@@ -197,10 +197,10 @@ const mutations = {
     state.routers = state.routers.concat(needAdd)
     // 这里将动态组装的路由添加到路由里面
     if (needAdd.length > 0) {
-      state.isDynamicAddRoute = true
       needAdd.push(errorPage)
       router.addRoutes(needAdd)
     }
+    state.isDynamicAddRoute = true
   },
   SET_PERMISSIONS: (state, permissions) => {
     state.permissions = permissions

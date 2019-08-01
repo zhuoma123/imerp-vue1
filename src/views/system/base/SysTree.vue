@@ -3,17 +3,25 @@
         <el-form :inline="true" size="mini" :model="dataForm" @keyup.enter.native="getDataList()">
             <el-form-item>
                 <el-input
-                        v-model="dataForm.username"
-                        :data-operate="dataFormOp.username"
-                        :placeholder="$t('views.public.user.username')"
+                    v-model="dataForm.type"
+                    :data-operate="dataFormOp.type"
+                    :placeholder="类型"
+                     clearable
+                />
+            </el-form-item>
+            <el-form-item>
+                <el-input
+                        v-model="dataForm.code"
+                        :data-operate="dataFormOp.code"
+                        :placeholder="编码"
                         clearable
                 />
             </el-form-item>
             <el-form-item>
                 <el-input
-                        v-model="dataForm.mobile"
-                        :data-operate="dataFormOp.mobile"
-                        :placeholder="$t('views.public.user.mobile')"
+                        v-model="dataForm.name"
+                        :data-operate="dataFormOp.name"
+                        :placeholder="名称"
                         clearable
                 />
             </el-form-item>
@@ -25,24 +33,21 @@
                         v-if="$hasPermission('sys:user:save')"
                         type="primary"
                         @click="addOrUpdateHandle()"
-                >{{ $t('views.public.add') }}
-                </el-button>
+                >{{ $t('views.public.add') }}</el-button>
             </el-form-item>
             <el-form-item>
                 <el-button
                         v-if="$hasPermission('sys:user:delete')"
                         type="danger"
                         @click="deleteHandle()"
-                >{{ $t('views.public.deleteBatch') }}
-                </el-button>
+                >{{ $t('views.public.deleteBatch') }}</el-button>
             </el-form-item>
             <el-form-item>
                 <el-button
                         v-if="$hasPermission('sys:user:export')"
                         type="info"
                         @click="exportHandle()"
-                >{{ $t('views.public.export') }}
-                </el-button>
+                >{{ $t('views.public.export') }}</el-button>
             </el-form-item>
         </el-form>
         <d2-crud
@@ -69,31 +74,33 @@
                 @current-change="pageCurrentChangeHandle"
         ></el-pagination>
         <!-- 弹窗, 新增 / 修改 -->
-        <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList"/>
+        <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList" />
     </d2-container>
 </template>
 
 <script>
 import mixinViewModule from '@/mixins/view-module'
-import AddOrUpdate from './user-add-or-update'
-
+import AddOrUpdate from '@/views/sys/user-add-or-update'
 export default {
   mixins: [mixinViewModule],
   data () {
     return {
       mixinViewModuleOptions: {
-        getDataListURL: '/sys/user/list',
+        getDataListURL: '/sys/tree/list',
         getDataListIsPage: true,
-        deleteURL: '/sys/user',
-        deleteIsBatch: true,
-        exportURL: '/sys/user/export'
+        deleteURL: '/sys/tree',
+        deleteIsBatch: true
+        // exportURL: '/sys/tree/export'
       },
       dataForm: {
-        username: '',
-        mobile: ''
+        type: '',
+        code: '',
+        name: ''
       },
       dataFormOp: {
-        username: 'like'
+        type: 'like',
+        code: 'like',
+        name: 'like'
       },
       rowHandler: {
         custom: [
@@ -119,52 +126,61 @@ export default {
       },
       columns: [
         {
-          title: this.$t('views.public.user.username'),
-          key: 'username',
+          title: '类型',
+          key: 'code',
           sortable: true,
           align: 'center'
         },
         {
-          title: this.$t('views.public.user.deptName'),
-          key: 'deptName',
+          title: '编码',
+          key: 'type',
           sortable: true,
           align: 'center'
         },
         {
-          title: this.$t('views.public.user.email'),
-          key: 'email',
+          title: '名称',
+          key: 'name',
           sortable: true,
           align: 'center'
         },
         {
-          title: this.$t('views.public.user.mobile'),
-          key: 'mobile',
+          title: '序号',
+          key: 'orderNum',
           sortable: true,
           align: 'center'
         },
         {
-          title: this.$t('views.public.user.status'),
-          key: 'status',
-          align: 'center',
-          width: '70px',
-          component: {
-            render: function (createElement) {
-              let s = 'views.public.user.status' + this.scope.row.status
-              let type = this.scope.row.status == '0' ? 'danger' : 'success'
-              return createElement(
-                'el-tag', {
-                  attrs: {
-                    type,
-                    size: 'mini'
-                  }
-                }, `${this.$t(s)}`
-              )
-            }
-          }
+          title: '是否系统数据',
+          key: 'sys',
+          align: 'center'
+        },
+        {
+          title: '',
+          key: 'remark',
+          sortable: true,
+          align: 'center'
+        },
+        {
+          title: '创建人',
+          key: 'createdBy',
+          sortable: true,
+          align: 'center'
         },
         {
           title: this.$t('views.public.createDate'),
           key: 'createDate',
+          sortable: true,
+          align: 'center'
+        },
+        {
+          title: '更新人',
+          key: 'updateBy',
+          sortable: true,
+          align: 'center'
+        },
+        {
+          title: '修改日期',
+          key: 'updateDate',
           sortable: true,
           align: 'center'
         }
@@ -177,7 +193,3 @@ export default {
   methods: {}
 }
 </script>
-
-<style>
-
-</style>

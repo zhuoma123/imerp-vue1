@@ -75,16 +75,16 @@
 
 <script>
 import mixinViewModule from '@/mixins/view-module'
-import AddOrUpdate from './user-add-or-update'
+import AddOrUpdate from '@/views/sys/user-add-or-update'
 
 export default {
   mixins: [mixinViewModule],
   data () {
     return {
       mixinViewModuleOptions: {
-        getDataListURL: '/sys/user/list',
+        getDataListURL: '/sys/cust/list',
         getDataListIsPage: true,
-        deleteURL: '/sys/user',
+        deleteURL: '/sys/cust',
         deleteIsBatch: true,
         exportURL: '/sys/user/export'
       },
@@ -152,12 +152,14 @@ export default {
               let s = 'views.public.user.status' + this.scope.row.status
               let type = this.scope.row.status == '0' ? 'danger' : 'success'
               return createElement(
-                'el-tag', {
+                'el-tag',
+                {
                   attrs: {
                     type,
                     size: 'mini'
                   }
-                }, `${this.$t(s)}`
+                },
+                `${this.$t(s)}`
               )
             }
           }

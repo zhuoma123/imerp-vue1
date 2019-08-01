@@ -20,13 +20,15 @@ module.exports = {
   devServer: {
     publicPath, // 和 publicPath 保持一致
     proxy: {
-      '/sys': {
-        target: 'http://localhost:8081',
+      '/': {
+        target: 'http://localhost:8081/',
         ws: true,
-        changeOrigin: true,
-        pathRewrite: {
-          '^/sys': '/sys'
-        }
+        changeOrigin: true
+      },
+      '/sockjs-node': {
+        target: 'http://localhost:8080/',
+        ws: true,
+        changeOrigin: true
       }
     }
   },

@@ -1,5 +1,5 @@
 <template>
-  <d2-container>
+  <d2-container class="mod-sys__user">
     <el-form :inline="true" size="mini" :model="dataForm" @keyup.enter.native="getDataList()">
       <el-form-item>
         <el-input
@@ -78,40 +78,40 @@ import AddOrUpdate from "./user-add-or-update";
 export default {
   name: 'sys-user',
   mixins: [mixinViewModule],
-  data() {
+  data () {
     return {
       mixinViewModuleOptions: {
-        getDataListURL: "/sys/user/list",
+        getDataListURL: '/sys/user/list',
         getDataListIsPage: true,
-        deleteURL: "/sys/user",
+        deleteURL: '/sys/user',
         deleteIsBatch: true,
-        exportURL: "/sys/user/export"
+        exportURL: '/sys/user/export'
       },
       dataForm: {
         username: "",
         mobile: ""
       },
       dataFormOp: {
-        username: "like"
+        username: 'like'
       },
       rowHandler: {
         custom: [
           {
-            text: this.$t("views.public.update"),
-            type: "primary",
-            size: "mini",
-            emit: "user-update",
+            text: this.$t('views.public.update'),
+            type: 'primary',
+            size: 'mini',
+            emit: 'user-update',
             show: (index, row) => {
-              return this.$hasPermission("sys:user:update");
+              return this.$hasPermission('sys:user:update')
             }
           },
           {
-            text: this.$t("views.public.delete"),
-            type: "danger",
-            size: "mini",
-            emit: "user-delete",
+            text: this.$t('views.public.delete'),
+            type: 'danger',
+            size: 'mini',
+            emit: 'user-delete',
             show: (index, row) => {
-              return this.$hasPermission("sys:user:delete");
+              return this.$hasPermission('sys:user:delete')
             }
           }
         ]
@@ -123,13 +123,13 @@ export default {
           title: this.$t("views.public.user.username"),
           field: "username",
           sortable: true,
-          align: "center"
+          align: 'center'
         },
         {
           title: this.$t("views.public.user.deptName"),
           field: "deptName",
           sortable: true,
-          align: "center"
+          align: 'center'
         },
         {
           title: this.$t("views.public.user.email"),
@@ -159,7 +159,7 @@ export default {
           title: this.$t("views.public.createDate"),
           field: "createTime",
           sortable: true,
-          align: "center"
+          align: 'center'
         }
       ],
       tableProxy: {
@@ -233,7 +233,7 @@ export default {
   components: {
     AddOrUpdate
   }
-};
+}
 </script>
 
 <style>

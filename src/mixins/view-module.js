@@ -65,8 +65,8 @@ export default {
         }
       ).then(res => {
         this.dataListLoading = false
-        this.dataList = this.mixinViewModuleOptions.getDataListIsPage ? res.data.list : res.data
-        this.total = this.mixinViewModuleOptions.getDataListIsPage ? res.data.total : 0
+        this.dataList = this.mixinViewModuleOptions.getDataListIsPage ? res.list : res
+        this.total = this.mixinViewModuleOptions.getDataListIsPage ? res.totalCount : 0
       }).catch(() => {
         this.dataList = []
         this.total = 0
@@ -101,12 +101,15 @@ export default {
     },
     // 新增 / 修改
     addOrUpdateHandle ({index, row}) {
-      console.log(row)
       this.addOrUpdateVisible = true
-      this.$nextTick(() => {
-        this.$refs.addOrUpdate.dataForm.id = row.id
+      if(index) {
+        this.$nextTick(() => {
+          this.$refs.addOrUpdate.dataForm.id = row.id
+          this.$refs.addOrUpdate.init()
+        })
+      } else {
         this.$refs.addOrUpdate.init()
-      })
+      }
     },
     // 删除
     deleteHandle ({index, row}) {

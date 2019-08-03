@@ -56,6 +56,7 @@
                 <el-button
                   size="default"
                   @click="submit"
+                  :disabled="submitDisabled"
                   type="primary"
                   class="button-login"
                 >{{ $t('views.system.login.form.button.login') }}</el-button>
@@ -102,9 +103,14 @@
 import dayjs from 'dayjs'
 import { mapActions } from 'vuex'
 import generate from '@babel/generator'
+// 进度条
+import NProgress from 'nprogress'
+import 'nprogress/nprogress.css'
+
 export default {
   data () {
     return {
+      submitDisabled: false,
       timeInterval: null,
       time: dayjs().format('HH:mm:ss'),
       // 表单
@@ -167,21 +173,24 @@ export default {
      */
     // 提交登录信息
     submit () {
-      this.$refs.loginForm.validate(valid => {
+      // 进度条
+      NProgress.start()
+      this.$refs.loginForm.validate( async valid => {
         if (valid) {
           // 登录
-          // 注意 这里的演示没有传验证码
-          // 具体需要传递的数据请自行修改代码
-          this.login({
+          await this.login({
             username: this.formLogin.username,
             password: this.formLogin.password
           }).then(() => {
+            NProgress.done()
             // 重定向对象不存在则返回顶层路径
             this.$router.replace(this.$route.query.redirect || '/')
           })
+          NProgress.done()
         } else {
           // 登录表单校验失败
           this.$message.error(this.$t('public.message.error.form.invalid'))
+          NProgress.done()
         }
       })
     }

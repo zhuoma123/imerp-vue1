@@ -1,6 +1,7 @@
 import { Message, MessageBox } from 'element-ui'
 import util from '@/libs/util.js'
 import router from '@/router'
+import store from '@/store/index'
 import { sysAccountService } from '@api'
 import i18n from '../../../../i18n'
 
@@ -56,11 +57,13 @@ export default {
        * @description 注销
        */
       async function logout () {
+        console.log('----------用户登出，清空缓存----------')
         // 删除cookie
         util.cookies.remove('token')
         util.cookies.remove('uuid')
         // 清空 vuex 菜单信息
         util.session.clear()
+        store.commit('d2admin/permission/SET_ISLOCK', false)
         // 清空 vuex 用户信息
         await dispatch('d2admin/user/set', {}, { root: true })
         // 跳转路由

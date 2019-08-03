@@ -1,5 +1,5 @@
 <template>
-  <d2-container class="mod-sys__user">
+  <d2-container>
     <el-form :inline="true" size="mini" :model="dataForm" @keyup.enter.native="getDataList()">
       <el-form-item>
         <el-input
@@ -24,7 +24,7 @@
         <el-button
           v-if="$hasPermission('sys:user:save')"
           type="primary"
-          @click="addOrUpdateHandle()"
+          @click="addOrUpdateHandle({})"
         >{{ $t('views.public.add') }}</el-button>
       </el-form-item>
       <el-form-item>
@@ -42,18 +42,19 @@
         >{{ $t('views.public.export') }}</el-button>
       </el-form-item>
     </el-form>
-    <d2-crud
-      :columns="columns"
-      :options="options"
-      selectionRow
-      :row-handle="rowHandler"
-      :loading="dataListLoading"
-      :data="dataList"
-      @selection-change="dataListSelectionChangeHandle"
-      @sort-change="dataListSortChangeHandle"
-      @user-update="addOrUpdateHandle"
-      @user-delete="deleteHandle"
-    ></d2-crud>
+    <vxe-grid
+      border
+      resizable
+      highlight-hover-row
+      remote-filter
+      height="100%"
+      row-id="id"
+      :toolbar="toolbar"
+      :proxy-config="tableProxy"
+      :columns="tableColumn"
+      :select-config="{reserve: true}"
+      :edit-config="{trigger: 'click', mode: 'row', showStatus: true}"
+    ></vxe-grid>
     <!-- 分页 -->
     <el-pagination
       slot="footer"
@@ -73,7 +74,9 @@
 <script>
 import mixinViewModule from "@/mixins/view-module";
 import AddOrUpdate from "./user-add-or-update";
+
 export default {
+  name: 'sys-user',
   mixins: [mixinViewModule],
   data() {
     return {
@@ -86,7 +89,7 @@ export default {
       },
       dataForm: {
         username: "",
-        mobile:""
+        mobile: ""
       },
       dataFormOp: {
         username: "like"
@@ -95,89 +98,143 @@ export default {
         custom: [
           {
             text: this.$t("views.public.update"),
-            type: 'primary',
-            size: 'mini',
-            emit: 'user-update',
+            type: "primary",
+            size: "mini",
+            emit: "user-update",
             show: (index, row) => {
               return this.$hasPermission("sys:user:update");
             }
           },
           {
             text: this.$t("views.public.delete"),
-            type: 'danger',
-            size: 'mini',
-            emit: 'user-delete',
+            type: "danger",
+            size: "mini",
+            emit: "user-delete",
             show: (index, row) => {
               return this.$hasPermission("sys:user:delete");
             }
           }
         ]
       },
-      columns: [
+      tableColumn: [
+        { type: "selection", width: 50, align: "center" },
+        { type: "index", width: 50, align: "center" },
         {
           title: this.$t("views.public.user.username"),
-          key: "username",
+          field: "username",
           sortable: true,
           align: "center"
         },
         {
           title: this.$t("views.public.user.deptName"),
-          key: "deptName",
+          field: "deptName",
           sortable: true,
           align: "center"
         },
         {
           title: this.$t("views.public.user.email"),
-          key: "email",
+          field: "email",
           sortable: true,
-          align: "center"
+          align: "center",
+          editRender: { name: 'input' }
         },
         {
           title: this.$t("views.public.user.mobile"),
-          key: "mobile",
+          field: "mobile",
           sortable: true,
-          align: "center"
+          align: "center",
+          editRender: { name: 'input' }
         },
         {
           title: this.$t("views.public.user.status"),
-          key: "status",
+          field: "status",
           align: "center",
           width: "70px",
-          component: {
-            render: function(createElement) {
-              let s = 'views.public.user.status'+ this.scope.row.status
-              let type = this.scope.row.status == '0' ? 'danger' : 'success'
-              return createElement(
-                "el-tag",
-                {
-                  attrs: {
-                    type,
-                    size: 'mini'
-                  }
-                },
-                `${this.$t(s)}`
-              );
-            }
-          }
+          filters: [
+            { label: this.$t("views.public.user.status0"), value: 0 },
+            { label: this.$t("views.public.user.status1"), value: 1 }
+          ]
         },
         {
           title: this.$t("views.public.createDate"),
-          key: "createDate",
+          field: "createTime",
           sortable: true,
           align: "center"
         }
-      ]
+      ],
+      tableProxy: {
+        index: true, // 启用动态序号代理
+        sort: true, // 启用排序代理
+        filter: true, // 启用筛选代理
+        ajax: {
+          query: ({ page, sort, filters }) => {
+            // 处理排序条件
+            let formData = {
+              sort: sort.property,
+              order: sort.order
+            };
+            // 处理筛选条件
+            filters.forEach(({ column, property, values }) => {
+              formData[property] = values.join(",");
+            });
+            return new Promise(async (resolve, reject) => {
+              await this.$axios.post(
+                this.mixinViewModuleOptions.getDataListURL,
+                {
+                  pageForm: {
+                    order: this.order,
+                    orderField: this.orderField,
+                    page: this.mixinViewModuleOptions.getDataListIsPage ? this.page : null,
+                    limit: this.mixinViewModuleOptions.getDataListIsPage ? this.limit : null
+                  },
+                  dataForm: {
+                    data: this.dataForm,
+                    op: this.dataFormOp
+                  }
+                }
+              ).then(res => {
+                console.log(this.mixinViewModuleOptions.getDataListIsPage)
+                this.total = res.totalCount
+                this.dataList = res.list
+              })
+              resolve({
+                total: this.total,
+                list: this.dataList
+              })
+            })
+          },
+          save: ({ body }) => {console.log(body)}
+        },
+        props: {
+          list: 'list',
+          result: 'list',
+          total: 'totalCount'
+        }
+      },
+      toolbar: {
+        id: "full_edit_1",
+        buttons: [
+          { code: "reload", name: "刷新" },
+          { code: "insert_actived", name: "新增" },
+          { code: "mark_cancel", name: "取消" },
+          { code: "remove_selection", name: "移除" },
+          { code: "save", name: "保存" },
+          { code: "export", name: "导出.csv" }
+        ],
+        resizable: {
+          storage: true
+        },
+        setting: {
+          storage: true
+        }
+      }
     };
   },
   components: {
     AddOrUpdate
-  },
-  methods: {
-    
   }
-}
+};
 </script>
 
 <style>
-
 </style>

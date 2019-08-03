@@ -1,0 +1,59 @@
+{
+  "form": {
+    "columns": [
+      {
+        "title": "编号",
+        "key": "",
+        "sortable": true,
+        "align": "center"
+      },{
+        "title": "名称",
+        "key": "",
+        "sortable": true,
+        "align": "center"
+      },{
+        "title": "拼音码",
+        "key": "",
+        "sortable": true,
+        "align": "center"
+      },{
+        "title": "五笔码",
+        "key": "",
+        "sortable": true,
+        "align": "center"
+      },{
+        "title": "remark",
+        "key": "",
+        "sortable": true,
+        "align": "center"
+      },{
+        "title": "公司ID",
+        "key": "companyId",
+        "sortable": true,
+        "align": "center"
+      },
+      {
+        "title": "创建人",
+        "key": "createBy",
+        "sortable": true,
+        "align": "center"
+      },{
+        "title": "创建日期",
+        "key": "createDate",
+        "sortable": true,
+        "align": "center"
+      },{
+        "title": "修改人",
+        "key": "updateBy",
+        "sortable": true,
+        "align": "center"
+      },
+      {
+        "title": "修改日期",
+        "key": "updateDate",
+        "sortable": true,
+        "align": "center"
+      }
+    ]
+  }
+}

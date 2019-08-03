@@ -1,0 +1,94 @@
+{
+  "form": {
+    "columns": [
+      {
+        "title": "需求日期",
+        "key": "requirementDate",
+        "sortable": true,
+        "align": "center"
+      },
+      {
+        "title": "公司编号",
+        "key": "companyId",
+        "sortable": true,
+        "align": "center"
+      },
+      {
+        "title": "产品Id",
+        "key": "productId",
+        "sortable": true,
+        "align": "center"
+      },
+      {
+        "title": "仓库Id",
+        "key": "warehouseId",
+        "sortable": true,
+        "align": "center"
+      },
+      {
+        "title": "保留类型",
+        "key": "tranType",
+        "sortable": true,
+        "align": "center"
+      },
+      {
+        "title": "需求来源单头Id",
+        "key": "demandSourceHeaderId",
+        "sortable": true,
+        "align": "center"
+      },
+      {
+        "title": "需求来源行Id",
+        "key": "demandSourceLineId",
+        "sortable": true,
+        "align": "center"
+      },{
+        "title": "保留量计量单位",
+        "key": "reservationUomCode",
+        "sortable": true,
+        "align": "center"
+      },{
+        "title": "保留数量",
+        "key": "reservationQuantity",
+        "sortable": true,
+        "align": "center"
+      },
+      {
+        "title": "备注",
+        "key": "remark",
+        "sortable": true,
+        "align": "center"
+      },
+      {
+        "title": "创建人",
+        "key": "createBy",
+        "sortable": true,
+        "align": "center"
+      },
+      {
+        "title": "创建日期",
+        "key": "createDate",
+        "sortable": true,
+        "align": "center"
+      },
+      {
+        "title": "修改人",
+        "key": "updateBy",
+        "sortable": true,
+        "align": "center"
+      },
+      {
+        "title": "修改日期",
+        "key": "updateDate",
+        "sortable": true,
+        "align": "center"
+      }
+    ],
+    "search": {
+      "requirementDate": "需求日期",
+      "companyId": "公司ID",
+      "productId": "产品ID",
+      "warehouseId": "仓库ID"
+    }
+  }
+}

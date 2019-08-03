@@ -3,25 +3,17 @@
         <el-form :inline="true" size="mini" :model="dataForm" @keyup.enter.native="getDataList()">
             <el-form-item>
                 <el-input
-                    v-model="dataForm.type"
-                    :data-operate="dataFormOp.type"
-                    :placeholder="类型"
-                     clearable
-                />
-            </el-form-item>
-            <el-form-item>
-                <el-input
-                        v-model="dataForm.code"
-                        :data-operate="dataFormOp.code"
-                        :placeholder="编码"
+                        v-model="dataForm.username"
+                        :data-operate="dataFormOp.username"
+                        :placeholder="$t('views.public.user.username')"
                         clearable
                 />
             </el-form-item>
             <el-form-item>
                 <el-input
-                        v-model="dataForm.name"
-                        :data-operate="dataFormOp.name"
-                        :placeholder="名称"
+                        v-model="dataForm.mobile"
+                        :data-operate="dataFormOp.mobile"
+                        :placeholder="$t('views.public.user.mobile')"
                         clearable
                 />
             </el-form-item>
@@ -33,21 +25,24 @@
                         v-if="$hasPermission('sys:user:save')"
                         type="primary"
                         @click="addOrUpdateHandle()"
-                >{{ $t('views.public.add') }}</el-button>
+                >{{ $t('views.public.add') }}
+                </el-button>
             </el-form-item>
             <el-form-item>
                 <el-button
                         v-if="$hasPermission('sys:user:delete')"
                         type="danger"
                         @click="deleteHandle()"
-                >{{ $t('views.public.deleteBatch') }}</el-button>
+                >{{ $t('views.public.deleteBatch') }}
+                </el-button>
             </el-form-item>
             <el-form-item>
                 <el-button
                         v-if="$hasPermission('sys:user:export')"
                         type="info"
                         @click="exportHandle()"
-                >{{ $t('views.public.export') }}</el-button>
+                >{{ $t('views.public.export') }}
+                </el-button>
             </el-form-item>
         </el-form>
         <d2-crud
@@ -74,33 +69,32 @@
                 @current-change="pageCurrentChangeHandle"
         ></el-pagination>
         <!-- 弹窗, 新增 / 修改 -->
-        <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList" />
+        <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList"/>
     </d2-container>
 </template>
 
 <script>
 import mixinViewModule from '@/mixins/view-module'
 import AddOrUpdate from '@/views/sys/user-add-or-update'
+import data from './data'
+
 export default {
   mixins: [mixinViewModule],
   data () {
     return {
       mixinViewModuleOptions: {
-        getDataListURL: '/sys/tree/list',
+        getDataListURL: '/sys/cust/list',
         getDataListIsPage: true,
-        deleteURL: '/sys/tree',
-        deleteIsBatch: true
-        // exportURL: '/sys/tree/export'
+        deleteURL: '/sys/cust',
+        deleteIsBatch: true,
+        exportURL: '/sys/user/export'
       },
       dataForm: {
-        type: '',
-        code: '',
-        name: ''
+        username: '',
+        mobile: ''
       },
       dataFormOp: {
-        type: 'like',
-        code: 'like',
-        name: 'like'
+        username: 'like'
       },
       rowHandler: {
         custom: [
@@ -124,67 +118,7 @@ export default {
           }
         ]
       },
-      columns: [
-        {
-          title: '类型',
-          key: 'code',
-          sortable: true,
-          align: 'center'
-        },
-        {
-          title: '编码',
-          key: 'type',
-          sortable: true,
-          align: 'center'
-        },
-        {
-          title: '名称',
-          key: 'name',
-          sortable: true,
-          align: 'center'
-        },
-        {
-          title: '序号',
-          key: 'orderNum',
-          sortable: true,
-          align: 'center'
-        },
-        {
-          title: '是否系统数据',
-          key: 'sys',
-          align: 'center'
-        },
-        {
-          title: '',
-          key: 'remark',
-          sortable: true,
-          align: 'center'
-        },
-        {
-          title: '创建人',
-          key: 'createdBy',
-          sortable: true,
-          align: 'center'
-        },
-        {
-          title: this.$t('views.public.createDate'),
-          key: 'createDate',
-          sortable: true,
-          align: 'center'
-        },
-        {
-          title: '更新人',
-          key: 'updateBy',
-          sortable: true,
-          align: 'center'
-        },
-        {
-          title: '修改日期',
-          key: 'updateDate',
-          sortable: true,
-          align: 'center'
-        }
-      ]
+      columns: data.form.columns
     }
   },
   components: {
@@ -193,3 +127,7 @@ export default {
   methods: {}
 }
 </script>
+
+<style>
+
+</style>

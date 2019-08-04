@@ -82,11 +82,10 @@ export default {
   data () {
     return {
       mixinViewModuleOptions: {
-        getDataListURL: '/sys/cust/list',
+        getDataListURL: '/base/cust/list',
         getDataListIsPage: true,
-        deleteURL: '/sys/cust',
-        deleteIsBatch: true,
-        exportURL: '/sys/user/export'
+        deleteURL: '/base/cust',
+        deleteIsBatch: true
       },
       dataForm: {
         username: '',

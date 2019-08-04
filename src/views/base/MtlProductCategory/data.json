@@ -55,6 +55,10 @@
         "sortable": true,
         "align": "center"
       }
-    ]
+    ],
+    "search": {
+      "code": "编号",
+      "name": "名称"
+    }
   }
 }

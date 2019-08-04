@@ -98,14 +98,13 @@ export default {
     return {
       data: data,
       mixinViewModuleOptions: {
-        getDataListURL: '/sys/cust/list',
+        getDataListURL: '/base/reservation/list',
         getDataListIsPage: true,
-        deleteURL: '/sys/cust',
-        deleteIsBatch: true,
-        exportURL: '/sys/user/export'
+        deleteURL: '/base/reservation',
+        deleteIsBatch: true
       },
       dataForm: {
-        companyId: '',
+        name: '',
         warehouseId: ''
       },
       dataFormOp: {

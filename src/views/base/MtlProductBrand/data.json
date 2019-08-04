@@ -3,27 +3,27 @@
     "columns": [
       {
         "title": "编号",
-        "key": "",
+        "key": "code",
         "sortable": true,
         "align": "center"
       },{
         "title": "名称",
-        "key": "",
+        "key": "name",
         "sortable": true,
         "align": "center"
       },{
         "title": "拼音码",
-        "key": "",
+        "key": "pinyinCode",
         "sortable": true,
         "align": "center"
       },{
         "title": "五笔码",
-        "key": "",
+        "key": "wbCode",
         "sortable": true,
         "align": "center"
       },{
-        "title": "remark",
-        "key": "",
+        "title": "备注",
+        "key": "remark",
         "sortable": true,
         "align": "center"
       },{
@@ -54,6 +54,10 @@
         "sortable": true,
         "align": "center"
       }
-    ]
+    ],
+    "search": {
+      "code": "编号",
+      "name": "名称"
+    }
   }
 }

@@ -3,17 +3,17 @@
         <el-form :inline="true" size="mini" :model="dataForm" @keyup.enter.native="getDataList()">
             <el-form-item>
                 <el-input
-                        v-model="dataForm.username"
-                        :data-operate="dataFormOp.username"
-                        :placeholder="$t('views.public.user.username')"
+                        v-model="dataForm.code"
+                        :data-operate="dataFormOp.likeOps"
+                        :placeholder="data.form.search.code"
                         clearable
                 />
             </el-form-item>
             <el-form-item>
                 <el-input
-                        v-model="dataForm.mobile"
-                        :data-operate="dataFormOp.mobile"
-                        :placeholder="$t('views.public.user.mobile')"
+                        v-model="dataForm.name"
+                        :data-operate="dataFormOp.likeOps"
+                        :placeholder="data.form.search.name"
                         clearable
                 />
             </el-form-item>
@@ -82,19 +82,19 @@ export default {
   mixins: [mixinViewModule],
   data () {
     return {
+      data: data,
       mixinViewModuleOptions: {
-        getDataListURL: '/sys/cust/list',
+        getDataListURL: '/base/productvehicle/list',
         getDataListIsPage: true,
-        deleteURL: '/sys/cust',
-        deleteIsBatch: true,
-        exportURL: '/sys/user/export'
+        deleteURL: '/base/productvehicle',
+        deleteIsBatch: true
       },
       dataForm: {
-        username: '',
-        mobile: ''
+        code: '',
+        name: ''
       },
       dataFormOp: {
-        username: 'like'
+        likeOps: 'like'
       },
       rowHandler: {
         custom: [

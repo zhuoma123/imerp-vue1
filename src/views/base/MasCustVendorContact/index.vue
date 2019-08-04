@@ -3,18 +3,38 @@
         <el-form :inline="true" size="mini" :model="dataForm" @keyup.enter.native="getDataList()">
             <el-form-item>
                 <el-input
-                        v-model="dataForm.username"
-                        :data-operate="dataFormOp.username"
-                        :placeholder="$t('views.public.user.username')"
+                        v-model="dataForm.custId"
+                        :data-opedrate="dataFormOp.likeOps"
+                        :placeholder="data.form.search.custId"
                         clearable
+                        style="width: 170px"
                 />
             </el-form-item>
             <el-form-item>
                 <el-input
-                        v-model="dataForm.mobile"
-                        :data-operate="dataFormOp.mobile"
-                        :placeholder="$t('views.public.user.mobile')"
+                        v-model="dataForm.name"
+                        :data-operate="dataFormOp.likeOps"
+                        :placeholder="data.form.search.name"
                         clearable
+                        style="width: 170px"
+                />
+            </el-form-item>
+            <el-form-item>
+                <el-input
+                        v-model="dataForm.shortName"
+                        :data-operate="dataFormOp.likeOps"
+                        :placeholder="data.form.search.shortName"
+                        clearable
+                        style="width: 170px"
+                />
+            </el-form-item>
+            <el-form-item>
+                <el-input
+                        v-model="dataForm.mobileNo"
+                        :data-operate="dataFormOp.likeOps"
+                        :placeholder="data.form.search.mobileNo"
+                        clearable
+                        style="width: 170px"
                 />
             </el-form-item>
             <el-form-item>
@@ -82,19 +102,22 @@ export default {
   mixins: [mixinViewModule],
   data () {
     return {
+      data: data,
       mixinViewModuleOptions: {
-        getDataListURL: '/sys/cust/list',
+        getDataListURL: '/base/custcontact/list',
         getDataListIsPage: true,
-        deleteURL: '/sys/cust',
-        deleteIsBatch: true,
-        exportURL: '/sys/user/export'
+        deleteURL: '/base/custcontact',
+        deleteIsBatch: true
       },
       dataForm: {
-        username: '',
-        mobile: ''
+        name: '',
+        mobileNo: '',
+        custId: '',
+        shortName: ''
       },
       dataFormOp: {
-        username: 'like'
+        likeOps: 'like',
+        equalsOps: '='
       },
       rowHandler: {
         custom: [

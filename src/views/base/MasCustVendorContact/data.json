@@ -76,6 +76,12 @@
         "sortable": true,
         "align": "center"
       }
-    ]
+    ],
+    "search": {
+      "custId": "客户ID",
+      "name": "姓名",
+      "shortName": "职务",
+      "mobileNo": "手机"
+    }
   }
 }

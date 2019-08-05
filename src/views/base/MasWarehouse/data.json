@@ -75,6 +75,11 @@
         "sortable": true,
         "align": "center"
       }
-    ]
+    ],
+    "search": {
+      "code": "仓库编号",
+      "name": "仓库名称",
+      "mobileNo": "负责人手机"
+    }
   }
 }

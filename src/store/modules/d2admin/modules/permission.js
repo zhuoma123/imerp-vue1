@@ -108,6 +108,7 @@ function fnAddDynamicSubRoutes(menuList = [], routes = []) {
         name: path,
         meta: {
           ...window.SITE_CONFIG['contentTabDefault'],
+          cache: true,
           auth: true,
           menuId: item.menuId,
           title: item.name
@@ -170,7 +171,7 @@ const errorPage = {
 }
 
 const state = {
-  lock: false,
+  isLock: false,
   isDynamicAddRoute: false,
   permissions: [],
   addRouters: [],
@@ -204,14 +205,23 @@ const mutations = {
   },
   SET_PERMISSIONS: (state, permissions) => {
     state.permissions = permissions
+  },
+  SET_ISLOCK: (state, isLock) => {
+    state.isLock = isLock
+    if(!isLock) {
+      state.isDynamicAddRoute = false
+    }
   }
 }
 
 const actions = {
-  generateRoutes ({ commit }) {
+  generateRoutes ({ commit, state }) {
+    console.log('lock--->', state.isLock)
     // 确保只做一次请求
-    if (store.lock) return
-    store.lock = true
+    if (state.isLock) return
+    console.log('setlock--->', true)
+    commit('SET_ISLOCK', true)
+
     const fnGenerator = menuList => {
       console.log('-----------------加载动态路由---------------')
       // 设置动态路由
@@ -236,7 +246,7 @@ const actions = {
     return new Promise((resolve, reject) => {
       // 获取缓存中的菜单信息
       const menuList = util.session.get('menuList')
-      if (!menuList) {
+      if (!menuList || menuList === null) {
         console.log('请求后台菜单----------')
         // 获取菜单列表, 添加保存到本地存储
         sysMenuService

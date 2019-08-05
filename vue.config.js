@@ -19,18 +19,14 @@ module.exports = {
   lintOnSave: true,
   devServer: {
     publicPath, // 和 publicPath 保持一致
-    proxy: {
-      '/': {
-        target: 'http://localhost:8081/',
-        ws: true,
-        changeOrigin: true
-      },
-      '/sockjs-node': {
-        target: 'http://localhost:8080/',
-        ws: true,
-        changeOrigin: true
-      }
-    }
+    // proxy: {
+    //   '/api': {
+    //     target: 'http://localhost:8081',
+    //     // ws: true,
+    //     changeOrigin: true,
+    //     '^/api': '/api'
+    //   }
+    // }
   },
   css: {
     loaderOptions: {
@@ -116,10 +112,11 @@ module.exports = {
     // 重新设置 alias
     config.resolve.alias
       .set('@api', resolve('src/api'))
+    console.log('环境变量', process.env.NODE_ENV, process.env.VUE_APP_BUILD_MODE)
     if (process.env.VUE_APP_BUILD_MODE !== 'NOMOCK') {
       // 判断环境加入模拟数据
       const entry = config.entry('app')
-      console.log('-------------------------------')
+      console.log('-------------加入模拟数据------------------')
       entry
         .add('@/mock')
         .end()

@@ -288,17 +288,17 @@
               flex-direction: column;
               overflow: hidden;
               .d2-container-full__header {
-                padding: 20px;
+                padding: 13px 20px 0px 20px;
               }
               .d2-container-full__body {
                 flex-grow: 1;
                 height: 100%;
-                padding: 20px 20px;
+                padding: 2px 3px;
                 overflow: auto;
                 position: relative;
               }
               .d2-container-full__footer {
-                padding: 20px;
+                padding: 5px;
               }
             }
             // 填充式布局组件 - 滚动优化
@@ -324,7 +324,7 @@
                 }
               }
               .d2-container-full-bs__footer {
-                padding: 20px;
+                padding: 7px;
               }
             }
             // 隐形布局组件

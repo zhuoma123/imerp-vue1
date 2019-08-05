@@ -100,16 +100,16 @@ export default {
       this.getDataList()
     },
     // 新增 / 修改
-    addOrUpdateHandle ({index, row}) {
+    addOrUpdateHandle (row) {
+      console.log(row)
       this.addOrUpdateVisible = true
-      if(index) {
-        this.$nextTick(() => {
+      this.$nextTick(() => {
+        if (row) {
           this.$refs.addOrUpdate.dataForm.id = row.id
-          this.$refs.addOrUpdate.init()
-        })
-      } else {
+        }
+
         this.$refs.addOrUpdate.init()
-      }
+      })
     },
     // 新增 / 修改
     addOrUpdateHandleSetter (row) {
@@ -126,7 +126,7 @@ export default {
       }
     },
     // 删除
-    deleteHandle ({index, row}) {
+    deleteHandle ({ index, row }) {
       const id = row.id
       if (this.mixinViewModuleOptions.deleteIsBatch && !id && this.dataListSelections.length <= 0) {
         return this.$message({

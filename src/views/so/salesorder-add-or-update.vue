@@ -1,242 +1,458 @@
 <template>
-  <el-dialog :visible.sync="visible" :title="!dataForm.id ? $t('views.public.add') : $t('views.public.update')" :close-on-click-modal="false" :close-on-press-escape="false">
-    <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmitHandle()" label-width="120px">
-      <el-form-item prop="username" :label="$t('views.public.user.username')">
-        <el-input v-model="dataForm.username" :placeholder="$t('views.public.user.username')"/>
-      </el-form-item>
-      <el-form-item prop="deptName" :label="$t('views.public.user.deptName')" class="dept-list">
-        <el-popover v-model="deptListVisible" ref="deptListPopover" placement="bottom-start" trigger="click">
-          <el-tree
-            :data="deptList"
-            :props="{ label: 'name', children: 'children' }"
-            node-key="id"
-            ref="deptListTree"
-            :highlight-current="true"
-            :expand-on-click-node="false"
-            accordion
-            @current-change="deptListTreeCurrentChangeHandle">
-          </el-tree>
-        </el-popover>
-        <el-input v-model="dataForm.deptName" v-popover:deptListPopover :readonly="true" :placeholder="$t('views.public.user.deptName')"/>
-      </el-form-item>
-      <el-form-item prop="password" :label="$t('views.public.user.password')" :class="{ 'is-required': !dataForm.id }">
-        <el-input v-model="dataForm.password" type="password" :placeholder="$t('views.public.user.password')"/>
-      </el-form-item>
-      <el-form-item prop="comfirmPassword" :label="$t('views.public.user.comfirmPassword')" :class="{ 'is-required': !dataForm.id }">
-        <el-input v-model="dataForm.comfirmPassword" type="password" :placeholder="$t('views.public.user.comfirmPassword')"/>
-      </el-form-item>
-      <el-form-item prop="realName" :label="$t('views.public.user.realName')">
-        <el-input v-model="dataForm.realName" :placeholder="$t('views.public.user.realName')"/>
-      </el-form-item>
-      <el-form-item prop="gender" :label="$t('views.public.user.gender')" size="mini">
-        <el-radio-group v-model="dataForm.gender">
-          <el-radio :label="0">{{ $t('views.public.user.gender0') }}</el-radio>
-          <el-radio :label="1">{{ $t('views.public.user.gender1') }}</el-radio>
-          <el-radio :label="2">{{ $t('views.public.user.gender2') }}</el-radio>
-        </el-radio-group>
-      </el-form-item>
-      <el-form-item prop="email" :label="$t('views.public.user.email')">
-        <el-input v-model="dataForm.email" :placeholder="$t('views.public.user.email')"/>
-      </el-form-item>
-      <el-form-item prop="mobile" :label="$t('views.public.user.mobile')">
-        <el-input v-model="dataForm.mobile" :placeholder="$t('views.public.user.mobile')"/>
-      </el-form-item>
-      <el-form-item prop="roleIdList" :label="$t('views.public.user.roleIdList')" class="role-list">
-        <el-select v-model="dataForm.roleIdList" multiple :placeholder="$t('views.public.user.roleIdList')">
-          <el-option v-for="role in roleList" :key="role.id" :label="role.name" :value="role.id"/>
-        </el-select>
-      </el-form-item>
-      <el-form-item prop="status" :label="$t('views.public.user.status')" size="mini">
-        <el-radio-group v-model="dataForm.status">
-          <el-radio :label="0">{{ $t('views.public.user.status0') }}</el-radio>
-          <el-radio :label="1">{{ $t('views.public.user.status1') }}</el-radio>
-        </el-radio-group>
-      </el-form-item>
-    </el-form>
-    <template slot="footer">
-      <el-button @click="visible = false">{{ $t('views.public.cancel') }}</el-button>
-      <el-button type="primary" @click="dataFormSubmitHandle()">{{ $t('views.public.confirm') }}</el-button>
-    </template>
+  <el-dialog
+          :title="!dataForm.id ? '新增' : '修改'"
+          :close-on-click-modal="false"
+          :visible.sync="visible"
+          width="80%">
+    <div slot="title" >
+      <el-form :model="dataForm" labelSuffix="：" size="mini" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmit()" label-width="120px">
+        <el-row inline>
+          <el-col :span="8" >
+            <el-form-item label="客户" prop="customerId">
+              <el-input v-model="dataForm.customerId" placeholder="客户" style="width:220px"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8" >
+            <el-form-item label="销售日期" prop="orderDate">
+              <el-date-picker v-model="dataForm.orderDate" placeholder="销售日期" style="width:160px"></el-date-picker>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8" >
+            <el-form-item label="要求交货期" prop="planDeliveryDate">
+              <el-date-picker v-model="dataForm.planDeliveryDate" placeholder="要求交货期" style="width:160px"></el-date-picker>
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+        <el-row inline>
+          <el-col :span="8" >
+            <el-form-item label="发运方式" prop="shipType">
+              <el-input v-model="dataForm.shipType" placeholder="发运方式"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8" >
+            <el-form-item label="订单金额" prop="orderAmount">
+              <el-input v-model="dataForm.orderAmount" placeholder="订单金额"></el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+        <el-row inline>
+          <el-col :span="8" >
+            <el-form-item label="收货人" prop="receiveName">
+              <el-input v-model="dataForm.receiveName" placeholder="收货人"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8" >
+            <el-form-item label="收货人电话" prop="receivePhone">
+              <el-input v-model="dataForm.receivePhone" placeholder="收货人电话"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8" >
+            <el-form-item label="收货地址" prop="receiveAddress">
+              <el-input v-model="dataForm.receiveAddress" placeholder="收货地址"></el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+
+
+
+        <el-form-item label="备注" prop="remark">
+          <el-input v-model="dataForm.remark" placeholder="备注"></el-input>
+        </el-form-item>
+
+      </el-form>
+
+    </div>
+    <vxe-grid
+            border
+            resizable
+            size="mini"
+            highlight-current-row
+            class="vxe-table-element"
+            remote-filter
+            ref="xGrid2"
+            row-id="id"
+            :toolbar="toolbar"
+            :proxy-config="itableProxy"
+            :columns="itableColumn"
+            :select-config="{reserve: true}"
+            :mouse-config="{selected: true}"
+            :keyboard-config="{isArrow: true, isDel: true, isTab: true, isEdit: true}"
+            :edit-config="{trigger: 'dblclick', mode: 'cell'}">
+    </vxe-grid>
+
+    <span slot="footer" class="dialog-footer">
+      <el-button @click="visible = false">取消</el-button>
+      <el-button type="primary" @click="dataFormSubmit()">确定</el-button>
+    </span>
   </el-dialog>
 </template>
 
 <script>
-import { debounce } from 'lodash'
-import { isEmail, isMobile } from '@/libs/validate'
-export default {
-  data () {
-    return {
-      visible: false,
-      deptList: [],
-      deptListVisible: false,
-      roleList: [],
-      roleIdListDefault: [],
-      dataForm: {
-        id: '',
-        username: '',
-        deptId: '0',
-        deptName: '',
-        password: '',
-        comfirmPassword: '',
-        realName: '',
-        gender: 0,
-        email: '',
-        mobile: '',
-        roleIdList: [],
-        status: 1
-      }
-    }
-  },
-  computed: {
-    dataRule () {
-      var validatePassword = (rule, value, callback) => {
-        if (!this.dataForm.id && !/\S/.test(value)) {
-          return callback(new Error(this.$t('public.rules.required', { 'name': this.$t('views.public.user.password') })))
-        }
-        callback()
-      }
-      var validateComfirmPassword = (rule, value, callback) => {
-        if (!this.dataForm.id && !/\S/.test(value)) {
-          return callback(new Error(this.$t('public.rules.required', { 'name': this.$t('views.public.user.comfirmPassword') })))
-        }
-        if (this.dataForm.password !== value) {
-          return callback(new Error(this.$t('views.public.user.validate.comfirmPassword')))
-        }
-        callback()
-      }
-      var validateEmail = (rule, value, callback) => {
-        if (!isEmail(value)) {
-          return callback(new Error(this.$t('public.rules.format', { 'name': this.$t('views.public.user.email') })))
-        }
-        callback()
-      }
-      var validateMobile = (rule, value, callback) => {
-        if (!isMobile(value)) {
-          return callback(new Error(this.$t('public.rules.format', { 'name': this.$t('views.public.user.mobile') })))
-        }
-        callback()
-      }
-      return {
-        username: [
-          { required: true, message: this.$t('public.rules.required', { 'name': this.$t('views.public.user.username') }), trigger: 'blur' }
-        ],
-        deptName: [
-          { required: true, message: this.$t('public.rules.required', { 'name': this.$t('views.public.user.deptName') }), trigger: 'change' }
-        ],
-        password: [
-          { validator: validatePassword, trigger: 'blur' }
-        ],
-        comfirmPassword: [
-          { validator: validateComfirmPassword, trigger: 'blur' }
-        ],
-        realName: [
-          { required: true, message: this.$t('public.rules.required', { 'name': this.$t('views.public.user.realName') }), trigger: 'blur' }
-        ],
-        email: [
-          { required: true, message: this.$t('public.rules.required', { 'name': this.$t('views.public.user.email') }), trigger: 'blur' },
-          { validator: validateEmail, trigger: 'blur' }
-        ],
-        mobile: [
-          { required: true, message: this.$t('public.rules.required', { 'name': this.$t('views.public.user.mobile') }), trigger: 'blur' },
-          { validator: validateMobile, trigger: 'blur' }
-        ]
-      }
-    }
-  },
-  methods: {
-    init () {
-      this.visible = true
-      this.$nextTick(() => {
-        this.$refs['dataForm'].resetFields()
-        this.roleIdListDefault = []
-        Promise.all([
-          this.getDeptList(),
-          this.getRoleList()
-        ]).then(() => {
-          if (this.dataForm.id) {
-            // this.getInfo()
-          }
-        })
-      })
-    },
-    // 获取部门列表
-    getDeptList () {
-      return this.$axios.get('/sys/dept/list').then(res => {
-        this.deptList = res
-      }).catch(() => {})
-    },
-    // 获取角色列表
-    getRoleList () {
-      return this.$axios.get('/sys/role/list').then(res => {
-        this.roleList = res
-      }).catch(() => {})
-    },
-    // 获取信息
-    getInfo () {
-      this.$axios.get(`/sys/user/${this.dataForm.id}`).then(res => {
-        this.dataForm = {
-          ...this.dataForm,
-          ...res,
-          roleIdList: []
-        }
-        this.$refs.deptListTree.setCurrentKey(this.dataForm.deptId)
-        // 角色配置, 区分是否为默认角色
-        for (var i = 0; i < res.roleIdList.length; i++) {
-          if (this.roleList.filter(item => item.id === res.roleIdList[i])[0]) {
-            this.dataForm.roleIdList.push(res.roleIdList[i])
-            continue
-          }
-          this.roleIdListDefault.push(res.roleIdList[i])
-        }
-      }).catch(() => {})
-    },
-    // 所属部门树, 选中
-    deptListTreeCurrentChangeHandle (data, node) {
-      this.dataForm.deptId = data.id
-      this.dataForm.deptName = data.name
-      this.deptListVisible = false
-    },
-    // 表单提交
-    dataFormSubmitHandle: debounce(function () {
-      this.$refs['dataForm'].validate((valid) => {
-        if (!valid) {
-          return false
-        }
-        this.$axios[!this.dataForm.id ? 'post' : 'put']('/sys/user', {
-          ...this.dataForm,
-          roleIdList: [
-            ...this.dataForm.roleIdList,
-            ...this.roleIdListDefault
-          ]
-        }).then(res => {
-          this.$message({
-            message: this.$t('views.public.success'),
-            type: 'success',
-            duration: 500,
-            onClose: () => {
-              this.visible = false
-              this.$emit('refreshDataList')
+    import ElCol from "element-ui/packages/col/src/col";
+    import ElInput from "../../../node_modules/element-ui/packages/input/src/input";
+    export default {
+        components: {
+            ElInput,
+            ElCol},
+        data () {
+            return {
+                mixinViewModuleOptions: {
+                    getDataListURL: "/so/salesorderline/list",
+                    getDataListIsPage: false,
+                    updateURL: "/so/salesorder/update",
+                    deleteIsBatch: true,
+                    prodURL: "/so/salesorder/prod"
+                },
+
+                visible: false,
+                dataForm: {
+                    id: 0,
+                    orderType: '',
+                    orderNum: '',
+                    customerId: '',
+                    orderDate: '',
+                    pic: '',
+                    shipType: '',
+                    planDeliveryDate: '',
+                    status: '',
+                    orderAmount: '',
+                    receiveAddress: '',
+                    receiveName: '',
+                    receivePhone: '',
+                    remark: '',
+                    companyId: '',
+                    deletedFlag: '',
+                    createBy: '',
+                    createDate: '',
+                    updateBy: '',
+                    updateDate: ''
+                },
+                dataRule: {
+                    orderType: [
+                        { required: true, message: '订单类型(销售/退货/报价)不能为空', trigger: 'blur' }
+                    ],
+                    orderNum: [
+                        { required: true, message: '订单号不能为空', trigger: 'blur' }
+                    ],
+                    customerId: [
+                        { required: true, message: '客户id不能为空', trigger: 'blur' }
+                    ],
+                    orderDate: [
+                        { required: true, message: '销售日期不能为空', trigger: 'blur' }
+                    ],
+                    pic: [
+                        { required: true, message: '业务员id不能为空', trigger: 'blur' }
+                    ],
+                    planDeliveryDate: [
+                        { required: true, message: '要求交货期不能为空', trigger: 'blur' }
+                    ],
+                    status: [
+                        { required: true, message: '单据状态不能为空', trigger: 'blur' }
+                    ],
+                    orderAmount: [
+                        { required: true, message: '订单金额不能为空', trigger: 'blur' }
+                    ],
+                    receiveAddress: [
+                        { required: true, message: '收货地址不能为空', trigger: 'blur' }
+                    ],
+                    receiveName: [
+                        { required: true, message: '收货人不能为空', trigger: 'blur' }
+                    ],
+                    receivePhone: [
+                        { required: true, message: '收货人电话不能为空', trigger: 'blur' }
+                    ],
+                    remark: [
+                        { required: true, message: '备注不能为空', trigger: 'blur' }
+                    ],
+                    companyId: [
+                        { required: true, message: '公司不能为空', trigger: 'blur' }
+                    ],
+                    deletedFlag: [
+                        { required: true, message: '删除标记不能为空', trigger: 'blur' }
+                    ],
+                    createBy: [
+                        { required: true, message: '创建人不能为空', trigger: 'blur' }
+                    ],
+                    createDate: [
+                        { required: true, message: '创建日期不能为空', trigger: 'blur' }
+                    ],
+                    updateBy: [
+                        { required: true, message: '修改人不能为空', trigger: 'blur' }
+                    ],
+                    updateDate: [
+                        { required: true, message: '修改日期不能为空', trigger: 'blur' }
+                    ]
+                },
+
+                restaurants: [
+                    {id: 1, value: '前端', name: '前端' },
+                    {id: 2, value: '后端', name: '后端' }
+                ],
+
+                itableColumn: [
+                    { type: "selection", width: 30, align: "center" },
+                    { type: "index", width: 30, align: "center" },
+                    {
+                        title: "物料名称",
+                        field: "productName",
+                        width: "200px",
+                        align: "center",
+                        editRender: {name: 'ElAutocomplete', props: {fetchSuggestions: this.prodSeach,triggerOnFocus:false }, events :{select: this.handleProcSelect}}
+                    },
+                    {
+                        title: "条码",
+                        field: "barCode",
+                        align: "center"
+                    },
+                    {
+                        title: "品牌",
+                        field: "brand",
+                        align: "center"
+                    },
+                    {
+                        title: "车型",
+                        field: "vehicle",
+                        align: "center"
+                    },
+                    {
+                        title: "产地",
+                        field: "madein",
+                        align: "center"
+                    },
+                    {
+                        title: "规格属性",
+                        field: "specialParam",
+                        align: "center"
+                    },
+                    {
+                        title: "当前库存",
+                        field: "stock",
+                        align: "left"
+                    },
+                    {
+                        title: "指导售价",
+                        field: "bPrice",
+                        align: "left"
+                    },
+                    {
+                        title: "下单数量",
+                        field: "orderQty",
+                        align: "left",
+                        editRender: { name: 'input' }
+                    },
+                    {
+                        title: "销售价",
+                        field: "price",
+                        sortable: true,
+                        align: "center",
+                        editRender: { name: 'input' }
+                    }
+
+                ],
+
+                itableProxy: {
+                    index: true, // 启用动态序号代理
+                    sort: true, // 启用排序代理
+                    filter: true, // 启用筛选代理
+                    ajax: {
+                        query: ({ page, sort, filters }) => {
+                            // 处理排序条件
+                            let formData = {
+                                sort: sort.property,
+                                order: sort.order
+                            };
+                            // 处理筛选条件
+                            filters.forEach(({ column, property, values }) => {
+                                formData[property] = values.join(",");
+                            });
+                            return new Promise(async (resolve, reject) => {
+                                await this.$axios.post(
+                                    this.mixinViewModuleOptions.getDataListURL,
+                                    {
+                                        pageForm: {
+                                            order: this.order,
+                                            orderField: this.orderField,
+                                            page: this.mixinViewModuleOptions.getDataListIsPage ? this.page : null,
+                                            limit: this.mixinViewModuleOptions.getDataListIsPage ? this.limit : null
+                                        },
+                                        dataForm: {
+                                            data: this.dataForm
+                                        }
+                                    }
+                                ).then(res => {
+                                    this.dataList = res
+                                })
+                                resolve({
+                                    total: this.total,
+                                    list: this.dataList
+                                })
+                            })
+                        },
+                        save: ({ body }) => {console.log(body)}
+
+                    },
+                    props: {
+                        list: 'list',
+                        result: 'list',
+                        total: 'totalCount'
+                    }
+                },
+                toolbar: {
+                    id: "full_edit_1",
+                    buttons: [
+                        { code: "insert_actived", name: "新增" },
+                        { code: "remove_selection", name: "删除" },
+                        { code: "save", name: "保存" }
+                    ],
+                    resizable: {
+                        storage: true
+                    },
+                    setting: {
+                        storage: true
+                    }
+                }
             }
-          })
-        }).catch(() => {})
-      })
-    }, 1000, { 'leading': true, 'trailing': false })
-  }
-}
+        },
+        methods: {
+            init (id) {
+                this.dataForm.id = id || 0
+                this.visible = true
+                this.$nextTick(() => {
+                    this.$refs['dataForm'].resetFields()
+                    if (this.dataForm.id) {
+                        this.$http({
+                            url: this.$http.adornUrl(`/so/salesorder/info/${this.dataForm.id}`),
+                            method: 'get',
+                            params: this.$http.adornParams()
+                        }).then(({data}) => {
+                            if (data && data.code === 0) {
+                                this.dataForm.orderType = data.salesorder.orderType
+                                this.dataForm.orderNum = data.salesorder.orderNum
+                                this.dataForm.customerId = data.salesorder.customerId
+                                this.dataForm.orderDate = data.salesorder.orderDate
+                                this.dataForm.pic = data.salesorder.pic
+                                this.dataForm.planDeliveryDate = data.salesorder.planDeliveryDate
+                                this.dataForm.status = data.salesorder.status
+                                this.dataForm.orderAmount = data.salesorder.orderAmount
+                                this.dataForm.receiveAddress = data.salesorder.receiveAddress
+                                this.dataForm.receiveName = data.salesorder.receiveName
+                                this.dataForm.receivePhone = data.salesorder.receivePhone
+                                this.dataForm.remark = data.salesorder.remark
+                                this.dataForm.companyId = data.salesorder.companyId
+                                this.dataForm.deletedFlag = data.salesorder.deletedFlag
+                                this.dataForm.createBy = data.salesorder.createBy
+                                this.dataForm.createDate = data.salesorder.createDate
+                                this.dataForm.updateBy = data.salesorder.updateBy
+                                this.dataForm.updateDate = data.salesorder.updateDate
+                            }
+                        })
+                    }
+                })
+            },
+            // 表单提交
+            dataFormSubmit () {
+                this.$refs['dataForm'].validate((valid) => {
+                    if (valid) {
+                        this.$http({
+                            url: this.$http.adornUrl(`/so/salesorder/${!this.dataForm.id ? 'save' : 'update'}`),
+                            method: 'post',
+                            data: this.$http.adornData({
+                                'id': this.dataForm.id || undefined,
+                                'orderType': this.dataForm.orderType,
+                                'orderNum': this.dataForm.orderNum,
+                                'customerId': this.dataForm.customerId,
+                                'orderDate': this.dataForm.orderDate,
+                                'pic': this.dataForm.pic,
+                                'planDeliveryDate': this.dataForm.planDeliveryDate,
+                                'status': this.dataForm.status,
+                                'orderAmount': this.dataForm.orderAmount,
+                                'receiveAddress': this.dataForm.receiveAddress,
+                                'receiveName': this.dataForm.receiveName,
+                                'receivePhone': this.dataForm.receivePhone,
+                                'remark': this.dataForm.remark,
+                                'companyId': this.dataForm.companyId,
+                                'deletedFlag': this.dataForm.deletedFlag,
+                                'createBy': this.dataForm.createBy,
+                                'createDate': this.dataForm.createDate,
+                                'updateBy': this.dataForm.updateBy,
+                                'updateDate': this.dataForm.updateDate
+                            })
+                        }).then(({data}) => {
+                            if (data && data.code === 0) {
+                                this.$message({
+                                    message: '操作成功',
+                                    type: 'success',
+                                    duration: 1500,
+                                    onClose: () => {
+                                        this.visible = false
+                                        this.$emit('refreshDataList')
+                                    }
+                                })
+                            } else {
+                                this.$message.error(data.msg)
+                            }
+                        })
+                    }
+                })
+            },
+
+
+            prodSeach (queryString, cb) {
+                var restaurants = this.restaurants
+                var results =[];
+
+                if(queryString){
+                    this.$axios.post(
+                        this.mixinViewModuleOptions.prodURL,
+                        {name:queryString}
+                    ).then(res => {
+                        for(var i=0;i<res.length;i++){
+                            res[i].value = res[i].val;
+                        }
+                        debugger
+                        results = res;
+                        clearTimeout(this.timeout);
+                        this.timeout = setTimeout(() => {
+                            cb(res);
+                        }, 100 * Math.random());
+                    });
+                }
+//                clearTimeout(this.timeout)
+//                this.timeout = setTimeout(() => {
+//                    cb(results)
+//                }, 100 * Math.random())
+            },
+            handleProcSelect(t,item) {
+//                var row = this.$refs.xGrid2.getCurrentRow();
+                var row = t.row;
+                if(item){
+                    debugger
+                    row.barCode = item.barCode;
+                    row.brand = item.brand;
+                    row.vehicle = item.vehicle;
+                    row.madein = item.madein;
+                    row.specialParam = item.specialParam;
+                    row.stock = item.stock;
+                    row.bPrice = item.salePrice;
+                }else{
+
+                }
+
+
+            }
+
+        }
+    }
 </script>
 
-<style lang="scss">
-.mod-sys__user {
-  .dept-list {
-    .el-input__inner,
-    .el-input__suffix {
-      cursor: pointer;
-    }
+
+<style>
+  .select-option{
+  div{
+    width: 400px;
   }
-  .role-list {
-    .el-select {
-      width: 100%;
-    }
   }
-}
 </style>

@@ -31,6 +31,9 @@ import d2VueFiltersDayjs from '@d2-admin/filters-dayjs'
 import VXETable from 'vxe-table'
 import 'vxe-table/lib/index.css'
 
+import VXETablePluginElement from 'vxe-table-plugin-element'
+import 'vxe-table-plugin-element/dist/style.css'
+
 // 菜单和路由设置
 import router from './router'
 
@@ -49,6 +52,7 @@ Vue.use(pluginExport)
 Vue.use(pluginImport)
 Vue.use(d2VueFiltersDayjs)
 Vue.use(VXETable)
+VXETable.use(VXETablePluginElement)
 Vue.component('d2-grid-layout', GridLayout)
 Vue.component('d2-grid-item', GridItem)
 Vue.component('SplitPane', SplitPane)

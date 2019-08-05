@@ -3,17 +3,57 @@
         <el-form :inline="true" size="mini" :model="dataForm" @keyup.enter.native="getDataList()">
             <el-form-item>
                 <el-input
-                        v-model="dataForm.username"
-                        :data-operate="dataFormOp.username"
-                        :placeholder="$t('views.public.user.username')"
+                        v-model="dataForm.code"
+                        :data-operate="dataFormOp.likeOps"
+                        :placeholder="data.form.search.code"
                         clearable
                 />
             </el-form-item>
             <el-form-item>
                 <el-input
-                        v-model="dataForm.mobile"
-                        :data-operate="dataFormOp.mobile"
-                        :placeholder="$t('views.public.user.mobile')"
+                        v-model="dataForm.name"
+                        :data-operate="dataFormOp.likeOps"
+                        :placeholder="data.form.search.name"
+                        clearable
+                />
+            </el-form-item>
+            <el-form-item>
+                <el-input
+                        v-model="dataForm.vehicleId"
+                        :data-operate="dataFormOp.likeOps"
+                        :placeholder="data.form.search.vehicleId"
+                        clearable
+                />
+            </el-form-item>
+            <el-form-item>
+                <el-input
+                        v-model="dataForm.categoryId"
+                        :data-operate="dataFormOp.likeOps"
+                        :placeholder="data.form.search.categoryId"
+                        clearable
+                />
+            </el-form-item>
+            <el-form-item>
+                <el-input
+                        v-model="dataForm.brandId"
+                        :data-operate="dataFormOp.likeOps"
+                        :placeholder="data.form.search.brandId"
+                        clearable
+                />
+            </el-form-item>
+            <el-form-item>
+                <el-input
+                        v-model="dataForm.categoryId"
+                        :data-operate="dataFormOp.likeOps"
+                        :placeholder="data.form.search.categoryId"
+                        clearable
+                />
+            </el-form-item>
+            <el-form-item>
+                <el-input
+                        v-model="dataForm.madeinId"
+                        :data-operate="dataFormOp.likeOps"
+                        :placeholder="data.form.search.madeinId"
                         clearable
                 />
             </el-form-item>
@@ -82,19 +122,23 @@ export default {
   mixins: [mixinViewModule],
   data () {
     return {
+      data: data,
       mixinViewModuleOptions: {
-        getDataListURL: '/sys/cust/list',
+        getDataListURL: '/base/product/list',
         getDataListIsPage: true,
-        deleteURL: '/sys/cust',
-        deleteIsBatch: true,
-        exportURL: '/sys/user/export'
+        deleteURL: '/base/product',
+        deleteIsBatch: true
       },
       dataForm: {
-        username: '',
-        mobile: ''
+        code: '',
+        name: '',
+        categoryId: '',
+        vehicleId: '',
+        brandId: '',
+        madeinId: ''
       },
       dataFormOp: {
-        username: 'like'
+        likeOps: 'like'
       },
       rowHandler: {
         custom: [

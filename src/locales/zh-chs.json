@@ -135,6 +135,7 @@
   "views": {
     "public": {
       "createDate": "创建时间",
+      "createBy":"创建人",
       "update": "修改",
       "delete": "删除",
       "handle": "操作",
@@ -143,6 +144,14 @@
       "add": "新增",
       "deleteBatch": "批量删除",
       "export": "导出",
+      "common":{
+        "companyName":"公司名称",
+        "productCode":"物料编码",
+        "warehouseCode":"仓库",
+        "uom":"单位",
+        "salePrice": "销售价",
+        "costPrice": "成本价"
+      },
       "user": {
         "username": "用户账号",
         "password": "密码",
@@ -162,6 +171,23 @@
         "validate": {
           "comfirmPassword":"确认密码"
         }
+      },
+      "onhand": {
+        "inventoryQuantity": "库存现有量",
+        "price": "成本价"
+      },
+      "transactions": {
+        "sourceCode": "来源订单",
+        "transactionReference": "来源业务订单",
+        "transactionQuantity": "数量",
+        "transactionUom": "单位",
+        "transactionDate": "事物日期",
+        "tranType": "事物类型",
+        "priorQuantity": "前期数量",
+        "balanceQuantity": "结余数量",
+        "employeeName": "事物执行人",
+        "beginTransactionDate": "开始日期",
+        "endTransactionDate": "结束日期"
       },
       "query": "查询",
       "success": "操作成功"

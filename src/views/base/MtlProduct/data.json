@@ -135,6 +135,14 @@
         "sortable": true,
         "align": "center"
       }
-    ]
+    ],
+    "search": {
+      "code": "编号",
+      "name": "名称",
+      "categoryId": "分类",
+      "vehicleId": "车型ID",
+      "brandId": "品牌ID",
+      "madeinId": "产地ID"
+    }
   }
 }

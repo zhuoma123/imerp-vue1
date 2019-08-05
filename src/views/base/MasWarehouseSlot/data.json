@@ -42,6 +42,9 @@
         "sortable": true,
         "align": "center"
       }
-    ]
+    ],"search": {
+      "warehoueseId": "仓库ID",
+      "name": "货位名称"
+    }
   }
 }

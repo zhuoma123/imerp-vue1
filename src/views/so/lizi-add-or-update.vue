@@ -74,6 +74,7 @@
             remote-filter
             ref="xGrid2"
             row-id="id"
+            @edit-closed = "setTotal"
             :toolbar="toolbar"
             :proxy-config="itableProxy"
             :columns="itableColumn"
@@ -93,7 +94,9 @@
 <script>
     import ElCol from "element-ui/packages/col/src/col";
     import ElInput from "../../../node_modules/element-ui/packages/input/src/input";
+    import mixinViewModule from "@/mixins/view-module";
     export default {
+        mixins: [mixinViewModule],
         components: {
             ElInput,
             ElCol},
@@ -110,25 +113,20 @@
                 visible: false,
                 dataForm: {
                     id: 0,
-                    orderType: '',
+                    orderType: 'SO',
                     orderNum: '',
-                    customerId: '',
-                    orderDate: '',
-                    pic: '',
-                    shipType: '',
-                    planDeliveryDate: '',
+                    customerId: '1',
+                    orderDate: '2019-08-05',
+                    pic: '销售员1',
+                    shipType: '1',
+                    planDeliveryDate: '2019-08-05',
                     status: '',
                     orderAmount: '',
-                    receiveAddress: '',
-                    receiveName: '',
-                    receivePhone: '',
+                    receiveAddress: '地址',
+                    receiveName: '收货人',
+                    receivePhone: '收货电话',
                     remark: '',
-                    companyId: '',
-                    deletedFlag: '',
-                    createBy: '',
-                    createDate: '',
-                    updateBy: '',
-                    updateDate: ''
+                    deletedFlag: 'N'
                 },
                 dataRule: {
                     orderType: [
@@ -203,6 +201,35 @@
                         editRender: {name: 'ElAutocomplete', props: {fetchSuggestions: this.prodSeach,triggerOnFocus:false }, events :{select: this.handleProcSelect}}
                     },
                     {
+                        title: "当前库存",
+                        field: "stock",
+                        align: "left"
+                    },
+                    {
+                        title: "指导售价",
+                        field: "bPrice",
+                        align: "left"
+                    },
+                    {
+                        title: "下单数量",
+                        field: "orderQty",
+                        align: "left",
+                        editRender: { name: 'input' }
+                    },
+                    {
+                        title: "销售价",
+                        field: "price",
+                        sortable: true,
+                        align: "center",
+                        editRender: { name: 'input' }
+                    },
+                    {
+                        title: "总金额",
+                        field: "totalPrice",
+                        align: "center",
+                        formatter : ['toFixedString', 2]
+                    },
+                    {
                         title: "条码",
                         field: "barCode",
                         align: "center"
@@ -226,30 +253,8 @@
                         title: "规格属性",
                         field: "specialParam",
                         align: "center"
-                    },
-                    {
-                        title: "当前库存",
-                        field: "stock",
-                        align: "left"
-                    },
-                    {
-                        title: "指导售价",
-                        field: "bPrice",
-                        align: "left"
-                    },
-                    {
-                        title: "下单数量",
-                        field: "orderQty",
-                        align: "left",
-                        editRender: { name: 'input' }
-                    },
-                    {
-                        title: "销售价",
-                        field: "price",
-                        sortable: true,
-                        align: "center",
-                        editRender: { name: 'input' }
                     }
+
 
                 ],
 
@@ -354,12 +359,12 @@
             },
             // 表单提交
             dataFormSubmit () {
+                var line = this.saveAll();
                 this.$refs['dataForm'].validate((valid) => {
                     if (valid) {
-                        this.$http({
-                            url: this.$http.adornUrl(`/so/salesorder/${!this.dataForm.id ? 'save' : 'update'}`),
-                            method: 'post',
-                            data: this.$http.adornData({
+                        this.$axios.post(
+                            this.mixinViewModuleOptions.updateURL,
+                            {
                                 'id': this.dataForm.id || undefined,
                                 'orderType': this.dataForm.orderType,
                                 'orderNum': this.dataForm.orderNum,
@@ -378,9 +383,10 @@
                                 'createBy': this.dataForm.createBy,
                                 'createDate': this.dataForm.createDate,
                                 'updateBy': this.dataForm.updateBy,
-                                'updateDate': this.dataForm.updateDate
-                            })
-                        }).then(({data}) => {
+                                'updateDate': this.dataForm.updateDate,
+                                'lineList': line
+                            }
+                        ).then(({data}) => {
                             if (data && data.code === 0) {
                                 this.$message({
                                     message: '操作成功',
@@ -442,17 +448,26 @@
                 }
 
 
+            },
+
+            saveAll(){
+                var d = this.getItemListDate(this.$refs.xGrid2);
+                console.log(d);
+            },
+            setTotal({column,row}){
+                if(column.property == "orderQty" || column.property == "price" ){
+                    var qty = row.orderQty;
+                    var price = row.price;
+                    if(!Number.isNaN(qty) && !Number.isNaN(price)){
+                        row.totalPrice = Number(qty)*Number(price).toFixed(2);
+                    }
+                }
+
+                console.log(row.totalPrice);
+                console.log(column);
+                console.log(row);
             }
 
         }
     }
 </script>
-
-
-<style>
-  .select-option{
-    div{
-      width: 400px;
-    }
-  }
-</style>

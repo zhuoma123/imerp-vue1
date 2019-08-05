@@ -2,63 +2,87 @@
   <el-dialog
           :title="!dataForm.id ? '新增' : '修改'"
           :close-on-click-modal="false"
-          :visible.sync="visible">
-    <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmit()" label-width="80px">
-      <el-form-item label="订单类型(销售/退货/报价)" prop="orderType">
-        <el-input v-model="dataForm.orderType" placeholder="订单类型(销售/退货/报价)"></el-input>
-      </el-form-item>
-      <el-form-item label="订单号" prop="orderNum">
-        <el-input v-model="dataForm.orderNum" placeholder="订单号"></el-input>
-      </el-form-item>
-      <el-form-item label="客户id" prop="customerId">
-        <el-input v-model="dataForm.customerId" placeholder="客户id"></el-input>
-      </el-form-item>
-      <el-form-item label="销售日期" prop="orderDate">
-        <el-input v-model="dataForm.orderDate" placeholder="销售日期"></el-input>
-      </el-form-item>
-      <el-form-item label="业务员id" prop="pic">
-        <el-input v-model="dataForm.pic" placeholder="业务员id"></el-input>
-      </el-form-item>
-      <el-form-item label="要求交货期" prop="planDeliveryDate">
-        <el-input v-model="dataForm.planDeliveryDate" placeholder="要求交货期"></el-input>
-      </el-form-item>
-      <el-form-item label="单据状态" prop="status">
-        <el-input v-model="dataForm.status" placeholder="单据状态"></el-input>
-      </el-form-item>
-      <el-form-item label="订单金额" prop="orderAmount">
-        <el-input v-model="dataForm.orderAmount" placeholder="订单金额"></el-input>
-      </el-form-item>
+          :visible.sync="visible"
+          width="80%">
+    <div slot="title" >
+    <el-form :model="dataForm" labelSuffix="：" size="mini" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmit()" label-width="120px">
+      <el-row inline>
+        <el-col :span="8" >
+          <el-form-item label="客户" prop="customerId">
+            <el-input v-model="dataForm.customerId" placeholder="客户" style="width:220px"></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="8" >
+          <el-form-item label="销售日期" prop="orderDate">
+            <el-date-picker v-model="dataForm.orderDate" placeholder="销售日期" style="width:160px"></el-date-picker>
+          </el-form-item>
+        </el-col>
+        <el-col :span="8" >
+          <el-form-item label="要求交货期" prop="planDeliveryDate">
+            <el-date-picker v-model="dataForm.planDeliveryDate" placeholder="要求交货期" style="width:160px"></el-date-picker>
+          </el-form-item>
+        </el-col>
+      </el-row>
+
+      <el-row inline>
+        <el-col :span="8" >
+          <el-form-item label="发运方式" prop="shipType">
+            <el-input v-model="dataForm.shipType" placeholder="发运方式"></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="8" >
+          <el-form-item label="订单金额" prop="orderAmount">
+            <el-input v-model="dataForm.orderAmount" placeholder="订单金额"></el-input>
+          </el-form-item>
+        </el-col>
+      </el-row>
+
+      <el-row inline>
+        <el-col :span="8" >
+          <el-form-item label="收货人" prop="receiveName">
+            <el-input v-model="dataForm.receiveName" placeholder="收货人"></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="8" >
+          <el-form-item label="收货人电话" prop="receivePhone">
+            <el-input v-model="dataForm.receivePhone" placeholder="收货人电话"></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="8" >
       <el-form-item label="收货地址" prop="receiveAddress">
         <el-input v-model="dataForm.receiveAddress" placeholder="收货地址"></el-input>
       </el-form-item>
-      <el-form-item label="收货人" prop="receiveName">
-        <el-input v-model="dataForm.receiveName" placeholder="收货人"></el-input>
-      </el-form-item>
-      <el-form-item label="收货人电话" prop="receivePhone">
-        <el-input v-model="dataForm.receivePhone" placeholder="收货人电话"></el-input>
-      </el-form-item>
+        </el-col>
+      </el-row>
+
+
+
+
       <el-form-item label="备注" prop="remark">
         <el-input v-model="dataForm.remark" placeholder="备注"></el-input>
       </el-form-item>
-      <el-form-item label="公司" prop="companyId">
-        <el-input v-model="dataForm.companyId" placeholder="公司"></el-input>
-      </el-form-item>
-      <el-form-item label="删除标记" prop="deletedFlag">
-        <el-input v-model="dataForm.deletedFlag" placeholder="删除标记"></el-input>
-      </el-form-item>
-      <el-form-item label="创建人" prop="createBy">
-        <el-input v-model="dataForm.createBy" placeholder="创建人"></el-input>
-      </el-form-item>
-      <el-form-item label="创建日期" prop="createDate">
-        <el-input v-model="dataForm.createDate" placeholder="创建日期"></el-input>
-      </el-form-item>
-      <el-form-item label="修改人" prop="updateBy">
-        <el-input v-model="dataForm.updateBy" placeholder="修改人"></el-input>
-      </el-form-item>
-      <el-form-item label="修改日期" prop="updateDate">
-        <el-input v-model="dataForm.updateDate" placeholder="修改日期"></el-input>
-      </el-form-item>
+
     </el-form>
+
+    </div>
+    <vxe-grid
+            border
+            resizable
+            size="mini"
+            highlight-current-row
+            class="vxe-table-element"
+            remote-filter
+            ref="xGrid2"
+            row-id="id"
+            :toolbar="toolbar"
+            :proxy-config="itableProxy"
+            :columns="itableColumn"
+            :select-config="{reserve: true}"
+            :mouse-config="{selected: true}"
+            :keyboard-config="{isArrow: true, isDel: true, isTab: true, isEdit: true}"
+            :edit-config="{trigger: 'dblclick', mode: 'cell'}">
+    </vxe-grid>
+
     <span slot="footer" class="dialog-footer">
       <el-button @click="visible = false">取消</el-button>
       <el-button type="primary" @click="dataFormSubmit()">确定</el-button>
@@ -67,9 +91,22 @@
 </template>
 
 <script>
+    import ElCol from "element-ui/packages/col/src/col";
+    import ElInput from "../../../node_modules/element-ui/packages/input/src/input";
     export default {
+        components: {
+            ElInput,
+            ElCol},
         data () {
             return {
+                mixinViewModuleOptions: {
+                    getDataListURL: "/so/salesorderline/list",
+                    getDataListIsPage: false,
+                    updateURL: "/so/salesorder/update",
+                    deleteIsBatch: true,
+                    prodURL: "/so/salesorder/prod"
+                },
+
                 visible: false,
                 dataForm: {
                     id: 0,
@@ -78,6 +115,7 @@
                     customerId: '',
                     orderDate: '',
                     pic: '',
+                    shipType: '',
                     planDeliveryDate: '',
                     status: '',
                     orderAmount: '',
@@ -147,6 +185,134 @@
                     updateDate: [
                         { required: true, message: '修改日期不能为空', trigger: 'blur' }
                     ]
+                },
+
+                restaurants: [
+                    {id: 1, value: '前端', name: '前端' },
+                    {id: 2, value: '后端', name: '后端' }
+                ],
+
+                itableColumn: [
+                    { type: "selection", width: 30, align: "center" },
+                    { type: "index", width: 30, align: "center" },
+                    {
+                        title: "物料名称",
+                        field: "productName",
+                        width: "200px",
+                        align: "center",
+                        editRender: {name: 'ElAutocomplete', props: {fetchSuggestions: this.prodSeach,triggerOnFocus:false }, events :{select: this.handleProcSelect}}
+                    },
+                    {
+                        title: "条码",
+                        field: "barCode",
+                        align: "center"
+                    },
+                    {
+                        title: "品牌",
+                        field: "brand",
+                        align: "center"
+                    },
+                    {
+                        title: "车型",
+                        field: "vehicle",
+                        align: "center"
+                    },
+                    {
+                        title: "产地",
+                        field: "madein",
+                        align: "center"
+                    },
+                    {
+                        title: "规格属性",
+                        field: "specialParam",
+                        align: "center"
+                    },
+                    {
+                        title: "当前库存",
+                        field: "stock",
+                        align: "left"
+                    },
+                    {
+                        title: "指导售价",
+                        field: "bPrice",
+                        align: "left"
+                    },
+                    {
+                        title: "下单数量",
+                        field: "orderQty",
+                        align: "left",
+                        editRender: { name: 'input' }
+                    },
+                    {
+                        title: "销售价",
+                        field: "price",
+                        sortable: true,
+                        align: "center",
+                        editRender: { name: 'input' }
+                    }
+
+                ],
+
+                itableProxy: {
+                    index: true, // 启用动态序号代理
+                    sort: true, // 启用排序代理
+                    filter: true, // 启用筛选代理
+                    ajax: {
+                        query: ({ page, sort, filters }) => {
+                            // 处理排序条件
+                            let formData = {
+                                sort: sort.property,
+                                order: sort.order
+                            };
+                            // 处理筛选条件
+                            filters.forEach(({ column, property, values }) => {
+                                formData[property] = values.join(",");
+                            });
+                            return new Promise(async (resolve, reject) => {
+                                await this.$axios.post(
+                                    this.mixinViewModuleOptions.getDataListURL,
+                                    {
+                                        pageForm: {
+                                            order: this.order,
+                                            orderField: this.orderField,
+                                            page: this.mixinViewModuleOptions.getDataListIsPage ? this.page : null,
+                                            limit: this.mixinViewModuleOptions.getDataListIsPage ? this.limit : null
+                                        },
+                                        dataForm: {
+                                            data: this.dataForm
+                                        }
+                                    }
+                                ).then(res => {
+                                    this.dataList = res
+                                })
+                                resolve({
+                                    total: this.total,
+                                    list: this.dataList
+                                })
+                            })
+                        },
+                        save: ({ body }) => {console.log(body)}
+
+                    },
+                    props: {
+                        list: 'list',
+                        result: 'list',
+                        total: 'totalCount'
+                    }
+                },
+                toolbar: {
+                    id: "full_edit_1",
+                    buttons: [
+                        { code: "insert_actived", name: "新增" },
+                        { code: "remove_selection", name: "删除" },
+                        { code: "save", name: "保存" }
+                    ],
+                    resizable: {
+                        storage: true
+                    },
+                    setting: {
+                        storage: true
+                    }
                 }
             }
         },
@@ -231,7 +397,62 @@
                         })
                     }
                 })
+            },
+
+
+            prodSeach (queryString, cb) {
+                var restaurants = this.restaurants
+                var results =[];
+
+                if(queryString){
+                    this.$axios.post(
+                      this.mixinViewModuleOptions.prodURL,
+                      {name:queryString}
+                  ).then(res => {
+                      for(var i=0;i<res.length;i++){
+                          res[i].value = res[i].val;
+                      }
+                      debugger
+                      results = res;
+                      clearTimeout(this.timeout);
+                      this.timeout = setTimeout(() => {
+                          cb(res);
+                      }, 100 * Math.random());
+                  });
+                }
+//                clearTimeout(this.timeout)
+//                this.timeout = setTimeout(() => {
+//                    cb(results)
+//                }, 100 * Math.random())
+            },
+            handleProcSelect(t,item) {
+//                var row = this.$refs.xGrid2.getCurrentRow();
+                var row = t.row;
+                if(item){
+                    debugger
+                    row.barCode = item.barCode;
+                    row.brand = item.brand;
+                    row.vehicle = item.vehicle;
+                    row.madein = item.madein;
+                    row.specialParam = item.specialParam;
+                    row.stock = item.stock;
+                    row.bPrice = item.salePrice;
+                }else{
+
+                }
+
+
             }
+
         }
     }
 </script>
+
+
+<style>
+  .select-option{
+    div{
+      width: 400px;
+    }
+  }
+</style>

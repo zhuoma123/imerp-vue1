@@ -232,7 +232,7 @@ export default {
 }
 
 .d2-layout-header-aside-group .d2-layout-header-aside-content .d2-theme-container .d2-theme-container-main .d2-theme-container-main-body .container-component .d2-container-full .d2-container-full__footer {
-    padding: 3px 20px;
+    padding: 3px 5px;
 }
 
 .el-table--mini td, .el-table--mini th {

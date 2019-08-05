@@ -1,265 +1,257 @@
 <template>
-  <div class="mod-config">
-    <el-form :inline="true" :model="dataForm" @keyup.enter.native="getDataList()">
-      <el-form-item>
-        <el-input v-model="dataForm.key" placeholder="参数名" clearable></el-input>
-      </el-form-item>
-      <el-form-item>
-        <el-button @click="getDataList()">查询</el-button>
-        <el-button v-if="$hasPermission('so:salesorder:save')" type="primary" @click="addOrUpdateHandle()">新增</el-button>
-        <el-button v-if="$hasPermission('so:salesorder:delete')" type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0">批量删除</el-button>
-      </el-form-item>
+  <d2-container >
+
+    <el-form slot="header" size="mini" :inline="true" :model="dataForm" ref="dataForm" @keyup.enter.native="getDataList()"
+             label-width="90px" label-suffix="：" style="margin-bottom: -18px;">
+
+      <el-row >
+        <el-col :span="6">
+          <el-form-item label="客户名称" prop="custName">
+            <el-input style="display: none" v-model="dataForm.custId" ></el-input>
+            <el-input v-model="dataForm.custName" clearable />
+          </el-form-item>
+        </el-col>
+
+        <el-col :span="6">
+          <el-form-item label="单据状态" >
+            <el-select v-model="dataForm.status" placeholder="请选择单据状态">
+              <el-option label="新建" value="NEW"></el-option>
+              <el-option label="已提交" value="SUBMIT"></el-option>
+            </el-select>
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label="下单时间">
+            <el-col :span="11">
+              <el-date-picker type="date" placeholder="选择日期" v-model="dataForm.bDate" style="width: 100%;"></el-date-picker>
+            </el-col>
+            <el-col class="line" align="center" :span="1">-</el-col>
+            <el-col :span="11">
+              <el-date-picker type="date" placeholder="选择日期" v-model="dataForm.eDate" style="width: 100%;"></el-date-picker>
+            </el-col>
+          </el-form-item>
+        </el-col>
+      </el-row>
+
+      <el-row >
+        <el-col :span="6">
+          <el-form-item label="配送方式" prop="shipType">
+            <el-input v-model="dataForm.shipType" clearable></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="6">
+          <el-form-item label="收货地址">
+            <el-input v-model="dataForm.receiveAddress" clearable></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label="收货人/手机" label-width="100px">
+            <el-input v-model="dataForm.receiveName" clearable></el-input>
+          </el-form-item>
+        </el-col>
+      </el-row>
+
+      <el-row >
+        <el-col :span="6">
+          <el-form-item label="销售员">
+            <el-input v-model="dataForm.pic" clearable/>
+          </el-form-item>
+        </el-col>
+        <el-col :span="6">
+          <el-form-item label="配件信息">
+            <el-input v-model="dataForm.productId" style="display:none"/>
+            <el-input v-model="dataForm.productName" placeholder="名称/品牌/产地/车型/图号" clearable />
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item>
+            <el-button type="primary" icon="el-icon-search" @click="getDataList()" >{{ $t('views.public.query') }}</el-button>
+          </el-form-item>
+          <el-form-item>
+            <el-button
+                    @click="handleFormReset">
+              <d2-icon name="refresh"/>
+              重置
+            </el-button>
+          </el-form-item>
+
+          <el-form-item>
+            <el-button v-if="$hasPermission('so:salesorder:save')" type="success" @click="addOrUpdateHandle()" >{{ $t('views.public.add') }}</el-button>
+          </el-form-item>
+          <el-form-item>
+            <el-button v-if="$hasPermission('so:salesorder:delete')" type="danger" @click="deleteHandle()" >{{ $t('views.public.deleteBatch') }}</el-button>
+          </el-form-item>
+          <el-form-item>
+            <el-button v-if="$hasPermission('so:salesorder:export')" type="info" @click="exportHandle()" >{{ $t('views.public.export') }}</el-button>
+          </el-form-item>
+        </el-col>
+      </el-row>
     </el-form>
-    <el-table
+
+    <d2-crud
+            :columns="columns"
+            :options="options"
+            selectionRow
+            :row-handle="rowHandler"
+            :loading="dataListLoading"
             :data="dataList"
-            border
-            v-loading="dataListLoading"
-            @selection-change="selectionChangeHandle"
-            style="width: 100%;">
-      <el-table-column
-              type="selection"
-              header-align="center"
-              align="center"
-              width="50">
-      </el-table-column>
-      <el-table-column
-              prop="id"
-              header-align="center"
-              align="center"
-              label="id">
-      </el-table-column>
-      <el-table-column
-              prop="orderType"
-              header-align="center"
-              align="center"
-              label="订单类型(销售/退货/报价)">
-      </el-table-column>
-      <el-table-column
-              prop="orderNum"
-              header-align="center"
-              align="center"
-              label="订单号">
-      </el-table-column>
-      <el-table-column
-              prop="customerId"
-              header-align="center"
-              align="center"
-              label="客户id">
-      </el-table-column>
-      <el-table-column
-              prop="orderDate"
-              header-align="center"
-              align="center"
-              label="销售日期">
-      </el-table-column>
-      <el-table-column
-              prop="pic"
-              header-align="center"
-              align="center"
-              label="业务员id">
-      </el-table-column>
-      <el-table-column
-              prop="planDeliveryDate"
-              header-align="center"
-              align="center"
-              label="要求交货期">
-      </el-table-column>
-      <el-table-column
-              prop="status"
-              header-align="center"
-              align="center"
-              label="单据状态">
-      </el-table-column>
-      <el-table-column
-              prop="orderAmount"
-              header-align="center"
-              align="center"
-              label="订单金额">
-      </el-table-column>
-      <el-table-column
-              prop="receiveAddress"
-              header-align="center"
-              align="center"
-              label="收货地址">
-      </el-table-column>
-      <el-table-column
-              prop="receiveName"
-              header-align="center"
-              align="center"
-              label="收货人">
-      </el-table-column>
-      <el-table-column
-              prop="receivePhone"
-              header-align="center"
-              align="center"
-              label="收货人电话">
-      </el-table-column>
-      <el-table-column
-              prop="remark"
-              header-align="center"
-              align="center"
-              label="备注">
-      </el-table-column>
-      <el-table-column
-              prop="companyId"
-              header-align="center"
-              align="center"
-              label="公司">
-      </el-table-column>
-      <el-table-column
-              prop="deletedFlag"
-              header-align="center"
-              align="center"
-              label="删除标记">
-      </el-table-column>
-      <el-table-column
-              prop="createBy"
-              header-align="center"
-              align="center"
-              label="创建人">
-      </el-table-column>
-      <el-table-column
-              prop="createDate"
-              header-align="center"
-              align="center"
-              label="创建日期">
-      </el-table-column>
-      <el-table-column
-              prop="updateBy"
-              header-align="center"
-              align="center"
-              label="修改人">
-      </el-table-column>
-      <el-table-column
-              prop="updateDate"
-              header-align="center"
-              align="center"
-              label="修改日期">
-      </el-table-column>
-      <el-table-column
-              fixed="right"
-              header-align="center"
-              align="center"
-              width="150"
-              label="操作">
-        <template slot-scope="scope">
-          <el-button type="text" size="small" @click="addOrUpdateHandle(scope.row.id)">修改</el-button>
-          <el-button type="text" size="small" @click="deleteHandle(scope.row.id)">删除</el-button>
-        </template>
-      </el-table-column>
-    </el-table>
+            @selection-change="dataListSelectionChangeHandle"
+            @sort-change="dataListSortChangeHandle"
+            @user-update="addOrUpdateHandle"
+            @user-delete="deleteHandle"
+    ></d2-crud>
+
+    <!-- 分页 -->
     <el-pagination
-            @size-change="sizeChangeHandle"
-            @current-change="currentChangeHandle"
-            :current-page="pageIndex"
+            slot="footer"
+            :current-page="page"
             :page-sizes="[10, 20, 50, 100]"
-            :page-size="pageSize"
-            :total="totalPage"
-            layout="total, sizes, prev, pager, next, jumper">
-    </el-pagination>
+            :page-size="limit"
+            :total="total"
+            layout="total, sizes, prev, pager, next, jumper"
+            @size-change="pageSizeChangeHandle"
+            @current-change="pageCurrentChangeHandle"
+    ></el-pagination>
     <!-- 弹窗, 新增 / 修改 -->
-    <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList"></add-or-update>
-  </div>
+    <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList" />
+  </d2-container>
 </template>
 
 <script>
-    import AddOrUpdate from './lizi-add-or-update'
+    import mixinViewModule from "@/mixins/view-module";
+    import AddOrUpdate from "./lizi-add-or-update";
+    import ElInput from "../../../node_modules/element-ui/packages/input/src/input";
+    import ElCol from "element-ui/packages/col/src/col";
     export default {
-        data () {
+        mixins: [mixinViewModule],
+        data() {
             return {
-                dataForm: {
-                    key: ''
+                mixinViewModuleOptions: {
+                    getDataListURL: "/so/salesorder/list",
+                    getDataListIsPage: true,
+                    updateURL: "/so/salesorder/update",
+                    deleteURL: "/so/salesorder/delete",
+                    deleteIsBatch: true,
+                    exportURL: "/so/salesorder/export"
                 },
-                dataList: [],
-                pageIndex: 1,
-                pageSize: 10,
-                totalPage: 0,
-                dataListLoading: false,
-                dataListSelections: [],
-                addOrUpdateVisible: false
-            }
+                dataForm: {
+                    bDate: new Date(),
+                    custName:"11"
+                },
+                dataFormOp: {
+                    username: "like"
+                },
+                rowHandler: {
+                    width:160,
+                    custom: [
+                        {
+                            text: this.$t("views.public.update"),
+                            type: 'primary',
+                            size: 'mini',
+                            emit: 'user-update',
+                            show: (index, row) => {
+                                return this.$hasPermission("so:salesorder:update");
+                            }
+                        },
+                        {
+                            text: this.$t("views.public.delete"),
+                            type: 'danger',
+                            size: 'mini',
+                            emit: 'user-delete',
+                            show: (index, row) => {
+                                return this.$hasPermission("so:salesorder:delete");
+                            }
+                        }
+                    ]
+                },
+                columns: [
+                    {
+                        title: "下单日期",
+                        key: "orderDate",
+                        sortable: true,
+                        width: "100px",
+                        align: "center"
+                    },
+                    {
+                        title: "销售单号",
+                        key: "orderNum",
+                        sortable: true,
+                        align: "center"
+                    },
+                    {
+                        title: "客户名称",
+                        key: "custName",
+                        sortable: true,
+                        align: "left"
+                    },
+                    {
+                        title: "状态",
+                        key: "status",
+                        sortable: true,
+                        align: "left"
+                    },
+                    {
+                        title: "订单金额",
+                        key: "orderAmount",
+                        sortable: true,
+                        align: "left"
+                    },
+                    {
+                        title: "发运方式",
+                        key: "shipType",
+                        sortable: true,
+                        align: "center"
+                    },
+                    {
+                        title: "销售员",
+                        key: "pic",
+                        sortable: true,
+                        align: "center"
+                    },
+                    {
+                        title: this.$t("views.public.user.status"),
+                        key: "status",
+                        align: "center",
+                        width: "70px",
+                        // component: {
+                        //     render: function(createElement) {
+                        //         let s = "新增"
+                        //         let type = this.scope.row.status == 'NEW' ? 'danger' : 'success'
+                        //         return createElement(
+                        //             "el-tag",
+                        //             {
+                        //                 attrs: {
+                        //                     type,
+                        //                     size: 'mini'
+                        //                 }
+                        //             },
+                        //             `${this.$t(s)}`
+                        //         );
+                        //     }
+                        // }
+                    },
+                    {
+                        title: this.$t("views.public.createDate"),
+                        key: "createDate",
+                        sortable: true,
+                        align: "center"
+                    }
+                ]
+            };
         },
         components: {
+            ElCol,
+            ElInput,
             AddOrUpdate
         },
-        activated () {
-            this.getDataList()
-        },
         methods: {
-            // 获取数据列表
-            getDataList () {
-                this.dataListLoading = true
-                this.$http({
-                    url: this.$http.adornUrl('/so/salesorder/list'),
-                    method: 'get',
-                    params: this.$http.adornParams({
-                        'page': this.pageIndex,
-                        'limit': this.pageSize,
-                        'key': this.dataForm.key
-                    })
-                }).then(({data}) => {
-                    if (data && data.code === 0) {
-                        this.dataList = data.page.list
-                        this.totalPage = data.page.totalCount
-                    } else {
-                        this.dataList = []
-                        this.totalPage = 0
-                    }
-                    this.dataListLoading = false
-                })
-            },
-            // 每页数
-            sizeChangeHandle (val) {
-                this.pageSize = val
-                this.pageIndex = 1
-                this.getDataList()
-            },
-            // 当前页
-            currentChangeHandle (val) {
-                this.pageIndex = val
-                this.getDataList()
-            },
-            // 多选
-            selectionChangeHandle (val) {
-                this.dataListSelections = val
-            },
-            // 新增 / 修改
-            addOrUpdateHandle (id) {
-                this.addOrUpdateVisible = true
-                this.$nextTick(() => {
-                    this.$refs.addOrUpdate.init(id)
-                })
-            },
-            // 删除
-            deleteHandle (id) {
-                var ids = id ? [id] : this.dataListSelections.map(item => {
-                    return item.id
-                })
-                this.$confirm(`确定对[id=${ids.join(',')}]进行[${id ? '删除' : '批量删除'}]操作?`, '提示', {
-                    confirmButtonText: '确定',
-                    cancelButtonText: '取消',
-                    type: 'warning'
-                }).then(() => {
-                    this.$http({
-                        url: this.$http.adornUrl('/so/salesorder/delete'),
-                        method: 'post',
-                        data: this.$http.adornData(ids, false)
-                    }).then(({data}) => {
-                        if (data && data.code === 0) {
-                            this.$message({
-                                message: '操作成功',
-                                type: 'success',
-                                duration: 1500,
-                                onClose: () => {
-                                    this.getDataList()
-                                }
-                            })
-                        } else {
-                            this.$message.error(data.msg)
-                        }
-                    })
-                })
+            handleFormReset () {
+                this.$refs.dataForm.resetFields()
             }
         }
     }
 </script>
+
+<style>
+
+</style>

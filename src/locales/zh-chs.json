@@ -190,8 +190,24 @@
         "endTransactionDate": "结束日期"
       },
       "query": "查询",
-      "success": "操作成功"
+      "success": "操作成功",
+      "dept":{
+        "name":"部门名称",
+        "parentId":"上级部门ID",
+        "orderNum":"排序",
+        "delFlag":"删除否"
     },
+    "menu":{
+      "name":"菜单名字",
+      "parentId":"上级菜单ID",
+      "orderNum":"排序",
+      "url":"菜单URL",
+      "perms":"授权",
+      "type":"菜单类型",
+      "icon":"菜单图标"
+  }
+    },
+    
     "sys": {},
     "system": {
       "error": {

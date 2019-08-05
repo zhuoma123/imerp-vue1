@@ -312,6 +312,19 @@
             "text": "快速选择用户（测试功能）"
           }
         }
+      },
+      "dataForm": {
+        "options": {
+          "likeOps": "like",
+          "equalsOps": "="
+        }
+      },
+      "InvTransactions": {
+        "form": {
+          "companyId": "公司",
+          "warehouseId": "仓库",
+          "actualLocator": "实物货位"
+        }
       }
     }
   }

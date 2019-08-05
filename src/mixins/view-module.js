@@ -101,12 +101,29 @@ export default {
     },
     // 新增 / 修改
     addOrUpdateHandle ({index, row}) {
-      console.log(row)
       this.addOrUpdateVisible = true
-      this.$nextTick(() => {
-        this.$refs.addOrUpdate.dataForm.id = row.id
+      if(index) {
+        this.$nextTick(() => {
+          this.$refs.addOrUpdate.dataForm.id = row.id
+          this.$refs.addOrUpdate.init()
+        })
+      } else {
         this.$refs.addOrUpdate.init()
-      })
+      }
+    },
+    // 新增 / 修改
+    addOrUpdateHandleSetter (row) {
+      debugger
+      var i=this;
+      this.addOrUpdateVisible = true
+      if(row) {
+        this.$nextTick(() => {
+          this.$refs.addOrUpdate.dataForm.id = row.id
+          this.$refs.addOrUpdate.init()
+        })
+      } else {
+        this.$refs.addOrUpdate.init()
+      }
     },
     // 删除
     deleteHandle ({index, row}) {

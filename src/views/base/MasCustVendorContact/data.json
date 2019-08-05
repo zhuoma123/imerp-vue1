@@ -1,0 +1,87 @@
+{
+  "form": {
+    "columns": [
+      {
+        "title": "客户ID",
+        "key": "custId",
+        "sortable": true,
+        "align": "center"
+      },
+      {
+        "title": "姓名",
+        "key": "name",
+        "sortable": true,
+        "align": "center"
+      },
+      {
+        "title": "职务",
+        "key": "shortName",
+        "sortable": true,
+        "align": "center"
+      },
+      {
+        "title": "首要联系人",
+        "key": "linkman",
+        "sortable": true,
+        "align": "center"
+      },
+      {
+        "title": "手机",
+        "key": "mobileNo",
+        "sortable": true,
+        "align": "center"
+      },{
+        "title": "办公电话",
+        "key": "tel",
+        "sortable": true,
+        "align": "center"
+      },{
+        "title": "微信号",
+        "key": "weixinNo",
+        "sortable": true,
+        "align": "center"
+      },
+      {
+        "title": "邮箱",
+        "key": "email",
+        "sortable": true,
+        "align": "center"
+      },
+      {
+        "title": "备注",
+        "key": "remark",
+        "sortable": true,
+        "align": "center"
+      },
+      {
+        "title": "创建人",
+        "key": "createBy",
+        "sortable": true,
+        "align": "center"
+      },
+      {
+        "title": "创建日期",
+        "key": "createDate",
+        "sortable": true,
+        "align": "center"
+      },{
+        "title": "修改人",
+        "key": "updateBy",
+        "sortable": true,
+        "align": "center"
+      },
+      {
+        "title": "修改日期",
+        "key": "updateDate",
+        "sortable": true,
+        "align": "center"
+      }
+    ],
+    "search": {
+      "custId": "客户ID",
+      "name": "姓名",
+      "shortName": "职务",
+      "mobileNo": "手机"
+    }
+  }
+}

@@ -1,0 +1,168 @@
+{
+  "form": {
+    "columns": [
+      {
+        "title": "编号",
+        "key": "",
+        "sortable": true,
+        "align": "center"
+      },{
+        "title": "名称",
+        "key": "",
+        "sortable": true,
+        "align": "center"
+      },{
+        "title": "前缀",
+        "key": "",
+        "sortable": true,
+        "align": "center"
+      },{
+        "title": "前缀分隔符",
+        "key": "",
+        "sortable": true,
+        "align": "center"
+      },{
+        "title": "年份包含",
+        "key": "",
+        "sortable": true,
+        "align": "center"
+      },{
+        "title": "年份位数",
+        "key": "",
+        "sortable": true,
+        "align": "center"
+      },{
+        "title": "月份包含",
+        "key": "",
+        "sortable": true,
+        "align": "center"
+      },{
+        "title": "日份包含",
+        "key": "",
+        "sortable": true,
+        "align": "center"
+      },{
+        "title": "流水号长度",
+        "key": "",
+        "sortable": true,
+        "align": "center"
+      },{
+        "title": "流水号循环类型",
+        "key": "",
+        "sortable": true,
+        "align": "center"
+      },{
+        "title": "后缀前加分隔符",
+        "key": "",
+        "sortable": true,
+        "align": "center"
+      },{
+        "title": "后缀",
+        "key": "",
+        "sortable": true,
+        "align": "center"
+      },{
+        "title": "备注",
+        "key": "",
+        "sortable": true,
+        "align": "center"
+      },{
+        "title": "",
+        "key": "",
+        "sortable": true,
+        "align": "center"
+      },{
+        "title": "当前年份",
+        "key": "",
+        "sortable": true,
+        "align": "center"
+      },{
+        "title": "当前月",
+        "key": "",
+        "sortable": true,
+        "align": "center"
+      },{
+        "title": "当前日",
+        "key": "",
+        "sortable": true,
+        "align": "center"
+      },{
+        "title": "当前流水号",
+        "key": "",
+        "sortable": true,
+        "align": "center"
+      },{
+        "title": "可用性",
+        "key": "",
+        "sortable": true,
+        "align": "center"
+      },{
+        "title": "有效开始日期",
+        "key": "",
+        "sortable": true,
+        "align": "center"
+      },{
+        "title": "有效结束日期",
+        "key": "",
+        "sortable": true,
+        "align": "center"
+      },{
+        "title": "",
+        "key": "",
+        "sortable": true,
+        "align": "center"
+      }, {
+        "title": "公司ID",
+        "key": "companyId",
+        "sortable": true,
+        "align": "center"
+      },
+      {
+        "title": "创建人",
+        "key": "createBy",
+        "sortable": true,
+        "align": "center"
+      },{
+        "title": "创建日期",
+        "key": "createDate",
+        "sortable": true,
+        "align": "center"
+      },{
+        "title": "修改人",
+        "key": "updateBy",
+        "sortable": true,
+        "align": "center"
+      },
+      {
+        "title": "修改日期",
+        "key": "updateDate",
+        "sortable": true,
+        "align": "center"
+      }
+    ],
+    "input": {
+      "code": "编码",
+      "name": "名称",
+      "prefix": "前缀",
+      "prefixSeprator": "前缀分隔符",
+      "yearFlag": "年份包含",
+      "yLength": "年份长度",
+      "monthFlag": "月份包含",
+      "dayFlag": "日份包含",
+      "sequenceLength": "流水号长度",
+      "loopType": "流水号循环类型",
+      "suffixSeprator": "后缀分隔符",
+      "suffix": "后缀",
+      "remark": "备注",
+      "year": "当前年份",
+      "month": "当前月",
+      "day": "当前日",
+      "sequenceNum": "当前流水号",
+      "enabledFlag": "可用性",
+      "deletedFlag": "删除标志",
+      "startDateActive": "有效开始日期",
+      "endDateActive": "有效结束日期",
+      "companyId": "公司"
+    }
+  }
+}

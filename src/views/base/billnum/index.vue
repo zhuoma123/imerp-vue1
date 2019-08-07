@@ -32,7 +32,7 @@
                 <el-button
                         v-if="$hasPermission('sys:user:delete')"
                         type="danger"
-                        @click="deleteHandle()"
+                        @click="deleteHandleSetter()"
                 >{{ $t('views.public.deleteBatch') }}
                 </el-button>
             </el-form-item>
@@ -55,7 +55,7 @@
                 @selection-change="dataListSelectionChangeHandle"
                 @sort-change="dataListSortChangeHandle"
                 @user-update="addOrUpdateHandleSetter"
-                @user-delete="deleteHandle"
+                @user-delete="deleteHandleSetter"
         ></d2-crud>
         <!-- 分页 -->
         <el-pagination
@@ -87,17 +87,19 @@ export default {
         getDataListURL: '/base/billnum/list',
         getDataListIsPage: true,
         deleteURL: '/base/billnum/delete',
-        deleteIsBatch: true
+        deleteIsBatch: true,
+        deleteIsBatchKey: 'code'
       },
       dataForm: {
-        username: '',
-        mobile: ''
+        code: '',
+        name: ''
       },
       dataFormOp: {
         likeOps: 'like',
         equalsOps: '='
       },
       rowHandler: {
+        width: '160px',
         custom: [
           {
             text: this.$t('views.public.update'),
@@ -125,7 +127,48 @@ export default {
   components: {
     AddOrUpdate
   },
-  methods: {}
+  methods: {
+    // 删除
+    deleteHandleSetter (index) {
+      let data
+      if (this.mixinViewModuleOptions.deleteIsBatch && this.dataListSelections.length > 0) {
+        data = this.dataListSelections.map(item => item[this.mixinViewModuleOptions.deleteIsBatchKey])
+      }
+      let row
+      if (!index) {
+        row = undefined
+      } else {
+        row = index.row
+      }
+      if (row) {
+        const code = row.code
+        if (code) {
+          data = [code]
+        }
+      }
+      this.$confirm(this.$t('public.prompt.info', { 'handle': this.$t('views.public.delete') }), this.$t('public.prompt.title'), {
+        confirmButtonText: this.$t('views.public.confirm'),
+        cancelButtonText: this.$t('views.public.cancel'),
+        type: 'warning'
+      }).then(() => {
+        this.$axios.post(
+          `${this.mixinViewModuleOptions.deleteURL}${this.mixinViewModuleOptions.deleteIsBatch ? '' : '/' + data}`,
+          this.mixinViewModuleOptions.deleteIsBatch ? {
+            'data': data
+          } : {}
+        ).then(res => {
+          this.$message({
+            message: this.$t('views.public.success'),
+            type: 'success',
+            duration: 500,
+            onClose: () => {
+              this.getDataList()
+            }
+          })
+        }).catch(() => {})
+      }).catch(() => {})
+    }
+  }
 }
 </script>
 

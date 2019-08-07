@@ -64,6 +64,7 @@ export default {
           }
         }
       ).then(res => {
+        debugger
         this.dataListLoading = false
         this.dataList = this.mixinViewModuleOptions.getDataListIsPage ? res.list : res
         this.total = this.mixinViewModuleOptions.getDataListIsPage ? res.totalCount : 0
@@ -111,18 +112,18 @@ export default {
         this.$refs.addOrUpdate.init()
       })
     },
-    // 新增 / 修改
+    // 新增 / 修改(module:base)
     addOrUpdateHandleSetter (row) {
-      debugger
-      var i=this;
       this.addOrUpdateVisible = true
-      if(row) {
+      if (row) {
         this.$nextTick(() => {
-          this.$refs.addOrUpdate.dataForm.id = row.id
-          this.$refs.addOrUpdate.init()
+          this.$refs.addOrUpdate.dataForm.id = row.row.id
+          this.$refs.addOrUpdate.update(row.row)
         })
       } else {
-        this.$refs.addOrUpdate.init()
+        this.$nextTick(() => {
+          this.$refs.addOrUpdate.init()
+        })
       }
     },
     // 删除
@@ -144,6 +145,46 @@ export default {
           `${this.mixinViewModuleOptions.deleteURL}${this.mixinViewModuleOptions.deleteIsBatch ? '' : '/' + id}`,
           this.mixinViewModuleOptions.deleteIsBatch ? {
             'data': id ? [id] : this.dataListSelections.map(item => item[this.mixinViewModuleOptions.deleteIsBatchKey])
+          } : {}
+        ).then(res => {
+          this.$message({
+            message: this.$t('views.public.success'),
+            type: 'success',
+            duration: 500,
+            onClose: () => {
+              this.getDataList()
+            }
+          })
+        }).catch(() => {})
+      }).catch(() => {})
+    },
+    // 删除
+    deleteHandleSetter (index) {
+      let data
+      if (this.mixinViewModuleOptions.deleteIsBatch && this.dataListSelections.length > 0) {
+        data = this.dataListSelections.map(item => item[this.mixinViewModuleOptions.deleteIsBatchKey])
+      }
+      let row
+      if (!index) {
+        row = undefined
+      } else {
+        row = index.row
+      }
+      if (row) {
+        const id = row.id
+        if (id) {
+          data = [id]
+        }
+      }
+      this.$confirm(this.$t('public.prompt.info', { 'handle': this.$t('views.public.delete') }), this.$t('public.prompt.title'), {
+        confirmButtonText: this.$t('views.public.confirm'),
+        cancelButtonText: this.$t('views.public.cancel'),
+        type: 'warning'
+      }).then(() => {
+        this.$axios.post(
+          `${this.mixinViewModuleOptions.deleteURL}${this.mixinViewModuleOptions.deleteIsBatch ? '' : '/' + id}`,
+          this.mixinViewModuleOptions.deleteIsBatch ? {
+            'data': data
           } : {}
         ).then(res => {
           this.$message({

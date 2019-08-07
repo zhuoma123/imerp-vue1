@@ -2,7 +2,7 @@
     <el-dialog :visible.sync="visible" :title="!dataForm.id ? $t('views.public.add') : $t('views.public.update')"
                :close-on-click-modal="false" :close-on-press-escape="false">
         <el-form :model="dataForm" :rules="rules" ref="dataForm" @keyup.enter.native="dataFormSubmitHandle()"
-                 label-width="120px">
+                 label-width="110px" :inline="true" style="width: 700px" >
             <el-form-item prop="code" :label="data.form.input.code">
                 <el-input v-model="dataForm.code" :placeholder="data.form.input.code"/>
             </el-form-item>
@@ -15,17 +15,8 @@
             <el-form-item prop="prefixSeprator" :label="data.form.input.prefixSeprator">
                 <el-input v-model="dataForm.prefixSeprator" :placeholder="data.form.input.prefixSeprator"/>
             </el-form-item>
-            <el-form-item prop="yearFlag" :label="data.form.input.yearFlag">
-                <el-input v-model="dataForm.yearFlag" :placeholder="data.form.input.yearFlag"/>
-            </el-form-item>
             <el-form-item prop="yLength" :label="data.form.input.yLength">
                 <el-input v-model="dataForm.yLength" :placeholder="data.form.input.yLength"/>
-            </el-form-item>
-            <el-form-item prop="monthFlag" :label="data.form.input.monthFlag">
-                <el-input v-model="dataForm.monthFlag" :placeholder="data.form.input.monthFlag"/>
-            </el-form-item>
-            <el-form-item prop="dayFlag" :label="data.form.input.dayFlag">
-                <el-input v-model="dataForm.dayFlag" :placeholder="data.form.input.dayFlag"/>
             </el-form-item>
             <el-form-item prop="sequenceLength" :label="data.form.input.sequenceLength">
                 <el-input v-model="dataForm.sequenceLength" :placeholder="data.form.input.sequenceLength"/>
@@ -51,20 +42,43 @@
             <el-form-item prop="day" :label="data.form.input.day">
                 <el-input v-model="dataForm.day" :placeholder="data.form.input.day"/>
             </el-form-item>
-            <el-form-item prop="sequenceNum" :label="data.form.input.sequenceNum">
-                <el-input v-model="dataForm.sequenceNum" :placeholder="data.form.input.sequenceNum"/>
-            </el-form-item>
-            <el-form-item prop="enabledFlag" :label="data.form.input.enabledFlag">
-                <el-input v-model="dataForm.enabledFlag" :placeholder="data.form.input.enabledFlag"/>
-            </el-form-item>
             <el-form-item prop="startDateActive" :label="data.form.input.startDateActive">
-                <el-input v-model="dataForm.startDateActive" :placeholder="data.form.input.startDateActive"/>
+                <el-date-picker
+                        v-model="dataForm.startDateActive"
+                        type="date"
+                        :placeholder="data.form.input.startDateActive">
+                </el-date-picker>
             </el-form-item>
             <el-form-item prop="endDateActive" :label="data.form.input.endDateActive">
-                <el-input v-model="dataForm.endDateActive" :placeholder="data.form.input.endDateActive"/>
+                <el-date-picker
+                        v-model="dataForm.endDateActive"
+                        type="date"
+                        :placeholder="data.form.input.endDateActive">
+                </el-date-picker>
             </el-form-item>
-            <el-form-item prop="companyId" :label="data.form.input.companyId">
-                <el-input v-model="dataForm.companyId" :placeholder="data.form.input.companyId"/>
+            <el-form-item prop="yearFlag" :label="data.form.input.yearFlag">
+                <el-radio-group v-model="dataForm.yearFlag" style="width: 280px">
+                    <el-radio :label='1'>是</el-radio>
+                    <el-radio :label='0'>否</el-radio>
+                </el-radio-group>
+            </el-form-item>
+            <el-form-item prop="monthFlag" :label="data.form.input.monthFlag">
+                <el-radio-group v-model="dataForm.monthFlag" style="width: 280px">
+                    <el-radio :label='1'>是</el-radio>
+                    <el-radio :label='0'>否</el-radio>
+                </el-radio-group>
+            </el-form-item>
+            <el-form-item prop="dayFlag" :label="data.form.input.dayFlag">
+                <el-radio-group v-model="dataForm.dayFlag" style="width: 280px">
+                    <el-radio :label='1'>是</el-radio>
+                    <el-radio :label='0'>否</el-radio>
+                </el-radio-group>
+            </el-form-item>
+            <el-form-item prop="enabledFlag" :label="data.form.input.enabledFlag">
+                <el-radio-group v-model="dataForm.enabledFlag" style="width: 280px">
+                    <el-radio :label='1'>是</el-radio>
+                    <el-radio :label='0'>否</el-radio>
+                </el-radio-group>
             </el-form-item>
         </el-form>
         <template slot="footer">
@@ -75,9 +89,7 @@
 </template>
 
 <script>
-import { debounce } from 'lodash'
 import data from './data'
-import { save } from '@/api/base/base'
 
 export default {
   data () {
@@ -85,20 +97,27 @@ export default {
       data: data,
       visible: false,
       dataForm: {
-        id: undefined,
-        parentId: undefined,
-        type: undefined,
         code: undefined,
         name: undefined,
-        orderNum: 0,
-        sys: true,
-        companyId: undefined,
+        prefix: undefined,
+        prefixSeprator: undefined,
+        yearFlag: 1,
+        yLength: undefined,
+        monthFlag: 1,
+        dayFlag: 1,
+        sequenceLength: undefined,
+        loopType: undefined,
+        suffixSeprator: undefined,
+        suffix: undefined,
         remark: undefined,
-        attr1: undefined,
-        attr2: undefined,
-        attr3: undefined,
-        attr4: undefined,
-        attr5: undefined
+        year: undefined,
+        month: undefined,
+        day: undefined,
+        sequenceNum: undefined,
+        enabledFlag: 1,
+        deletedFlag: undefined,
+        startDateActive: undefined,
+        endDateActive: undefined
       },
       rules: {
         name: [{
@@ -116,30 +135,39 @@ export default {
       this.$nextTick(() => {
         this.$refs['dataForm'].resetFields()
         this.$refs['dataForm'].clearValidate()
+        let date = new Date()
+        this.dataForm.startDateActive = date
+        this.dataForm.year = date.getFullYear()
+        this.dataForm.month = date.getMonth() + 1
+        this.dataForm.day = date.getDate()
+        debugger
       })
     },
     // 表单提交
-    dataFormSubmitHandle: debounce(function () {
-      this.$refs['dataForm'].validate((valid) => {
+    dataFormSubmitHandle () {
+      let th = this
+      this.$refs['dataForm'].validate(valid => {
         if (!valid) {
           return false
         }
-        if (this.dataForm.id) {
-          save(...this.dataForm, '/base/billnum/save').then(res => {
-            this.$message({
-              message: this.$t('views.public.success'),
-              type: 'success',
-              duration: 500,
-              onClose: () => {
-                this.visible = false
-                this.$emit('refreshDataList')
-              }
-            })
-          }).catch(() => {
+        th.$axios({
+          url: '/base/billnum/save',
+          method: 'post',
+          data: th.dataForm
+        }).then(res => {
+          this.$message({
+            message: this.$t('views.public.success'),
+            type: 'success',
+            duration: 500,
+            onClose: () => {
+              this.visible = false
+              this.$emit('refreshDataList')
+            }
           })
-        }
+        }).catch(() => {
+        })
       })
-    }, 1000, { 'leading': true, 'trailing': false })
+    }
   }
 }
 </script>

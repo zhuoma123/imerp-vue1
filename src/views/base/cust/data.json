@@ -1,0 +1,23 @@
+{"form": {
+  "input": {
+    "custVendor": "客户/供应商",
+    "code": "编号",
+    "name": "姓名",
+    "shortName": "职务",
+    "type": "类型",
+    "fax": "传真",
+    "mm": "企业微信号",
+    "companyAddress": "企业地址",
+    "legalMan": "法人",
+    "webSite": "网址",
+    "bank": "开户银行",
+    "bankAccount": "银行账号",
+    "taxNum": "纳税号",
+    "pinyinCode": "拼音码",
+    "wbCode": "五笔码",
+    "pic": "业务员",
+    "companyId": "公司",
+    "remark": "备注",
+    "email": "邮箱"
+  }
+}}

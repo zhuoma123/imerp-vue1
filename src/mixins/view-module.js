@@ -31,7 +31,35 @@ export default {
         size: 'mini',
         stripe: true,
         border: true
-      }
+      },
+    //时间联动框
+    pickerOptions: {
+        shortcuts: [{
+            text: '最近一周',
+            onClick(picker) {
+                const end = new Date();
+                const start = new Date();
+                start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+                picker.$emit('pick', [start, end]);
+            }
+        }, {
+            text: '最近一个月',
+            onClick(picker) {
+                const end = new Date();
+                const start = new Date();
+                start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+                picker.$emit('pick', [start, end]);
+            }
+        }, {
+            text: '最近三个月',
+            onClick(picker) {
+                const end = new Date();
+                const start = new Date();
+                start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
+                picker.$emit('pick', [start, end]);
+            }
+        }]
+    },
     }
     /* eslint-enable */
   },
@@ -99,18 +127,25 @@ export default {
       this.page = val
       this.getDataList()
     },
-    // 新增 / 修改
-    addOrUpdateHandle (row) {
-      console.log(row)
+    // 新增
+    addHandle () {
       this.addOrUpdateVisible = true
       this.$nextTick(() => {
-        if (row) {
-          this.$refs.addOrUpdate.dataForm.id = row.id
-        }
-
         this.$refs.addOrUpdate.init()
       })
     },
+      // 修改
+      updateHandle (grid) {
+          var row = grid.getCurrentRow();
+          this.addOrUpdateVisible = true
+          this.$nextTick(() => {
+              if (row) {
+                  this.$refs.addOrUpdate.dataForm.id = row.id
+              }
+              this.$refs.addOrUpdate.init(row.id)
+          })
+      },
+
     // 新增 / 修改
     addOrUpdateHandleSetter (row) {
       debugger
@@ -164,6 +199,32 @@ export default {
         ...this.dataForm
       })
       window.location.href = `${window.SITE_CONFIG['apiURL']}${this.mixinViewModuleOptions.exportURL}?${params}`
+    },
+    // 获取行表数据
+    getItemListDate (grid) {
+      var allDate = grid.getRecordset()
+      var rlist = []
+      if (allDate) {
+        if (allDate.insertRecords && allDate.insertRecords.length > 0) {
+          for (var i = 0; i < allDate.insertRecords.length; i++) {
+            allDate.insertRecords[i].__iop = 'INSERT'
+          }
+          rlist = rlist.concat(allDate.insertRecords)
+        }
+        if (allDate.updateRecords && allDate.updateRecords.length > 0) {
+          for (var i = 0; i < allDate.updateRecords.length; i++) {
+            allDate.updateRecords[i].__iop = 'UPDATE'
+          }
+            rlist = rlist.concat(allDate.updateRecords)
+        }
+        if (allDate.removeRecords && allDate.removeRecords.length > 0) {
+          for (var i = 0; i < allDate.removeRecords.length; i++) {
+            allDate.removeRecords[i].__iop = 'DELETE'
+          }
+            rlist = rlist.concat(allDate.removeRecords)
+        }
+      }
+      return rlist
     }
   }
 }

@@ -132,15 +132,16 @@ export default {
       dataForm: {
         code: '',
         name: '',
-        categoryId: '',
-        vehicleId: '',
-        brandId: '',
-        madeinId: ''
+        categoryId: undefined,
+        vehicleId: undefined,
+        brandId: undefined,
+        madeinId: undefined
       },
       dataFormOp: {
         likeOps: 'like'
       },
       rowHandler: {
+        width: '160px',
         custom: [
           {
             text: this.$t('views.public.update'),

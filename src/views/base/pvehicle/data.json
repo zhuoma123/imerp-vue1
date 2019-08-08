@@ -15,12 +15,14 @@
         "title": "拼音码",
         "key": "pinyinCode",
         "sortable": true,
-        "align": "center"
+        "align": "center",
+        "width": "110px"
       },{
         "title": "五笔码",
         "key": "wbCode",
         "sortable": true,
-        "align": "center"
+        "align": "center",
+        "width": "110px"
       },
       {
         "title": "备注",
@@ -29,32 +31,30 @@
         "align": "center"
       },
       {
-        "title": "公司ID",
-        "key": "companyId",
-        "sortable": true,
-        "align": "center"
-      },
-      {
         "title": "创建人",
         "key": "createBy",
         "sortable": true,
-        "align": "center"
+        "align": "center",
+        "width": "110px"
       },{
         "title": "创建日期",
         "key": "createDate",
         "sortable": true,
-        "align": "center"
+        "align": "center",
+        "width": "120px"
       },{
         "title": "修改人",
         "key": "updateBy",
         "sortable": true,
-        "align": "center"
+        "align": "center",
+        "width": "110px"
       },
       {
         "title": "修改日期",
         "key": "updateDate",
         "sortable": true,
-        "align": "center"
+        "align": "center",
+        "width": "120px"
       }
     ],
     "input": {
@@ -62,8 +62,7 @@
       "name": "名称",
       "pinyinCode": "拼音码",
       "wbCode": "五笔码",
-      "remark": "备注",
-      "companyId": "公司"
+      "remark": "备注"
     }
   }
 }

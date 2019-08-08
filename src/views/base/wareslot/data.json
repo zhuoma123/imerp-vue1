@@ -5,13 +5,15 @@
         "title": "仓库ID",
         "key": "warehouseId",
         "sortable": true,
-        "align": "center"
+        "align": "center",
+        "width": "110px"
       },
       {
         "title": "货位名称",
         "key": "name",
         "sortable": true,
-        "align": "center"
+        "align": "center",
+        "width": "120px"
       },
       {
         "title": "备注",
@@ -23,28 +25,33 @@
         "title": "创建人",
         "key": "createBy",
         "sortable": true,
-        "align": "center"
+        "align": "center",
+        "width": "110px"
       },
       {
         "title": "创建日期",
         "key": "createDate",
         "sortable": true,
-        "align": "center"
+        "align": "center",
+        "width": "120px"
       },{
         "title": "修改人",
         "key": "updateBy",
         "sortable": true,
-        "align": "center"
+        "align": "center",
+        "width": "110px"
       },
       {
         "title": "修改日期",
         "key": "updateDate",
         "sortable": true,
-        "align": "center"
+        "align": "center",
+        "width": "120px"
       }
-    ],"search": {
-      "warehoueseId": "仓库ID",
-      "name": "货位名称"
+    ],"input": {
+      "warehouseId": "仓库ID",
+      "name": "货位名称",
+      "remark": "备注"
     }
   }
 }

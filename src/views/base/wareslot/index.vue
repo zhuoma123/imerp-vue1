@@ -5,7 +5,7 @@
                 <el-input
                         v-model="dataForm.warehouseId"
                         :data-operate="dataFormOp.likeOps"
-                        :placeholder="data.form.search.warehoueseId"
+                        :placeholder="data.form.input.warehouseId"
                         clearable
                 />
             </el-form-item>
@@ -13,7 +13,7 @@
                 <el-input
                         v-model="dataForm.name"
                         :data-operate="dataFormOp.likeOps"
-                        :placeholder="data.form.search.name"
+                        :placeholder="data.form.input.name"
                         clearable
                 />
             </el-form-item>
@@ -86,17 +86,18 @@ export default {
       mixinViewModuleOptions: {
         getDataListURL: '/base/warehouseslot/list',
         getDataListIsPage: true,
-        deleteURL: '/base/warehouseslot',
+        deleteURL: '/base/warehouseslot/delete',
         deleteIsBatch: true
       },
       dataForm: {
-        username: '',
-        mobile: ''
+        warehouseId: undefined,
+        name: ''
       },
       dataFormOp: {
         likeOps: 'like'
       },
       rowHandler: {
+        width: '160px',
         custom: [
           {
             text: this.$t('views.public.update'),

@@ -97,6 +97,7 @@ export default {
         liekOps: 'like'
       },
       rowHandler: {
+        width: '160px',
         custom: [
           {
             text: this.$t('views.public.update'),

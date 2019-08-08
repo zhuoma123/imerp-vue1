@@ -110,10 +110,10 @@ export default {
         deleteIsBatch: true
       },
       dataForm: {
-        name: '',
-        mobileNo: '',
-        custId: '',
-        shortName: ''
+        name: undefined,
+        mobileNo: undefined,
+        custId: undefined,
+        shortName: undefined
       },
       dataFormOp: {
         likeOps: 'like',

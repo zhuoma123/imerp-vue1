@@ -182,7 +182,7 @@ export default {
         type: 'warning'
       }).then(() => {
         this.$axios.post(
-          `${this.mixinViewModuleOptions.deleteURL}${this.mixinViewModuleOptions.deleteIsBatch ? '' : '/' + id}`,
+          `${this.mixinViewModuleOptions.deleteURL}${this.mixinViewModuleOptions.deleteIsBatch ? '' : '/' + data}`,
           this.mixinViewModuleOptions.deleteIsBatch ? {
             'data': data
           } : {}

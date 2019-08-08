@@ -1,22 +1,6 @@
 <template>
     <d2-container class="mod-sys__user">
         <el-form :inline="true" size="mini" :model="dataForm" @keyup.enter.native="getDataList()">
-            <el-form-item>
-                <el-input
-                        v-model="dataForm.requirementDate"
-                        :data-operate="dataFormOp.likeOps"
-                        :placeholder="data.form.input.requirementDate"
-                        clearable
-                />
-            </el-form-item>
-            <el-form-item>
-                <el-input
-                        v-model="dataForm.companyId"
-                        :data-operate="dataFormOp.likeOps"
-                        :placeholder="data.form.input.companyId"
-                        clearable
-                />
-            </el-form-item>
                 <el-form-item>
                     <el-input
                             v-model="dataForm.productId"
@@ -34,36 +18,11 @@
                     <el-form-item>
                         <el-button @click="getDataList()">{{ $t('views.public.query') }}</el-button>
                     </el-form-item>
-                    <el-form-item>
-                        <el-button
-                                v-if="$hasPermission('sys:user:save')"
-                                type="primary"
-                                @click="addOrUpdateHandleSetter()"
-                        >{{ $t('views.public.add') }}
-                        </el-button>
-                    </el-form-item>
-                    <el-form-item>
-                        <el-button
-                                v-if="$hasPermission('sys:user:delete')"
-                                type="danger"
-                                @click="deleteHandle()"
-                        >{{ $t('views.public.deleteBatch') }}
-                        </el-button>
-                    </el-form-item>
-                    <el-form-item>
-                        <el-button
-                                v-if="$hasPermission('sys:user:export')"
-                                type="info"
-                                @click="exportHandle()"
-                        >{{ $t('views.public.export') }}
-                        </el-button>
-                    </el-form-item>
         </el-form>
         <d2-crud
                 :columns="columns"
                 :options="options"
                 selectionRow
-                :row-handle="rowHandler"
                 :loading="dataListLoading"
                 :data="dataList"
                 @selection-change="dataListSelectionChangeHandle"
@@ -104,8 +63,8 @@ export default {
         deleteIsBatch: true
       },
       dataForm: {
-        name: '',
-        warehouseId: ''
+        productId: undefined,
+        warehouseId: undefined
       },
       dataFormOp: {
         baseOp: 'like'

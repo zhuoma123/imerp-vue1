@@ -23,23 +23,27 @@
         "title": "配件分类",
         "key": "categoryId",
         "sortable": true,
-        "align": "center"
+        "align": "center",
+        "width": "110px"
       },{
         "title": "车型ID",
         "key": "vehicleId",
         "sortable": true,
-        "align": "center"
+        "align": "center",
+        "width": "110px"
       },{
         "title": "品牌ID",
         "key": "brandId",
         "sortable": true,
-        "align": "center"
+        "align": "center",
+        "width": "110px"
       },
       {
         "title": "产地ID",
         "key": "madeinId",
         "sortable": true,
-        "align": "center"
+        "align": "center",
+        "width": "110px"
       },{
         "title": "条码",
         "key": "barCode",
@@ -54,7 +58,8 @@
         "title": "规格属性",
         "key": "specialParam",
         "sortable": true,
-        "align": "center"
+        "align": "center",
+        "width": "120px"
       },
       {
         "title": "描述",
@@ -84,22 +89,26 @@
         "title": "默认供应商ID",
         "key": "defaultVendorId",
         "sortable": true,
-        "align": "center"
+        "align": "center",
+        "width": "140px"
       },{
         "title": "物料状态",
         "key": "status",
         "sortable": true,
-        "align": "center"
+        "align": "center",
+        "width": "120px"
       },{
         "title": "拼音码",
         "key": "pinyinCode",
         "sortable": true,
-        "align": "center"
+        "align": "center",
+        "width": "110px"
       },{
         "title": "五笔码",
         "key": "wbCode",
         "sortable": true,
-        "align": "center"
+        "align": "center",
+        "width": "110px"
       },
       {
         "title": "备注",
@@ -108,32 +117,30 @@
         "align": "center"
       },
       {
-        "title": "公司ID",
-        "key": "companyId",
-        "sortable": true,
-        "align": "center"
-      },
-      {
         "title": "创建人",
         "key": "createBy",
         "sortable": true,
-        "align": "center"
+        "align": "center",
+        "width": "110px"
       },{
         "title": "创建日期",
         "key": "createDate",
         "sortable": true,
-        "align": "center"
+        "align": "center",
+        "width": "120px"
       },{
         "title": "修改人",
         "key": "updateBy",
         "sortable": true,
-        "align": "center"
+        "align": "center",
+        "width": "110px"
       },
       {
         "title": "修改日期",
         "key": "updateDate",
         "sortable": true,
-        "align": "center"
+        "align": "center",
+        "width": "120px"
       }
     ],
     "input": {

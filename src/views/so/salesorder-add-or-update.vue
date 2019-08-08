@@ -73,7 +73,7 @@
             class="vxe-table-element"
             remote-filter
             ref="xGrid2"
-            row-id="id"
+
             @edit-closed = "setTotal"
             :toolbar="toolbar"
             :proxy-config="itableProxy"
@@ -86,7 +86,7 @@
 
     <span slot="footer" class="dialog-footer">
       <el-button @click="visible = false">取消</el-button>
-      <el-button type="primary" @click="dataFormSubmit()">确定</el-button>
+      <el-button type="primary" :disabled="btnDisable" @click="dataFormSubmit()">确定</el-button>
     </span>
   </el-dialog>
 </template>
@@ -111,6 +111,7 @@
                 },
 
                 visible: false,
+                btnDisable: false,
                 dataForm: {
                     id: 0,
                     orderType: 'SO',
@@ -343,48 +344,26 @@
             },
             // 表单提交
             dataFormSubmit () {
+                this.btnDisable = true;
                 var line = this.getItemListDate(this.$refs.xGrid2);
                 console.log(line);
                 this.$refs['dataForm'].validate((valid) => {
                     if (valid) {
+                        this.dataForm.lines = line
                         this.$axios.post(
                             this.mixinViewModuleOptions.updateURL,
-                            {
-                                'id': this.dataForm.id || undefined,
-                                'orderType': this.dataForm.orderType,
-                                'orderNum': this.dataForm.orderNum,
-                                'customerId': this.dataForm.customerId,
-                                'orderDate': this.dataForm.orderDate,
-                                'pic': this.dataForm.pic,
-                                'planDeliveryDate': this.dataForm.planDeliveryDate,
-                                'status': this.dataForm.status,
-                                'orderAmount': this.dataForm.orderAmount,
-                                'receiveAddress': this.dataForm.receiveAddress,
-                                'receiveName': this.dataForm.receiveName,
-                                'receivePhone': this.dataForm.receivePhone,
-                                'remark': this.dataForm.remark,
-                                'companyId': this.dataForm.companyId,
-                                'deletedFlag': this.dataForm.deletedFlag,
-                                'createBy': this.dataForm.createBy,
-                                'createDate': this.dataForm.createDate,
-                                'updateBy': this.dataForm.updateBy,
-                                'updateDate': this.dataForm.updateDate,
-                                'lines': line
-                            }
+                            this.dataForm
                         ).then(({data}) => {
-                            if (data && data.code === 0) {
-                                this.$message({
-                                    message: '操作成功',
-                                    type: 'success',
-                                    duration: 1500,
-                                    onClose: () => {
-                                        this.visible = false
-                                        this.$emit('refreshDataList')
-                                    }
-                                })
-                            } else {
-                                this.$message.error(data.msg)
-                            }
+                            this.btnDisable = false;
+                            this.$message({
+                                message: '操作成功',
+                                type: 'success',
+                                duration: 1500,
+                                onClose: () => {
+                                    this.visible = false
+                                    this.$emit('refreshDataList')
+                                }
+                            })
                         })
                     }
                 })
@@ -403,7 +382,6 @@
                         for(var i=0;i<res.length;i++){
                             res[i].value = res[i].val;
                         }
-                        debugger
                         results = res;
                         clearTimeout(this.timeout);
                         this.timeout = setTimeout(() => {
@@ -420,7 +398,6 @@
 //                var row = this.$refs.xGrid2.getCurrentRow();
                 var row = t.row;
                 if(item){
-                    debugger
                     row.barCode = item.barCode;
                     row.brand = item.brand;
                     row.vehicle = item.vehicle;

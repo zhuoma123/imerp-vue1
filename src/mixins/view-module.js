@@ -1,4 +1,5 @@
 import qs from 'qs'
+import { getDataList } from '../api/base/base'
 export default {
   data () {
     /* eslint-disable */
@@ -75,30 +76,43 @@ export default {
   },
   methods: {
     // 获取数据列表
-    getDataList () {
-      this.dataListLoading = true
-      this.$axios.post(
-        this.mixinViewModuleOptions.getDataListURL,
-        {
-          pageForm: {
-            order: this.order,
-            orderField: this.orderField,
-            page: this.mixinViewModuleOptions.getDataListIsPage ? this.page : null,
-            limit: this.mixinViewModuleOptions.getDataListIsPage ? this.limit : null
-          },
-          dataForm: {
-            data: this.dataForm,
-            op: this.dataFormOp
+    async getDataList () {
+      return new Promise((resolve, reject) => {
+        this.dataListLoading = true
+        this.$axios.post(
+          this.mixinViewModuleOptions.getDataListURL,
+          {
+            pageForm: {
+              order: this.order,
+              orderField: this.orderField,
+              page: this.mixinViewModuleOptions.getDataListIsPage ? this.page : null,
+              limit: this.mixinViewModuleOptions.getDataListIsPage ? this.limit : null
+            },
+            dataForm: {
+              data: this.dataForm,
+              op: this.dataFormOp
+            }
           }
-        }
-      ).then(res => {
-        this.dataListLoading = false
-        this.dataList = this.mixinViewModuleOptions.getDataListIsPage ? res.list : res
-        this.total = this.mixinViewModuleOptions.getDataListIsPage ? res.totalCount : 0
-      }).catch(() => {
-        this.dataList = []
-        this.total = 0
-        this.dataListLoading = false
+        ).then(res => {
+          this.dataListLoading = false
+          this.dataList = this.mixinViewModuleOptions.getDataListIsPage ? res.list : res
+          this.total = this.mixinViewModuleOptions.getDataListIsPage ? res.totalCount : 0
+          resolve()
+        }).catch(() => {
+          this.dataList = []
+          this.total = 0
+          this.dataListLoading = false
+        })
+      })
+    },
+    vxeTabQuery () {
+      return new Promise(async (resolve, reject) => {
+        await this.getDataList().then((res, rej) => {
+          resolve({
+            total: this.total,
+            list: this.dataList
+          })
+        })
       })
     },
     // 多选
@@ -134,24 +148,24 @@ export default {
         this.$refs.addOrUpdate.init()
       })
     },
-      // 修改
-      updateHandle (grid) {
-          var row = grid.getCurrentRow();
-          this.addOrUpdateVisible = true
-          this.$nextTick(() => {
-              if (row) {
-                  this.$refs.addOrUpdate.dataForm.id = row.id
-              }
-              this.$refs.addOrUpdate.init(row.id)
-          })
-      },
+    // 修改
+    updateHandle (grid) {
+      var row = grid.getCurrentRow()
+      this.addOrUpdateVisible = true
+      this.$nextTick(() => {
+        if (row) {
+          this.$refs.addOrUpdate.dataForm.id = row.id
+        }
+        this.$refs.addOrUpdate.init(row.id)
+      })
+    },
 
     // 新增 / 修改
     addOrUpdateHandleSetter (row) {
       debugger
-      var i=this;
+      var i = this
       this.addOrUpdateVisible = true
-      if(row) {
+      if (row) {
         this.$nextTick(() => {
           this.$refs.addOrUpdate.dataForm.id = row.id
           this.$refs.addOrUpdate.init()
@@ -207,21 +221,21 @@ export default {
       if (allDate) {
         if (allDate.insertRecords && allDate.insertRecords.length > 0) {
           for (var i = 0; i < allDate.insertRecords.length; i++) {
-            allDate.insertRecords[i].__iop = 'INSERT'
+            allDate.insertRecords[i].__state = 'INSERT'
           }
           rlist = rlist.concat(allDate.insertRecords)
         }
         if (allDate.updateRecords && allDate.updateRecords.length > 0) {
           for (var i = 0; i < allDate.updateRecords.length; i++) {
-            allDate.updateRecords[i].__iop = 'UPDATE'
+            allDate.updateRecords[i].__state = 'UPDATE'
           }
-            rlist = rlist.concat(allDate.updateRecords)
+          rlist = rlist.concat(allDate.updateRecords)
         }
         if (allDate.removeRecords && allDate.removeRecords.length > 0) {
           for (var i = 0; i < allDate.removeRecords.length; i++) {
-            allDate.removeRecords[i].__iop = 'DELETE'
+            allDate.removeRecords[i].__state = 'DELETE'
           }
-            rlist = rlist.concat(allDate.removeRecords)
+          rlist = rlist.concat(allDate.removeRecords)
         }
       }
       return rlist

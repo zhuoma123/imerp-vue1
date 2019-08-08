@@ -93,204 +93,176 @@
     </el-form>
 
     <vxe-grid
-            border
-            resizable
-            highlight-current-row
-            remote-filter
-            size="mini"
-            ref="xGrid"
-            row-id="id"
-            :toolbar="toolbar"
-            :proxy-config="tableProxy"
-            :columns="tableColumn"
-            :select-config="{reserve: true}"
-            :edit-config="{trigger: 'click', mode: 'row', showStatus: true}">
-          <template v-slot:buttons>
-            <vxe-button @click="$refs.xGrid.commitProxy('reload')">刷新</vxe-button>
-            <vxe-button @click="addHandle()">新增</vxe-button>
-            <vxe-button @click="updateHandle($refs.xGrid)">修改</vxe-button>
-            <vxe-button @click="deleteHandle()">删除</vxe-button>
-            <vxe-button @click="deleteHandle()">提交</vxe-button>
-            <vxe-button @click="deleteHandle()">打印</vxe-button>
-            <vxe-button @click="$refs.xGrid.exportCsv()">导出.csv</vxe-button>
-        </template>
+        border
+        resizable
+        highlight-current-row
+        remote-filter
+        size="mini"
+        ref="xGrid"
+        row-id="id"
+        :toolbar="toolbar"
+        :proxy-config="tableProxy"
+        :columns="tableColumn"
+        :select-config="{reserve: true}"
+        :edit-config="{trigger: 'click', mode: 'row', showStatus: true}">
+      <template v-slot:buttons>
+        <vxe-button @click="refresh">刷新</vxe-button>
+        <vxe-button @click="addHandle()">新增</vxe-button>
+        <vxe-button @click="updateHandle($refs.xGrid)">修改</vxe-button>
+        <vxe-button @click="deleteHandle()">删除</vxe-button>
+        <vxe-button @click="deleteHandle()">提交</vxe-button>
+        <vxe-button @click="deleteHandle()">打印</vxe-button>
+        <vxe-button @click="$refs.xGrid.exportCsv()">导出.csv</vxe-button>
+      </template>
     </vxe-grid>
-
 
     <!-- 分页 -->
     <el-pagination
-            slot="footer"
-            :current-page="page"
-            :page-sizes="[10, 20, 50, 100]"
-            :page-size="limit"
-            :total="total"
-            layout="total, sizes, prev, pager, next, jumper"
-            @size-change="pageSizeChangeHandle"
-            @current-change="pageCurrentChangeHandle"
+      slot="footer"
+      :current-page="page"
+      :page-sizes="[10, 20, 50, 100]"
+      :page-size="limit"
+      :total="total"
+      layout="total, sizes, prev, pager, next, jumper"
+      @size-change="pageSizeChangeHandle"
+      @current-change="pageCurrentChangeHandle"
     ></el-pagination>
     <!-- 弹窗, 新增 / 修改 -->
     <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList" />
   </d2-container>
 </template>
 
-
 <script>
-    import mixinViewModule from "@/mixins/view-module";
-    import AddOrUpdate from "./salesorder-add-or-update";
-    import ElInput from "../../../node_modules/element-ui/packages/input/src/input";
-    import ElCol from "element-ui/packages/col/src/col";
-    export default {
-        mixins: [mixinViewModule],
-        data() {
-            return {
-                mixinViewModuleOptions: {
-                    getDataListURL: "/so/salesorder/list",
-                    getDataListIsPage: true,
-                    updateURL: "/so/salesorder/update",
-                    deleteURL: "/so/salesorder/delete",
-                    deleteIsBatch: true,
-                    exportURL: "/so/salesorder/export"
-                },
-                dataForm: {
-                    custName:""
-                },
-                dataFormOp: {
-                },
+import mixinViewModule from '@/mixins/view-module'
+import AddOrUpdate from './salesorder-add-or-update'
+export default {
+  mixins: [mixinViewModule],
+  data () {
+    return {
+      mixinViewModuleOptions: {
+        getDataListURL: '/so/salesorder/list',
+        getDataListIsPage: true,
+        updateURL: '/so/salesorder/update',
+        deleteURL: '/so/salesorder/delete',
+        deleteIsBatch: true,
+        exportURL: '/so/salesorder/export'
+      },
+      dataForm: {
+        custName: ''
+      },
+      dataFormOp: {
+      },
 
-                tableColumn: [
-                    { type: "selection", width: 30, align: "center" },
-                    { type: "index", width: 50, align: "center" },
-                    {
-                        title: "下单日期",
-                        field: "orderDate",
-                        sortable: true,
-                        width: "100px",
-                        align: "center",
-                        formatter : ['toDateString', 'yyyy-MM-dd']
-                    },
-                    {
-                        title: "销售单号",
-                        field: "orderNum",
-                        sortable: true,
-                        align: "center"
-                    },
-                    {
-                        title: "客户名称",
-                        field: "custName",
-                        sortable: true,
-                        align: "left"
-                    },
-                    {
-                        title: "状态",
-                        field: "status",
-                        sortable: true,
-                        align: "left"
-                    },
-                    {
-                        title: "订单金额",
-                        field: "orderAmount",
-                        sortable: true,
-                        align: "left"
-                    },
-                    {
-                        title: "发运方式",
-                        field: "shipType",
-                        sortable: true,
-                        align: "center"
-                    },
-                    {
-                        title: "销售员",
-                        field: "pic",
-                        sortable: true,
-                        align: "center"
-                    },
-                    {
-                        title: this.$t("views.public.user.status"),
-                        field: "status",
-                        align: "center",
-                        width: "70px"
-                    },
-                    {
-                        title: this.$t("views.public.createDate"),
-                        field: "createDate",
-                        sortable: true,
-                        align: "center"
-                    }
-                ],
-
-                tableProxy: {
-                    index: true, // 启用动态序号代理
-                    sort: true, // 启用排序代理
-                    filter: true, // 启用筛选代理
-                    ajax: {
-                        query: ({ page, sort, filters }) => {
-                            // 处理排序条件
-                            let formData = {
-                                sort: sort.property,
-                                order: sort.order
-                            };
-                            // 处理筛选条件
-                            filters.forEach(({ column, property, values }) => {
-                                formData[property] = values.join(",");
-                            });
-                            return new Promise(async (resolve, reject) => {
-                                await this.$axios.post(
-                                    this.mixinViewModuleOptions.getDataListURL,
-                                    {
-                                        pageForm: {
-                                            order: this.order,
-                                            orderField: this.orderField,
-                                            page: this.mixinViewModuleOptions.getDataListIsPage ? this.page : null,
-                                            limit: this.mixinViewModuleOptions.getDataListIsPage ? this.limit : null
-                                        },
-                                        dataForm: {
-                                            data: this.dataForm,
-                                            op: this.dataFormOp
-                                        }
-                                    }
-                                ).then(res => {
-                                    console.log(this.mixinViewModuleOptions.getDataListIsPage);
-                                    this.total = res.totalCount;
-                                    this.dataList = res.list
-                                })
-                                resolve({
-                                    total: this.total,
-                                    list: this.dataList
-                                })
-                            })
-                        },
-                        save: ({ body }) => {console.log(body)}
-
-                    },
-                    props: {
-                        list: 'list',
-                        result: 'list',
-                        total: 'totalCount'
-                    }
-                },
-                toolbar: {
-                    id: "full_edit_1",
-                    resizable: {
-                        storage: true
-                    },
-                    setting: {
-                        storage: true
-                    }
-                }
-
-            };
+      tableColumn: [
+        { type: 'selection', width: 30, align: 'center' },
+        { type: 'index', width: 50, align: 'center' },
+        {
+          title: '下单日期',
+          field: 'orderDate',
+          sortable: true,
+          width: '100px',
+          align: 'center',
+          formatter: ['toDateString', 'yyyy-MM-dd']
         },
-        components: {
-            ElCol,
-            ElInput,
-            AddOrUpdate
+        {
+          title: '销售单号',
+          field: 'orderNum',
+          sortable: true,
+          align: 'center'
         },
-        methods: {
-            handleFormReset () {
-                this.$refs.dataForm.resetFields()
-            }
+        {
+          title: '客户名称',
+          field: 'custName',
+          sortable: true,
+          align: 'left'
+        },
+        {
+          title: '状态',
+          field: 'status',
+          sortable: true,
+          align: 'left'
+        },
+        {
+          title: '订单金额',
+          field: 'orderAmount',
+          sortable: true,
+          align: 'left'
+        },
+        {
+          title: '发运方式',
+          field: 'shipType',
+          sortable: true,
+          align: 'center'
+        },
+        {
+          title: '销售员',
+          field: 'pic',
+          sortable: true,
+          align: 'center'
+        },
+        {
+          title: this.$t('views.public.user.status'),
+          field: 'status',
+          align: 'center',
+          width: '70px'
+        },
+        {
+          title: this.$t('views.public.createDate'),
+          field: 'createDate',
+          sortable: true,
+          align: 'center'
         }
+      ],
+
+      tableProxy: {
+        index: true, // 启用动态序号代理
+        sort: true, // 启用排序代理
+        filter: true, // 启用筛选代理
+        ajax: {
+          query: ({ page, sort, filters }) => {
+            // 处理排序条件
+            let formData = {
+              sort: sort.property,
+              order: sort.order
+            }
+            // 处理筛选条件
+            filters.forEach(({ column, property, values }) => {
+              formData[property] = values.join(',')
+            })
+            return this.vxeTabQuery()
+          }
+        },
+        props: {
+          list: 'list',
+          result: 'list',
+          total: 'totalCount'
+        }
+      },
+      toolbar: {
+        id: 'full_edit_1',
+        resizable: {
+          storage: true
+        },
+        setting: {
+          storage: true
+        }
+      }
+
     }
+  },
+  components: {
+    AddOrUpdate
+  },
+  methods: {
+    refresh (event) {
+      this.$refs.xGrid.clearData()
+      this.$refs.xGrid.refreshData()
+    },
+    handleFormReset () {
+      this.$refs.dataForm.resetFields()
+    }
+  }
+}
 </script>
 
 <style>

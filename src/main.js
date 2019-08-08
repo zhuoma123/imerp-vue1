@@ -34,6 +34,8 @@ import 'vxe-table/lib/index.css'
 import VXETablePluginElement from 'vxe-table-plugin-element'
 import 'vxe-table-plugin-element/dist/style.css'
 
+import ElAutocompleteItem from './views/so/select-item'
+
 // 菜单和路由设置
 import router from './router'
 
@@ -51,8 +53,9 @@ Vue.use(vueJsonTreeView)
 Vue.use(pluginExport)
 Vue.use(pluginImport)
 Vue.use(d2VueFiltersDayjs)
-Vue.use(VXETable)
 VXETable.use(VXETablePluginElement)
+Vue.use(VXETable)
+Vue.component('ElAutocompleteItem', ElAutocompleteItem)
 Vue.component('d2-grid-layout', GridLayout)
 Vue.component('d2-grid-item', GridItem)
 Vue.component('SplitPane', SplitPane)

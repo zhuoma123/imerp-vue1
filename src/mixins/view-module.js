@@ -145,13 +145,13 @@ export default {
               this.$refs.addOrUpdate.init(row.id)
           })
       },
-    
+
     // 新增 / 修改
     addOrUpdateHandleSetter (row) {
       debugger
-      var i = this
+      var i=this;
       this.addOrUpdateVisible = true
-      if (row) {
+      if(row) {
         this.$nextTick(() => {
           this.$refs.addOrUpdate.dataForm.id = row.id
           this.$refs.addOrUpdate.init()

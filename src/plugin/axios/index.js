@@ -110,7 +110,6 @@ service.interceptors.response.use(
           return Promise.reject(msg)
         default:
           // [ 示例 ] 其它和后台约定的 code
-          store.dispatch('d2admin/account/logout')
           errorCreate(`[ code: ${code} ] ${msg}: ${response.config.url}`)
           return Promise.reject(msg)
       }

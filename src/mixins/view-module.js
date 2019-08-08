@@ -1,4 +1,5 @@
 import qs from 'qs'
+import { getDataList } from '../api/base/base'
 export default {
   data () {
     /* eslint-disable */
@@ -31,7 +32,35 @@ export default {
         size: 'mini',
         stripe: true,
         border: true
-      }
+      },
+    //时间联动框
+    pickerOptions: {
+        shortcuts: [{
+            text: '最近一周',
+            onClick(picker) {
+                const end = new Date();
+                const start = new Date();
+                start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+                picker.$emit('pick', [start, end]);
+            }
+        }, {
+            text: '最近一个月',
+            onClick(picker) {
+                const end = new Date();
+                const start = new Date();
+                start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+                picker.$emit('pick', [start, end]);
+            }
+        }, {
+            text: '最近三个月',
+            onClick(picker) {
+                const end = new Date();
+                const start = new Date();
+                start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
+                picker.$emit('pick', [start, end]);
+            }
+        }]
+    },
     }
     /* eslint-enable */
   },
@@ -47,31 +76,43 @@ export default {
   },
   methods: {
     // 获取数据列表
-    getDataList () {
-      this.dataListLoading = true
-      this.$axios.post(
-        this.mixinViewModuleOptions.getDataListURL,
-        {
-          pageForm: {
-            order: this.order,
-            orderField: this.orderField,
-            page: this.mixinViewModuleOptions.getDataListIsPage ? this.page : null,
-            limit: this.mixinViewModuleOptions.getDataListIsPage ? this.limit : null
-          },
-          dataForm: {
-            data: this.dataForm,
-            op: this.dataFormOp
+    async getDataList () {
+      return new Promise((resolve, reject) => {
+        this.dataListLoading = true
+        this.$axios.post(
+          this.mixinViewModuleOptions.getDataListURL,
+          {
+            pageForm: {
+              order: this.order,
+              orderField: this.orderField,
+              page: this.mixinViewModuleOptions.getDataListIsPage ? this.page : null,
+              limit: this.mixinViewModuleOptions.getDataListIsPage ? this.limit : null
+            },
+            dataForm: {
+              data: this.dataForm,
+              op: this.dataFormOp
+            }
           }
-        }
-      ).then(res => {
-        debugger
-        this.dataListLoading = false
-        this.dataList = this.mixinViewModuleOptions.getDataListIsPage ? res.list : res
-        this.total = this.mixinViewModuleOptions.getDataListIsPage ? res.totalCount : 0
-      }).catch(() => {
-        this.dataList = []
-        this.total = 0
-        this.dataListLoading = false
+        ).then(res => {
+          this.dataListLoading = false
+          this.dataList = this.mixinViewModuleOptions.getDataListIsPage ? res.list : res
+          this.total = this.mixinViewModuleOptions.getDataListIsPage ? res.totalCount : 0
+          resolve()
+        }).catch(() => {
+          this.dataList = []
+          this.total = 0
+          this.dataListLoading = false
+        })
+      })
+    },
+    vxeTabQuery () {
+      return new Promise(async (resolve, reject) => {
+        await this.getDataList().then((res, rej) => {
+          resolve({
+            total: this.total,
+            list: this.dataList
+          })
+        })
       })
     },
     // 多选
@@ -100,19 +141,26 @@ export default {
       this.page = val
       this.getDataList()
     },
-    // 新增 / 修改
-    addOrUpdateHandle (row) {
-      console.log(row)
+    // 新增
+    addHandle () {
+      this.addOrUpdateVisible = true
+      this.$nextTick(() => {
+        this.$refs.addOrUpdate.init()
+      })
+    },
+    // 修改
+    updateHandle (grid) {
+      var row = grid.getCurrentRow()
       this.addOrUpdateVisible = true
       this.$nextTick(() => {
         if (row) {
           this.$refs.addOrUpdate.dataForm.id = row.id
         }
-
-        this.$refs.addOrUpdate.init()
+        this.$refs.addOrUpdate.init(row.id)
       })
     },
-    // 新增 / 修改(module:base)
+
+    // 新增 / 修改
     addOrUpdateHandleSetter (row) {
       this.addOrUpdateVisible = true
       if (row) {
@@ -182,7 +230,7 @@ export default {
         type: 'warning'
       }).then(() => {
         this.$axios.post(
-          `${this.mixinViewModuleOptions.deleteURL}${this.mixinViewModuleOptions.deleteIsBatch ? '' : '/' + data}`,
+          `${this.mixinViewModuleOptions.deleteURL}${this.mixinViewModuleOptions.deleteIsBatch ? '' : '/' + id}`,
           this.mixinViewModuleOptions.deleteIsBatch ? {
             'data': data
           } : {}
@@ -205,6 +253,32 @@ export default {
         ...this.dataForm
       })
       window.location.href = `${window.SITE_CONFIG['apiURL']}${this.mixinViewModuleOptions.exportURL}?${params}`
+    },
+    // 获取行表数据
+    getItemListDate (grid) {
+      var allDate = grid.getRecordset()
+      var rlist = []
+      if (allDate) {
+        if (allDate.insertRecords && allDate.insertRecords.length > 0) {
+          for (var i = 0; i < allDate.insertRecords.length; i++) {
+            allDate.insertRecords[i].__state = 'INSERT'
+          }
+          rlist = rlist.concat(allDate.insertRecords)
+        }
+        if (allDate.updateRecords && allDate.updateRecords.length > 0) {
+          for (var i = 0; i < allDate.updateRecords.length; i++) {
+            allDate.updateRecords[i].__state = 'UPDATE'
+          }
+          rlist = rlist.concat(allDate.updateRecords)
+        }
+        if (allDate.removeRecords && allDate.removeRecords.length > 0) {
+          for (var i = 0; i < allDate.removeRecords.length; i++) {
+            allDate.removeRecords[i].__state = 'DELETE'
+          }
+          rlist = rlist.concat(allDate.removeRecords)
+        }
+      }
+      return rlist
     }
   }
 }

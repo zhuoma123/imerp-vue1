@@ -14,12 +14,12 @@
           </el-col>
           <el-col :span="8" >
             <el-form-item label="销售日期" prop="orderDate">
-              <el-date-picker v-model="dataForm.orderDate" placeholder="销售日期" style="width:160px"></el-date-picker>
+              <el-date-picker v-model="dataForm.orderDate" placeholder="销售日期" style="width:160px" value-format="yyyy-MM-dd"></el-date-picker>
             </el-form-item>
           </el-col>
           <el-col :span="8" >
             <el-form-item label="要求交货期" prop="planDeliveryDate">
-              <el-date-picker v-model="dataForm.planDeliveryDate" placeholder="要求交货期" style="width:160px"></el-date-picker>
+              <el-date-picker v-model="dataForm.planDeliveryDate" placeholder="要求交货期" value-format="yyyy-MM-dd" style="width:160px"></el-date-picker>
             </el-form-item>
           </el-col>
         </el-row>
@@ -73,7 +73,8 @@
             class="vxe-table-element"
             remote-filter
             ref="xGrid2"
-            row-id="id"
+
+            @edit-closed = "setTotal"
             :toolbar="toolbar"
             :proxy-config="itableProxy"
             :columns="itableColumn"
@@ -85,7 +86,7 @@
 
     <span slot="footer" class="dialog-footer">
       <el-button @click="visible = false">取消</el-button>
-      <el-button type="primary" @click="dataFormSubmit()">确定</el-button>
+      <el-button type="primary" :disabled="btnDisable" @click="dataFormSubmit()">确定</el-button>
     </span>
   </el-dialog>
 </template>
@@ -93,7 +94,9 @@
 <script>
     import ElCol from "element-ui/packages/col/src/col";
     import ElInput from "../../../node_modules/element-ui/packages/input/src/input";
+    import mixinViewModule from "@/mixins/view-module";
     export default {
+        mixins: [mixinViewModule],
         components: {
             ElInput,
             ElCol},
@@ -108,27 +111,23 @@
                 },
 
                 visible: false,
+                btnDisable: false,
                 dataForm: {
                     id: 0,
-                    orderType: '',
+                    orderType: 'SO',
                     orderNum: '',
-                    customerId: '',
-                    orderDate: '',
-                    pic: '',
-                    shipType: '',
-                    planDeliveryDate: '',
+                    customerId: '1',
+                    orderDate: '2019-08-05',
+                    pic: '销售员1',
+                    shipType: '1',
+                    planDeliveryDate: '2019-08-05',
                     status: '',
                     orderAmount: '',
-                    receiveAddress: '',
-                    receiveName: '',
-                    receivePhone: '',
+                    receiveAddress: '地址',
+                    receiveName: '收货人',
+                    receivePhone: '收货电话',
                     remark: '',
-                    companyId: '',
-                    deletedFlag: '',
-                    createBy: '',
-                    createDate: '',
-                    updateBy: '',
-                    updateDate: ''
+                    deletedFlag: 'N'
                 },
                 dataRule: {
                     orderType: [
@@ -203,6 +202,35 @@
                         editRender: {name: 'ElAutocomplete', props: {fetchSuggestions: this.prodSeach,triggerOnFocus:false }, events :{select: this.handleProcSelect}}
                     },
                     {
+                        title: "当前库存",
+                        field: "stock",
+                        align: "left"
+                    },
+                    {
+                        title: "指导售价",
+                        field: "bPrice",
+                        align: "left"
+                    },
+                    {
+                        title: "下单数量",
+                        field: "orderQty",
+                        align: "left",
+                        editRender: { name: 'input' }
+                    },
+                    {
+                        title: "销售价",
+                        field: "price",
+                        sortable: true,
+                        align: "center",
+                        editRender: { name: 'input' }
+                    },
+                    {
+                        title: "总金额",
+                        field: "totalPrice",
+                        align: "center",
+                        formatter : ['toFixedString', 2]
+                    },
+                    {
                         title: "条码",
                         field: "barCode",
                         align: "center"
@@ -226,30 +254,8 @@
                         title: "规格属性",
                         field: "specialParam",
                         align: "center"
-                    },
-                    {
-                        title: "当前库存",
-                        field: "stock",
-                        align: "left"
-                    },
-                    {
-                        title: "指导售价",
-                        field: "bPrice",
-                        align: "left"
-                    },
-                    {
-                        title: "下单数量",
-                        field: "orderQty",
-                        align: "left",
-                        editRender: { name: 'input' }
-                    },
-                    {
-                        title: "销售价",
-                        field: "price",
-                        sortable: true,
-                        align: "center",
-                        editRender: { name: 'input' }
                     }
+
 
                 ],
 
@@ -323,77 +329,41 @@
                 this.$nextTick(() => {
                     this.$refs['dataForm'].resetFields()
                     if (this.dataForm.id) {
-                        this.$http({
-                            url: this.$http.adornUrl(`/so/salesorder/info/${this.dataForm.id}`),
-                            method: 'get',
-                            params: this.$http.adornParams()
-                        }).then(({data}) => {
-                            if (data && data.code === 0) {
-                                this.dataForm.orderType = data.salesorder.orderType
-                                this.dataForm.orderNum = data.salesorder.orderNum
-                                this.dataForm.customerId = data.salesorder.customerId
-                                this.dataForm.orderDate = data.salesorder.orderDate
-                                this.dataForm.pic = data.salesorder.pic
-                                this.dataForm.planDeliveryDate = data.salesorder.planDeliveryDate
-                                this.dataForm.status = data.salesorder.status
-                                this.dataForm.orderAmount = data.salesorder.orderAmount
-                                this.dataForm.receiveAddress = data.salesorder.receiveAddress
-                                this.dataForm.receiveName = data.salesorder.receiveName
-                                this.dataForm.receivePhone = data.salesorder.receivePhone
-                                this.dataForm.remark = data.salesorder.remark
-                                this.dataForm.companyId = data.salesorder.companyId
-                                this.dataForm.deletedFlag = data.salesorder.deletedFlag
-                                this.dataForm.createBy = data.salesorder.createBy
-                                this.dataForm.createDate = data.salesorder.createDate
-                                this.dataForm.updateBy = data.salesorder.updateBy
-                                this.dataForm.updateDate = data.salesorder.updateDate
-                            }
-                        })
-                    }
+                        this.$axios.get(`/so/salesorder/info/${this.dataForm.id}`)
+                            .then((data) => {
+                                if (data) {
+                                    this.dataForm =data;
+                                }
+                                this.$refs.xGrid2.commitProxy('reload');
+                            })
+                            .catch(function (error) {
+                                console.log(error);
+                            });
+                    };
                 })
             },
             // 表单提交
             dataFormSubmit () {
+                this.btnDisable = true;
+                var line = this.getItemListDate(this.$refs.xGrid2);
+                console.log(line);
                 this.$refs['dataForm'].validate((valid) => {
                     if (valid) {
-                        this.$http({
-                            url: this.$http.adornUrl(`/so/salesorder/${!this.dataForm.id ? 'save' : 'update'}`),
-                            method: 'post',
-                            data: this.$http.adornData({
-                                'id': this.dataForm.id || undefined,
-                                'orderType': this.dataForm.orderType,
-                                'orderNum': this.dataForm.orderNum,
-                                'customerId': this.dataForm.customerId,
-                                'orderDate': this.dataForm.orderDate,
-                                'pic': this.dataForm.pic,
-                                'planDeliveryDate': this.dataForm.planDeliveryDate,
-                                'status': this.dataForm.status,
-                                'orderAmount': this.dataForm.orderAmount,
-                                'receiveAddress': this.dataForm.receiveAddress,
-                                'receiveName': this.dataForm.receiveName,
-                                'receivePhone': this.dataForm.receivePhone,
-                                'remark': this.dataForm.remark,
-                                'companyId': this.dataForm.companyId,
-                                'deletedFlag': this.dataForm.deletedFlag,
-                                'createBy': this.dataForm.createBy,
-                                'createDate': this.dataForm.createDate,
-                                'updateBy': this.dataForm.updateBy,
-                                'updateDate': this.dataForm.updateDate
+                        this.dataForm.lines = line
+                        this.$axios.post(
+                            this.mixinViewModuleOptions.updateURL,
+                            this.dataForm
+                        ).then(({data}) => {
+                            this.btnDisable = false;
+                            this.$message({
+                                message: '操作成功',
+                                type: 'success',
+                                duration: 1500,
+                                onClose: () => {
+                                    this.visible = false
+                                    this.$emit('refreshDataList')
+                                }
                             })
-                        }).then(({data}) => {
-                            if (data && data.code === 0) {
-                                this.$message({
-                                    message: '操作成功',
-                                    type: 'success',
-                                    duration: 1500,
-                                    onClose: () => {
-                                        this.visible = false
-                                        this.$emit('refreshDataList')
-                                    }
-                                })
-                            } else {
-                                this.$message.error(data.msg)
-                            }
                         })
                     }
                 })
@@ -412,7 +382,6 @@
                         for(var i=0;i<res.length;i++){
                             res[i].value = res[i].val;
                         }
-                        debugger
                         results = res;
                         clearTimeout(this.timeout);
                         this.timeout = setTimeout(() => {
@@ -429,7 +398,6 @@
 //                var row = this.$refs.xGrid2.getCurrentRow();
                 var row = t.row;
                 if(item){
-                    debugger
                     row.barCode = item.barCode;
                     row.brand = item.brand;
                     row.vehicle = item.vehicle;
@@ -442,17 +410,23 @@
                 }
 
 
+            },
+
+
+            setTotal({column,row}){
+                if(column.property == "orderQty" || column.property == "price" ){
+                    var qty = row.orderQty;
+                    var price = row.price;
+                    if(!Number.isNaN(qty) && !Number.isNaN(price)){
+                        row.totalPrice = Number(qty)*Number(price).toFixed(2);
+                    }
+                }
+
+                console.log(row.totalPrice);
+                console.log(column);
+                console.log(row);
             }
 
         }
     }
 </script>
-
-
-<style>
-  .select-option{
-  div{
-    width: 400px;
-  }
-  }
-</style>

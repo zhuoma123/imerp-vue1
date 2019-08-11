@@ -48,19 +48,15 @@ export default {
       visible: false,
       dataForm: {
         id: undefined,
-        parentId: undefined,
-        type: undefined,
-        code: undefined,
+        custId: undefined,
         name: undefined,
-        orderNum: 0,
-        sys: true,
-        companyId: undefined,
-        remark: undefined,
-        attr1: undefined,
-        attr2: undefined,
-        attr3: undefined,
-        attr4: undefined,
-        attr5: undefined
+        shortName: undefined,
+        linkman: undefined,
+        mobileNo: undefined,
+        tel: undefined,
+        weixinNo: undefined,
+        email: undefined,
+        remark: undefined
       },
       rules: {
         name: [{
@@ -80,6 +76,13 @@ export default {
         this.$refs['dataForm'].clearValidate()
       })
     },
+    update (row) {
+      this.dataForm = Object.assign({}, row)
+      this.visible = true
+      this.$nextTick(() => {
+        this.$refs['dataForm'].clearValidate()
+      })
+    },
     // 表单提交
     dataFormSubmitHandle () {
       let th = this
@@ -88,7 +91,7 @@ export default {
           return false
         }
         th.$axios({
-          url: '/base/billnum/save',
+          url: '/base/custcontact/save',
           method: 'post',
           data: th.dataForm
         }).then(res => {

@@ -18,9 +18,6 @@
             <el-form-item prop="remark" :label="data.form.input.remark">
                 <el-input v-model="dataForm.remark" :placeholder="data.form.input.remark"/>
             </el-form-item>
-            <el-form-item prop="companyId" :label="data.form.input.companyId">
-                <el-input v-model="dataForm.companyId" :placeholder="data.form.input.companyId"/>
-            </el-form-item>
         </el-form>
         <template slot="footer">
             <el-button @click="visible = false">{{ $t('views.public.cancel') }}</el-button>
@@ -38,19 +35,11 @@ export default {
       visible: false,
       dataForm: {
         id: undefined,
-        parentId: undefined,
-        type: undefined,
         code: undefined,
         name: undefined,
-        orderNum: 0,
-        sys: true,
-        companyId: undefined,
-        remark: undefined,
-        attr1: undefined,
-        attr2: undefined,
-        attr3: undefined,
-        attr4: undefined,
-        attr5: undefined
+        pinyinCode: undefined,
+        wbCode: undefined,
+        remark: undefined
       },
       rules: {
         name: [{
@@ -67,6 +56,13 @@ export default {
       this.visible = true
       this.$nextTick(() => {
         this.$refs['dataForm'].resetFields()
+        this.$refs['dataForm'].clearValidate()
+      })
+    },
+    update (row) {
+      this.dataForm = Object.assign({}, row)
+      this.visible = true
+      this.$nextTick(() => {
         this.$refs['dataForm'].clearValidate()
       })
     },

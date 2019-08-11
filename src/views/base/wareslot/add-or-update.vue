@@ -30,19 +30,9 @@ export default {
       visible: false,
       dataForm: {
         id: undefined,
-        parentId: undefined,
-        type: undefined,
-        code: undefined,
+        warehouseId: undefined,
         name: undefined,
-        orderNum: 0,
-        sys: true,
-        companyId: undefined,
-        remark: undefined,
-        attr1: undefined,
-        attr2: undefined,
-        attr3: undefined,
-        attr4: undefined,
-        attr5: undefined
+        remark: undefined
       },
       rules: {
         name: [{
@@ -59,6 +49,13 @@ export default {
       this.visible = true
       this.$nextTick(() => {
         this.$refs['dataForm'].resetFields()
+        this.$refs['dataForm'].clearValidate()
+      })
+    },
+    update (row) {
+      this.dataForm = Object.assign({}, row)
+      this.visible = true
+      this.$nextTick(() => {
         this.$refs['dataForm'].clearValidate()
       })
     },

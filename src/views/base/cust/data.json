@@ -18,13 +18,15 @@
         "title": "名称",
         "key": "name",
         "sortable": true,
-        "align": "center"
+        "align": "center",
+        "width": "150px"
       },
       {
         "title": "职称",
         "key": "shortName",
         "sortable": true,
-        "align": "center"
+        "align": "center",
+        "width": "150px"
       },
       {
         "title": "类型",

@@ -18,20 +18,22 @@
         "title": "职务",
         "key": "shortName",
         "sortable": true,
-        "align": "center"
+        "align": "center",
+        "width": "160px"
       },
       {
         "title": "首要联系人",
         "key": "linkman",
         "sortable": true,
         "align": "center",
-        "width": "120px"
+        "width": "160px"
       },
       {
         "title": "手机",
         "key": "mobileNo",
         "sortable": true,
-        "align": "center"
+        "align": "center",
+        "width": "160px"
       },{
         "title": "办公电话",
         "key": "tel",
@@ -61,7 +63,8 @@
         "title": "创建人",
         "key": "createBy",
         "sortable": true,
-        "align": "center"
+        "align": "center",
+        "width": "120px"
       },
       {
         "title": "创建日期",

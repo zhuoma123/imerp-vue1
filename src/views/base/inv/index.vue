@@ -28,7 +28,7 @@
                 @selection-change="dataListSelectionChangeHandle"
                 @sort-change="dataListSortChangeHandle"
                 @user-update="addOrUpdateHandleSetter"
-                @user-delete="deleteHandle"
+                @user-delete="deleteHandleSetter"
         ></d2-crud>
         <!-- 分页 -->
         <el-pagination
@@ -50,6 +50,7 @@
 import mixinViewModule from '@/mixins/view-module'
 import AddOrUpdate from './add-or-update'
 import data from './data'
+import util from '@/libs/util'
 
 export default {
   mixins: [mixinViewModule],

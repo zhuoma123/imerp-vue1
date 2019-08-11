@@ -78,18 +78,18 @@ export default {
      * 该方法只用于子页面
      * @param {*} item
      */
-    init(item) {
-      if(item) {
-        Object.assign(this.dataForm, item);
-        this.isNew = false;
+    init (item) {
+      if (item) {
+        Object.assign(this.dataForm, item)
+        this.isNew = false
       } else {
-        this.isNew = true;
+        this.isNew = true
       }
-      this.visible = true;
+      this.visible = true
     },
     // 获取数据列表
     getDataList (vxeDataForm) {
-      return new Promise ((resolve, reject) => {
+      return new Promise((resolve, reject) => {
         this.dataListLoading = true
         this.$axios.post(
           this.mixinViewModuleOptions.getDataListURL,
@@ -101,7 +101,7 @@ export default {
               limit: this.mixinViewModuleOptions.getDataListIsPage ? this.limit : null
             },
             dataForm: {
-              data: Object.assign({},this.dataForm, vxeDataForm),
+              data: Object.assign({}, this.dataForm, vxeDataForm),
               op: this.dataFormOp
             }
           }
@@ -120,7 +120,7 @@ export default {
     },
     vxeTabQuery ({ page, sort, filters }) {
       // 处理排序条件
-      if(sort) {
+      if (sort) {
         this.order = sort.order
         this.orderField = sort.property
       }
@@ -142,39 +142,39 @@ export default {
     },
     search () {
       this.dataListLoading = true
-      let vxeParams = {page:null, sort: null, filters: []}
+      let vxeParams = { page: null, sort: null, filters: [] }
       this.vxeTabQuery(vxeParams).then((resolve, rejects) => {
         this.pGrid.loadData(this.dataList)
         this.dataListLoading = false
       })
     },
     // 表单提交
-    dataFormSubmit() {
+    dataFormSubmit () {
       this.$refs.dataForm.validate(valid => {
         if (valid) {
-          this.btnDisable = true;
-          if(this.$refs.sGrid) {
-            this.dataForm.lines = this.getItemListDate(this.$refs.sGrid);
+          this.btnDisable = true
+          if (this.$refs.sGrid) {
+            this.dataForm.lines = this.getItemListDate(this.$refs.sGrid)
           }
-          this.fullscreenLoading = true;
+          this.fullscreenLoading = true
           this.$axios
             .post(this.mixinViewModuleOptions.updateURL, this.dataForm)
             .then(({ data }) => {
-              this.fullscreenLoading = false;
+              this.fullscreenLoading = false
               this.$message({
-                message: "操作成功",
-                type: "success",
+                message: '操作成功',
+                type: 'success',
                 duration: 1000,
                 onClose: () => {
-                  this.visible = false;
-                  this.btnDisable = false;
-                  this.$emit("refreshDataList");
+                  this.visible = false
+                  this.btnDisable = false
+                  this.$emit('refreshDataList')
                 }
-              });
+              })
             }).catch(error => {
-              this.btnDisable = false;
-              this.fullscreenLoading = false;
-            });
+              this.btnDisable = false
+              this.fullscreenLoading = false
+            })
         }
       })
     },
@@ -197,7 +197,7 @@ export default {
     pageSizeChangeHandle (val, vxe) {
       this.page = 1
       this.limit = val
-      if(vxe) {
+      if (vxe) {
         this.search()
       } else {
         this.getDataList()
@@ -206,14 +206,14 @@ export default {
     // 分页, 当前页
     pageCurrentChangeHandle (val, vxe) {
       this.page = val
-      if(vxe) {
+      if (vxe) {
         this.search()
       } else {
         this.getDataList()
       }
     },
     // 双击
-    cellDblClick ({row}) {
+    cellDblClick ({ row }) {
       this.addOrUpdateVisible = true
       this.$nextTick(() => {
         this.$refs.addOrUpdate.init(row)
@@ -254,8 +254,8 @@ export default {
     deleteHandle (grid) {
       let ids = ''
       this.dataListSelections = grid.getSelectRecords()
-      if(grid.getSelectRecords().length === 0) {
-        if(!grid.getCurrentRow()) {
+      if (grid.getSelectRecords().length === 0) {
+        if (!grid.getCurrentRow()) {
           return this.$message({
             message: '请选择要删除的记录',
             type: 'warning'
@@ -270,9 +270,9 @@ export default {
         cancelButtonText: this.$t('views.public.cancel'),
         type: 'warning'
       }).then(() => {
-        this.$axios.post (
+        this.$axios.post(
           this.mixinViewModuleOptions.deleteURL,
-          {'ids': ids}
+          { 'ids': ids }
         ).then(res => {
           this.$message({
             message: this.$t('views.public.success'),
@@ -324,7 +324,7 @@ export default {
           })
         }).catch(() => {})
       }).catch(() => {})
-    }
+    },
     // 导出
     exportHandle () {
       var params = qs.stringify({
@@ -362,13 +362,13 @@ export default {
   },
   watch: {
     visible: function (newName, oldName) {
-      if(this.$refs.sGrid && newName) {
+      if (this.$refs.sGrid && newName) {
         this.dataList = []
         this.$refs.sGrid.loadData(this.dataList)
-        if(this.isNew){
+        if (this.isNew) {
           this.$refs.dataForm.resetFields()
         } else {
-          this.search();
+          this.search()
         }
       }
     }

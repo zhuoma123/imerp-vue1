@@ -120,6 +120,13 @@ export default {
         this.$refs['dataForm'].clearValidate()
       })
     },
+    update (row) {
+      this.dataForm = Object.assign({}, row)
+      this.visible = true
+      this.$nextTick(() => {
+        this.$refs['dataForm'].clearValidate()
+      })
+    },
     // 表单提交
     dataFormSubmitHandle () {
       let th = this

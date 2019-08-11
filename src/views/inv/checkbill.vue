@@ -38,8 +38,8 @@
               @select="handlePicSelect"
             ></el-autocomplete>
           </el-form-item>
-                                <el-form-item label="状态" >
-                      <el-select
+           <el-form-item label="状态" >
+             <el-select
               v-model="dataForm.status"
               filterable
               remote
@@ -214,7 +214,7 @@ export default {
         },
         {
           title: '状态',
-          field: 'status',
+          field: 'statusMean',
           sortable: true,
           align: 'center'
         },

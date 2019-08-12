@@ -159,6 +159,11 @@ export default {
           if (this.$refs.sGrid) {
             this.dataForm.lines = this.getItemListDate(this.$refs.sGrid);
           }
+          if(this.isNew) {
+            this.dataForm.state = 'NEW';
+          } else {
+            this.dataForm.state = 'MODIFIED';
+          }
           this.fullscreenLoading = true;
           this.$axios
             .post(this.mixinViewModuleOptions.updateURL, this.dataForm)
@@ -169,8 +174,8 @@ export default {
                 type: 'success',
                 duration: 1000,
                 onClose: () => {
-                  this.visible = false
-                  this.btnDisable = false
+                  this.visible = false;
+                  this.btnDisable = false;
                   this.$emit('refreshDataList')
                 }
               });

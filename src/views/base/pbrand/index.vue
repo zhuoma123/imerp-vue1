@@ -90,12 +90,12 @@ export default {
         deleteIsBatch: true
       },
       dataForm: {
-        code: '',
-        name: '',
-        pinyinCode: '',
-        wbCode: '',
-        remark: '',
-        companyId: ''
+        code: undefined,
+        name: undefined,
+        pinyinCode: undefined,
+        wbCode: undefined,
+        remark: undefined,
+        companyId: undefined
       },
       dataFormOp: {
         liekOps: 'like'

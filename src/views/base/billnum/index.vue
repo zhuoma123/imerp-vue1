@@ -91,8 +91,8 @@ export default {
         deleteIsBatchKey: 'code'
       },
       dataForm: {
-        code: '',
-        name: ''
+        code: undefined,
+        name: undefined
       },
       dataFormOp: {
         likeOps: 'like',

@@ -90,8 +90,8 @@ export default {
         deleteIsBatch: true
       },
       dataForm: {
-        code: '',
-        name: ''
+        code: undefined,
+        name: undefined
       },
       dataFormOp: {
         likeOps: 'like'

@@ -1,242 +1,339 @@
 <template>
-  <el-dialog :visible.sync="visible" :title="!dataForm.id ? $t('views.public.add') : $t('views.public.update')" :close-on-click-modal="false" :close-on-press-escape="false">
-    <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmitHandle()" label-width="120px">
-      <el-form-item prop="username" :label="$t('views.public.user.username')">
-        <el-input v-model="dataForm.username" :placeholder="$t('views.public.user.username')"/>
-      </el-form-item>
-      <el-form-item prop="deptName" :label="$t('views.public.user.deptName')" class="dept-list">
-        <el-popover v-model="deptListVisible" ref="deptListPopover" placement="bottom-start" trigger="click">
-          <el-tree
-                  :data="deptList"
-                  :props="{ label: 'name', children: 'children' }"
-                  node-key="id"
-                  ref="deptListTree"
-                  :highlight-current="true"
-                  :expand-on-click-node="false"
-                  accordion
-                  @current-change="deptListTreeCurrentChangeHandle">
-          </el-tree>
-        </el-popover>
-        <el-input v-model="dataForm.deptName" v-popover:deptListPopover :readonly="true" :placeholder="$t('views.public.user.deptName')"/>
-      </el-form-item>
-      <el-form-item prop="password" :label="$t('views.public.user.password')" :class="{ 'is-required': !dataForm.id }">
-        <el-input v-model="dataForm.password" type="password" :placeholder="$t('views.public.user.password')"/>
-      </el-form-item>
-      <el-form-item prop="comfirmPassword" :label="$t('views.public.user.comfirmPassword')" :class="{ 'is-required': !dataForm.id }">
-        <el-input v-model="dataForm.comfirmPassword" type="password" :placeholder="$t('views.public.user.comfirmPassword')"/>
-      </el-form-item>
-      <el-form-item prop="realName" :label="$t('views.public.user.realName')">
-        <el-input v-model="dataForm.realName" :placeholder="$t('views.public.user.realName')"/>
-      </el-form-item>
-      <el-form-item prop="gender" :label="$t('views.public.user.gender')" size="mini">
-        <el-radio-group v-model="dataForm.gender">
-          <el-radio :label="0">{{ $t('views.public.user.gender0') }}</el-radio>
-          <el-radio :label="1">{{ $t('views.public.user.gender1') }}</el-radio>
-          <el-radio :label="2">{{ $t('views.public.user.gender2') }}</el-radio>
-        </el-radio-group>
-      </el-form-item>
-      <el-form-item prop="email" :label="$t('views.public.user.email')">
-        <el-input v-model="dataForm.email" :placeholder="$t('views.public.user.email')"/>
-      </el-form-item>
-      <el-form-item prop="mobile" :label="$t('views.public.user.mobile')">
-        <el-input v-model="dataForm.mobile" :placeholder="$t('views.public.user.mobile')"/>
-      </el-form-item>
-      <el-form-item prop="roleIdList" :label="$t('views.public.user.roleIdList')" class="role-list">
-        <el-select v-model="dataForm.roleIdList" multiple :placeholder="$t('views.public.user.roleIdList')">
-          <el-option v-for="role in roleList" :key="role.id" :label="role.name" :value="role.id"/>
-        </el-select>
-      </el-form-item>
-      <el-form-item prop="status" :label="$t('views.public.user.status')" size="mini">
-        <el-radio-group v-model="dataForm.status">
-          <el-radio :label="0">{{ $t('views.public.user.status0') }}</el-radio>
-          <el-radio :label="1">{{ $t('views.public.user.status1') }}</el-radio>
-        </el-radio-group>
-      </el-form-item>
-    </el-form>
-    <template slot="footer">
-      <el-button @click="visible = false">{{ $t('views.public.cancel') }}</el-button>
-      <el-button type="primary" @click="dataFormSubmitHandle()">{{ $t('views.public.confirm') }}</el-button>
-    </template>
+  <el-dialog
+    :close-on-click-modal="false"
+    :visible.sync="visible"
+    v-loading.fullscreen.lock="fullscreenLoading"
+    width="80%"
+  >
+    <div slot="title">
+      <el-form
+        :model="dataForm"
+        labelSuffix="："
+        size="mini"
+        :rules="dataRule"
+        ref="dataForm"
+        @keyup.enter.native="dataFormSubmit()"
+        label-width="120px"
+      >
+        <el-input type="hidden" v-model="dataForm.id" clearable ></el-input>
+                <el-form-item label="盘点单号" prop="orderNum">
+                          <el-input v-model="dataForm.orderNum" clearable ></el-input>
+                      </el-form-item>
+                <el-form-item label="盘点主题" prop="topic">
+                          <el-input v-model="dataForm.topic" clearable ></el-input>
+                      </el-form-item>
+                <el-form-item label="盘点仓id" prop="warehouseId">
+                          <el-input v-model="dataForm.warehouseId" clearable ></el-input>
+                      </el-form-item>
+                <el-form-item label="负责人" prop="pic">
+                          <el-autocomplete
+                class="inline-input"
+                value-key="key"
+                v-model="dataForm.pic"
+                :fetch-suggestions="queryPic"
+                placeholder="请输入"
+                :trigger-on-focus="false"
+                @select="handlePicSelect"
+              ></el-autocomplete>
+                      </el-form-item>
+                <el-form-item label="状态" prop="status">
+                                          <el-select
+                  v-model="dataForm.status"
+                  :loading="statusSel.loading"
+                >
+                  <el-option
+                    v-for="item in statusSel.dataList"
+                    :key="item.key"
+                    :label="item.key"
+                    :value="item.value">
+                  </el-option>
+                </el-select>
+                                    </el-form-item>
+                <el-form-item label="审批状态" prop="wfStatus">
+                  <el-select v-model="dataForm.wfStatus" placeholder="请选择审批状态">
+                    <el-option label="草稿" value="1"></el-option>
+                    <el-option label="审核" value="2"></el-option>
+                    <el-option label="通过" value="3"></el-option>
+                  </el-select>
+                </el-form-item>
+                <el-form-item label="审批意见" prop="wfOpinion">
+                          <el-input v-model="dataForm.wfOpinion" clearable ></el-input>
+                      </el-form-item>
+                <el-form-item label="备注" prop="remark">
+                          <el-input v-model="dataForm.remark" clearable ></el-input>
+                      </el-form-item>
+                <el-form-item label="公司" prop="companyId">
+                          <el-input v-model="dataForm.companyId" clearable ></el-input>
+                      </el-form-item>
+              </el-form>
+    </div>
+    <vxe-grid
+      border
+      resizable
+      size="mini"
+      highlight-current-row
+      class="vxe-table-element"
+      remote-filter
+      ref="sGrid"
+      :toolbar="toolbar"
+      :proxy-config="tableProxy"
+      :columns="tableColumn"
+      :select-config="{reserve: true}"
+      :mouse-config="{selected: true}"
+      :keyboard-config="{isArrow: true, isDel: true, isTab: true, isEdit: true}"
+    ></vxe-grid>
+    <span slot="footer" class="dialog-footer">
+      <el-button @click="visible = false">取消</el-button>
+      <el-button type="primary" :disabled="btnDisable" @click="dataFormSubmit">确定</el-button>
+    </span>
   </el-dialog>
 </template>
 
 <script>
-  import { debounce } from 'lodash'
-  import { isEmail, isMobile } from '@/libs/validate'
-  export default {
-    data () {
-      return {
-        visible: false,
-        deptList: [],
-        deptListVisible: false,
-        roleList: [],
-        roleIdListDefault: [],
-        dataForm: {
-          id: '',
-          username: '',
-          deptId: '0',
-          deptName: '',
-          password: '',
-          comfirmPassword: '',
-          realName: '',
-          gender: 0,
-          email: '',
-          mobile: '',
-          roleIdList: [],
-          status: 1
+import mixinViewModule from "@/mixins/view-module"
+export default {
+  mixins: [mixinViewModule],
+  data() {
+    return {
+      mixinViewModuleOptions: {
+        getDataListURL: '/inv/checkbillline/list',
+        updateURL: "/inv/checkbill/save",
+        getDataListIsPage: false
+      },
+      visible: false,
+      btnDisable: false,
+      dataForm: {
+        id:'',
+        orderNum:'',
+        topic:'',
+        warehouseId:'',
+        checkDate:'',
+        pic:'',
+        status:'',
+        wfStatus:'',
+        wfOpinion:'',
+        remark:'',
+        companyId:'',
+        deletedFlag:'',
+        createBy:'',
+        createDate:'',
+        updateBy:'',
+        updateDate:'',
+      },
+      dataRule: {
+        id:[
+            { required: true, message: "id不能为空", trigger: "blur" }
+        ],
+        orderNum:[
+            { required: true, message: "盘点单号不能为空", trigger: "blur" }
+        ],
+        topic:[
+            { required: true, message: "盘点主题不能为空", trigger: "blur" }
+        ],
+        warehouseId:[
+            { required: true, message: "盘点仓id不能为空", trigger: "blur" }
+        ],
+        checkDate:[
+            { required: true, message: "盘点日期不能为空", trigger: "blur" }
+        ],
+        pic:[
+            { required: true, message: "负责人不能为空", trigger: "blur" }
+        ],
+        status:[
+            { required: true, message: "状态不能为空", trigger: "blur" }
+        ],
+        wfStatus:[
+            { required: true, message: "审批状态不能为空", trigger: "blur" }
+        ],
+        wfOpinion:[
+            { required: true, message: "审批意见不能为空", trigger: "blur" }
+        ],
+        remark:[
+            { required: true, message: "备注不能为空", trigger: "blur" }
+        ],
+        companyId:[
+            { required: true, message: "公司不能为空", trigger: "blur" }
+        ],
+        deletedFlag:[
+            { required: true, message: "删除标记不能为空", trigger: "blur" }
+        ],
+        createBy:[
+            { required: true, message: "创建人不能为空", trigger: "blur" }
+        ],
+        createDate:[
+            { required: true, message: "创建日期不能为空", trigger: "blur" }
+        ],
+        updateBy:[
+            { required: true, message: "修改人不能为空", trigger: "blur" }
+        ],
+        updateDate:[
+            { required: true, message: "修改日期不能为空", trigger: "blur" }
+        ],
+      },
+      tableColumn: [
+        { type: "selection", width: 30, align: "center" },
+        { type: "index", width: 30, align: "center" },
+          {
+          title: 'id',
+          field: 'id',
+          sortable: true,
+          align: 'center'
+        },
+            {
+          title: '盘点单id',
+          field: 'checkBillId',
+          sortable: true,
+          align: 'center'
+        },
+            {
+          title: '货位id',
+          field: 'warehouseSlotId',
+          sortable: true,
+          align: 'center'
+        },
+            {
+          title: '商品id',
+          field: 'productId',
+          sortable: true,
+          align: 'center'
+        },
+            {
+          title: '单位',
+          field: 'uom',
+          sortable: true,
+          align: 'center'
+        },
+            {
+          title: '帐面数量',
+          field: 'quantityOld',
+          sortable: true,
+          align: 'center'
+        },
+            {
+          title: '盘点数量',
+          field: 'quantityNew',
+          sortable: true,
+          align: 'center'
+        },
+            {
+          title: '差异数',
+          field: 'orderQty',
+          sortable: true,
+          align: 'center'
+        },
+            {
+          title: '差异原因',
+          field: 'diffCause',
+          sortable: true,
+          align: 'center'
+        },
+            {
+          title: '解决方案',
+          field: 'solution',
+          sortable: true,
+          align: 'center'
+        },
+            {
+          title: '备注',
+          field: 'remark',
+          sortable: true,
+          align: 'center'
+        },
+            {
+          title: '删除标记',
+          field: 'deletedFlag',
+          sortable: true,
+          align: 'center'
+        },
+            {
+          title: '创建人',
+          field: 'createBy',
+          sortable: true,
+          align: 'center'
+        },
+            {
+          title: '创建日期',
+          field: 'createDate',
+          sortable: true,
+          align: 'center',
+          formatter: ['toDateString', 'yyyy-MM-dd']
+        },
+            {
+          title: '修改人',
+          field: 'updateBy',
+          sortable: true,
+          align: 'center'
+        },
+            {
+          title: '修改日期',
+          field: 'updateDate',
+          sortable: true,
+          align: 'center',
+          formatter: ['toDateString', 'yyyy-MM-dd']
+        },
+        ],
+    picAuto: {
+      remoteURL:'/common/biz/employee',
+      dataList: [],
+      timeout: null
+    },
+    statusSel: {
+      remoteURL:'/common/code/status',
+      loading: false,
+      dataList: [],
+      timeout: null
+    },
+      toolbar: {
+        id: "full_edit_1",
+        buttons: [
+            { code: "insert_actived", name: "新增" },
+            { code: "remove_selection", name: "删除" }
+        ],
+        resizable: {
+            storage: true
+        },
+        setting: {
+            storage: true
         }
       }
-    },
-    computed: {
-      dataRule () {
-        var validatePassword = (rule, value, callback) => {
-          if (!this.dataForm.id && !/\S/.test(value)) {
-            return callback(new Error(this.$t('public.rules.required', { 'name': this.$t('views.public.user.password') })))
-          }
-          callback()
-        }
-        var validateComfirmPassword = (rule, value, callback) => {
-          if (!this.dataForm.id && !/\S/.test(value)) {
-            return callback(new Error(this.$t('public.rules.required', { 'name': this.$t('views.public.user.comfirmPassword') })))
-          }
-          if (this.dataForm.password !== value) {
-            return callback(new Error(this.$t('views.public.user.validate.comfirmPassword')))
-          }
-          callback()
-        }
-        var validateEmail = (rule, value, callback) => {
-          if (!isEmail(value)) {
-            return callback(new Error(this.$t('public.rules.format', { 'name': this.$t('views.public.user.email') })))
-          }
-          callback()
-        }
-        var validateMobile = (rule, value, callback) => {
-          if (!isMobile(value)) {
-            return callback(new Error(this.$t('public.rules.format', { 'name': this.$t('views.public.user.mobile') })))
-          }
-          callback()
-        }
-        return {
-          username: [
-            { required: true, message: this.$t('public.rules.required', { 'name': this.$t('views.public.user.username') }), trigger: 'blur' }
-          ],
-          deptName: [
-            { required: true, message: this.$t('public.rules.required', { 'name': this.$t('views.public.user.deptName') }), trigger: 'change' }
-          ],
-          password: [
-            { validator: validatePassword, trigger: 'blur' }
-          ],
-          comfirmPassword: [
-            { validator: validateComfirmPassword, trigger: 'blur' }
-          ],
-          realName: [
-            { required: true, message: this.$t('public.rules.required', { 'name': this.$t('views.public.user.realName') }), trigger: 'blur' }
-          ],
-          email: [
-            { required: true, message: this.$t('public.rules.required', { 'name': this.$t('views.public.user.email') }), trigger: 'blur' },
-            { validator: validateEmail, trigger: 'blur' }
-          ],
-          mobile: [
-            { required: true, message: this.$t('public.rules.required', { 'name': this.$t('views.public.user.mobile') }), trigger: 'blur' },
-            { validator: validateMobile, trigger: 'blur' }
-          ]
-        }
-      }
-    },
-    methods: {
-      init () {
-        this.visible = true
-        this.$nextTick(() => {
-          this.$refs['dataForm'].resetFields()
-          this.roleIdListDefault = []
-          Promise.all([
-            this.getDeptList(),
-            this.getRoleList()
-          ]).then(() => {
-            if (this.dataForm.id) {
-              // this.getInfo()
-            }
-          })
-        })
-      },
-      // 获取部门列表
-      getDeptList () {
-        return this.$axios.get('/sys/dept/list').then(res => {
-          this.deptList = res
-        }).catch(() => {})
-      },
-      // 获取角色列表
-      getRoleList () {
-        return this.$axios.get('/sys/role/list').then(res => {
-          this.roleList = res
-        }).catch(() => {})
-      },
-      // 获取信息
-      getInfo () {
-        this.$axios.get(`/sys/user/${this.dataForm.id}`).then(res => {
-          this.dataForm = {
-            ...this.dataForm,
-            ...res,
-            roleIdList: []
-          }
-          this.$refs.deptListTree.setCurrentKey(this.dataForm.deptId)
-          // 角色配置, 区分是否为默认角色
-          for (var i = 0; i < res.roleIdList.length; i++) {
-            if (this.roleList.filter(item => item.id === res.roleIdList[i])[0]) {
-              this.dataForm.roleIdList.push(res.roleIdList[i])
-              continue
-            }
-            this.roleIdListDefault.push(res.roleIdList[i])
-          }
-        }).catch(() => {})
-      },
-      // 所属部门树, 选中
-      deptListTreeCurrentChangeHandle (data, node) {
-        this.dataForm.deptId = data.id
-        this.dataForm.deptName = data.name
-        this.deptListVisible = false
-      },
-      // 表单提交
-      dataFormSubmitHandle: debounce(function () {
-        this.$refs['dataForm'].validate((valid) => {
-          if (!valid) {
-            return false
-          }
-          this.$axios[!this.dataForm.id ? 'post' : 'put']('/sys/user', {
-            ...this.dataForm,
-            roleIdList: [
-              ...this.dataForm.roleIdList,
-              ...this.roleIdListDefault
-            ]
-          }).then(res => {
-            this.$message({
-              message: this.$t('views.public.success'),
-              type: 'success',
-              duration: 500,
-              onClose: () => {
-                this.visible = false
-                this.$emit('refreshDataList')
-              }
-            })
-          }).catch(() => {})
-        })
-      }, 1000, { 'leading': true, 'trailing': false })
     }
-  }
-</script>
+  },
+  methods: {
+      queryPic: function (query, cb) {
+      if(query) {
+        this.$axios.post (
+          this.picAuto.remoteURL,
+          {query: query}
+        ).then(res => {
+          this.picAuto.dataList = [];
+          for(let i=0;i<res.length;i++){
+            this.picAuto.dataList.push(res[i])
+          }
+          cb(this.picAuto.dataList);
+        });
+      }
+    },
+    handlePicSelect: function () {
 
-<style lang="scss">
-  .mod-sys__user {
-    .dept-list {
-      .el-input__inner,
-      .el-input__suffix {
-        cursor: pointer;
-      }
-    }
-    .role-list {
-      .el-select {
-        width: 100%;
-      }
-    }
+    },
+        selStatus: function () {
+      this.statusSel.loading = true;
+      this.$axios.post (
+        this.statusSel.remoteURL,
+        {}
+      ).then(res => {
+        this.statusSel.loading = false;
+        if (res && res.length > 0) {
+          for (let i = 0; i < res.length; i++) {
+            this.statusSel.dataList.push(res[i])
+          }
+        } else
+          this.statusSel.dataList = [];
+      })
+    },
+    },
+  mounted () {
+  this.selStatus();
   }
-</style>
+};
+</script>

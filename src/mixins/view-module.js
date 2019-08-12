@@ -42,6 +42,21 @@ export default {
       sGrid: {},
       addOrUpdate: {},
       isNew: false,
+      tableProxy: {
+        index: true, // 启用动态序号代理
+        sort: true, // 启用排序代理
+        filter: true, // 启用筛选代理
+        ajax: {
+          query: ({ page, sort, filters }) => {
+            return this.vxeTabQuery({ page, sort, filters })
+          }
+        },
+        props: {
+          list: 'list',
+          result: 'list',
+          total: 'totalCount'
+        }
+      },
       //时间联动框
       pickerOptions: {
         shortcuts: [{
@@ -90,30 +105,30 @@ export default {
     // 获取数据列表
     getDataList (vxeDataForm) {
       return new Promise ((resolve, reject) => {
-        this.dataListLoading = true
+        this.dataListLoading = true;
         this.$axios.post(
           this.mixinViewModuleOptions.getDataListURL,
           {
-            pageForm: {
+            pageForm: this.mixinViewModuleOptions.getDataListIsPage ? {
               order: this.order,
               orderField: this.orderField,
               page: this.mixinViewModuleOptions.getDataListIsPage ? this.page : null,
               limit: this.mixinViewModuleOptions.getDataListIsPage ? this.limit : null
-            },
+            } : {},
             dataForm: {
               data: Object.assign({},this.dataForm, vxeDataForm),
               op: this.dataFormOp
             }
           }
         ).then(res => {
-          this.dataListLoading = false
-          this.dataList = this.mixinViewModuleOptions.getDataListIsPage ? res.list : res
-          this.total = this.mixinViewModuleOptions.getDataListIsPage ? res.totalCount : 0
+          this.dataListLoading = false;
+          this.dataList = this.mixinViewModuleOptions.getDataListIsPage ? res.list : res;
+          this.total = this.mixinViewModuleOptions.getDataListIsPage ? res.totalCount : 0;
           resolve()
         }).catch(() => {
-          this.dataList = []
-          this.total = 0
-          this.dataListLoading = false
+          this.dataList = [];
+          this.total = 0;
+          this.dataListLoading = false;
           reject()
         })
       })
@@ -121,14 +136,14 @@ export default {
     vxeTabQuery ({ page, sort, filters }) {
       // 处理排序条件
       if(sort) {
-        this.order = sort.order
+        this.order = sort.order;
         this.orderField = sort.property
       }
-      let vxeDataForm = {} 
+      let vxeDataForm = {};
       // 处理筛选条件
       filters.forEach(({ column, property, values }) => {
         vxeDataForm[property] = values.join(',')
-      })
+      });
       return new Promise((resolve, reject) => {
         this.getDataList(vxeDataForm).then(() => {
           resolve({
@@ -141,10 +156,13 @@ export default {
       })
     },
     search () {
-      this.dataListLoading = true
-      let vxeParams = {page:null, sort: null, filters: []}
+      this.dataListLoading = true;
+      let vxeParams = {page:null, sort: null, filters: []};
       this.vxeTabQuery(vxeParams).then((resolve, rejects) => {
-        this.pGrid.loadData(this.dataList)
+        if(this.$refs.sGrid) {
+          this.$refs.sGrid.loadData(this.dataList);
+        } else
+          this.pGrid.loadData(this.dataList);
         this.dataListLoading = false
       })
     },
@@ -155,6 +173,11 @@ export default {
           this.btnDisable = true;
           if(this.$refs.sGrid) {
             this.dataForm.lines = this.getItemListDate(this.$refs.sGrid);
+          }
+          if(this.isNew) {
+            this.dataForm.state = "NEW";
+          } else {
+            this.dataForm.state = "MODIFIED";
           }
           this.fullscreenLoading = true;
           this.$axios
@@ -185,18 +208,18 @@ export default {
     // 排序
     dataListSortChangeHandle (data) {
       if (!data.order || !data.prop) {
-        this.order = ''
-        this.orderField = ''
+        this.order = '';
+        this.orderField = '';
         return false
       }
-      this.order = data.order.replace(/ending$/, '')
-      this.orderField = data.prop.replace(/([A-Z])/g, '_$1').toLowerCase()
+      this.order = data.order.replace(/ending$/, '');
+      this.orderField = data.prop.replace(/([A-Z])/g, '_$1').toLowerCase();
       this.getDataList()
     },
     // 分页, 每页条数
     pageSizeChangeHandle (val, vxe) {
-      this.page = 1
-      this.limit = val
+      this.page = 1;
+      this.limit = val;
       if(vxe) {
         this.search()
       } else {
@@ -205,7 +228,7 @@ export default {
     },
     // 分页, 当前页
     pageCurrentChangeHandle (val, vxe) {
-      this.page = val
+      this.page = val;
       if(vxe) {
         this.search()
       } else {
@@ -214,34 +237,39 @@ export default {
     },
     // 双击
     cellDblClick ({row}) {
-      this.addOrUpdateVisible = true
+      this.addOrUpdateVisible = true;
       this.$nextTick(() => {
         this.$refs.addOrUpdate.init(row)
       })
     },
     // 新增
     addHandle () {
-      this.addOrUpdateVisible = true
+      this.addOrUpdateVisible = true;
       this.$nextTick(() => {
         this.$refs.addOrUpdate.init()
       })
     },
     // 修改
-    updateHandle (grid) {
-      var row = grid.getCurrentRow()
-      this.addOrUpdateVisible = true
-      this.$nextTick(() => {
-        if (row) {
+    updateHandle (event) {
+      let row = this.pGrid.getCurrentRow();
+      this.addOrUpdateVisible = true;
+      if (row) {
+        this.$nextTick(() => {
           this.$refs.addOrUpdate.init(row)
-        }
-      })
+        })
+      } else {
+        return this.$message({
+          message: '请选择要修改的记录',
+          type: 'warning'
+        })
+      }
     },
     // 新增 / 修改
     addOrUpdateHandleSetter (row) {
-      this.addOrUpdateVisible = true
+      this.addOrUpdateVisible = true;
       if (row) {
         this.$nextTick(() => {
-          this.addOrUpdate.dataForm.id = row.id
+          this.addOrUpdate.dataForm.id = row.id;
           this.addOrUpdate.init()
         })
       } else {
@@ -250,8 +278,8 @@ export default {
     },
     // 删除
     deleteHandle (grid) {
-      let ids = ''
-      this.dataListSelections = grid.getSelectRecords()
+      let ids = '';
+      this.dataListSelections = grid.getSelectRecords();
       if(grid.getSelectRecords().length === 0) {
         if(!grid.getCurrentRow()) {
           return this.$message({
@@ -285,7 +313,7 @@ export default {
     },
     // 导出
     exportHandle () {
-      var params = qs.stringify({
+      let params = qs.stringify({
         'token': cookieGet('token'),
         ...this.dataForm
       })
@@ -293,23 +321,23 @@ export default {
     },
     // 获取行表数据
     getItemListDate (grid) {
-      var allDate = grid.getRecordset()
-      var rlist = []
+      let allDate = grid.getRecordset();
+      let rlist = [];
       if (allDate) {
         if (allDate.insertRecords && allDate.insertRecords.length > 0) {
-          for (var i = 0; i < allDate.insertRecords.length; i++) {
+          for (let i = 0; i < allDate.insertRecords.length; i++) {
             allDate.insertRecords[i].__state = 'INSERT'
           }
           rlist = rlist.concat(allDate.insertRecords)
         }
         if (allDate.updateRecords && allDate.updateRecords.length > 0) {
-          for (var i = 0; i < allDate.updateRecords.length; i++) {
+          for (let i = 0; i < allDate.updateRecords.length; i++) {
             allDate.updateRecords[i].__state = 'UPDATE'
           }
           rlist = rlist.concat(allDate.updateRecords)
         }
         if (allDate.removeRecords && allDate.removeRecords.length > 0) {
-          for (var i = 0; i < allDate.removeRecords.length; i++) {
+          for (let i = 0; i < allDate.removeRecords.length; i++) {
             allDate.removeRecords[i].__state = 'DELETE'
           }
           rlist = rlist.concat(allDate.removeRecords)
@@ -321,8 +349,8 @@ export default {
   watch: {
     visible: function (newName, oldName) {
       if(this.$refs.sGrid && newName) {
-        this.dataList = []
-        this.$refs.sGrid.loadData(this.dataList)
+        this.dataList = [];
+        this.$refs.sGrid.loadData(this.dataList);
         if(this.isNew){
           this.$refs.dataForm.resetFields()
         } else {
@@ -334,9 +362,10 @@ export default {
   created () {
   },
   mounted () {
+    console.log("mixin-----mounted--->")
     this.$nextTick(() => {
-      this.pGrid = this.$refs.pGrid
-      this.sGrid = this.$refs.sGrid
+      this.pGrid = this.$refs.pGrid;
+      this.sGrid = this.$refs.sGrid;
       this.addOrUpdate = this.$refs.addOrUpdate
     })
   }

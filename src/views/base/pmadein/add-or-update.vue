@@ -1,13 +1,13 @@
 <template>
     <el-dialog :visible.sync="visible" :title="!dataForm.id ? $t('views.public.add') : $t('views.public.update')"
-               :close-on-click-modal="false" :close-on-press-escape="false">
+               :close-on-click-modal="false" :close-on-press-escape="false" width="800px">
         <el-form :model="dataForm" :rules="rules" ref="dataForm" @keyup.enter.native="dataFormSubmitHandle()"
-                 label-width="120px">
+                 label-width="120px" :inline="true">
             <el-form-item prop="code" :label="data.form.input.code">
                 <el-input v-model="dataForm.code" :placeholder="data.form.input.code"/>
             </el-form-item>
             <el-form-item prop="name" :label="data.form.input.name">
-                <el-input v-model="dataForm.name" :placeholder="data.form.input.type"/>
+                <el-input v-model="dataForm.name" :placeholder="data.form.input.name"/>
             </el-form-item>
             <el-form-item prop="pinyinCode" :label="data.form.input.pinyinCode">
                 <el-input v-model="dataForm.pinyinCode" :placeholder="data.form.input.pinyinCode"/>
@@ -18,9 +18,6 @@
             <el-form-item prop="remark" :label="data.form.input.remark">
                 <el-input v-model="dataForm.remark" :placeholder="data.form.input.remark"/>
             </el-form-item>
-            <el-form-item prop="companyId" :label="data.form.input.companyId">
-                <el-input v-model="dataForm.companyId" :placeholder="data.form.input.companyId"/>
-            </el-form-item>
         </el-form>
         <template slot="footer">
             <el-button @click="visible = false">{{ $t('views.public.cancel') }}</el-button>
@@ -30,9 +27,7 @@
 </template>
 
 <script>
-import { debounce } from 'lodash'
 import data from './data'
-import { save } from '@/api/base/base'
 
 export default {
   data () {
@@ -41,19 +36,11 @@ export default {
       visible: false,
       dataForm: {
         id: undefined,
-        parentId: undefined,
-        type: undefined,
         code: undefined,
         name: undefined,
-        orderNum: 0,
-        sys: true,
-        companyId: undefined,
-        remark: undefined,
-        attr1: undefined,
-        attr2: undefined,
-        attr3: undefined,
-        attr4: undefined,
-        attr5: undefined
+        pinyinCode: undefined,
+        wbCode: undefined,
+        remark: undefined
       },
       rules: {
         name: [{
@@ -73,28 +60,38 @@ export default {
         this.$refs['dataForm'].clearValidate()
       })
     },
+    update (row) {
+      this.dataForm = Object.assign({}, row)
+      this.visible = true
+      this.$nextTick(() => {
+        this.$refs['dataForm'].clearValidate()
+      })
+    },
     // 表单提交
-    dataFormSubmitHandle: debounce(function () {
-      this.$refs['dataForm'].validate((valid) => {
+    dataFormSubmitHandle () {
+      let th = this
+      this.$refs['dataForm'].validate(valid => {
         if (!valid) {
           return false
         }
-        if (this.dataForm.id) {
-          save(...this.dataForm, '/base/billnum/save').then(res => {
-            this.$message({
-              message: this.$t('views.public.success'),
-              type: 'success',
-              duration: 500,
-              onClose: () => {
-                this.visible = false
-                this.$emit('refreshDataList')
-              }
-            })
-          }).catch(() => {
+        th.$axios({
+          url: '/base/productmadein/save',
+          method: 'post',
+          data: th.dataForm
+        }).then(res => {
+          this.$message({
+            message: this.$t('views.public.success'),
+            type: 'success',
+            duration: 500,
+            onClose: () => {
+              this.visible = false
+              this.$emit('refreshDataList')
+            }
           })
-        }
+        }).catch(() => {
+        })
       })
-    }, 1000, { 'leading': true, 'trailing': false })
+    }
   }
 }
 </script>

@@ -42,21 +42,6 @@ export default {
       sGrid: {},
       addOrUpdate: {},
       isNew: false,
-      tableProxy: {
-        index: true, // 启用动态序号代理
-        sort: true, // 启用排序代理
-        filter: true, // 启用筛选代理
-        ajax: {
-          query: ({ page, sort, filters }) => {
-            return this.vxeTabQuery({ page, sort, filters })
-          }
-        },
-        props: {
-          list: 'list',
-          result: 'list',
-          total: 'totalCount'
-        }
-      },
       //时间联动框
       pickerOptions: {
         shortcuts: [{
@@ -167,17 +152,12 @@ export default {
       })
     },
     // 表单提交
-    dataFormSubmit() {
+    dataFormSubmit () {
       this.$refs.dataForm.validate(valid => {
         if (valid) {
           this.btnDisable = true;
-          if(this.$refs.sGrid) {
+          if (this.$refs.sGrid) {
             this.dataForm.lines = this.getItemListDate(this.$refs.sGrid);
-          }
-          if(this.isNew) {
-            this.dataForm.state = "NEW";
-          } else {
-            this.dataForm.state = "MODIFIED";
           }
           this.fullscreenLoading = true;
           this.$axios
@@ -185,13 +165,13 @@ export default {
             .then(({ data }) => {
               this.fullscreenLoading = false;
               this.$message({
-                message: "操作成功",
-                type: "success",
+                message: '操作成功',
+                type: 'success',
                 duration: 1000,
                 onClose: () => {
-                  this.visible = false;
-                  this.btnDisable = false;
-                  this.$emit("refreshDataList");
+                  this.visible = false
+                  this.btnDisable = false
+                  this.$emit('refreshDataList')
                 }
               });
             }).catch(error => {
@@ -244,7 +224,7 @@ export default {
     },
     // 新增
     addHandle () {
-      this.addOrUpdateVisible = true;
+      this.addOrUpdateVisible = true
       this.$nextTick(() => {
         this.$refs.addOrUpdate.init()
       })
@@ -269,11 +249,13 @@ export default {
       this.addOrUpdateVisible = true;
       if (row) {
         this.$nextTick(() => {
-          this.addOrUpdate.dataForm.id = row.id;
-          this.addOrUpdate.init()
+          this.$refs.addOrUpdate.dataForm.id = row.id;
+          this.$refs.addOrUpdate.init();
         })
       } else {
-        this.addOrUpdate.init()
+        this.$nextTick(() => {
+          this.$refs.addOrUpdate.init();
+        })
       }
     },
     // 删除
@@ -306,6 +288,46 @@ export default {
             duration: 500,
             onClose: () => {
               this.search()
+            }
+          })
+        }).catch(() => {})
+      }).catch(() => {})
+    },
+    // 删除
+    deleteHandleSetter (index) {
+      let data
+      if (this.mixinViewModuleOptions.deleteIsBatch && this.dataListSelections.length > 0) {
+        data = this.dataListSelections.map(item => item[this.mixinViewModuleOptions.deleteIsBatchKey])
+      }
+      let row
+      if (!index) {
+        row = undefined
+      } else {
+        row = index.row
+      }
+      if (row) {
+        const id = row.id
+        if (id) {
+          data = [id]
+        }
+      }
+      this.$confirm(this.$t('public.prompt.info', { 'handle': this.$t('views.public.delete') }), this.$t('public.prompt.title'), {
+        confirmButtonText: this.$t('views.public.confirm'),
+        cancelButtonText: this.$t('views.public.cancel'),
+        type: 'warning'
+      }).then(() => {
+        this.$axios.post(
+          `${this.mixinViewModuleOptions.deleteURL}${this.mixinViewModuleOptions.deleteIsBatch ? '' : '/' + id}`,
+          this.mixinViewModuleOptions.deleteIsBatch ? {
+            'data': data
+          } : {}
+        ).then(res => {
+          this.$message({
+            message: this.$t('views.public.success'),
+            type: 'success',
+            duration: 500,
+            onClose: () => {
+              this.getDataList()
             }
           })
         }).catch(() => {})
@@ -349,8 +371,8 @@ export default {
   watch: {
     visible: function (newName, oldName) {
       if(this.$refs.sGrid && newName) {
-        this.dataList = [];
-        this.$refs.sGrid.loadData(this.dataList);
+        this.dataList = []
+        this.$refs.sGrid.loadData(this.dataList)
         if(this.isNew){
           this.$refs.dataForm.resetFields()
         } else {
@@ -362,10 +384,9 @@ export default {
   created () {
   },
   mounted () {
-    console.log("mixin-----mounted--->")
     this.$nextTick(() => {
-      this.pGrid = this.$refs.pGrid;
-      this.sGrid = this.$refs.sGrid;
+      this.pGrid = this.$refs.pGrid
+      this.sGrid = this.$refs.sGrid
       this.addOrUpdate = this.$refs.addOrUpdate
     })
   }

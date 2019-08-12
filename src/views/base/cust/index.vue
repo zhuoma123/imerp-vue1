@@ -32,7 +32,7 @@
                 <el-button
                         v-if="$hasPermission('sys:user:delete')"
                         type="danger"
-                        @click="deleteHandle()"
+                        @click="deleteHandleSetter()"
                 >{{ $t('views.public.deleteBatch') }}
                 </el-button>
             </el-form-item>
@@ -55,7 +55,7 @@
                 @selection-change="dataListSelectionChangeHandle"
                 @sort-change="dataListSortChangeHandle"
                 @user-update="addOrUpdateHandleSetter"
-                @user-delete="deleteHandle"
+                @user-delete="deleteHandleSetter"
         ></d2-crud>
         <!-- 分页 -->
         <el-pagination
@@ -76,6 +76,7 @@
 <script>
 import mixinViewModule from '@/mixins/view-module'
 import AddOrUpdate from './add-or-update'
+import data from './data'
 
 export default {
   mixins: [mixinViewModule],
@@ -113,6 +114,7 @@ export default {
         username: 'like'
       },
       rowHandler: {
+        width: '160px',
         custom: [
           {
             text: this.$t('views.public.update'),
@@ -134,60 +136,7 @@ export default {
           }
         ]
       },
-      columns: [
-        {
-          title: this.$t('views.public.user.username'),
-          key: 'username',
-          sortable: true,
-          align: 'center'
-        },
-        {
-          title: this.$t('views.public.user.deptName'),
-          key: 'deptName',
-          sortable: true,
-          align: 'center'
-        },
-        {
-          title: this.$t('views.public.user.email'),
-          key: 'email',
-          sortable: true,
-          align: 'center'
-        },
-        {
-          title: this.$t('views.public.user.mobile'),
-          key: 'mobile',
-          sortable: true,
-          align: 'center'
-        },
-        {
-          title: this.$t('views.public.user.status'),
-          key: 'status',
-          align: 'center',
-          width: '70px',
-          component: {
-            render: function (createElement) {
-              let s = 'views.public.user.status' + this.scope.row.status
-              let type = this.scope.row.status == '0' ? 'danger' : 'success'
-              return createElement(
-                'el-tag',
-                {
-                  attrs: {
-                    type,
-                    size: 'mini'
-                  }
-                },
-                `${this.$t(s)}`
-              )
-            }
-          }
-        },
-        {
-          title: this.$t('views.public.createDate'),
-          key: 'createDate',
-          sortable: true,
-          align: 'center'
-        }
-      ]
+      columns: data.form.columns
     }
   },
   components: {

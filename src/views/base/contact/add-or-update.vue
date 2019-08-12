@@ -1,8 +1,8 @@
 <template>
     <el-dialog :visible.sync="visible" :title="!dataForm.id ? $t('views.public.add') : $t('views.public.update')"
-               :close-on-click-modal="false" :close-on-press-escape="false">
+               :close-on-click-modal="false" :close-on-press-escape="false" width="850px">
         <el-form :model="dataForm" :rules="rules" ref="dataForm" @keyup.enter.native="dataFormSubmitHandle()"
-                 label-width="120px">
+                 label-width="120px" :inline="true">
             <el-form-item prop="custId" :label="data.form.input.custId">
                 <el-input v-model="dataForm.custId" :placeholder="data.form.input.custId"/>
             </el-form-item>
@@ -39,9 +39,7 @@
 </template>
 
 <script>
-import { debounce } from 'lodash'
 import data from './data'
-import { save } from '@/api/base/base'
 
 export default {
   data () {
@@ -50,19 +48,15 @@ export default {
       visible: false,
       dataForm: {
         id: undefined,
-        parentId: undefined,
-        type: undefined,
-        code: undefined,
+        custId: undefined,
         name: undefined,
-        orderNum: 0,
-        sys: true,
-        companyId: undefined,
-        remark: undefined,
-        attr1: undefined,
-        attr2: undefined,
-        attr3: undefined,
-        attr4: undefined,
-        attr5: undefined
+        shortName: undefined,
+        linkman: undefined,
+        mobileNo: undefined,
+        tel: undefined,
+        weixinNo: undefined,
+        email: undefined,
+        remark: undefined
       },
       rules: {
         name: [{
@@ -82,28 +76,38 @@ export default {
         this.$refs['dataForm'].clearValidate()
       })
     },
+    update (row) {
+      this.dataForm = Object.assign({}, row)
+      this.visible = true
+      this.$nextTick(() => {
+        this.$refs['dataForm'].clearValidate()
+      })
+    },
     // 表单提交
-    dataFormSubmitHandle: debounce(function () {
-      this.$refs['dataForm'].validate((valid) => {
+    dataFormSubmitHandle () {
+      let th = this
+      this.$refs['dataForm'].validate(valid => {
         if (!valid) {
           return false
         }
-        if (this.dataForm.id) {
-          save(...this.dataForm, '/base/billnum/save').then(res => {
-            this.$message({
-              message: this.$t('views.public.success'),
-              type: 'success',
-              duration: 500,
-              onClose: () => {
-                this.visible = false
-                this.$emit('refreshDataList')
-              }
-            })
-          }).catch(() => {
+        th.$axios({
+          url: '/base/custcontact/save',
+          method: 'post',
+          data: th.dataForm
+        }).then(res => {
+          this.$message({
+            message: this.$t('views.public.success'),
+            type: 'success',
+            duration: 500,
+            onClose: () => {
+              this.visible = false
+              this.$emit('refreshDataList')
+            }
           })
-        }
+        }).catch(() => {
+        })
       })
-    }, 1000, { 'leading': true, 'trailing': false })
+    }
   }
 }
 </script>

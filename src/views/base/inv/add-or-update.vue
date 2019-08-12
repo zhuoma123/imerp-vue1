@@ -1,13 +1,15 @@
 <template>
     <el-dialog :visible.sync="visible" :title="!dataForm.id ? $t('views.public.add') : $t('views.public.update')"
-               :close-on-click-modal="false" :close-on-press-escape="false">
+               :close-on-click-modal="false" :close-on-press-escape="false" width="800px">
         <el-form :model="dataForm" :rules="rules" ref="dataForm" @keyup.enter.native="dataFormSubmitHandle()"
-                 label-width="120px">
+                 label-width="120px" :inline="true">
             <el-form-item prop="requirementDate" :label="data.form.input.requirementDate">
-                <el-input v-model="dataForm.requirementDate" :placeholder="data.form.input.requirementDate"/>
-            </el-form-item>
-            <el-form-item prop="companyId" :label="data.form.input.companyId">
-                <el-input v-model="dataForm.companyId" :placeholder="data.form.input.companyId"/>
+                <el-date-picker
+                        value-format="yyyy-MM-dd"
+                        v-model="dataForm.requirementDate"
+                        type="date"
+                        :placeholder="data.form.input.requirementDate">
+                </el-date-picker>
             </el-form-item>
             <el-form-item prop="productId" :label="data.form.input.productId">
                 <el-input v-model="dataForm.productId" :placeholder="data.form.input.productId"/>
@@ -34,17 +36,11 @@
                 <el-input v-model="dataForm.remark" :placeholder="data.form.input.remark"/>
             </el-form-item>
         </el-form>
-        <template slot="footer">
-            <el-button @click="visible = false">{{ $t('views.public.cancel') }}</el-button>
-            <el-button type="primary" @click="dataFormSubmitHandle()">{{ $t('views.public.confirm') }}</el-button>
-        </template>
     </el-dialog>
 </template>
 
 <script>
-import { debounce } from 'lodash'
 import data from './data'
-import { save } from '@/api/base/base'
 
 export default {
   data () {
@@ -57,8 +53,8 @@ export default {
         productId: undefined,
         warehouseId: undefined,
         tranType: undefined,
-        demandSourceHeaderId: 0,
-        demandSourceLineId: true,
+        demandSourceHeaderId: undefined,
+        demandSourceLineId: undefined,
         reservationUomCode: undefined,
         reservationQuantity: undefined,
         remark: undefined
@@ -79,30 +75,42 @@ export default {
       this.$nextTick(() => {
         this.$refs['dataForm'].resetFields()
         this.$refs['dataForm'].clearValidate()
+        // this.dataForm.requirementDate = new Date()
+      })
+    },
+    update (row) {
+      this.dataForm = Object.assign({}, row)
+      this.visible = true
+      this.$nextTick(() => {
+        this.$refs['dataForm'].clearValidate()
       })
     },
     // 表单提交
-    dataFormSubmitHandle: debounce(function () {
-      this.$refs['dataForm'].validate((valid) => {
+    dataFormSubmitHandle () {
+      debugger
+      let th = this
+      this.$refs['dataForm'].validate(valid => {
         if (!valid) {
           return false
         }
-        if (this.dataForm.id) {
-          save(...this.dataForm, '/base/reservation/save').then(res => {
-            this.$message({
-              message: this.$t('views.public.success'),
-              type: 'success',
-              duration: 500,
-              onClose: () => {
-                this.visible = false
-                this.$emit('refreshDataList')
-              }
-            })
-          }).catch(() => {
+        th.$axios({
+          url: '/base/reservation/save',
+          method: 'post',
+          data: th.dataForm
+        }).then(res => {
+          this.$message({
+            message: this.$t('views.public.success'),
+            type: 'success',
+            duration: 500,
+            onClose: () => {
+              this.visible = false
+              this.$emit('refreshDataList')
+            }
           })
-        }
+        }).catch(() => {
+        })
       })
-    }, 1000, { 'leading': true, 'trailing': false })
+    }
   }
 }
 </script>

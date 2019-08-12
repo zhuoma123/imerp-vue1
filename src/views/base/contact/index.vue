@@ -52,7 +52,7 @@
                 <el-button
                         v-if="$hasPermission('sys:user:delete')"
                         type="danger"
-                        @click="deleteHandle()"
+                        @click="deleteHandleSetter()"
                 >{{ $t('views.public.deleteBatch') }}
                 </el-button>
             </el-form-item>
@@ -75,7 +75,7 @@
                 @selection-change="dataListSelectionChangeHandle"
                 @sort-change="dataListSortChangeHandle"
                 @user-update="addOrUpdateHandleSetter"
-                @user-delete="deleteHandle"
+                @user-delete="deleteHandleSetter"
         ></d2-crud>
         <!-- 分页 -->
         <el-pagination
@@ -106,20 +106,21 @@ export default {
       mixinViewModuleOptions: {
         getDataListURL: '/base/custcontact/list',
         getDataListIsPage: true,
-        deleteURL: '/base/custcontact',
+        deleteURL: '/base/custcontact/delete',
         deleteIsBatch: true
       },
       dataForm: {
-        name: '',
-        mobileNo: '',
-        custId: '',
-        shortName: ''
+        name: undefined,
+        mobileNo: undefined,
+        custId: undefined,
+        shortName: undefined
       },
       dataFormOp: {
         likeOps: 'like',
         equalsOps: '='
       },
       rowHandler: {
+        width: '160px',
         custom: [
           {
             text: this.$t('views.public.update'),

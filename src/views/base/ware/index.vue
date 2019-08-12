@@ -5,7 +5,7 @@
                 <el-input
                         v-model="dataForm.code"
                         :data-operate="dataFormOp.likeOps"
-                        :placeholder="data.form.search.code"
+                        :placeholder="data.form.input.code"
                         clearable
                 />
             </el-form-item>
@@ -13,7 +13,7 @@
                 <el-input
                         v-model="dataForm.name"
                         :data-operate="dataFormOp.likeOps"
-                        :placeholder="data.form.search.name"
+                        :placeholder="data.form.input.name"
                         clearable
                 />
             </el-form-item>
@@ -21,7 +21,7 @@
                 <el-input
                         v-model="dataForm.mobileNo"
                         :data-operate="dataFormOp.likeOps"
-                        :placeholder="data.form.search.mobileNo"
+                        :placeholder="data.form.input.mobileNo"
                         clearable
                 />
             </el-form-item>
@@ -40,7 +40,7 @@
                 <el-button
                         v-if="$hasPermission('sys:user:delete')"
                         type="danger"
-                        @click="deleteHandle()"
+                        @click="deleteHandleSetter()"
                 >{{ $t('views.public.deleteBatch') }}
                 </el-button>
             </el-form-item>
@@ -63,7 +63,7 @@
                 @selection-change="dataListSelectionChangeHandle"
                 @sort-change="dataListSortChangeHandle"
                 @user-update="addOrUpdateHandleSetter"
-                @user-delete="deleteHandle"
+                @user-delete="deleteHandleSetter"
         ></d2-crud>
         <!-- 分页 -->
         <el-pagination
@@ -94,17 +94,19 @@ export default {
       mixinViewModuleOptions: {
         getDataListURL: '/base/warehouse/list',
         getDataListIsPage: true,
-        deleteURL: '/base/warehouse',
+        deleteURL: '/base/warehouse/delete',
         deleteIsBatch: true
       },
       dataForm: {
-        username: '',
-        mobile: ''
+        code: undefined,
+        name: undefined,
+        mobileNo: undefined
       },
       dataFormOp: {
         username: 'like'
       },
       rowHandler: {
+        width: '180px',
         custom: [
           {
             text: this.$t('views.public.update'),

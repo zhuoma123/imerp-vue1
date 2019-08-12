@@ -1,23 +1,185 @@
-{"form": {
-  "input": {
-    "custVendor": "客户/供应商",
-    "code": "编号",
-    "name": "姓名",
-    "shortName": "职务",
-    "type": "类型",
-    "fax": "传真",
-    "mm": "企业微信号",
-    "companyAddress": "企业地址",
-    "legalMan": "法人",
-    "webSite": "网址",
-    "bank": "开户银行",
-    "bankAccount": "银行账号",
-    "taxNum": "纳税号",
-    "pinyinCode": "拼音码",
-    "wbCode": "五笔码",
-    "pic": "业务员",
-    "companyId": "公司",
-    "remark": "备注",
-    "email": "邮箱"
+{
+  "form": {
+    "columns": [
+      {
+        "title": "客户|供应商",
+        "key": "custVendor",
+        "sortable": true,
+        "align": "center",
+        "width": "120px"
+      },
+      {
+        "title": "编号",
+        "key": "code",
+        "sortable": true,
+        "align": "center"
+      },
+      {
+        "title": "名称",
+        "key": "name",
+        "sortable": true,
+        "align": "center",
+        "width": "150px"
+      },
+      {
+        "title": "职称",
+        "key": "shortName",
+        "sortable": true,
+        "align": "center",
+        "width": "150px"
+      },
+      {
+        "title": "类型",
+        "key": "type",
+        "sortable": true,
+        "align": "center"
+      },
+      {
+        "title": "公司电话",
+        "key": "tel",
+        "sortable": true,
+        "align": "center",
+        "width": "120px"
+      },
+      {
+        "title": "公司传真",
+        "key": "fax",
+        "sortable": true,
+        "align": "center",
+        "width": "120px"
+      },
+      {
+        "title": "公司邮箱",
+        "key": "email",
+        "sortable": true,
+        "align": "center",
+        "width": "120px"
+      },
+      {
+        "title": "公司微信号",
+        "key": "mm",
+        "sortable": true,
+        "align": "center",
+        "width": "130px"
+      },
+      {
+        "title": "公司地址",
+        "key": "companyAddress",
+        "sortable": true,
+        "align": "center",
+        "width": "120px"
+      },
+      {
+        "title": "法人",
+        "key": "legalMan",
+        "sortable": true,
+        "align": "center"
+      },
+      {
+        "title": "公司网址",
+        "key": "webSite",
+        "sortable": true,
+        "align": "center",
+        "width": "120px"
+      },
+      {
+        "title": "开户银行",
+        "key": "bank",
+        "sortable": true,
+        "align": "center",
+        "width": "120px"
+      },
+      {
+        "title": "银行账号",
+        "key": "bankAccount",
+        "sortable": true,
+        "align": "center",
+        "width": "120px"
+      },
+      {
+        "title": "纳税号",
+        "key": "taxNum",
+        "sortable": true,
+        "align": "center",
+        "width": "120px"
+      },
+      {
+        "title": "拼音码",
+        "key": "pinyinCode",
+        "sortable": true,
+        "align": "center",
+        "width": "120px"
+      },
+      {
+        "title": "五笔码",
+        "key": "wbCode",
+        "sortable": true,
+        "align": "center",
+        "width": "120px"
+      },
+      {
+        "title": "业务员",
+        "key": "pic",
+        "sortable": true,
+        "align": "center",
+        "width": "120px"
+      },
+      {
+        "title": "备注",
+        "key": "remark",
+        "sortable": true,
+        "align": "center"
+      },
+      {
+        "title": "创建人",
+        "key": "createBy",
+        "sortable": true,
+        "align": "center",
+        "width": "120px"
+      },
+      {
+        "title": "创建日期",
+        "key": "createDate",
+        "sortable": true,
+        "align": "center",
+        "width": "120px"
+      },
+      {
+        "title": "修改人",
+        "key": "updateBy",
+        "sortable": true,
+        "align": "center",
+        "width": "120px"
+      },
+      {
+        "title": "修改日期",
+        "key": "updateDate",
+        "sortable": true,
+        "align": "center",
+        "width": "120px"
+      }
+    ],
+    "input": {
+      "custVendor": "客户/供应商",
+      "code": "编号",
+      "name": "姓名",
+      "shortName": "职务",
+      "type": "类型",
+      "tel": "电话",
+      "fax": "传真",
+      "mm": "企业微信号",
+      "companyAddress": "企业地址",
+      "legalMan": "法人",
+      "webSite": "网址",
+      "bank": "开户银行",
+      "bankAccount": "银行账号",
+      "taxNum": "纳税号",
+      "pinyinCode": "拼音码",
+      "wbCode": "五笔码",
+      "pic": "业务员",
+      "companyId": "公司",
+      "remark": "备注",
+      "email": "邮箱"
+    }
   }
-}}
+}

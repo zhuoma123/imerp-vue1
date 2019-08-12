@@ -1,8 +1,8 @@
 <template>
     <el-dialog :visible.sync="visible" :title="!dataForm.id ? $t('views.public.add') : $t('views.public.update')"
-               :close-on-click-modal="false" :close-on-press-escape="false">
+               :close-on-click-modal="false" :close-on-press-escape="false" width="850px">
         <el-form :model="dataForm" :rules="rules" ref="dataForm" @keyup.enter.native="dataFormSubmitHandle()"
-                 label-width="120px">
+                 label-width="120px" :inline="true">
             <el-form-item prop="code" :label="data.form.input.code">
                 <el-input v-model="dataForm.code" :placeholder="data.form.input.code"/>
             </el-form-item>
@@ -43,7 +43,7 @@
                 <el-input v-model="dataForm.volume" :placeholder="data.form.input.volume"/>
             </el-form-item>
             <el-form-item prop="defaultVendorId" :label="data.form.input.weight">
-                <el-input v-model="dataForm.defaultVendorId" :placeholder="data.form.input.defaultVendorId"/>
+                <el-input v-model="dataForm.defaultVendorId" :placeholder="data.form.input.weight"/>
             </el-form-item>
             <el-form-item prop="defaultVendorId" :label="data.form.input.defaultVendorId">
                 <el-input v-model="dataForm.defaultVendorId" :placeholder="data.form.input.defaultVendorId"/>
@@ -75,9 +75,7 @@
 </template>
 
 <script>
-import { debounce } from 'lodash'
 import data from './data'
-import { save } from '@/api/base/base'
 
 export default {
   data () {
@@ -90,8 +88,8 @@ export default {
         name: undefined,
         alisaName: undefined,
         categoryId: undefined,
-        vehicleId: 0,
-        brandId: true,
+        vehicleId: undefined,
+        brandId: undefined,
         madeinId: undefined,
         barCode: undefined,
         picCode: undefined,
@@ -126,28 +124,38 @@ export default {
         this.$refs['dataForm'].clearValidate()
       })
     },
+    update (row) {
+      this.dataForm = Object.assign({}, row)
+      this.visible = true
+      this.$nextTick(() => {
+        this.$refs['dataForm'].clearValidate()
+      })
+    },
     // 表单提交
-    dataFormSubmitHandle: debounce(function () {
-      this.$refs['dataForm'].validate((valid) => {
+    dataFormSubmitHandle () {
+      let th = this
+      this.$refs['dataForm'].validate(valid => {
         if (!valid) {
           return false
         }
-        if (this.dataForm.id) {
-          save(...this.dataForm, '/base/billnum/save').then(res => {
-            this.$message({
-              message: this.$t('views.public.success'),
-              type: 'success',
-              duration: 500,
-              onClose: () => {
-                this.visible = false
-                this.$emit('refreshDataList')
-              }
-            })
-          }).catch(() => {
+        th.$axios({
+          url: '/base/product/save',
+          method: 'post',
+          data: th.dataForm
+        }).then(res => {
+          this.$message({
+            message: this.$t('views.public.success'),
+            type: 'success',
+            duration: 500,
+            onClose: () => {
+              this.visible = false
+              this.$emit('refreshDataList')
+            }
           })
-        }
+        }).catch(() => {
+        })
       })
-    }, 1000, { 'leading': true, 'trailing': false })
+    }
   }
 }
 </script>

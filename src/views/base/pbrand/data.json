@@ -26,11 +26,6 @@
         "key": "remark",
         "sortable": true,
         "align": "center"
-      },{
-        "title": "公司ID",
-        "key": "companyId",
-        "sortable": true,
-        "align": "center"
       },
       {
         "title": "创建人",
@@ -41,7 +36,8 @@
         "title": "创建日期",
         "key": "createDate",
         "sortable": true,
-        "align": "center"
+        "align": "center",
+        "width": "120px"
       },{
         "title": "修改人",
         "key": "updateBy",
@@ -52,7 +48,8 @@
         "title": "修改日期",
         "key": "updateDate",
         "sortable": true,
-        "align": "center"
+        "align": "center",
+        "width": "120px"
       }
     ],
     "input": {

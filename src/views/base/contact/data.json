@@ -5,7 +5,8 @@
         "title": "客户ID",
         "key": "custId",
         "sortable": true,
-        "align": "center"
+        "align": "center",
+        "width": "110px"
       },
       {
         "title": "姓名",
@@ -17,29 +18,34 @@
         "title": "职务",
         "key": "shortName",
         "sortable": true,
-        "align": "center"
+        "align": "center",
+        "width": "160px"
       },
       {
         "title": "首要联系人",
         "key": "linkman",
         "sortable": true,
-        "align": "center"
+        "align": "center",
+        "width": "160px"
       },
       {
         "title": "手机",
         "key": "mobileNo",
         "sortable": true,
-        "align": "center"
+        "align": "center",
+        "width": "160px"
       },{
         "title": "办公电话",
         "key": "tel",
         "sortable": true,
-        "align": "center"
+        "align": "center",
+        "width": "120px"
       },{
         "title": "微信号",
         "key": "weixinNo",
         "sortable": true,
-        "align": "center"
+        "align": "center",
+        "width": "110px"
       },
       {
         "title": "邮箱",
@@ -57,24 +63,28 @@
         "title": "创建人",
         "key": "createBy",
         "sortable": true,
-        "align": "center"
+        "align": "center",
+        "width": "120px"
       },
       {
         "title": "创建日期",
         "key": "createDate",
         "sortable": true,
-        "align": "center"
+        "align": "center",
+        "width": "120px"
       },{
         "title": "修改人",
         "key": "updateBy",
         "sortable": true,
-        "align": "center"
+        "align": "center",
+        "width": "110px"
       },
       {
         "title": "修改日期",
         "key": "updateDate",
         "sortable": true,
-        "align": "center"
+        "align": "center",
+        "width": "110px"
       }
     ],
     "input": {

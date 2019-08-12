@@ -40,7 +40,6 @@
     <d2-crud
       :columns="columns"
       :options="options"
-      selectionRow
       :row-handle="rowHandler"
       :loading="dataListLoading"
       :data="dataList"

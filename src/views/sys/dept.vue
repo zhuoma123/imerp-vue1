@@ -44,6 +44,7 @@
       :row-handle="rowHandler"
       :loading="dataListLoading"
       :data="dataList"
+      :key="deptId"
       @selection-change="dataListSelectionChangeHandle"
       @sort-change="dataListSortChangeHandle"
       @user-update="addOrUpdateHandle"
@@ -67,15 +68,15 @@
 
 <script>
 import mixinViewModule from "@/mixins/view-module";
-import AddOrUpdate from "./user-add-or-update";
+import AddOrUpdate from "./dept-add-or-update";
 export default {
   mixins: [mixinViewModule],
   data() {
     return {
       mixinViewModuleOptions: {
-        getDataListURL: "/sys/dept/list",
+        getDataListURL: "/sys/dept/listpage",
         getDataListIsPage: true,
-        deleteURL: "/sys/dept",
+        deleteURL: "/sys/dept/delete",
         deleteIsBatch: true,
         exportURL: "/sys/dept/export"
       },
@@ -92,7 +93,7 @@ export default {
             type: 'primary',
             size: 'mini',
             emit: 'user-update',
-            show: (index, row) => {
+            show: (row) => {
               return this.$hasPermission("sys:dept:update");
             }
           },
@@ -101,13 +102,19 @@ export default {
             type: 'danger',
             size: 'mini',
             emit: 'user-delete',
-            show: (index, row) => {
+            show: ( row) => {
               return this.$hasPermission("sys:dept:delete");
             }
           }
         ]
       },
       columns: [
+        {
+          title: "id",
+          key: "deptId",
+          sortable: true,
+          align: "center",
+        },
         {
           title: this.$t("views.public.dept.name"),
           key: "name",
@@ -140,7 +147,7 @@ export default {
     AddOrUpdate
   },
   methods: {
-    
+   
   }
   
  

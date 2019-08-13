@@ -19,14 +19,6 @@ module.exports = {
   lintOnSave: true,
   devServer: {
     publicPath, // 和 publicPath 保持一致
-    // proxy: {
-    //   '/api': {
-    //     target: 'http://localhost:8081',
-    //     // ws: true,
-    //     changeOrigin: true,
-    //     '^/api': '/api'
-    //   }
-    // }
   },
   css: {
     loaderOptions: {
@@ -116,7 +108,6 @@ module.exports = {
     if (process.env.VUE_APP_BUILD_MODE !== 'NOMOCK') {
       // 判断环境加入模拟数据
       const entry = config.entry('app')
-      console.log('-------------加入模拟数据------------------')
       entry
         .add('@/mock')
         .end()

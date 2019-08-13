@@ -42,6 +42,21 @@ export default {
       sGrid: {},
       addOrUpdate: {},
       isNew: false,
+      tableProxy: {
+        index: true, // 启用动态序号代理
+        sort: true, // 启用排序代理
+        filter: true, // 启用筛选代理
+        ajax: {
+          query: ({ page, sort, filters }) => {
+            return this.vxeTabQuery({ page, sort, filters })
+          }
+        },
+        props: {
+          list: 'list',
+          result: 'list',
+          total: 'totalCount'
+        }
+      },
       //时间联动框
       pickerOptions: {
         shortcuts: [{
@@ -157,26 +172,26 @@ export default {
         if (valid) {
           this.btnDisable = true;
           if (this.$refs.sGrid) {
-            this.dataForm.lines = this.getItemListDate(this.$refs.sGrid);
+            this.dataForm.lineList = this.getItemListDate(this.$refs.sGrid);
           }
           if(this.isNew) {
-            this.dataForm.state = 'NEW';
+            this.dataForm.__state = 'NEW';
           } else {
-            this.dataForm.state = 'MODIFIED';
+            this.dataForm.__state = 'MODIFIED';
           }
           this.fullscreenLoading = true;
           this.$axios
             .post(this.mixinViewModuleOptions.updateURL, this.dataForm)
-            .then(({ data }) => {
+            .then(() => {
               this.fullscreenLoading = false;
+              this.visible = false;
+              this.$emit('refreshDataList');
               this.$message({
                 message: '操作成功',
                 type: 'success',
                 duration: 1000,
                 onClose: () => {
-                  this.visible = false;
                   this.btnDisable = false;
-                  this.$emit('refreshDataList')
                 }
               });
             }).catch(error => {
@@ -353,19 +368,19 @@ export default {
       if (allDate) {
         if (allDate.insertRecords && allDate.insertRecords.length > 0) {
           for (let i = 0; i < allDate.insertRecords.length; i++) {
-            allDate.insertRecords[i].__state = 'INSERT'
+            allDate.insertRecords[i].__state = 'NEW'
           }
           rlist = rlist.concat(allDate.insertRecords)
         }
         if (allDate.updateRecords && allDate.updateRecords.length > 0) {
           for (let i = 0; i < allDate.updateRecords.length; i++) {
-            allDate.updateRecords[i].__state = 'UPDATE'
+            allDate.updateRecords[i].__state = 'MODIFIED'
           }
           rlist = rlist.concat(allDate.updateRecords)
         }
         if (allDate.removeRecords && allDate.removeRecords.length > 0) {
           for (let i = 0; i < allDate.removeRecords.length; i++) {
-            allDate.removeRecords[i].__state = 'DELETE'
+            allDate.removeRecords[i].__state = 'DELETED'
           }
           rlist = rlist.concat(allDate.removeRecords)
         }

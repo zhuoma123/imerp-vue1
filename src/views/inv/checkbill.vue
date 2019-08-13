@@ -133,9 +133,9 @@
       @cell-dblclick="cellDblClick">
       <template v-slot:buttons>
         <vxe-button @click="search">刷新</vxe-button>
-        <vxe-button @click="addHandle">新增</vxe-button>
-        <vxe-button @click="updateHandle">修改</vxe-button>
-        <vxe-button v-if="$hasPermission('inv:checkbill:delete')" @click="deleteHandle">删除</vxe-button>
+        <vxe-button v-if="$hasPermission('inv:checkbill:save')" @click="addHandle()">新增</vxe-button>
+        <vxe-button v-if="$hasPermission('inv:checkbill:save')" @click="updateHandle($refs.pGrid)">修改</vxe-button>
+        <vxe-button v-if="$hasPermission('inv:checkbill:delete')" @click="deleteHandle($refs.pGrid)">删除</vxe-button>
         <vxe-button v-if="$hasPermission('inv:checkbill:save')" >提交</vxe-button>
         <vxe-button v-if="$hasPermission('inv:checkbill:print')" >打印</vxe-button>
         <vxe-button v-if="$hasPermission('inv:checkbill:export')" @click="$refs.pGrid.exportCsv()">导出.csv</vxe-button>
@@ -358,7 +358,6 @@ export default {
     }
   },
   mounted () {
-    console.log("-----mounted--->")
     this.selStatus();
   }
 }

@@ -5,7 +5,7 @@
                 <el-input
                         v-model="dataForm.code"
                         :data-operate="dataFormOp.liekOps"
-                        :placeholder="$t('views.public.user.username')"
+                        :placeholder="data.form.input.code"
                         clearable
                 />
             </el-form-item>
@@ -13,7 +13,7 @@
                 <el-input
                         v-model="dataForm.name"
                         :data-operate="dataFormOp.likeOps"
-                        :placeholder="$t('views.public.user.mobile')"
+                        :placeholder="data.form.input.name"
                         clearable
                 />
             </el-form-item>
@@ -82,6 +82,7 @@ export default {
   mixins: [mixinViewModule],
   data () {
     return {
+      data: data,
       mixinViewModuleOptions: {
         getDataListURL: '/base/productmadein/list',
         getDataListIsPage: true,
@@ -89,8 +90,8 @@ export default {
         deleteIsBatch: true
       },
       dataForm: {
-        code: '',
-        name: ''
+        code: undefined,
+        name: undefined
       },
       dataFormOp: {
         likeOps: 'like'

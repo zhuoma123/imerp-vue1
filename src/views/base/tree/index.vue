@@ -78,9 +78,9 @@ export default {
         deleteIsBatch: true
       },
       dataForm: {
-        type: '',
-        code: '',
-        name: ''
+        type: undefined,
+        code: undefined,
+        name: undefined
       },
       dataFormOp: {
         likeOps: 'like'

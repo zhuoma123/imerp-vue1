@@ -23,54 +23,182 @@ export default {
       limit: 10,                  // 每页数
       total: 0,                   // 总条数
       dataListLoading: false,     // 数据列表，loading状态
+      fullscreenLoading: false,   // 全页面遮罩
       dataListSelections: [],     // 数据列表，多选项
       addOrUpdateVisible: false,   // 新增／更新，弹窗visible状态
       // 表格属性
       selectionRow: false,
+      sortConfig: {
+        trigger: 'cell'
+      },
       options: {
         size: 'mini',
         stripe: true,
         border: true
-      }
+      },
+      visible: false,
+      btnDisable: false,
+      pGrid: {},
+      sGrid: {},
+      addOrUpdate: {},
+      isNew: false,
+      tableProxy: {
+        index: true, // 启用动态序号代理
+        sort: true, // 启用排序代理
+        filter: true, // 启用筛选代理
+        ajax: {
+          query: ({ page, sort, filters }) => {
+            return this.vxeTabQuery({ page, sort, filters })
+          }
+        },
+        props: {
+          list: 'list',
+          result: 'list',
+          total: 'totalCount'
+        }
+      },
+      //时间联动框
+      pickerOptions: {
+        shortcuts: [{
+            text: '最近一周',
+            onClick(picker) {
+                const end = new Date();
+                const start = new Date();
+                start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+                picker.$emit('pick', [start, end]);
+            }
+        }, {
+            text: '最近一个月',
+            onClick(picker) {
+                const end = new Date();
+                const start = new Date();
+                start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+                picker.$emit('pick', [start, end]);
+            }
+        }, {
+            text: '最近三个月',
+            onClick(picker) {
+                const end = new Date();
+                const start = new Date();
+                start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
+                picker.$emit('pick', [start, end]);
+            }
+        }]
+      },
     }
     /* eslint-enable */
   },
-  activated () {
-    if (this.mixinViewModuleOptions.activatedIsNeed) {
-      this.getDataList()
-    }
-  },
-  created () {
-    if (this.mixinViewModuleOptions.activatedIsNeed) {
-      this.getDataList()
-    }
-  },
   methods: {
+    /**
+     * 该方法只用于子页面
+     * @param {*} item 
+     */
+    init(item) { 
+      if(item) {
+        Object.assign(this.dataForm, item);
+        this.isNew = false;
+      } else {
+        this.isNew = true;
+      }
+      this.visible = true;
+    },
     // 获取数据列表
-    getDataList () {
-      this.dataListLoading = true
-      this.$axios.post(
-        this.mixinViewModuleOptions.getDataListURL,
-        {
-          pageForm: {
-            order: this.order,
-            orderField: this.orderField,
-            page: this.mixinViewModuleOptions.getDataListIsPage ? this.page : null,
-            limit: this.mixinViewModuleOptions.getDataListIsPage ? this.limit : null
-          },
-          dataForm: {
-            data: this.dataForm,
-            op: this.dataFormOp
+    getDataList (vxeDataForm) {
+      return new Promise ((resolve, reject) => {
+        this.dataListLoading = true;
+        this.$axios.post(
+          this.mixinViewModuleOptions.getDataListURL,
+          {
+            pageForm: this.mixinViewModuleOptions.getDataListIsPage ? {
+              order: this.order,
+              orderField: this.orderField,
+              page: this.mixinViewModuleOptions.getDataListIsPage ? this.page : null,
+              limit: this.mixinViewModuleOptions.getDataListIsPage ? this.limit : null
+            } : {},
+            dataForm: {
+              data: Object.assign({},this.dataForm, vxeDataForm),
+              op: this.dataFormOp
+            }
           }
+        ).then(res => {
+          this.dataListLoading = false;
+          this.dataList = this.mixinViewModuleOptions.getDataListIsPage ? res.list : res;
+          this.total = this.mixinViewModuleOptions.getDataListIsPage ? res.totalCount : 0;
+          resolve()
+        }).catch(() => {
+          this.dataList = [];
+          this.total = 0;
+          this.dataListLoading = false;
+          reject()
+        })
+      })
+    },
+    vxeTabQuery ({ page, sort, filters }) {
+      // 处理排序条件
+      if(sort) {
+        this.order = sort.order;
+        this.orderField = sort.property
+      }
+      let vxeDataForm = {};
+      // 处理筛选条件
+      filters.forEach(({ column, property, values }) => {
+        vxeDataForm[property] = values.join(',')
+      });
+      return new Promise((resolve, reject) => {
+        this.getDataList(vxeDataForm).then(() => {
+          resolve({
+            total: this.total,
+            list: this.dataList
+          })
+        }).catch(err => {
+          resolve()
+        })
+      })
+    },
+    search () {
+      this.dataListLoading = true;
+      let vxeParams = {page:null, sort: null, filters: []};
+      this.vxeTabQuery(vxeParams).then((resolve, rejects) => {
+        if(this.$refs.sGrid) {
+          this.$refs.sGrid.loadData(this.dataList);
+        } else
+          this.pGrid.loadData(this.dataList);
+        this.dataListLoading = false
+      })
+    },
+    // 表单提交
+    dataFormSubmit () {
+      this.$refs.dataForm.validate(valid => {
+        if (valid) {
+          this.btnDisable = true;
+          if (this.$refs.sGrid) {
+            this.dataForm.lineList = this.getItemListDate(this.$refs.sGrid);
+          }
+          if(this.isNew) {
+            this.dataForm.__state = 'NEW';
+          } else {
+            this.dataForm.__state = 'MODIFIED';
+          }
+          this.fullscreenLoading = true;
+          this.$axios
+            .post(this.mixinViewModuleOptions.updateURL, this.dataForm)
+            .then(() => {
+              this.fullscreenLoading = false;
+              this.visible = false;
+              this.$emit('refreshDataList');
+              this.$message({
+                message: '操作成功',
+                type: 'success',
+                duration: 1000,
+                onClose: () => {
+                  this.btnDisable = false;
+                }
+              });
+            }).catch(error => {
+              this.btnDisable = false;
+              this.fullscreenLoading = false;
+            });
         }
-      ).then(res => {
-        this.dataListLoading = false
-        this.dataList = this.mixinViewModuleOptions.getDataListIsPage ? res.list : res
-        this.total = this.mixinViewModuleOptions.getDataListIsPage ? res.totalCount : 0
-      }).catch(() => {
-        this.dataList = []
-        this.total = 0
-        this.dataListLoading = false
       })
     },
     // 多选
@@ -80,70 +208,138 @@ export default {
     // 排序
     dataListSortChangeHandle (data) {
       if (!data.order || !data.prop) {
-        this.order = ''
-        this.orderField = ''
+        this.order = '';
+        this.orderField = '';
         return false
       }
-      this.order = data.order.replace(/ending$/, '')
-      this.orderField = data.prop.replace(/([A-Z])/g, '_$1').toLowerCase()
+      this.order = data.order.replace(/ending$/, '');
+      this.orderField = data.prop.replace(/([A-Z])/g, '_$1').toLowerCase();
       this.getDataList()
     },
     // 分页, 每页条数
-    pageSizeChangeHandle (val) {
-      this.page = 1
-      this.limit = val
-      this.getDataList()
+    pageSizeChangeHandle (val, vxe) {
+      this.page = 1;
+      this.limit = val;
+      if(vxe) {
+        this.search()
+      } else {
+        this.getDataList()
+      }
     },
     // 分页, 当前页
-    pageCurrentChangeHandle (val) {
-      this.page = val
-      this.getDataList()
+    pageCurrentChangeHandle (val, vxe) {
+      this.page = val;
+      if(vxe) {
+        this.search()
+      } else {
+        this.getDataList()
+      }
     },
-    // 新增 / 修改
-    addOrUpdateHandle (row) {
-      console.log(row)
+    // 双击
+    cellDblClick ({row}) {
+      this.addOrUpdateVisible = true;
+      this.$nextTick(() => {
+        this.$refs.addOrUpdate.init(row)
+      })
+    },
+    // 新增
+    addHandle () {
       this.addOrUpdateVisible = true
       this.$nextTick(() => {
-        if (row) {
-          this.$refs.addOrUpdate.dataForm.id = row.id
-        }
-
         this.$refs.addOrUpdate.init()
       })
     },
-    // 新增 / 修改
-    addOrUpdateHandleSetter (row) {
-      debugger
-      var i=this;
-      this.addOrUpdateVisible = true
-      if(row) {
+    // 修改
+    updateHandle (event) {
+      let row = this.pGrid.getCurrentRow();
+      this.addOrUpdateVisible = true;
+      if (row) {
         this.$nextTick(() => {
-          this.$refs.addOrUpdate.dataForm.id = row.id
-          this.$refs.addOrUpdate.init()
+          this.$refs.addOrUpdate.init(row)
         })
       } else {
-        this.$refs.addOrUpdate.init()
+        return this.$message({
+          message: '请选择要修改的记录',
+          type: 'warning'
+        })
+      }
+    },
+    // 新增 / 修改
+    addOrUpdateHandleSetter (row) {
+      this.addOrUpdateVisible = true;
+      if (row) {
+        this.$nextTick(() => {
+          this.$refs.addOrUpdate.dataForm.id = row.id;
+          this.$refs.addOrUpdate.init();
+        })
+      } else {
+        this.$nextTick(() => {
+          this.$refs.addOrUpdate.init();
+        })
       }
     },
     // 删除
-    deleteHandle ({ index, row }) {
-      const id = row.id
-      if (this.mixinViewModuleOptions.deleteIsBatch && !id && this.dataListSelections.length <= 0) {
-        return this.$message({
-          message: this.$t('public.prompt.deleteBatch'),
-          type: 'warning',
-          duration: 500
-        })
+    deleteHandle (grid) {
+      let ids = '';
+      this.dataListSelections = grid.getSelectRecords();
+      if(grid.getSelectRecords().length === 0) {
+        if(!grid.getCurrentRow()) {
+          return this.$message({
+            message: '请选择要删除的记录',
+            type: 'warning'
+          })
+        }
+        ids = grid.getCurrentRow().id
+      } else {
+        ids = this.dataListSelections.map(item => item.id).join()
+      }
+      this.$confirm('确定要删除选中的记录', { 'handle': '删除' }, '确认操作', {
+        confirmButtonText: this.$t('views.public.confirm'),
+        cancelButtonText: this.$t('views.public.cancel'),
+        type: 'warning'
+      }).then(() => {
+        this.$axios.post (
+          this.mixinViewModuleOptions.deleteURL,
+          {'ids': ids}
+        ).then(res => {
+          this.$message({
+            message: this.$t('views.public.success'),
+            type: 'success',
+            duration: 500,
+            onClose: () => {
+              this.search()
+            }
+          })
+        }).catch(() => {})
+      }).catch(() => {})
+    },
+    // 删除
+    deleteHandleSetter (index) {
+      let data
+      if (this.mixinViewModuleOptions.deleteIsBatch && this.dataListSelections.length > 0) {
+        data = this.dataListSelections.map(item => item[this.mixinViewModuleOptions.deleteIsBatchKey])
+      }
+      let row
+      if (!index) {
+        row = undefined
+      } else {
+        row = index.row
+      }
+      if (row) {
+        const id = row.id
+        if (id) {
+          data = [id]
+        }
       }
       this.$confirm(this.$t('public.prompt.info', { 'handle': this.$t('views.public.delete') }), this.$t('public.prompt.title'), {
         confirmButtonText: this.$t('views.public.confirm'),
         cancelButtonText: this.$t('views.public.cancel'),
         type: 'warning'
       }).then(() => {
-        this.$axios.delete(
+        this.$axios.post(
           `${this.mixinViewModuleOptions.deleteURL}${this.mixinViewModuleOptions.deleteIsBatch ? '' : '/' + id}`,
           this.mixinViewModuleOptions.deleteIsBatch ? {
-            'data': id ? [id] : this.dataListSelections.map(item => item[this.mixinViewModuleOptions.deleteIsBatchKey])
+            'data': data
           } : {}
         ).then(res => {
           this.$message({
@@ -159,11 +355,59 @@ export default {
     },
     // 导出
     exportHandle () {
-      var params = qs.stringify({
+      let params = qs.stringify({
         'token': cookieGet('token'),
         ...this.dataForm
       })
       window.location.href = `${window.SITE_CONFIG['apiURL']}${this.mixinViewModuleOptions.exportURL}?${params}`
+    },
+    // 获取行表数据
+    getItemListDate (grid) {
+      let allDate = grid.getRecordset();
+      let rlist = [];
+      if (allDate) {
+        if (allDate.insertRecords && allDate.insertRecords.length > 0) {
+          for (let i = 0; i < allDate.insertRecords.length; i++) {
+            allDate.insertRecords[i].__state = 'NEW'
+          }
+          rlist = rlist.concat(allDate.insertRecords)
+        }
+        if (allDate.updateRecords && allDate.updateRecords.length > 0) {
+          for (let i = 0; i < allDate.updateRecords.length; i++) {
+            allDate.updateRecords[i].__state = 'MODIFIED'
+          }
+          rlist = rlist.concat(allDate.updateRecords)
+        }
+        if (allDate.removeRecords && allDate.removeRecords.length > 0) {
+          for (let i = 0; i < allDate.removeRecords.length; i++) {
+            allDate.removeRecords[i].__state = 'DELETED'
+          }
+          rlist = rlist.concat(allDate.removeRecords)
+        }
+      }
+      return rlist
     }
+  },
+  watch: {
+    visible: function (newName, oldName) {
+      if(this.$refs.sGrid && newName) {
+        this.dataList = []
+        this.$refs.sGrid.loadData(this.dataList)
+        if(this.isNew){
+          this.$refs.dataForm.resetFields()
+        } else {
+          this.search();
+        }
+      }
+    }
+  },
+  created () {
+  },
+  mounted () {
+    this.$nextTick(() => {
+      this.pGrid = this.$refs.pGrid
+      this.sGrid = this.$refs.sGrid
+      this.addOrUpdate = this.$refs.addOrUpdate
+    })
   }
 }

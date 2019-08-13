@@ -160,4 +160,4 @@ At the same time, you can report your project to us. We will place the excellent
 
 [MIT](https://github.com/d2-projects/d2-admin/blob/master/LICENSE)
 
-Copyright (c) 2018-present FairyEver
+Copyright (c) 2018-2019 广州盟码信息科技有限公司

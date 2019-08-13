@@ -19,14 +19,6 @@ module.exports = {
   lintOnSave: true,
   devServer: {
     publicPath, // 和 publicPath 保持一致
-    // proxy: {
-    //   '/api': {
-    //     target: 'http://localhost:8081',
-    //     // ws: true,
-    //     changeOrigin: true,
-    //     '^/api': '/api'
-    //   }
-    // }
   },
   css: {
     loaderOptions: {
@@ -74,7 +66,7 @@ module.exports = {
       // 开发环境
       .when(process.env.NODE_ENV === 'development',
         // sourcemap不包含列信息cheap-module-eval-source-map
-        config => config.devtool('cheap-module-eval-source-map')
+        config => config.devtool('source-map')
       )
       // TRAVIS 构建 vue-loader 添加 filename
       .when(process.env.VUE_APP_SCOURCE_LINK === 'TRUE',
@@ -116,7 +108,6 @@ module.exports = {
     if (process.env.VUE_APP_BUILD_MODE !== 'NOMOCK') {
       // 判断环境加入模拟数据
       const entry = config.entry('app')
-      console.log('-------------加入模拟数据------------------')
       entry
         .add('@/mock')
         .end()

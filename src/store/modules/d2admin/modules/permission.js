@@ -20,7 +20,7 @@ const routePathDict = {}
  * 删除无用的 children 字段以及精简数据
  * @param {Array} menuArray 后台返回的菜单格式
  */
-function toD2AdminMenu(menuArray) {
+function toD2AdminMenu (menuArray) {
   const transform = menu => ({
     ...(menu.children && menu.children.length > 0) ? { children: menu.children.map(e => transform(e)) } : {},
     id: menu.menuId,
@@ -36,7 +36,7 @@ function toD2AdminMenu(menuArray) {
  * 将后台返回的数据转化成 d2admin/page/init 使用的【路由】数据，得到每一级的路由设置，用于处理layout里面的tab页
  * @param {Array} menuArray 后台返回的菜单格式
  */
-function toD2AdminPageInitData(menuArray) {
+function toD2AdminPageInitData (menuArray) {
   const transform = menu => ({
     ...(menu.children && menu.children.length > 0) ? { children: menu.children.map(e => transform(e)) } : {},
     meta: {
@@ -52,7 +52,7 @@ function toD2AdminPageInitData(menuArray) {
  * 将后台返回的数据转化成 d2admin/search/init 使用的数据
  * @param {Array} menuArray 后台返回的菜单格式
  */
-function toD2AdminSearchInitData(menuArray) {
+function toD2AdminSearchInitData (menuArray) {
   const transform = menu => ({
     ...(menu.children && menu.children.length > 0) ? { children: menu.children.map(e => transform(e)) } : {},
     path: routePathDict[menu.menuId],
@@ -66,7 +66,7 @@ function toD2AdminSearchInitData(menuArray) {
  * 组装一级路由
  * @param {Array} menuList
  */
-function fnAddDynamicRootRoutes(menuList = []) {
+function fnAddDynamicRootRoutes (menuList = []) {
   let rootRoutes = []
   menuList.forEach(item => {
     if (item.children && item.children.length >= 1) {
@@ -94,7 +94,7 @@ function fnAddDynamicRootRoutes(menuList = []) {
  * @param {*} menuList 菜单列表
  * @param {*} routes 递归创建的动态(菜单)路由
  */
-function fnAddDynamicSubRoutes(menuList = [], routes = []) {
+function fnAddDynamicSubRoutes (menuList = [], routes = []) {
   var temp = []
   menuList.forEach(item => {
     if (item.children && item.children.length >= 1) {
@@ -121,7 +121,7 @@ function fnAddDynamicSubRoutes(menuList = [], routes = []) {
         route['path'] = route['name'] = `i-${item.menuId}`
         route['meta']['iframeURL'] = URL
         route['component'] = {
-          render(h) {
+          render (h) {
             return h('d2-container', {}, [
               h('iframe', {
                 style: {
@@ -208,7 +208,7 @@ const mutations = {
   },
   SET_ISLOCK: (state, isLock) => {
     state.isLock = isLock
-    if(!isLock) {
+    if (!isLock) {
       state.isDynamicAddRoute = false
     }
   }

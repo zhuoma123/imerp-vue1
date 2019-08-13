@@ -1,0 +1,171 @@
+{
+  "form": {
+    "columns": [
+      {
+        "title": "编号",
+        "key": "code",
+        "sortable": true,
+        "align": "center"
+      },
+      {
+        "title": "名称",
+        "key": "name",
+        "sortable": true,
+        "align": "center"
+      },
+      {
+        "title": "别名",
+        "key": "alisaName",
+        "sortable": true,
+        "align": "center"
+      },
+      {
+        "title": "配件分类",
+        "key": "categoryId",
+        "sortable": true,
+        "align": "center",
+        "width": "110px"
+      },{
+        "title": "车型ID",
+        "key": "vehicleId",
+        "sortable": true,
+        "align": "center",
+        "width": "110px"
+      },{
+        "title": "品牌ID",
+        "key": "brandId",
+        "sortable": true,
+        "align": "center",
+        "width": "110px"
+      },
+      {
+        "title": "产地ID",
+        "key": "madeinId",
+        "sortable": true,
+        "align": "center",
+        "width": "110px"
+      },{
+        "title": "条码",
+        "key": "barCode",
+        "sortable": true,
+        "align": "center"
+      },{
+        "title": "图号",
+        "key": "picCode",
+        "sortable": true,
+        "align": "center"
+      },{
+        "title": "规格属性",
+        "key": "specialParam",
+        "sortable": true,
+        "align": "center",
+        "width": "120px"
+      },
+      {
+        "title": "描述",
+        "key": "desc",
+        "sortable": true,
+        "align": "center"
+      },
+      {
+        "title": "单位",
+        "key": "unit",
+        "sortable": true,
+        "align": "center"
+      },
+      {
+        "title": "体积",
+        "key": "volume",
+        "sortable": true,
+        "align": "center"
+      },
+      {
+        "title": "重量",
+        "key": "weight",
+        "sortable": true,
+        "align": "center"
+      },
+      {
+        "title": "默认供应商ID",
+        "key": "defaultVendorId",
+        "sortable": true,
+        "align": "center",
+        "width": "140px"
+      },{
+        "title": "物料状态",
+        "key": "status",
+        "sortable": true,
+        "align": "center",
+        "width": "120px"
+      },{
+        "title": "拼音码",
+        "key": "pinyinCode",
+        "sortable": true,
+        "align": "center",
+        "width": "110px"
+      },{
+        "title": "五笔码",
+        "key": "wbCode",
+        "sortable": true,
+        "align": "center",
+        "width": "110px"
+      },
+      {
+        "title": "备注",
+        "key": "remark",
+        "sortable": true,
+        "align": "center"
+      },
+      {
+        "title": "创建人",
+        "key": "createBy",
+        "sortable": true,
+        "align": "center",
+        "width": "110px"
+      },{
+        "title": "创建日期",
+        "key": "createDate",
+        "sortable": true,
+        "align": "center",
+        "width": "120px"
+      },{
+        "title": "修改人",
+        "key": "updateBy",
+        "sortable": true,
+        "align": "center",
+        "width": "110px"
+      },
+      {
+        "title": "修改日期",
+        "key": "updateDate",
+        "sortable": true,
+        "align": "center",
+        "width": "120px"
+      }
+    ],
+    "input": {
+      "code": "编号",
+      "name": "名称",
+      "categoryId": "分类",
+      "vehicleId": "车型ID",
+      "brandId": "品牌ID",
+      "madeinId": "产地ID",
+      "alisaName": "别名",
+      "barCode": "条码",
+      "picCode": "图号",
+      "specialParam": "规格属性",
+      "desc": "描述",
+      "unit": "单位",
+      "volume": "体积",
+      "weight": "重量",
+      "defaultVendorId": "默认供应商ID",
+      "status": "物料状态",
+      "pinyinCode": "拼音码",
+      "wbCode": "五笔码",
+      "salePrice": "销售价",
+      "costPrice": "成本价",
+      "remark": "备注",
+      "companyId": "公司"
+    }
+  }
+}

@@ -91,7 +91,7 @@ export default {
       },
       dataForm: {
         warehouseId: undefined,
-        name: ''
+        name: undefined
       },
       dataFormOp: {
         likeOps: 'like'

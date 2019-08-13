@@ -40,6 +40,7 @@ function toD2AdminPageInitData (menuArray) {
   const transform = menu => ({
     ...(menu.children && menu.children.length > 0) ? { children: menu.children.map(e => transform(e)) } : {},
     meta: {
+      cache: true,
       title: menu.name
     },
     name: routeNameDict[menu.menuId],
@@ -109,7 +110,6 @@ function fnAddDynamicSubRoutes (menuList = [], routes = []) {
         meta: {
           ...window.SITE_CONFIG['contentTabDefault'],
           cache: true,
-          auth: true,
           menuId: item.menuId,
           title: item.name
         }

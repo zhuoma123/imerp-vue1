@@ -409,5 +409,8 @@ export default {
       this.sGrid = this.$refs.sGrid
       this.addOrUpdate = this.$refs.addOrUpdate
     })
+  },
+  activated() {
+    console.log("---------------->activated")
   }
 }

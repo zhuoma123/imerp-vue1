@@ -13,7 +13,7 @@
         </div>
         <div class="page-login--content-main" flex="dir:top main:center cross:center">
           <!-- logo -->
-          <img class="page-login--logo" src="./image/logo@2x.png" />
+          <img class="page-login--logo" :src="`${$baseUrl}image/imema@v1.png`" />
           <!-- form -->
           <div class="page-login--form">
             <el-card shadow="never">
@@ -42,17 +42,6 @@
                     <i slot="prepend" class="fa fa-keyboard-o"></i>
                   </el-input>
                 </el-form-item>
-                <el-form-item prop="code">
-                  <el-input
-                    type="text"
-                    v-model="formLogin.code"
-                    :placeholder="$t('views.system.login.form.placeholder.code')"
-                  >
-                    <template slot="append">
-                      <img class="login-code" src="./image/login-code.png" />
-                    </template>
-                  </el-input>
-                </el-form-item>
                 <el-button
                   size="default"
                   @click="submit"
@@ -62,31 +51,15 @@
                 >{{ $t('views.system.login.form.button.login') }}</el-button>
               </el-form>
             </el-card>
-            <p class="page-login--options" flex="main:justify cross:center">
-              <span>
-                <d2-icon name="question-circle" />
-                {{ $t('views.system.login.options.forget-password') }}
-              </span>
-              <span>{{ $t('views.system.login.options.register') }}</span>
-            </p>
           </div>
         </div>
         <div class="page-login--content-footer">
-          <p class="page-login--content-footer-locales">
-            <a
-              v-for="language in $languages"
-              :key="language.value"
-              :command="language.value"
-              @click="$i18n.locale = language.value"
-            >{{ language.label }}</a>
-          </p>
           <p class="page-login--content-footer-copyright">
             {{ $t('views.system.login.footer.copyright.copyright') }}
             <d2-icon name="copyright" />
-            {{ $t('views.system.login.footer.copyright.content') }}
             <a
-              href="https://github.com/FairyEver"
-            >@{{ $t('views.system.login.footer.copyright.author') }}</a>
+              href="http://www.imema.com.cn"
+            >2018-2019 广州盟码信息科技有限公司</a>
           </p>
           <p class="page-login--content-footer-options">
             <a href="#">{{ $t('views.system.login.footer.button.help') }}</a>
@@ -115,9 +88,8 @@ export default {
       time: dayjs().format('HH:mm:ss'),
       // 表单
       formLogin: {
-        username: 'admin',
-        password: 'admin',
-        code: 'v9am'
+        username: '',
+        password: ''
       }
     }
   },
@@ -239,7 +211,7 @@ export default {
   }
   // main
   .page-login--logo {
-    width: 240px;
+    width: 500px;
     margin-bottom: 2em;
     margin-top: -2em;
   }

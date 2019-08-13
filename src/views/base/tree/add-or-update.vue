@@ -61,6 +61,7 @@
                 class="filter-tree"
                 default-expand-all
                 :filter-node-method="filterNode"
+                @node-click="getSelectedMenu"
         ></el-tree>
         <div slot="footer" class="dialog-footer">
           <div class="menuDia">
@@ -78,7 +79,7 @@ import data from './data'
 export default {
   data () {
     return {
-      filterText: '',
+      filterText: undefined,
       menuList: [],
       defaultProps: {
         children: 'children',

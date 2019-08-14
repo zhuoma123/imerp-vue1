@@ -109,7 +109,10 @@ export default {
           this.dataListLoading = false;
           this.dataList = this.mixinViewModuleOptions.getDataListIsPage ? res.list : res;
           this.total = this.mixinViewModuleOptions.getDataListIsPage ? res.totalCount : 0;
-          resolve()
+          resolve({
+            total: this.total,
+            list: this.dataList
+          })
         }).catch(() => {
           this.dataList = [];
           this.total = 0;
@@ -149,7 +152,16 @@ export default {
         } else
           this.pGrid.loadData(this.dataList);
         this.dataListLoading = false
-      })
+        if(this.$refs.sGrid) {
+          debugger
+          this.$refs.sGrid.updateFooter();
+        }else if(this.$refs.pGrid){
+          this.$refs.pGrid.updateFooter();
+        }
+      });
+      
+      
+      
     },
     // 表单提交
     dataFormSubmit () {

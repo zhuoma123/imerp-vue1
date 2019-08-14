@@ -130,8 +130,8 @@ export default {
         deleteIsBatch: true
       },
       dataForm: {
-        code: '',
-        name: '',
+        code: undefined,
+        name: undefined,
         categoryId: undefined,
         vehicleId: undefined,
         brandId: undefined,

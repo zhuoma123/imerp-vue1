@@ -50,7 +50,6 @@
 import mixinViewModule from '@/mixins/view-module'
 import AddOrUpdate from './add-or-update'
 import data from './data'
-import util from '@/libs/util'
 
 export default {
   mixins: [mixinViewModule],

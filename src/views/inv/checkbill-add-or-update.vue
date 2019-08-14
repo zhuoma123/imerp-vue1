@@ -15,7 +15,6 @@
         @keyup.enter.native="dataFormSubmit()"
         label-width="120px"
       >
-        <el-input type="hidden" v-model="dataForm.id" clearable ></el-input>
                 <el-form-item label="盘点单号" prop="orderNum">
                           <el-input v-model="dataForm.orderNum" clearable ></el-input>
                       </el-form-item>
@@ -50,12 +49,12 @@
                 </el-select>
                                     </el-form-item>
                 <el-form-item label="审批状态" prop="wfStatus">
-                  <el-select v-model="dataForm.wfStatus" placeholder="请选择审批状态">
-                    <el-option label="草稿" value="1"></el-option>
-                    <el-option label="审核" value="2"></el-option>
-                    <el-option label="通过" value="3"></el-option>
-                  </el-select>
-                </el-form-item>
+                                          <el-select v-model="dataForm.wfStatus" placeholder="请选择审批状态">
+                                      <el-option label="草稿" value="1"></el-option>
+                                      <el-option label="审核" value="2"></el-option>
+                                      <el-option label="通过" value="3"></el-option>
+                                  </el-select>
+                                    </el-form-item>
                 <el-form-item label="审批意见" prop="wfOpinion">
                           <el-input v-model="dataForm.wfOpinion" clearable ></el-input>
                       </el-form-item>
@@ -81,6 +80,7 @@
       :select-config="{reserve: true}"
       :mouse-config="{selected: true}"
       :keyboard-config="{isArrow: true, isDel: true, isTab: true, isEdit: true}"
+      :edit-config="{trigger: 'dblclick', mode: 'cell'}"
     ></vxe-grid>
     <span slot="footer" class="dialog-footer">
       <el-button @click="visible = false">取消</el-button>
@@ -97,7 +97,7 @@ export default {
     return {
       mixinViewModuleOptions: {
         getDataListURL: '/inv/checkbillline/list',
-        updateURL: "/inv/checkbill/save",
+        updateURL: '/inv/checkbill/save',
         getDataListIsPage: false
       },
       visible: false,
@@ -177,99 +177,115 @@ export default {
           title: 'id',
           field: 'id',
           sortable: true,
-          align: 'center'
+          align: 'center',
+          editRender: { name: "input" }
         },
             {
           title: '盘点单id',
           field: 'checkBillId',
           sortable: true,
-          align: 'center'
+          align: 'center',
+          editRender: { name: "input" }
         },
             {
           title: '货位id',
           field: 'warehouseSlotId',
           sortable: true,
-          align: 'center'
+          align: 'center',
+          editRender: { name: "input" }
         },
             {
           title: '商品id',
           field: 'productId',
           sortable: true,
-          align: 'center'
+          align: 'center',
+          editRender: { name: "input" }
         },
             {
           title: '单位',
           field: 'uom',
           sortable: true,
-          align: 'center'
+          align: 'center',
+          editRender: { name: "input" }
         },
             {
           title: '帐面数量',
           field: 'quantityOld',
           sortable: true,
-          align: 'center'
+          align: 'center',
+          editRender: { name: "input" }
         },
             {
           title: '盘点数量',
           field: 'quantityNew',
           sortable: true,
-          align: 'center'
+          align: 'center',
+          editRender: { name: "input" }
         },
             {
           title: '差异数',
           field: 'orderQty',
           sortable: true,
-          align: 'center'
+          align: 'center',
+          editRender: { name: "input" }
         },
             {
           title: '差异原因',
           field: 'diffCause',
           sortable: true,
-          align: 'center'
+          align: 'center',
+          editRender: { name: "input" }
         },
             {
           title: '解决方案',
           field: 'solution',
           sortable: true,
-          align: 'center'
+          align: 'center',
+          editRender: { name: "input" }
         },
             {
           title: '备注',
           field: 'remark',
           sortable: true,
-          align: 'center'
+          align: 'center',
+          editRender: { name: "input" }
         },
             {
           title: '删除标记',
           field: 'deletedFlag',
           sortable: true,
-          align: 'center'
+          align: 'center',
+          editRender: { name: "input" }
         },
             {
           title: '创建人',
           field: 'createBy',
           sortable: true,
-          align: 'center'
+          align: 'center',
+          editRender: { name: "input" }
         },
             {
           title: '创建日期',
           field: 'createDate',
           sortable: true,
           align: 'center',
-          formatter: ['toDateString', 'yyyy-MM-dd']
+          formatter: ['toDateString', 'yyyy-MM-dd'],
+	      editRender: { name: "ElDatePicker" }
         },
             {
           title: '修改人',
           field: 'updateBy',
           sortable: true,
-          align: 'center'
+          align: 'center',
+          editRender: { name: "input" }
         },
             {
           title: '修改日期',
           field: 'updateDate',
           sortable: true,
           align: 'center',
-          formatter: ['toDateString', 'yyyy-MM-dd']
+          formatter: ['toDateString', 'yyyy-MM-dd'],
+	      editRender: { name: "ElDatePicker" }
         },
         ],
     picAuto: {

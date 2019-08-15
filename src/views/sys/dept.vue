@@ -18,7 +18,7 @@
           v-if="$hasPermission('sys:dept:save')"
           type="primary"
            icon="el-icon-edit"
-          @click="addOrUpdateHandle({})"
+          @click="addOrUpdateHandleSetter({})"
         >{{ $t('views.public.add') }}</el-button>
       </el-form-item>
       <el-form-item>
@@ -26,7 +26,7 @@
           v-if="$hasPermission('sys:dept:delete')"
           type="danger"
            icon="el-icon-delete"
-          @click="deleteHandle()"
+          @click="deleteHandleSetter()"
         >{{ $t('views.public.deleteBatch') }}</el-button>
       </el-form-item>
       <el-form-item>
@@ -38,17 +38,18 @@
       </el-form-item>
     </el-form>
     <d2-crud
+      ref="d2Crud"
+                                                                     
       :columns="columns"
       :options="options"
       selectionRow
       :row-handle="rowHandler"
       :loading="dataListLoading"
       :data="dataList"
-      :key="deptId"
       @selection-change="dataListSelectionChangeHandle"
       @sort-change="dataListSortChangeHandle"
-      @user-update="addOrUpdateHandle"
-      @user-delete="deleteHandle"
+      @user-update="addOrUpdateHandleSetter"
+      @user-delete="deleteHandleSetter"
     ></d2-crud>
     <!-- 分页 -->
     <el-pagination
@@ -70,6 +71,7 @@
 import mixinViewModule from "@/mixins/view-module";
 import AddOrUpdate from "./dept-add-or-update";
 export default {
+  name:"sys-dept",
   mixins: [mixinViewModule],
   data() {
     return {
@@ -93,7 +95,7 @@ export default {
             type: 'primary',
             size: 'mini',
             emit: 'user-update',
-            show: (row) => {
+            show: ({index,row}) => {
               return this.$hasPermission("sys:dept:update");
             }
           },
@@ -102,7 +104,7 @@ export default {
             type: 'danger',
             size: 'mini',
             emit: 'user-delete',
-            show: ( row) => {
+            show: ( index) => {
               return this.$hasPermission("sys:dept:delete");
             }
           }

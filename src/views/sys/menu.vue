@@ -2,18 +2,6 @@
   <d2-container class="mod-sys__user">
     <el-form :inline="true" size="mini" :model="dataForm" @keyup.enter.native="getDataList()">
       <el-form-item>
-        <el-input
-          v-model="dataForm.name"
-          :data-operate="dataFormOp.name"
-          :placeholder="$t('views.public.menu.name')"
-          clearable
-        />
-      </el-form-item>
-      
-      <el-form-item>
-        <el-button @click="getDataList()">{{ $t('views.public.query') }}</el-button>
-      </el-form-item>
-      <el-form-item>
         <el-button
           v-if="$hasPermission('sys:menu:save')"
           type="primary"
@@ -23,42 +11,38 @@
       </el-form-item>
       <el-form-item>
         <el-button
-          v-if="$hasPermission('sys:menu:delete')"
-          type="danger"
-           icon="el-icon-delete"
-          @click="deleteHandle()"
-        >{{ $t('views.public.deleteBatch') }}</el-button>
-      </el-form-item>
-      <el-form-item>
-        <el-button
           v-if="$hasPermission('sys:menu:export')"
           type="info"
           @click="exportHandle()"
         >{{ $t('views.public.export') }}</el-button>
       </el-form-item>
     </el-form>
-    <d2-crud
-      :columns="columns"
-      :options="options"
-      :row-handle="rowHandler"
-      :loading="dataListLoading"
-      :data="dataList"
-      @selection-change="dataListSelectionChangeHandle"
-      @sort-change="dataListSortChangeHandle"
-      @user-update="addOrUpdateHandle"
-      @user-delete="deleteHandle"
-    ></d2-crud>
-    <!-- 分页 -->
-    <el-pagination
-      slot="footer"
-      :current-page="page"
-      :page-sizes="[10, 20, 50, 100]"
-      :page-size="limit"
-      :total="total"
-      layout="total, sizes, prev, pager, next, jumper"
-      @size-change="pageSizeChangeHandle"
-      @current-change="pageCurrentChangeHandle"
-    ></el-pagination>
+    <el-table
+    :data="dataList"
+    style="width: 100%;margin-bottom: 20px;"
+    row-key="menuId"
+    border
+    :tree-props="{children: 'children'}">
+      <el-table-column prop="name" label="菜单名称" width="200" align="left" ></el-table-column>
+      <el-table-column prop="menuId" label="菜单ID" width="80" align="center"></el-table-column>
+      <el-table-column prop="parentId" label="父类ID" width="80" align="center"></el-table-column>
+      <el-table-column prop="url" label="菜单URL" align="center"></el-table-column>
+      <el-table-column prop="perms" label="授权" width="200" align="center"></el-table-column>
+      <el-table-column prop="type" label="类型" align="center"></el-table-column>
+      <el-table-column prop="icon" label="菜单图标" align="center"></el-table-column>
+      <el-table-column prop="orderNum" label="排序" align="center"></el-table-column>
+      <el-table-column label="操作" align="center">
+      <template slot-scope="scope">
+        <el-button
+          size="mini"
+          @click="handleEdit(scope.$index, scope.row)">编辑</el-button><br>
+        <el-button
+          size="mini"
+          type="danger"
+          @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+      </template>
+    </el-table-column>
+    </el-table>
     <!-- 弹窗, 新增 / 修改 -->
     <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList" />
   </d2-container>
@@ -67,13 +51,13 @@
 <script>
 import mixinViewModule from "@/mixins/view-module";
 import AddOrUpdate from "./user-add-or-update";
+
 export default {
   mixins: [mixinViewModule],
   data() {
     return {
       mixinViewModuleOptions: {
         getDataListURL: "/sys/menu/list",
-        getDataListIsPage: true,
         deleteURL: "/sys/menu",
         deleteIsBatch: true,
         exportURL: "/sys/menu/export"
@@ -106,60 +90,19 @@ export default {
           }
         ]
       },
-      columns: [
-        {
-          title: this.$t("views.public.menu.name"),
-          key: "name",
-          sortable: true,
-          align: "center"
-        },
-        {
-          title: this.$t("views.public.menu.parentId"),
-          key: "parentId",
-          sortable: true,
-          align: "center"
-        },
-        {
-          title: this.$t("views.public.menu.url"),
-          key: "url",
-          sortable: true,
-          align: "center"
-        },
-        {
-          title: this.$t("views.public.menu.perms"),
-          key: "perms",
-          sortable: true,
-          align: "center"
-        },
-        {
-          title: this.$t("views.public.menu.type"),
-          key: "type",
-          sortable: true,
-          align: "center"
-        },
-        {
-          title: this.$t("views.public.menu.icon"),
-          key: "icon",
-          sortable: true,
-          align: "center"
-        },
-        {
-          title: this.$t("views.public.menu.orderNum"),
-          key: "orderNum",
-          sortable: true,
-          align: "center"
-        },
-      ]
+      
     };
   },
   components: {
     AddOrUpdate
   },
   methods: {
-    
+
+  },
+
+  mounted() {
+    this.search()
   }
-  
- 
 
 }
 
@@ -167,5 +110,20 @@ export default {
 </script>
 
 <style>
-
+.statistics {
+    padding: 10px;
+    .hiddenRow {
+        display: none;
+    }
+    .searchForm{
+        padding: 10px;
+        span.label{
+            margin-right: 10px;
+        }
+        span.attention{
+            color: #e50021;
+        }
+    }
+    
+}
 </style>

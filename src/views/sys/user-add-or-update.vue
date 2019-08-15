@@ -1,5 +1,5 @@
 <template>
-  <el-dialog :visible.sync="visible" :title="!dataForm.id ? $t('views.public.add') : $t('views.public.update')" :close-on-click-modal="false" :close-on-press-escape="false">
+  <el-dialog class="abow-dialog" :visible.sync="visible" :title="!dataForm.id ? $t('views.public.add') : $t('views.public.update')" :close-on-click-modal="false" :close-on-press-escape="false">
     <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmitHandle()" label-width="120px">
       <el-form-item prop="username" :label="$t('views.public.user.username')">
         <el-input v-model="dataForm.username" :placeholder="$t('views.public.user.username')"/>

@@ -95,7 +95,7 @@ export default {
      */
     init(item) { 
       if(item) {
-        Object.assign(this.dataForm, item);
+        this.dataForm = Object.assign({}, item);
         this.isNew = false;
       } else {
         this.isNew = true;
@@ -135,9 +135,9 @@ export default {
     },
     vxeTabQuery ({ page, sort, filters }) {
       // 处理排序条件
-      if(sort) {
+      if(sort && sort.field && sort.field !== '') {
         this.order = sort.order;
-        this.orderField = sort.property
+        this.orderField = sort.field
       }
       let vxeDataForm = {};
       // 处理筛选条件
@@ -145,14 +145,18 @@ export default {
         vxeDataForm[property] = values.join(',')
       });
       return new Promise((resolve, reject) => {
-        this.getDataList(vxeDataForm).then(() => {
-          resolve({
-            total: this.total,
-            list: this.dataList
-          })
-        }).catch(err => {
+        if(this.isNew) {
           resolve()
-        })
+        } else {
+          this.getDataList(vxeDataForm).then(() => {
+            resolve({
+              total: this.total,
+              list: this.dataList
+            })
+          }).catch(err => {
+            resolve()
+          })
+        }
       })
     },
     search () {

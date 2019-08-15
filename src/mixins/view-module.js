@@ -168,7 +168,6 @@ export default {
           this.pGrid.loadData(this.dataList);
         this.dataListLoading = false
         if(this.$refs.sGrid) {
-          debugger
           this.$refs.sGrid.updateFooter();
         }else if(this.$refs.pGrid){
           this.$refs.pGrid.updateFooter();

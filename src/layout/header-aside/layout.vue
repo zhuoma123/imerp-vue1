@@ -274,6 +274,17 @@ export default {
 .el-submenu__title {
   padding: 0 5px;
 }
+
+.d2-layout-header-aside-group 
+.d2-layout-header-aside-content 
+.d2-theme-container 
+.d2-theme-container-main 
+.d2-theme-container-main-body 
+.container-component 
+.d2-container-full 
+.d2-container-full__body {
+  overflow: hidden;
+}
 /*-----layout end-------*/
 
 .el-form-item--mini.el-form-item,
@@ -337,6 +348,10 @@ export default {
       z-index: 1;
       overflow: hidden;
       overflow-y: auto;
+
+      .el-form {
+        padding: 0, 10px;
+      }
     }
     .el-dialog__footer{
       position: absolute;

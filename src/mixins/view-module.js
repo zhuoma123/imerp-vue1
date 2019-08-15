@@ -95,7 +95,7 @@ export default {
      */
     init(item) { 
       if(item) {
-        Object.assign(this.dataForm, item);
+        this.dataForm = Object.assign({}, item);
         this.isNew = false;
       } else {
         this.isNew = true;
@@ -386,6 +386,19 @@ export default {
         }
       }
       return rlist
+    },
+    computeHeight() {
+      let self = this
+      if(self.$refs.pGrid){
+        let toolbar = `${document.getElementsByClassName('vxe-toolbar')[0].clientHeight}`
+        let tableHeader = `${document.getElementsByClassName('vxe-table--header-wrapper')[0].clientHeight}`
+        let bodyClientHeight = `${document.getElementsByClassName('d2-container-full__body')[0].clientHeight}`
+        let tableBody = self.$refs.pGrid.$el.getElementsByClassName('vxe-table--body-wrapper')[0]
+        tableBody.style.height = bodyClientHeight - toolbar - tableHeader + 'px'
+      }
+    },
+    collapseChange() {
+      setTimeout(this.computeHeight, 500);
     }
   },
   watch: {
@@ -408,6 +421,14 @@ export default {
       this.pGrid = this.$refs.pGrid
       this.sGrid = this.$refs.sGrid
       this.addOrUpdate = this.$refs.addOrUpdate
+      if(this.$refs.pGrid){
+        // 窗口变化事件
+        window.onresize = () => {
+          this.computeHeight()
+        }
+        // 初始化
+        this.computeHeight()
+      }
     })
   },
   activated() {

@@ -124,7 +124,10 @@ export default {
           this.dataListLoading = false
           this.dataList = this.mixinViewModuleOptions.getDataListIsPage ? res.list : res
           this.total = this.mixinViewModuleOptions.getDataListIsPage ? res.totalCount : 0
-          resolve()
+          resolve({
+            total: this.total,
+            list: this.dataList
+          })
         }).catch(() => {
           this.dataList = []
           this.total = 0
@@ -163,11 +166,20 @@ export default {
       this.dataListLoading = true
       let vxeParams = { page: null, sort: null, filters: [] }
       this.vxeTabQuery(vxeParams).then((resolve, rejects) => {
-        if (this.$refs.sGrid) {
+        if(this.$refs.sGrid) {
           this.$refs.sGrid.loadData(this.dataList)
-        } else { this.pGrid.loadData(this.dataList) }
+        } else
+          this.pGrid.loadData(this.dataList)
         this.dataListLoading = false
-      })
+        if(this.$refs.sGrid) {
+          this.$refs.sGrid.updateFooter();
+        }else if(this.$refs.pGrid){
+          this.$refs.pGrid.updateFooter();
+        }
+      });
+
+
+
     },
     // 表单提交
     dataFormSubmit () {
@@ -390,6 +402,19 @@ export default {
         }
       }
       return rlist
+    },
+    computeHeight() {
+      let self = this
+      if(self.$refs.pGrid){
+        let toolbar = `${document.getElementsByClassName('vxe-toolbar')[0].clientHeight}`
+        let tableHeader = `${document.getElementsByClassName('vxe-table--header-wrapper')[0].clientHeight}`
+        let bodyClientHeight = `${document.getElementsByClassName('d2-container-full__body')[0].clientHeight}`
+        let tableBody = self.$refs.pGrid.$el.getElementsByClassName('vxe-table--body-wrapper')[0]
+        tableBody.style.height = bodyClientHeight - toolbar - tableHeader + 'px'
+      }
+    },
+    collapseChange() {
+      setTimeout(this.computeHeight, 500);
     }
   },
   watch: {
@@ -412,6 +437,14 @@ export default {
       this.pGrid = this.$refs.pGrid
       this.sGrid = this.$refs.sGrid
       this.addOrUpdate = this.$refs.addOrUpdate
+      if(this.$refs.pGrid){
+        // 窗口变化事件
+        window.onresize = () => {
+          this.computeHeight()
+        }
+        // 初始化
+        this.computeHeight()
+      }
     })
   },
   activated () {

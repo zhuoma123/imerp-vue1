@@ -56,7 +56,7 @@
                 @user-delete="deleteHandleSetter"
         ></d2-crud>
         <!-- 弹窗, 新增 / 修改 -->
-        <AddOrUpdate v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList"/>
+        <AddOrUpdate v-if="addOrUpdateVisible" :parentDataList="dataList" ref="addOrUpdate" @refreshDataList="getDataList"/>
     </d2-container>
 </template>
 
@@ -67,6 +67,7 @@ import formMap from '../data'
 import data from './data'
 
 export default {
+  name: 'tree',
   mixins: [mixinViewModule],
   data () {
     return {
@@ -114,6 +115,9 @@ export default {
   components: {
     AddOrUpdate
   },
-  methods: {}
+  methods: {},
+  created () {
+    this.getDataList()
+  }
 }
 </script>

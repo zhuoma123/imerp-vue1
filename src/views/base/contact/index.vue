@@ -99,6 +99,7 @@ import AddOrUpdate from './add-or-update'
 import data from './data'
 
 export default {
+  name: 'contact',
   mixins: [mixinViewModule],
   data () {
     return {
@@ -117,7 +118,7 @@ export default {
       },
       dataFormOp: {
         likeOps: 'like',
-        equalsOps: '='
+        equalsOps: 'eq'
       },
       rowHandler: {
         width: '160px',

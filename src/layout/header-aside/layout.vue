@@ -331,12 +331,18 @@ export default {
       position: absolute;
       left: 0;
       top: 54px;
-      bottom: 0;
+      bottom: 70px;
       right: 0;
       padding: 0;
       z-index: 1;
       overflow: hidden;
       overflow-y: auto;
+    }
+    .el-dialog__footer{
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
     }
   }
 }

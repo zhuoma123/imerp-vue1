@@ -78,6 +78,11 @@
               <!-- 页面 -->
               <div class="d2-theme-container-main-body" flex-box="1">
                 <transition :name="transitionActive ? 'fade-transverse' : ''">
+                  <!--<keep-alive>
+                      <router-view v-if="$route.meta.cache"></router-view>
+                  </keep-alive>
+                  <router-view v-if="!$route.meta.cache"></router-view>
+                  -->
                   <keep-alive :include="keepAlive">
                     <router-view />
                   </keep-alive>
@@ -140,6 +145,7 @@ export default {
     ...mapGetters("d2admin", {
       themeActiveSetting: "theme/activeSetting"
     }),
+
     /**
      * @description 最外层容器的背景图片样式
      */
@@ -307,5 +313,37 @@ export default {
 
 .vxe-table.size--mini .vxe-body--column, .vxe-table.size--mini .vxe-footer--column, .vxe-table.size--mini .vxe-header--column {
     padding: 3px 0 !important;
+}
+
+/*弹出框*/
+.abow_dialog {
+  display: flex;
+  justify-content: center;
+  align-items: Center;
+  overflow: hidden;
+
+  .el-dialog {
+    margin: 0 auto !important;
+    height: 90%;
+    overflow: hidden;
+
+    .el-dialog__body {
+      position: absolute;
+      left: 0;
+      top: 54px;
+      bottom: 70px;
+      right: 0;
+      padding: 0;
+      z-index: 1;
+      overflow: hidden;
+      overflow-y: auto;
+    }
+    .el-dialog__footer{
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+    }
+  }
 }
 </style>

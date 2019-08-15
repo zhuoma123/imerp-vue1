@@ -331,6 +331,7 @@ export default {
     },
     // 删除
     deleteHandleSetter (index) {
+      debugger
       let data
       if (this.mixinViewModuleOptions.deleteIsBatch && this.dataListSelections.length > 0) {
         data = this.dataListSelections.map(item => item[this.mixinViewModuleOptions.deleteIsBatchKey])

@@ -114,9 +114,9 @@ export default {
         parentId: [{
           required: true, message: '父级菜单不可缺少', trigger: 'blur'
         }],
-        type: [{
-          required: true, message: '类型不可缺少', trigger: 'blur'
-        }],
+        type: [
+          {required: true, message: '类型不可缺少', trigger: 'blur'},
+          {max: 6, message: '此处最多6个字符', trigger: 'blur' }],
         code: [{
           required: true, message: '编码不可缺少', trigger: 'blur'
         }]

@@ -285,7 +285,6 @@ export default {
         })
       } else {
         this.$nextTick(() => {
-          this.dataForm.id = undefined
           this.$refs.addOrUpdate.init()
         })
       }

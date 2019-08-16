@@ -108,6 +108,7 @@
       class="vxe-table-element"
       remote-filter
       ref="sGrid"
+      :data.sync="dataList"
       @edit-closed="setTotal"
       :toolbar="toolbar"
       :proxy-config="itableProxy"
@@ -148,6 +149,7 @@ export default {
       visible: false,
       btnDisable: false,
       isReadOnly:false,
+      dataList:[],
       dataForm: {
         id: null,
         orderType: "SO",
@@ -210,7 +212,7 @@ export default {
         },
         {
           title: "总金额",
-          field: "totalPrice",
+          field: "amount",
           align: "left",
           formatter: ["toFixedString", 2]
         },
@@ -291,7 +293,7 @@ export default {
 
       if (queryString) {
         this.$axios
-          .post(this.mixinViewModuleOptions.prodURL, { name: queryString })
+          .post(this.mixinViewModuleOptions.prodURL, { name: queryString ,lastPrice:1,customerId:this.dataForm.customerId})
           .then(res => {
             for (var i = 0; i < res.length; i++) {
               res[i].value = res[i].val;
@@ -309,6 +311,7 @@ export default {
       var row = t.row;
       if (item) {
         Object.assign(row, item);
+        row.productId = item.id;
         row.bPrice = item.salePrice;
       } else {
       }
@@ -326,10 +329,10 @@ export default {
         var qty = row.orderQty;
         var price = row.price;
         if (!Number.isNaN(qty) && !Number.isNaN(price)) {
-          row.totalPrice = Number(qty) * Number(price).toFixed(2);
+          row.amount = Number(qty) * Number(price).toFixed(2);
         }
       }
-this.$refs.sGrid.updateFooter();
+
     },
     shipType: function () {
       this.shipTypeSel.loading = true;
@@ -353,7 +356,7 @@ this.$refs.sGrid.updateFooter();
             if (columnIndex === 2) {
               return '汇总'
             }
-            if (['totalPrice'].includes(column.property)) {
+            if (['amount'].includes(column.property)) {
               return XEUtils.sum(data, column.property)
             }
             return null
@@ -362,6 +365,22 @@ this.$refs.sGrid.updateFooter();
       }
 
   }, 
+  watch: {
+  //   dataList: function () {
+  //     this.$nextTick(() => {
+  //       this.$refs.sGrid.updateFooter();
+  //     })
+  //   }
+  },
+  computed: {
+    d11111: function () {
+        //this.$refs.sGrid.updateFooter();
+        console.log(33333333333333333333);
+        return this.dataList;
+      }
+    
+  },
+  
   mounted () {
     console.log('-----11', this.d_custSelect)
     this.shipType();

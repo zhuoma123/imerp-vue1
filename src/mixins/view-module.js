@@ -279,6 +279,34 @@ export default {
         })
       }
     },
+    // 提交
+    submitHandle (event,isAuto) {
+      let row = this.pGrid.getCurrentRow();
+      if (!row) {
+        return this.$message({
+          message: '请选择要提交的记录',
+          type: 'warning'
+        })
+      }
+      this.$confirm('确定要提交吗，提交后不能在修改！', { 'handle': '提交' }, '确认操作', {
+        confirmButtonText: this.$t('views.public.confirm'),
+        cancelButtonText: this.$t('views.public.cancel'),
+        type: 'warning'
+      }).then(() => {
+        this.$axios.post(
+            this.mixinViewModuleOptions.submitURL,{"id":row.id,"isAuto":isAuto}
+        ).then(res => {
+          this.$message({
+            message: this.$t('views.public.success'),
+            type: 'success',
+            duration: 500,
+            onClose: () => {
+              this.search()
+            }
+          })
+        }).catch(() => {})
+      }).catch(() => {})
+    },
     // 新增 / 修改
     addOrUpdateHandleSetter (row) {
       this.addOrUpdateVisible = true

@@ -1,4 +1,5 @@
 import qs from 'qs'
+import XEUtils from 'xe-utils'
 export default {
   data () {
     /* eslint-disable */
@@ -41,11 +42,13 @@ export default {
       pGrid: {},
       sGrid: {},
       addOrUpdate: {},
+      entityModel: {},
       isNew: false,
       tableProxy: {
         index: true, // 启用动态序号代理
         sort: true, // 启用排序代理
-        filter: true, // 启用筛选代理
+        filter: true, // 启用筛选代理,
+        autoLoad: true,
         ajax: {
           query: ({ page, sort, filters }) => {
             return this.vxeTabQuery({ page, sort, filters })
@@ -94,92 +97,75 @@ export default {
      * @param {*} item
      */
     init (item) {
-      if (item) {
-        this.dataForm = Object.assign({}, item)
-        this.isNew = false
-      } else {
-        this.isNew = true
-      }
+      this.isNew = !item
+      if(item)
+        this.entityModel = Object.assign({}, item)
+        
       this.visible = true
     },
     // 获取数据列表
-    getDataList (vxeDataForm) {
-      return new Promise((resolve, reject) => {
-        this.dataListLoading = true
-        this.$axios.post(
-          this.mixinViewModuleOptions.getDataListURL,
-          {
-            pageForm: this.mixinViewModuleOptions.getDataListIsPage ? {
-              order: this.order,
-              orderField: this.orderField,
-              page: this.mixinViewModuleOptions.getDataListIsPage ? this.page : null,
-              limit: this.mixinViewModuleOptions.getDataListIsPage ? this.limit : null
-            } : {},
-            dataForm: {
-              data: Object.assign({}, this.dataForm, vxeDataForm),
-              op: this.dataFormOp
-            }
+    async getDataList (vxeDataForm) {
+      this.dataListLoading = true
+      await this.$axios.post(
+        this.mixinViewModuleOptions.getDataListURL,
+        {
+          pageForm: this.mixinViewModuleOptions.getDataListIsPage ? {
+            order: this.order,
+            orderField: this.orderField,
+            page: this.mixinViewModuleOptions.getDataListIsPage ? this.page : null,
+            limit: this.mixinViewModuleOptions.getDataListIsPage ? this.limit : null
+          } : {},
+          dataForm: {
+            data: Object.assign({}, this.dataForm, vxeDataForm),
+            op: this.dataFormOp
           }
-        ).then(res => {
-          this.dataListLoading = false
-          this.dataList = this.mixinViewModuleOptions.getDataListIsPage ? res.list : res
-          this.total = this.mixinViewModuleOptions.getDataListIsPage ? res.totalCount : 0
-          resolve({
-            total: this.total,
-            list: this.dataList
-          })
-        }).catch(() => {
-          this.dataList = []
-          this.total = 0
-          this.dataListLoading = false
-          reject()
-        })
+        }
+      ).then(res => {
+        this.dataList = this.mixinViewModuleOptions.getDataListIsPage ? res.list : res
+        this.total = this.mixinViewModuleOptions.getDataListIsPage ? res.totalCount : 0
+      }).catch(() => {
+        this.dataList = []
+        this.total = 0
       })
+      this.dataListLoading = false
     },
-    vxeTabQuery ({ page, sort, filters }) {
+    vxeTabQuery ({ page, sort, filters }, dataForm) {
       // 处理排序条件
       if (sort && sort.field && sort.field !== '') {
         this.order = sort.order
         this.orderField = sort.field
       }
-      let vxeDataForm = {}
+      let vxeDataForm = dataForm || {}
       // 处理筛选条件
       filters.forEach(({ column, property, values }) => {
         vxeDataForm[property] = values.join(',')
       })
       return new Promise((resolve, reject) => {
-        if(this.isNew) {
-          resolve()
-        } else {
-          this.getDataList(vxeDataForm).then(() => {
-            resolve({
-              total: this.total,
-              list: this.dataList
-            })
-          }).catch(err => {
-            resolve()
+        this.getDataList(vxeDataForm).then(() => {
+          resolve({
+            total: this.total,
+            list: this.dataList
           })
-        }
+        }).catch(err => {
+          reject(err)
+        })
       })
     },
-    search () {
+    search (dataForm) {
       this.dataListLoading = true
       let vxeParams = { page: null, sort: null, filters: [] }
-      this.vxeTabQuery(vxeParams).then((resolve, rejects) => {
-        if(this.$refs.sGrid) {
+      this.vxeTabQuery(vxeParams, dataForm).then((resolve, rejects) => {
+        if (this.$refs.sGrid) {
           this.$refs.sGrid.loadData(this.dataList)
-        } else
-          this.pGrid.loadData(this.dataList)
+        } else { this.pGrid.loadData(this.dataList) }
+
         this.dataListLoading = false
-        if(this.$refs.sGrid) {
-          this.$refs.sGrid.updateFooter();
-        }else if(this.$refs.pGrid){
-          this.$refs.pGrid.updateFooter();
+        if (this.$refs.sGrid) {
+          this.$refs.sGrid.updateFooter()
+        } else if (this.$refs.pGrid) {
+          this.$refs.pGrid.updateFooter()
         }
-      });
-
-
-
+      })
     },
     // 表单提交
     dataFormSubmit () {
@@ -187,9 +173,9 @@ export default {
         if (valid) {
           this.btnDisable = true
           if (this.$refs.sGrid) {
-            this.dataForm.lineList = this.getItemListDate(this.$refs.sGrid);
+            this.dataForm.lineList = this.getItemListDate(this.$refs.sGrid)
           }
-          if(this.isNew) {
+          if (this.isNew) {
             this.dataForm.__state = 'NEW'
           } else {
             this.dataForm.__state = 'MODIFIED'
@@ -317,7 +303,6 @@ export default {
         })
       } else {
         this.$nextTick(() => {
-          this.dataForm.id = undefined
           this.$refs.addOrUpdate.init()
         })
       }
@@ -432,9 +417,50 @@ export default {
       }
       return rlist
     },
-    computeHeight() {
+    footerCellClassName ({ $rowIndex, column, columnIndex, $columnIndex }) {
+      if (column.align) {
+        return 'col--' + column.align
+      }
+    },
+    footerMethod ({ columns, data }) {
+      return [columns.map((column, columnIndex) => {
+        data.map((row) => {
+          let editPost = column.own.editPost
+          if (editPost) {
+            row[column.property] = editPost(column, row)
+          }
+        })
+
+        let footerRender = column.own.footerRender
+        if (footerRender) {
+          let cellValue = footerRender(column, data)
+          let cellLabel = cellValue
+          let { formatter } = column
+          if (formatter) {
+            if (XEUtils.isString(formatter)) {
+              cellLabel = XEUtils[formatter](cellValue)
+            } else if (XEUtils.isArray(formatter)) {
+              cellLabel = XEUtils[formatter[0]].apply(XEUtils, [cellValue].concat(formatter.slice(1)))
+            } else {
+              cellLabel = formatter(Object.assign({ cellValue }))
+            }
+          }
+
+          return cellLabel
+        }
+
+        return null
+      })
+      ]
+    },
+    removeSelecteds (grid) {
+      grid.removeSelecteds().then(() => {
+        grid.updateFooter()
+      })
+    },
+    computeHeight () {
       let self = this
-      if(self.$refs.pGrid){
+      if (self.$refs.pGrid) {
         let toolbar = `${document.getElementsByClassName('vxe-toolbar')[0].clientHeight}`
         let tableHeader = `${document.getElementsByClassName('vxe-table--header-wrapper')[0].clientHeight}`
         let bodyClientHeight = `${document.getElementsByClassName('d2-container-full__body')[0].clientHeight}`
@@ -442,20 +468,24 @@ export default {
         tableBody.style.height = bodyClientHeight - toolbar - tableHeader + 'px'
       }
     },
-    collapseChange() {
-      setTimeout(this.computeHeight, 500);
+    collapseChange () {
+      setTimeout(this.computeHeight, 500)
     }
   },
   watch: {
     visible: function (newName, oldName) {
-      if (this.$refs.sGrid && newName) {
-        this.dataList = []
-        this.$refs.sGrid.loadData(this.dataList)
-        if (this.isNew) {
-          this.$refs.dataForm.resetFields()
-        } else {
-          this.search()
-        }
+      if (newName) {
+        this.$nextTick(() => {
+          this.dataList = []
+          this.$refs.sGrid.loadData(this.dataList)
+          if (this.isNew) {
+            this.$refs.dataForm.resetFields()
+            this.$refs.sGrid.updateFooter()
+          } else {
+            this.dataForm = this.entityModel
+            this.search(this.entityModel)
+          }
+        })
       }
     }
   },
@@ -466,7 +496,7 @@ export default {
       this.pGrid = this.$refs.pGrid
       this.sGrid = this.$refs.sGrid
       this.addOrUpdate = this.$refs.addOrUpdate
-      if(this.$refs.pGrid){
+      if (this.$refs.pGrid) {
         // 窗口变化事件
         window.onresize = () => {
           this.computeHeight()

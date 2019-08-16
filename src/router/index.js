@@ -33,7 +33,6 @@ router.beforeEach(async (to, from, next) => {
     NProgress.done()
   } else {
     if(count > 1000) {
-      console.log('菜单加载多次--->登出')
       store.dispatch('d2admin/account/logout')
       NProgress.done()
       count = 0
@@ -47,7 +46,6 @@ router.beforeEach(async (to, from, next) => {
     // 根据routers的值判断动态的菜单是否已经加载完成
     const isDynamicAddRoute = store.getters.permission.isDynamicAddRoute
     const menuList = util.session.get('menuList')
-    console.log('加载状态---->', hasToken, isDynamicAddRoute, menuList, count)
     if (hasToken) {
       try {
         // 确认已经加载多标签页数据 https://github.com/d2-projects/d2-admin/issues/201
@@ -59,7 +57,6 @@ router.beforeEach(async (to, from, next) => {
         
         if (isDynamicAddRoute) {
           if(menuList && menuList.length > 0) {
-            console.log('动态的菜单已经加载完成--->', to.path)
             next()
             NProgress.done()
             count = 0
@@ -77,7 +74,6 @@ router.beforeEach(async (to, from, next) => {
         // 已经登录，根据后台返回菜单生成路由
         await store.dispatch('d2admin/permission/generateRoutes').then(() => {
           const redirect = decodeURIComponent(from.query.redirect || to.path)
-          console.log('路由路径--->', to.path, redirect)
           if (to.path === redirect || to.path === '/index') {
             // hack方法 确保addRoutes已完成 ,set the replace: true so the navigation will not leave a history record
             next({ ...to, replace: true })

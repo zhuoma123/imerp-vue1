@@ -266,6 +266,17 @@ export default {
   padding: 3px 5px;
 }
 
+.d2-layout-header-aside-group
+  .d2-layout-header-aside-content
+  .d2-theme-container
+  .d2-theme-container-main
+  .d2-theme-container-main-body
+  .container-component
+  .d2-container-full
+  .d2-container-full__body {
+  overflow: hidden;
+}
+
 .el-table--mini td,
 .el-table--mini th {
   padding: 0px 0;

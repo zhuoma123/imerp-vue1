@@ -50,9 +50,10 @@
     "vue-splitpane": "^1.0.4",
     "vue-ueditor-wrap": "^2.4.1",
     "vuex": "^3.1.1",
-    "vxe-table": "^1.11.11",
-    "vxe-table-plugin-element": "^1.2.4",
-    "xe-utils": "^1.9.7"
+    "vxe-table": "^2.2.8",
+    "vxe-table-plugin-element": "^1.4.0",
+    "@d2-admin/filters-dayjs": "1.0.3",
+    "xe-utils": "^1.9.8"
   },
   "devDependencies": {
     "@kazupon/vue-i18n-loader": "^0.3.0",

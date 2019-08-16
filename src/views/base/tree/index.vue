@@ -65,14 +65,17 @@
                 <el-table-column align="center" label="编码" prop="code"/>
                 <el-table-column align="center" label="名称" prop="name"/>
                 <el-table-column align="center" label="排序序号" prop="orderNum"/>
-                <el-table-column align="center" label="是否系统数据" prop="sys"/>
+                <el-table-column align="center" label="是否系统数据" prop="sys">
+                    <template slot-scope="scope">
+                        <el-tag >{{ sysDic[scope.row.sys] }}</el-tag>
+                    </template>
+                </el-table-column>
                 <el-table-column align="center" label="备注" prop="remark"/>
                 <el-table-column align="center" label="更新人" prop="orderNum"/>
                 <el-table-column align="center" label="更新时间" prop="orderNum"/>
-                <el-table-column align="center" label="操作" class-name="small-padding" width="160px">
+                <el-table-column align="center" label="操作" class-name="small-padding" width="80px">
                     <template slot-scope="scope">
                         <el-button type="primary" size="mini" @click="add(scope.row)">编辑</el-button>
-                        <el-button type="danger" size="mini" @click="del(scope.row)">删除</el-button>
                     </template>
                 </el-table-column>
             </el-table>
@@ -131,7 +134,8 @@ export default {
           }
         ]
       },
-      columns: data.data.form
+      columns: data.data.form,
+      sysDic: ['是', '否']
     }
   },
   components: {
@@ -144,9 +148,10 @@ export default {
       this.addOrUpdateHandleSetter(map)
     },
     del (row) {
+      debugger
       let map = {}
       map.row = row
-      this.deleteHandleSetter(map)
+      // this.deleteHandleSetter(map)
     }
   },
   created () {

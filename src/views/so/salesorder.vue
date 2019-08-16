@@ -179,7 +179,7 @@ export default {
         },
         {
           title: '客户名称',
-          field: 'custName',
+          field: 'customerName',
           sortable: true,
           align: 'left'
         },
@@ -213,21 +213,6 @@ export default {
           align: 'center'
         }
       ],
-      tableProxy: {
-        index: true, // 启用动态序号代理
-        sort: true, // 启用排序代理
-        filter: true, // 启用筛选代理
-        ajax: {
-          query: ({ page, sort, filters }) => {
-            return this.vxeTabQuery({ page, sort, filters })
-          }
-        },
-        props: {
-          list: 'list',
-          result: 'list',
-          total: 'totalCount'
-        }
-      },
       toolbar: {
         id: 'full_edit_1',
         resizable: {

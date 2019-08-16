@@ -1,11 +1,11 @@
 <template>
-  <el-dialog
+  <el-dialog :title="isNew ? '销售单新增' : '销售单修改'"
     :close-on-click-modal="false"
     :visible.sync="visible"
     v-loading.fullscreen.lock="fullscreenLoading"
     width="80%"
   >
-    <div slot="title">
+    <div>
       <el-form
         :model="dataForm"
         labelSuffix="："
@@ -18,7 +18,13 @@
         <el-row inline>
           <el-col :span="8">
             <el-form-item label="客户" prop="customerId">
-              <el-input v-model="dataForm.customerId" placeholder="客户" style="width:220px"></el-input>
+              <im-selector 
+              v-model="dataForm.customerId" 
+              :mapModel.sync="dataForm"
+              mapKeyVal="customerId:customerName" 
+              dataType="customer" 
+              @change="changeCust">
+              </im-selector>
             </el-form-item>
           </el-col>
           <el-col :span="8">
@@ -87,15 +93,21 @@
       class="vxe-table-element"
       remote-filter
       ref="sGrid"
-      @edit-closed="setTotal"
       :toolbar="toolbar"
-      :proxy-config="itableProxy"
+      :proxy-config="tableProxy"
       :columns="itableColumn"
       :select-config="{reserve: true}"
       :mouse-config="{selected: true}"
       :keyboard-config="{isArrow: true, isDel: true, isTab: true, isEdit: true}"
       :edit-config="{trigger: 'dblclick', mode: 'cell'}"
-    ></vxe-grid>
+      :footer-cell-class-name="footerCellClassName"
+      show-footer
+    >
+    <template v-slot:buttons>
+        <el-button size="mini" icon="el-icon-circle-plus" @click="$refs.sGrid.insert({})">新增</el-button>
+        <el-button type="danger" size="mini" icon="el-icon-delete" @click="removeSelecteds($refs.sGrid)">删除</el-button>
+    </template>
+    </vxe-grid>
 
     <span slot="footer" class="dialog-footer">
       <el-button @click="visible = false">取消</el-button>
@@ -123,10 +135,10 @@ export default {
       btnDisable: false,
       dataForm: {
         id: 0,
-        orderType: "SO",
-        customerId: "1",
-        orderDate: "2019-08-05",
-        planDeliveryDate: "2019-08-05",
+        orderType: "",
+        customerId: "",
+        orderDate: new Date(),
+        planDeliveryDate: new Date(),
         orderAmount: "",
         shipType: "",
         remark: "",
@@ -199,6 +211,9 @@ export default {
             name: "ElAutocomplete",
             props: { fetchSuggestions: this.prodSeach, triggerOnFocus: false},
             events: { select: this.handleProcSelect }
+          },
+          footerRender: function (column, data) {
+            return '汇总'
           }
         },
         {
@@ -227,8 +242,18 @@ export default {
         {
           title: "总金额",
           field: "totalPrice",
-          align: "center",
-          formatter: ["toFixedString", 2]
+          align: "left",
+          formatter: ["toFixedString", 2],
+          editPost: function (column, row) {
+            var qty = row.orderQty;
+            var price = row.price;
+            if (!Number.isNaN(qty) && !Number.isNaN(price)) {
+              return Number(qty) * Number(price).toFixed(2);
+            }
+          },
+          footerRender: function (column, data) {
+            return XEUtils.sum(data, column.property)
+          }
         },
         {
           title: "条码",
@@ -256,33 +281,8 @@ export default {
           align: "center"
         }
       ],
-
-      itableProxy: {
-        index: true, // 启用动态序号代理
-        sort: true, // 启用排序代理
-        filter: true, // 启用筛选代理
-        ajax: {
-          query: ({ page, sort, filters }) => {
-            return new Promise((resolve, reject) => {
-              resolve()
-            })
-          },
-          save: ({ body }) => {
-            console.log(body);
-          }
-        },
-        props: {
-          list: "list",
-          result: "list",
-          total: "totalCount"
-        }
-      },
       toolbar: {
         id: "full_edit_1",
-        buttons: [
-          { code: "insert_actived", name: "新增" },
-          { code: "remove_selection", name: "删除" }
-        ],
         resizable: {
           storage: true
         },
@@ -333,18 +333,8 @@ export default {
         this.dataListLoading = false
       })
     },
-    setTotal({ column, row }) {
-      if (column.property == "orderQty" || column.property == "price") {
-        var qty = row.orderQty;
-        var price = row.price;
-        if (!Number.isNaN(qty) && !Number.isNaN(price)) {
-          row.totalPrice = Number(qty) * Number(price).toFixed(2);
-        }
-      }
-
-      console.log(row.totalPrice);
-      console.log(column);
-      console.log(row);
+    changeCust(e) {
+      console.log('------', e, this.dataForm)
     }
   }, 
   mounted () {

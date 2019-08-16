@@ -1,4 +1,5 @@
 import qs from 'qs'
+import XEUtils from 'xe-utils'
 export default {
   data () {
     /* eslint-disable */
@@ -169,6 +170,7 @@ export default {
         if (this.$refs.sGrid) {
           this.$refs.sGrid.loadData(this.dataList)
         } else { this.pGrid.loadData(this.dataList) }
+
         this.dataListLoading = false
         if (this.$refs.sGrid) {
           this.$refs.sGrid.updateFooter()
@@ -399,6 +401,47 @@ export default {
       }
       return rlist
     },
+    footerCellClassName ({ $rowIndex, column, columnIndex, $columnIndex }) {
+      if (column.align) {
+        return 'col--' + column.align
+      }
+    },
+    footerMethod ({ columns, data }) {
+      return [columns.map((column, columnIndex) => {
+        data.map((row) => {
+          let editPost = column.own.editPost
+          if (editPost) {
+            row[column.property] = editPost(column, row)
+          }
+        })
+
+        let footerRender = column.own.footerRender
+        if (footerRender) {
+          let cellValue = footerRender(column, data)
+          let cellLabel = cellValue
+          let { formatter } = column
+          if (formatter) {
+            if (XEUtils.isString(formatter)) {
+              cellLabel = XEUtils[formatter](cellValue)
+            } else if (XEUtils.isArray(formatter)) {
+              cellLabel = XEUtils[formatter[0]].apply(XEUtils, [cellValue].concat(formatter.slice(1)))
+            } else {
+              cellLabel = formatter(Object.assign({ cellValue }))
+            }
+          }
+
+          return cellLabel
+        }
+
+        return null
+      })
+      ]
+    },
+    removeSelecteds (grid) {
+      grid.removeSelecteds().then(() => {
+        grid.updateFooter()
+      })
+    },
     computeHeight () {
       let self = this
       if (self.$refs.pGrid) {
@@ -419,7 +462,11 @@ export default {
         this.dataList = []
         this.$refs.sGrid.loadData(this.dataList)
         if (this.isNew) {
+          debugger
+          this.$refs.sGrid.updateFooter()
+          // setTimeout(()=>{
           this.$refs.dataForm.resetFields()
+          // }, 1000);
         } else {
           this.search()
         }

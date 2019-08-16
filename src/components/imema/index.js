@@ -8,8 +8,8 @@ export default {
     return {
       id: this.value,
       mapObj: this.mapModel,
-      mapKey: 'name',
-      mapVal: 'id'
+      mapKey: 'key',
+      mapVal: 'value'
     }
   },
   props: {
@@ -34,8 +34,7 @@ export default {
     // 下拉框对象的下拉显示属性-对应的值
     mapKeyVal: {
       type: String,
-      required: false,
-      default: 'id:name'
+      required: false
     }
   },
   computed: {
@@ -61,11 +60,10 @@ export default {
             change: e => this.$emit('change', e),
             input: e=> {
               if(!e.value) {
-                this.mapModel[this.mapKey]=null
-                this.mapModel[this.mapVal]=null
+                this.mapModel[this.mapKey] = this.mapModel[this.mapVal] = null
               } else {
                 this.mapModel[this.mapKey]=e.key
-                this.mapModel[this.mapVal]=Number(e.value)
+                this.mapModel[this.mapVal]=e.value
               }
             }
           }
@@ -81,23 +79,27 @@ export default {
         key: this.mapModel[this.mapKey],
         value: this.mapModel[this.mapVal]
       }
-      this.$refs.component._selChange(obj)
+      this.$refs.component._setVal(obj)
     }
   },
-  mounted () {
+  created () {
     if(this.mapKeyVal) {
       let kv = this.mapKeyVal.split(":")
       if(kv.length == 2) {
-        this.mapVal = kv[0]
-        this.mapKey = kv[1]
+        this.mapKey = kv[0]
+        this.mapVal = kv[1]
+      } else {
+        this.mapKey = this.mapVal = this.mapKeyVal
       }
     }
+  },
+  mounted () {
     this.$nextTick(() => {
       let obj = {
         key: this.mapModel[this.mapKey],
         value: this.mapModel[this.mapVal]
       }
-      this.$refs.component._selChange(obj)
+      this.$refs.component._setVal(obj)
     })
   }
 }

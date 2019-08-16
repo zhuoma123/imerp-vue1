@@ -21,8 +21,8 @@
               <im-selector 
               v-model="dataForm.customerId" 
               :mapModel.sync="dataForm"
-              mapKeyVal="customerId:customerName" 
-              dataType="customer" 
+              mapKeyVal="customerName:customerId" 
+              dataType="customer"
               @change="changeCust">
               </im-selector>
             </el-form-item>
@@ -52,7 +52,13 @@
         <el-row inline>
           <el-col :span="8">
             <el-form-item label="发运方式" prop="shipType">
-              <el-input v-model="dataForm.shipType" placeholder="发运方式"></el-input>
+              <im-selector 
+              v-model="dataForm.shipType" 
+              :mapModel.sync="dataForm"
+              mapKeyVal="shipType"
+              dataType="dict.SHIP_TYPE"
+              @change="changeCust">
+              </im-selector>
             </el-form-item>
           </el-col>
           <el-col :span="8">
@@ -101,6 +107,7 @@
       :keyboard-config="{isArrow: true, isDel: true, isTab: true, isEdit: true}"
       :edit-config="{trigger: 'dblclick', mode: 'cell'}"
       :footer-cell-class-name="footerCellClassName"
+      :footer-method="footerMethod"
       show-footer
     >
     <template v-slot:buttons>
@@ -118,7 +125,8 @@
 
 <script>
 import mixinViewModule from "@/mixins/view-module"
-import { Promise } from 'q';
+import { Promise } from 'q'
+import XEUtils from 'xe-utils'
 export default {
   mixins: [mixinViewModule],
   data() {
@@ -128,7 +136,7 @@ export default {
         getDataListIsPage: false,
         updateURL: "/so/salesorder/update",
         deleteIsBatch: true,
-        prodURL: "/so/salesorder/prod"
+        prodURL: "/base/product/search"
       },
 
       visible: false,
@@ -137,8 +145,8 @@ export default {
         id: 0,
         orderType: "",
         customerId: "",
-        orderDate: new Date(),
-        planDeliveryDate: new Date(),
+        orderDate: new Date("2019-08-16"),
+        planDeliveryDate: new Date("2019-08-16"),
         orderAmount: "",
         shipType: "",
         remark: "",

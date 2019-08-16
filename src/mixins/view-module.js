@@ -1,4 +1,5 @@
 import qs from 'qs'
+import XEUtils from 'xe-utils'
 export default {
   data () {
     /* eslint-disable */
@@ -148,7 +149,7 @@ export default {
         vxeDataForm[property] = values.join(',')
       })
       return new Promise((resolve, reject) => {
-        if(this.isNew) {
+        if (this.isNew) {
           resolve()
         } else {
           this.getDataList(vxeDataForm).then(() => {
@@ -166,20 +167,17 @@ export default {
       this.dataListLoading = true
       let vxeParams = { page: null, sort: null, filters: [] }
       this.vxeTabQuery(vxeParams).then((resolve, rejects) => {
-        if(this.$refs.sGrid) {
+        if (this.$refs.sGrid) {
           this.$refs.sGrid.loadData(this.dataList)
-        } else
-          this.pGrid.loadData(this.dataList)
+        } else { this.pGrid.loadData(this.dataList) }
+
         this.dataListLoading = false
-        if(this.$refs.sGrid) {
-          this.$refs.sGrid.updateFooter();
-        }else if(this.$refs.pGrid){
-          this.$refs.pGrid.updateFooter();
+        if (this.$refs.sGrid) {
+          this.$refs.sGrid.updateFooter()
+        } else if (this.$refs.pGrid) {
+          this.$refs.pGrid.updateFooter()
         }
-      });
-
-
-
+      })
     },
     // 表单提交
     dataFormSubmit () {
@@ -187,9 +185,9 @@ export default {
         if (valid) {
           this.btnDisable = true
           if (this.$refs.sGrid) {
-            this.dataForm.lineList = this.getItemListDate(this.$refs.sGrid);
+            this.dataForm.lineList = this.getItemListDate(this.$refs.sGrid)
           }
-          if(this.isNew) {
+          if (this.isNew) {
             this.dataForm.__state = 'NEW'
           } else {
             this.dataForm.__state = 'MODIFIED'
@@ -317,7 +315,6 @@ export default {
         })
       } else {
         this.$nextTick(() => {
-          this.dataForm.id = undefined
           this.$refs.addOrUpdate.init()
         })
       }
@@ -432,9 +429,50 @@ export default {
       }
       return rlist
     },
-    computeHeight() {
+    footerCellClassName ({ $rowIndex, column, columnIndex, $columnIndex }) {
+      if (column.align) {
+        return 'col--' + column.align
+      }
+    },
+    footerMethod ({ columns, data }) {
+      return [columns.map((column, columnIndex) => {
+        data.map((row) => {
+          let editPost = column.own.editPost
+          if (editPost) {
+            row[column.property] = editPost(column, row)
+          }
+        })
+
+        let footerRender = column.own.footerRender
+        if (footerRender) {
+          let cellValue = footerRender(column, data)
+          let cellLabel = cellValue
+          let { formatter } = column
+          if (formatter) {
+            if (XEUtils.isString(formatter)) {
+              cellLabel = XEUtils[formatter](cellValue)
+            } else if (XEUtils.isArray(formatter)) {
+              cellLabel = XEUtils[formatter[0]].apply(XEUtils, [cellValue].concat(formatter.slice(1)))
+            } else {
+              cellLabel = formatter(Object.assign({ cellValue }))
+            }
+          }
+
+          return cellLabel
+        }
+
+        return null
+      })
+      ]
+    },
+    removeSelecteds (grid) {
+      grid.removeSelecteds().then(() => {
+        grid.updateFooter()
+      })
+    },
+    computeHeight () {
       let self = this
-      if(self.$refs.pGrid){
+      if (self.$refs.pGrid) {
         let toolbar = `${document.getElementsByClassName('vxe-toolbar')[0].clientHeight}`
         let tableHeader = `${document.getElementsByClassName('vxe-table--header-wrapper')[0].clientHeight}`
         let bodyClientHeight = `${document.getElementsByClassName('d2-container-full__body')[0].clientHeight}`
@@ -442,8 +480,8 @@ export default {
         tableBody.style.height = bodyClientHeight - toolbar - tableHeader + 'px'
       }
     },
-    collapseChange() {
-      setTimeout(this.computeHeight, 500);
+    collapseChange () {
+      setTimeout(this.computeHeight, 500)
     }
   },
   watch: {
@@ -452,7 +490,11 @@ export default {
         this.dataList = []
         this.$refs.sGrid.loadData(this.dataList)
         if (this.isNew) {
+          debugger
+          this.$refs.sGrid.updateFooter()
+          // setTimeout(()=>{
           this.$refs.dataForm.resetFields()
+          // }, 1000);
         } else {
           this.search()
         }
@@ -466,7 +508,7 @@ export default {
       this.pGrid = this.$refs.pGrid
       this.sGrid = this.$refs.sGrid
       this.addOrUpdate = this.$refs.addOrUpdate
-      if(this.$refs.pGrid){
+      if (this.$refs.pGrid) {
         // 窗口变化事件
         window.onresize = () => {
           this.computeHeight()

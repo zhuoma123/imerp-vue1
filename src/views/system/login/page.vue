@@ -75,7 +75,7 @@
 <script>
 import dayjs from 'dayjs'
 import { mapActions } from 'vuex'
-import generate from '@babel/generator'
+// import generate from '@babel/generator'
 // 进度条
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
@@ -147,7 +147,7 @@ export default {
     submit () {
       // 进度条
       NProgress.start()
-      this.$refs.loginForm.validate( async valid => {
+      this.$refs.loginForm.validate(async valid => {
         if (valid) {
           // 登录
           await this.login({

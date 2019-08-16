@@ -32,12 +32,12 @@ router.beforeEach(async (to, from, next) => {
     next()
     NProgress.done()
   } else {
-    if(count > 1000) {
+    if (count > 1000) {
       store.dispatch('d2admin/account/logout')
       NProgress.done()
       count = 0
       return
-    } 
+    }
     count++
     // 这里暂时将cookie里是否存有token作为验证是否登录的条件
     // 请根据自身业务需要修改
@@ -54,14 +54,14 @@ router.beforeEach(async (to, from, next) => {
         await store.dispatch('d2admin/size/isLoaded')
         // 关闭搜索面板
         store.commit('d2admin/search/set', false)
-        
+
         if (isDynamicAddRoute) {
-          if(menuList && menuList.length > 0) {
+          if (menuList && menuList.length > 0) {
             next()
             NProgress.done()
             count = 0
             return
-          } else if(menuList.length == 0) {
+          } else if (menuList.length === 0) {
             this.$message.error('该用户无可用菜单，请刷新页面或联系系统管理员')
             next({ path: '/sys/login', query: { redirect: to.fullPath } })
             NProgress.done()

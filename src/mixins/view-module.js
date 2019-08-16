@@ -1,5 +1,7 @@
 import qs from 'qs'
 import XEUtils from 'xe-utils'
+import util from '@/libs/util.js'
+
 export default {
   data () {
     /* eslint-disable */
@@ -98,9 +100,8 @@ export default {
      */
     init (item) {
       this.isNew = !item
-      if(item)
-        this.entityModel = Object.assign({}, item)
-        
+      if (item) { this.entityModel = Object.assign({}, item) }
+
       this.visible = true
     },
     // 获取数据列表
@@ -195,7 +196,7 @@ export default {
                   this.btnDisable = false
                 }
               })
-            }).catch(error => {
+            }).catch(() => {
               this.btnDisable = false
               this.fullscreenLoading = false
             })
@@ -266,8 +267,8 @@ export default {
       }
     },
     // 提交
-    submitHandle (event,isAuto) {
-      let row = this.pGrid.getCurrentRow();
+    submitHandle (event, isAuto) {
+      let row = this.pGrid.getCurrentRow()
       if (!row) {
         return this.$message({
           message: '请选择要提交的记录',
@@ -280,7 +281,7 @@ export default {
         type: 'warning'
       }).then(() => {
         this.$axios.post(
-            this.mixinViewModuleOptions.submitURL,{"id":row.id,"isAuto":isAuto}
+          this.mixinViewModuleOptions.submitURL, { 'id': row.id, 'isAuto': isAuto }
         ).then(res => {
           this.$message({
             message: this.$t('views.public.success'),
@@ -367,10 +368,10 @@ export default {
         type: 'warning'
       }).then(() => {
         this.$axios.post(
-          `${this.mixinViewModuleOptions.deleteURL}${this.mixinViewModuleOptions.deleteIsBatch ? '' : '/' + id}`,
-          this.mixinViewModuleOptions.deleteIsBatch ? {
+          this.mixinViewModuleOptions.deleteURL,
+          {
             'data': data
-          } : {}
+          }
         ).then(res => {
           this.$message({
             message: this.$t('views.public.success'),
@@ -386,7 +387,7 @@ export default {
     // 导出
     exportHandle () {
       let params = qs.stringify({
-        'token': cookieGet('token'),
+        'token': util.cookies.get('token'),
         ...this.dataForm
       })
       window.location.href = `${window.SITE_CONFIG['apiURL']}${this.mixinViewModuleOptions.exportURL}?${params}`

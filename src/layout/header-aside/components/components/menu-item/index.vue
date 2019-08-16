@@ -9,7 +9,7 @@
 
 <script>
 export default {
-  name: "d2-layout-header-aside-menu-item",
+  name: 'd2-layout-header-aside-menu-item',
   props: {
     menu: {
       type: Object,
@@ -19,10 +19,10 @@ export default {
   },
   data () {
     return {
-      uniqueId: this._.uniqueId("d2-menu-empty-")
-    };
+      uniqueId: this._.uniqueId('d2-menu-empty-')
+    }
   }
-};
+}
 </script>
 <style>
 .el-menu-item {

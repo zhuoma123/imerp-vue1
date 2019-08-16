@@ -28,36 +28,36 @@
 </template>
 <script>
 export default {
-  name: "ElAutocompleteItem",
-  created() {
+  name: 'ElAutocompleteItem',
+  created () {
   },
-  data() {
+  data () {
     return {
-      value: "",
-      state: ""
-    };
+      value: '',
+      state: ''
+    }
   },
   methods: {
-    select: function(item) {
-      this.value = item[this.valueKey];
-      this.$emit('select',item);
+    select: function (item) {
+      this.value = item[this.valueKey]
+      this.$emit('select', item)
     },
-    handleBlur(event) {
+    handleBlur (event) {
       event.target.value = this.value
-      console.log('getData----->', event);
+      console.log('getData----->', event)
     },
-    getData(queryString) {
+    getData (queryString) {
       console.log('getData----->', queryString)
-    },
+    }
   },
   props: {
     valueKey: {
       type: String,
-      default: "value"
+      default: 'value'
     },
     popperClass: {
       type: String,
-      default: "my-autocomplete"
+      default: 'my-autocomplete'
     },
     popperOptions: Object,
     placeholder: String,
@@ -93,7 +93,7 @@ export default {
     },
     placement: {
       type: String,
-      default: "bottom-start"
+      default: 'bottom-start'
     },
     hideLoading: Boolean,
     popperAppendToBody: {
@@ -106,7 +106,7 @@ export default {
     },
     extField: String
   }
-};
+}
 </script>
 <style>
 .my-autocomplete {

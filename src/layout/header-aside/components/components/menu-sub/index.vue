@@ -16,7 +16,8 @@
 <script>
 // 组件
 import d2LayoutMainMenuItem from '../menu-item'
-import menu from '../../mixin/menu';
+import util from '@/libs/util.js'
+import {} from '../../mixin/menu'
 
 export default {
   name: 'd2-layout-header-aside-menu-sub',
@@ -36,8 +37,8 @@ export default {
     }
   },
   methods: {
-    handleClick() {
-      if(this.menu.children && this.menu.children.length > 0) {
+    handleClick () {
+      if (this.menu.children && this.menu.children.length > 0) {
         let index = this.menu.children[0].path
         if (/^d2-menu-empty-\d+$/.test(index) || index === undefined) {
           this.$message.warning(this.$t('layout.header-aside.message.warning.temporary-menu'))
@@ -46,7 +47,7 @@ export default {
         } else {
           const pid = this.menu.id
           const curPid = this.$store.getters.menu.curAsidePid
-          if(!pid || pid === curPid) return
+          if (!pid || pid === curPid) return
           console.log('切换菜单-------' + this.menu.title)
           const menuList = this.$store.getters.menu.header || []
           const _side = menuList.filter(menu => menu.id === pid)

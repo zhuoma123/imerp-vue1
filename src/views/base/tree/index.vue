@@ -141,7 +141,7 @@ export default {
     add (row) {
       let map = {}
       map.row = row
-      this.addOrUpdateHandleSetter(map)
+      this.addOrUpdateHandleSetter(maJAVA_MODULEp)
     },
     del (row) {
       let map = {}

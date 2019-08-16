@@ -105,7 +105,7 @@
         size="mini"
         ref="pGrid"
         row-id="id"
-        show-footer
+        auto-resize
         :sort-config="sortConfig"
         :loading="dataListLoading"
         :toolbar="toolbar"
@@ -113,7 +113,6 @@
         :columns="tableColumn"
         :select-config="{reserve: true}"
         :edit-config="{trigger: 'click', mode: 'row', showStatus: true}"
-        :footer-method="footerMethod"
         @cell-dblclick="cellDblClick">
       <template v-slot:buttons>
         <vxe-button @click="search">刷新</vxe-button>
@@ -145,7 +144,6 @@
 <script>
 import mixinViewModule from '@/mixins/view-module'
 import AddOrUpdate from './salesorder-add-or-update'
-import XEUtils from 'xe-utils'
 export default {
   mixins: [mixinViewModule],
   data () {
@@ -163,7 +161,7 @@ export default {
       dataFormOp: {
       },
       tableColumn: [
-        { type: 'selection', width: 40, align: 'center' },
+        { type: 'selection', width: 30, align: 'center' },
         { type: 'index', width: 50, align: 'center' },
         {
           title: '下单日期',
@@ -215,21 +213,6 @@ export default {
           align: 'center'
         }
       ],
-      tableProxy: {
-        index: true, // 启用动态序号代理
-        sort: true, // 启用排序代理
-        filter: true, // 启用筛选代理
-        ajax: {
-          query: ({ page, sort, filters }) => {
-            return this.vxeTabQuery({ page, sort, filters })
-          }
-        },
-        props: {
-          list: 'list',
-          result: 'list',
-          total: 'totalCount'
-        }
-      },
       toolbar: {
         id: 'full_edit_1',
         resizable: {
@@ -239,7 +222,6 @@ export default {
           storage: true
         }
       }
-      
     }
   },
   components: {
@@ -248,22 +230,7 @@ export default {
   methods: {
     handleFormReset () {
       this.$refs.dataForm.resetFields()
-    },
-    footerMethod ({ columns, data }) {
-      console.log(data)
-        return [
-          
-          columns.map((column, columnIndex) => {
-            if (columnIndex === 2) {
-              return '汇总'
-            }
-            if (['orderAmount'].includes(column.property)) {
-              return XEUtils.sum(data, column.property)
-            }
-            return null
-          })
-        ]
-      }
+    }
   }
 }
 </script>

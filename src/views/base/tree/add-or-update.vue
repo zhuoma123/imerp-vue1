@@ -21,8 +21,8 @@
         </el-form-item>
         <el-form-item prop="sys" :label="data.data.input.sys">
           <el-radio-group v-model="dataForm.sys">
-            <el-radio :label='1'>是</el-radio>
-            <el-radio :label='0'>否</el-radio>
+            <el-radio :label=1>是</el-radio>
+            <el-radio :label=0>否</el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item prop="remark" :label="data.data.input.remark">
@@ -75,15 +75,17 @@
 </template>
 
 <script>
+import mixinViewModule from '@/mixins/view-module'
 import data from './data'
 export default {
+  mixins: [mixinViewModule],
   data () {
     return {
       filterText: undefined,
       menuList: [],
       defaultProps: {
         children: 'children',
-        label: 'pname',
+        label: 'name',
         id: 'id'
       },
       data: data,
@@ -95,7 +97,7 @@ export default {
         code: undefined,
         name: undefined,
         orderNum: 0,
-        sys: '0',
+        sys: 0,
         companyId: undefined,
         remark: undefined,
         attr1: undefined,
@@ -107,19 +109,24 @@ export default {
       },
       rules: {
         name: [{
-          required: true, message: '名称不可缺少'
+          required: true, message: '名称不可缺少', trigger: 'blur'
         }],
         parentId: [{
-          required: true, message: '父级菜单不可缺少'
+          required: true, message: '父级菜单不可缺少', trigger: 'blur'
         }],
         type: [{
-          required: true, message: '类型不可缺少'
+          required: true, message: '类型不可缺少', trigger: 'blur'
         }],
         code: [{
-          required: true, message: '编码不可缺少'
+          required: true, message: '编码不可缺少', trigger: 'blur'
         }]
       },
       menuFormVisible: false
+    }
+  },
+  props: {
+    parentDataList: {
+      type: Array
     }
   },
   watch: {
@@ -169,13 +176,15 @@ export default {
     },
     showPid () {
       this.menuFormVisible = true
+      debugger
       this.$nextTick(() => {
-        this.menuList = [{ id: 0, pname: '顶级菜单', children: this.dataList }]
+        debugger
+        this.menuList = [{ id: 0, name: '顶级菜单', children: this.parentDataList }]
       })
     },
     getSelectedMenu () {
       let data = this.$refs.tree.getCurrentNode()
-      this.dataForm.pname = data.pname
+      this.dataForm.pname = data.name
       this.dataForm.parentId = data.id
       this.menuFormVisible = false
     },

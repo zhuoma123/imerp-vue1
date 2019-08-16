@@ -3,13 +3,13 @@
     "form": [
       {
         "title": "类型",
-        "key": "code",
+        "key": "type",
         "sortable": true,
         "align": "center"
       },
       {
         "title": "编码",
-        "key": "type",
+        "key": "code",
         "sortable": true,
         "align": "center"
       },

@@ -30,12 +30,12 @@ import d2VueFiltersDayjs from '@d2-admin/filters-dayjs'
 // [ 可选数据表 ] 数据表插件
 import VXETable from 'vxe-table'
 import 'vxe-table/lib/index.css'
-import XEUtils from 'xe-utils'
 
 import VXETablePluginElement from 'vxe-table-plugin-element'
 import 'vxe-table-plugin-element/dist/style.css'
 
 import ElAutocompleteItem from './views/so/select-item'
+import ImSelector from './components/imema'
 
 // 菜单和路由设置
 import router from './router'
@@ -56,8 +56,8 @@ Vue.use(pluginImport)
 Vue.use(d2VueFiltersDayjs)
 VXETable.use(VXETablePluginElement)
 Vue.use(VXETable)
-Vue.use(XEUtils)
 Vue.component('ElAutocompleteItem', ElAutocompleteItem)
+Vue.component('ImSelector', ImSelector)
 Vue.component('d2-grid-layout', GridLayout)
 Vue.component('d2-grid-item', GridItem)
 Vue.component('SplitPane', SplitPane)

@@ -59,6 +59,7 @@ export default {
         this.$refs['dataForm'].resetFields()
         this.$refs['dataForm'].clearValidate()
       })
+      debugger
     },
     update (row) {
       this.dataForm = Object.assign({}, row)
@@ -66,6 +67,7 @@ export default {
       this.$nextTick(() => {
         this.$refs['dataForm'].clearValidate()
       })
+      debugger
     },
     // 表单提交
     dataFormSubmitHandle () {

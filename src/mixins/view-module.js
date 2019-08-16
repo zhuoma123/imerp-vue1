@@ -1,4 +1,5 @@
 import qs from 'qs'
+import XEUtils from 'xe-utils'
 export default {
   data () {
     /* eslint-disable */
@@ -91,21 +92,21 @@ export default {
   methods: {
     /**
      * 该方法只用于子页面
-     * @param {*} item 
+     * @param {*} item
      */
-    init(item) { 
-      if(item) {
-        this.dataForm = Object.assign({}, item);
-        this.isNew = false;
+    init (item) {
+      if (item) {
+        this.dataForm = Object.assign({}, item)
+        this.isNew = false
       } else {
-        this.isNew = true;
+        this.isNew = true
       }
-      this.visible = true;
+      this.visible = true
     },
     // 获取数据列表
     getDataList (vxeDataForm) {
-      return new Promise ((resolve, reject) => {
-        this.dataListLoading = true;
+      return new Promise((resolve, reject) => {
+        this.dataListLoading = true
         this.$axios.post(
           this.mixinViewModuleOptions.getDataListURL,
           {
@@ -116,39 +117,39 @@ export default {
               limit: this.mixinViewModuleOptions.getDataListIsPage ? this.limit : null
             } : {},
             dataForm: {
-              data: Object.assign({},this.dataForm, vxeDataForm),
+              data: Object.assign({}, this.dataForm, vxeDataForm),
               op: this.dataFormOp
             }
           }
         ).then(res => {
-          this.dataListLoading = false;
-          this.dataList = this.mixinViewModuleOptions.getDataListIsPage ? res.list : res;
-          this.total = this.mixinViewModuleOptions.getDataListIsPage ? res.totalCount : 0;
+          this.dataListLoading = false
+          this.dataList = this.mixinViewModuleOptions.getDataListIsPage ? res.list : res
+          this.total = this.mixinViewModuleOptions.getDataListIsPage ? res.totalCount : 0
           resolve({
             total: this.total,
             list: this.dataList
           })
         }).catch(() => {
-          this.dataList = [];
-          this.total = 0;
-          this.dataListLoading = false;
+          this.dataList = []
+          this.total = 0
+          this.dataListLoading = false
           reject()
         })
       })
     },
     vxeTabQuery ({ page, sort, filters }) {
       // 处理排序条件
-      if(sort && sort.field && sort.field !== '') {
-        this.order = sort.order;
+      if (sort && sort.field && sort.field !== '') {
+        this.order = sort.order
         this.orderField = sort.field
       }
-      let vxeDataForm = {};
+      let vxeDataForm = {}
       // 处理筛选条件
       filters.forEach(({ column, property, values }) => {
         vxeDataForm[property] = values.join(',')
-      });
+      })
       return new Promise((resolve, reject) => {
-        if(this.isNew) {
+        if (this.isNew) {
           resolve()
         } else {
           this.getDataList(vxeDataForm).then(() => {
@@ -163,56 +164,53 @@ export default {
       })
     },
     search () {
-      this.dataListLoading = true;
-      let vxeParams = {page:null, sort: null, filters: []};
+      this.dataListLoading = true
+      let vxeParams = { page: null, sort: null, filters: [] }
       this.vxeTabQuery(vxeParams).then((resolve, rejects) => {
-        if(this.$refs.sGrid) {
-          this.$refs.sGrid.loadData(this.dataList);
-        } else
-          this.pGrid.loadData(this.dataList);
+        if (this.$refs.sGrid) {
+          this.$refs.sGrid.loadData(this.dataList)
+        } else { this.pGrid.loadData(this.dataList) }
+
         this.dataListLoading = false
-        if(this.$refs.sGrid) {
-          this.$refs.sGrid.updateFooter();
-        }else if(this.$refs.pGrid){
-          this.$refs.pGrid.updateFooter();
+        if (this.$refs.sGrid) {
+          this.$refs.sGrid.updateFooter()
+        } else if (this.$refs.pGrid) {
+          this.$refs.pGrid.updateFooter()
         }
-      });
-      
-      
-      
+      })
     },
     // 表单提交
     dataFormSubmit () {
       this.$refs.dataForm.validate(valid => {
         if (valid) {
-          this.btnDisable = true;
+          this.btnDisable = true
           if (this.$refs.sGrid) {
-            this.dataForm.lineList = this.getItemListDate(this.$refs.sGrid);
+            this.dataForm.lineList = this.getItemListDate(this.$refs.sGrid)
           }
-          if(this.isNew) {
-            this.dataForm.__state = 'NEW';
+          if (this.isNew) {
+            this.dataForm.__state = 'NEW'
           } else {
-            this.dataForm.__state = 'MODIFIED';
+            this.dataForm.__state = 'MODIFIED'
           }
-          this.fullscreenLoading = true;
+          this.fullscreenLoading = true
           this.$axios
             .post(this.mixinViewModuleOptions.updateURL, this.dataForm)
             .then(() => {
-              this.fullscreenLoading = false;
-              this.visible = false;
-              this.$emit('refreshDataList');
+              this.fullscreenLoading = false
+              this.visible = false
+              this.$emit('refreshDataList')
               this.$message({
                 message: '操作成功',
                 type: 'success',
                 duration: 1000,
                 onClose: () => {
-                  this.btnDisable = false;
+                  this.btnDisable = false
                 }
-              });
+              })
             }).catch(error => {
-              this.btnDisable = false;
-              this.fullscreenLoading = false;
-            });
+              this.btnDisable = false
+              this.fullscreenLoading = false
+            })
         }
       })
     },
@@ -223,19 +221,19 @@ export default {
     // 排序
     dataListSortChangeHandle (data) {
       if (!data.order || !data.prop) {
-        this.order = '';
-        this.orderField = '';
+        this.order = ''
+        this.orderField = ''
         return false
       }
-      this.order = data.order.replace(/ending$/, '');
-      this.orderField = data.prop.replace(/([A-Z])/g, '_$1').toLowerCase();
+      this.order = data.order.replace(/ending$/, '')
+      this.orderField = data.prop.replace(/([A-Z])/g, '_$1').toLowerCase()
       this.getDataList()
     },
     // 分页, 每页条数
     pageSizeChangeHandle (val, vxe) {
-      this.page = 1;
-      this.limit = val;
-      if(vxe) {
+      this.page = 1
+      this.limit = val
+      if (vxe) {
         this.search()
       } else {
         this.getDataList()
@@ -243,16 +241,16 @@ export default {
     },
     // 分页, 当前页
     pageCurrentChangeHandle (val, vxe) {
-      this.page = val;
-      if(vxe) {
+      this.page = val
+      if (vxe) {
         this.search()
       } else {
         this.getDataList()
       }
     },
     // 双击
-    cellDblClick ({row}) {
-      this.addOrUpdateVisible = true;
+    cellDblClick ({ row }) {
+      this.addOrUpdateVisible = true
       this.$nextTick(() => {
         this.$refs.addOrUpdate.init(row)
       })
@@ -266,8 +264,8 @@ export default {
     },
     // 修改
     updateHandle (event) {
-      let row = this.pGrid.getCurrentRow();
-      this.addOrUpdateVisible = true;
+      let row = this.pGrid.getCurrentRow()
+      this.addOrUpdateVisible = true
       if (row) {
         this.$nextTick(() => {
           this.$refs.addOrUpdate.init(row)
@@ -279,26 +277,54 @@ export default {
         })
       }
     },
+    // 提交
+    submitHandle (event,isAuto) {
+      let row = this.pGrid.getCurrentRow();
+      if (!row) {
+        return this.$message({
+          message: '请选择要提交的记录',
+          type: 'warning'
+        })
+      }
+      this.$confirm('确定要提交吗，提交后不能在修改！', { 'handle': '提交' }, '确认操作', {
+        confirmButtonText: this.$t('views.public.confirm'),
+        cancelButtonText: this.$t('views.public.cancel'),
+        type: 'warning'
+      }).then(() => {
+        this.$axios.post(
+            this.mixinViewModuleOptions.submitURL,{"id":row.id,"isAuto":isAuto}
+        ).then(res => {
+          this.$message({
+            message: this.$t('views.public.success'),
+            type: 'success',
+            duration: 500,
+            onClose: () => {
+              this.search()
+            }
+          })
+        }).catch(() => {})
+      }).catch(() => {})
+    },
     // 新增 / 修改
     addOrUpdateHandleSetter (row) {
-      this.addOrUpdateVisible = true;
+      this.addOrUpdateVisible = true
       if (row) {
         this.$nextTick(() => {
-          this.$refs.addOrUpdate.dataForm.id = row.id;
-          this.$refs.addOrUpdate.init();
+          this.$refs.addOrUpdate.dataForm.id = row.row.id
+          this.$refs.addOrUpdate.update(row.row)
         })
       } else {
         this.$nextTick(() => {
-          this.$refs.addOrUpdate.init();
+          this.$refs.addOrUpdate.init()
         })
       }
     },
     // 删除
     deleteHandle (grid) {
-      let ids = '';
-      this.dataListSelections = grid.getSelectRecords();
-      if(grid.getSelectRecords().length === 0) {
-        if(!grid.getCurrentRow()) {
+      let ids = ''
+      this.dataListSelections = grid.getSelectRecords()
+      if (grid.getSelectRecords().length === 0) {
+        if (!grid.getCurrentRow()) {
           return this.$message({
             message: '请选择要删除的记录',
             type: 'warning'
@@ -313,9 +339,9 @@ export default {
         cancelButtonText: this.$t('views.public.cancel'),
         type: 'warning'
       }).then(() => {
-        this.$axios.post (
+        this.$axios.post(
           this.mixinViewModuleOptions.deleteURL,
-          {'ids': ids}
+          { 'ids': ids }
         ).then(res => {
           this.$message({
             message: this.$t('views.public.success'),
@@ -330,6 +356,7 @@ export default {
     },
     // 删除
     deleteHandleSetter (index) {
+      debugger
       let data
       if (this.mixinViewModuleOptions.deleteIsBatch && this.dataListSelections.length > 0) {
         data = this.dataListSelections.map(item => item[this.mixinViewModuleOptions.deleteIsBatchKey])
@@ -378,8 +405,8 @@ export default {
     },
     // 获取行表数据
     getItemListDate (grid) {
-      let allDate = grid.getRecordset();
-      let rlist = [];
+      let allDate = grid.getRecordset()
+      let rlist = []
       if (allDate) {
         if (allDate.insertRecords && allDate.insertRecords.length > 0) {
           for (let i = 0; i < allDate.insertRecords.length; i++) {
@@ -401,17 +428,75 @@ export default {
         }
       }
       return rlist
+    },
+    footerCellClassName ({ $rowIndex, column, columnIndex, $columnIndex }) {
+      if (column.align) {
+        return 'col--' + column.align
+      }
+    },
+    footerMethod ({ columns, data }) {
+      return [columns.map((column, columnIndex) => {
+        data.map((row) => {
+          let editPost = column.own.editPost
+          if (editPost) {
+            row[column.property] = editPost(column, row)
+          }
+        })
+
+        let footerRender = column.own.footerRender
+        if (footerRender) {
+          let cellValue = footerRender(column, data)
+          let cellLabel = cellValue
+          let { formatter } = column
+          if (formatter) {
+            if (XEUtils.isString(formatter)) {
+              cellLabel = XEUtils[formatter](cellValue)
+            } else if (XEUtils.isArray(formatter)) {
+              cellLabel = XEUtils[formatter[0]].apply(XEUtils, [cellValue].concat(formatter.slice(1)))
+            } else {
+              cellLabel = formatter(Object.assign({ cellValue }))
+            }
+          }
+
+          return cellLabel
+        }
+
+        return null
+      })
+      ]
+    },
+    removeSelecteds (grid) {
+      grid.removeSelecteds().then(() => {
+        grid.updateFooter()
+      })
+    },
+    computeHeight () {
+      let self = this
+      if (self.$refs.pGrid) {
+        let toolbar = `${document.getElementsByClassName('vxe-toolbar')[0].clientHeight}`
+        let tableHeader = `${document.getElementsByClassName('vxe-table--header-wrapper')[0].clientHeight}`
+        let bodyClientHeight = `${document.getElementsByClassName('d2-container-full__body')[0].clientHeight}`
+        let tableBody = self.$refs.pGrid.$el.getElementsByClassName('vxe-table--body-wrapper')[0]
+        tableBody.style.height = bodyClientHeight - toolbar - tableHeader + 'px'
+      }
+    },
+    collapseChange () {
+      setTimeout(this.computeHeight, 500)
     }
   },
   watch: {
     visible: function (newName, oldName) {
-      if(this.$refs.sGrid && newName) {
+      if (this.$refs.sGrid && newName) {
         this.dataList = []
         this.$refs.sGrid.loadData(this.dataList)
-        if(this.isNew){
+        if (this.isNew) {
+          debugger
+          this.$refs.sGrid.updateFooter()
+          // setTimeout(()=>{
           this.$refs.dataForm.resetFields()
+          // }, 1000);
         } else {
-          this.search();
+          this.search()
         }
       }
     }
@@ -423,9 +508,17 @@ export default {
       this.pGrid = this.$refs.pGrid
       this.sGrid = this.$refs.sGrid
       this.addOrUpdate = this.$refs.addOrUpdate
+      if (this.$refs.pGrid) {
+        // 窗口变化事件
+        window.onresize = () => {
+          this.computeHeight()
+        }
+        // 初始化
+        this.computeHeight()
+      }
     })
   },
-  activated() {
-    console.log("---------------->activated")
+  activated () {
+    console.log('---------------->activated')
   }
 }

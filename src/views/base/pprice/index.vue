@@ -71,6 +71,7 @@ import AddOrUpdate from './add-or-update'
 import data from './data'
 
 export default {
+  name: 'pprice',
   mixins: [mixinViewModule],
   data () {
     return {

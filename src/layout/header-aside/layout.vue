@@ -289,7 +289,7 @@ export default {
 
 .el-form-item--mini.el-form-item,
 .el-form-item--small.el-form-item {
-  margin-bottom: 5px;
+  margin-bottom: 3px;
 }
 
 .el-form-item__label {
@@ -317,13 +317,21 @@ export default {
   border: 0;
 }
 
-/*表格按钮*/
+/*表格*/
 .vxe-toolbar.size--mini, .vxe-toolbar.size--small {
-    padding: 8px 8px !important;
+  padding: 8px 8px !important;
 }
 
 .vxe-table.size--mini .vxe-body--column, .vxe-table.size--mini .vxe-footer--column, .vxe-table.size--mini .vxe-header--column {
-    padding: 3px 0 !important;
+  padding: 3px 0 !important;
+}
+
+.vxe-table .vxe-cell {
+  padding: 0 3px !important;
+}
+
+.vxe-table.fixed--left.size--mini .vxe-body--column, .vxe-table.fixed--right.size--mini .vxe-body--column, .vxe-table.vxe-editable.size--mini .vxe-body--column {
+  height: 30px !important;
 }
 
 /*弹出框*/

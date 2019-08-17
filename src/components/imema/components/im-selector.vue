@@ -72,11 +72,11 @@ export default {
     } else {
       this.dType = this.dataType
     }
-    this.selType = TYPE_MAP.this.dType.type
+    this.selType = TYPE_MAP[this.dType].type
     if (this.selType === 'static') {
       this._selLoadCode()
     }
-    this.placeholder = TYPE_MAP.this.dType.text
+    this.placeholder = TYPE_MAP[this.dType].text
   },
   mounted () {
 
@@ -91,7 +91,7 @@ export default {
     async _selDyamicList (query) {
       this.loading = true
       await this.$axios.post(
-        '/common/' + TYPE_MAP.dType.url.replace(/^\//, '') + this.codeType,
+        '/common/' + TYPE_MAP[this.dType].url.replace(/^\//, '') + this.codeType,
         { query: query }
       ).then(res => {
         this.loading = false

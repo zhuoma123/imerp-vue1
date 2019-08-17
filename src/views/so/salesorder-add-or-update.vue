@@ -17,10 +17,10 @@
         <el-row inline>
           <el-col :span="8">
             <el-form-item label="客户" prop="customerId">
-              <im-selector 
-              v-model="dataForm.customerId" 
+              <im-selector
+              v-model="dataForm.customerId"
               :mapModel.sync="dataForm"
-              mapKeyVal="customerName:customerId" 
+              mapKeyVal="customerName:customerId"
               dataType="customer"
               @change="changeCust">
               </im-selector>
@@ -51,8 +51,8 @@
         <el-row inline>
           <el-col :span="8">
             <el-form-item label="发运方式" prop="shipType">
-              <im-selector 
-              v-model="dataForm.shipType" 
+              <im-selector
+              v-model="dataForm.shipType"
               :mapModel.sync="dataForm"
               mapKeyVal="shipType"
               dataType="dict.SHIP_TYPE"
@@ -123,19 +123,18 @@
 </template>
 
 <script>
-import mixinViewModule from "@/mixins/view-module"
-import { Promise } from 'q'
+import mixinViewModule from '@/mixins/view-module'
 import XEUtils from 'xe-utils'
 export default {
   mixins: [mixinViewModule],
-  data() {
+  data () {
     return {
       mixinViewModuleOptions: {
-        getDataListURL: "/so/salesorderline/list",
+        getDataListURL: '/so/salesorderline/list',
         getDataListIsPage: false,
-        updateURL: "/so/salesorder/update",
+        updateURL: '/so/salesorder/update',
         deleteIsBatch: true,
-        prodURL: "/base/product/search"
+        prodURL: '/base/product/search'
       },
 
       visible: false,
@@ -164,13 +163,13 @@ export default {
         { type: "selection", width: 50, align: "center" },
         { type: "index", width: 50, align: "center" },
         {
-          title: "物料名称",
-          field: "productName",
-          width: "200px",
-          align: "center",
+          title: '物料名称',
+          field: 'productName',
+          width: '200px',
+          align: 'center',
           editRender: {
-            name: "ElAutocomplete",
-            props: { fetchSuggestions: this.prodSeach, triggerOnFocus: false},
+            name: 'ElAutocomplete',
+            props: { fetchSuggestions: this.prodSeach, triggerOnFocus: false },
             events: { select: this.handleProcSelect }
           },
           footerRender: function (column, data) {
@@ -178,38 +177,38 @@ export default {
           }
         },
         {
-          title: "当前库存",
-          field: "stock",
-          align: "left"
+          title: '当前库存',
+          field: 'stock',
+          align: 'left'
         },
         {
-          title: "指导售价",
-          field: "bPrice",
-          align: "left"
+          title: '指导售价',
+          field: 'bPrice',
+          align: 'left'
         },
         {
-          title: "下单数量",
-          field: "orderQty",
-          align: "left",
-          editRender: { name: "input" }
+          title: '下单数量',
+          field: 'orderQty',
+          align: 'left',
+          editRender: { name: 'input' }
         },
         {
-          title: "销售价",
-          field: "price",
+          title: '销售价',
+          field: 'price',
           sortable: true,
-          align: "center",
-          editRender: { name: "input" }
+          align: 'center',
+          editRender: { name: 'input' }
         },
         {
-          title: "总金额",
-          field: "totalPrice",
-          align: "left",
-          formatter: ["toFixedString", 2],
+          title: '总金额',
+          field: 'totalPrice',
+          align: 'left',
+          formatter: ['toFixedString', 2],
           editPost: function (column, row) {
-            var qty = row.orderQty;
-            var price = row.price;
+            var qty = row.orderQty
+            var price = row.price
             if (!Number.isNaN(qty) && !Number.isNaN(price)) {
-              return Number(qty) * Number(price).toFixed(2);
+              return Number(qty) * Number(price).toFixed(2)
             }
           },
           footerRender: function (column, data) {
@@ -217,33 +216,33 @@ export default {
           }
         },
         {
-          title: "条码",
-          field: "barCode",
-          align: "center"
+          title: '条码',
+          field: 'barCode',
+          align: 'center'
         },
         {
-          title: "品牌",
-          field: "brand",
-          align: "center"
+          title: '品牌',
+          field: 'brand',
+          align: 'center'
         },
         {
-          title: "车型",
-          field: "vehicle",
-          align: "center"
+          title: '车型',
+          field: 'vehicle',
+          align: 'center'
         },
         {
-          title: "产地",
-          field: "madein",
-          align: "center"
+          title: '产地',
+          field: 'madein',
+          align: 'center'
         },
         {
-          title: "规格属性",
-          field: "specialParam",
-          align: "center"
+          title: '规格属性',
+          field: 'specialParam',
+          align: 'center'
         }
       ],
       toolbar: {
-        id: "full_edit_1",
+        id: 'full_edit_1',
         resizable: {
           storage: true
         },
@@ -251,26 +250,22 @@ export default {
           storage: true
         }
       }
-    };
+    }
   },
   methods: {
-    prodSeach(queryString, cb) {
-      var restaurants = this.restaurants;
-      var results = [];
-
+    prodSeach (queryString, cb) {
       if (queryString) {
         this.$axios
           .post(this.mixinViewModuleOptions.prodURL, { name: queryString ,customerId:this.dataForm.customerId,lastPrice:1})
           .then(res => {
             for (var i = 0; i < res.length; i++) {
-              res[i].value = res[i].val;
+              res[i].value = res[i].val
             }
-            results = res;
-            clearTimeout(this.timeout);
+            clearTimeout(this.timeout)
             this.timeout = setTimeout(() => {
-              cb(res);
-            }, 100 * Math.random());
-          });
+              cb(res)
+            }, 100 * Math.random())
+          })
       }
 
     },
@@ -285,17 +280,17 @@ export default {
     },
     search () {
       this.dataListLoading = true
-      let vxeParams = {page:null, sort: null, filters: []}
+      let vxeParams = { page: null, sort: null, filters: [] }
       this.vxeTabQuery(vxeParams).then((resolve, rejects) => {
         this.$refs.sGrid.loadData(this.dataList)
         this.dataListLoading = false
       })
     },
-    changeCust(e) {
+    changeCust (e) {
       console.log('------', e, this.dataForm)
     }
-  }, 
+  },
   mounted () {
   }
-};
+}
 </script>

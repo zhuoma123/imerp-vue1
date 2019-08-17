@@ -118,138 +118,138 @@
 </template>
 
 <script>
-    import mixinViewModule from "@/mixins/view-module";
-    import AddOrUpdate from "./lizi-add-or-update";
-    import ElInput from "../../../node_modules/element-ui/packages/input/src/input";
-    import ElCol from "element-ui/packages/col/src/col";
-    export default {
-        mixins: [mixinViewModule],
-        data() {
-            return {
-                mixinViewModuleOptions: {
-                    getDataListURL: "/so/salesorder/list",
-                    getDataListIsPage: true,
-                    updateURL: "/so/salesorder/update",
-                    deleteURL: "/so/salesorder/delete",
-                    deleteIsBatch: true,
-                    exportURL: "/so/salesorder/export"
-                },
-                dataForm: {
-                    bDate: new Date(),
-                    custName:"11"
-                },
-                dataFormOp: {
-                    username: "like"
-                },
-                rowHandler: {
-                    width:160,
-                    custom: [
-                        {
-                            text: this.$t("views.public.update"),
-                            type: 'primary',
-                            size: 'mini',
-                            emit: 'user-update',
-                            show: (index, row) => {
-                                return this.$hasPermission("so:salesorder:update");
-                            }
-                        },
-                        {
-                            text: this.$t("views.public.delete"),
-                            type: 'danger',
-                            size: 'mini',
-                            emit: 'user-delete',
-                            show: (index, row) => {
-                                return this.$hasPermission("so:salesorder:delete");
-                            }
-                        }
-                    ]
-                },
-                columns: [
-                    {
-                        title: "下单日期",
-                        key: "orderDate",
-                        sortable: true,
-                        width: "100px",
-                        align: "center"
-                    },
-                    {
-                        title: "销售单号",
-                        key: "orderNum",
-                        sortable: true,
-                        align: "center"
-                    },
-                    {
-                        title: "客户名称",
-                        key: "custName",
-                        sortable: true,
-                        align: "left"
-                    },
-                    {
-                        title: "状态",
-                        key: "status",
-                        sortable: true,
-                        align: "left"
-                    },
-                    {
-                        title: "订单金额",
-                        key: "orderAmount",
-                        sortable: true,
-                        align: "left"
-                    },
-                    {
-                        title: "发运方式",
-                        key: "shipType",
-                        sortable: true,
-                        align: "center"
-                    },
-                    {
-                        title: "销售员",
-                        key: "pic",
-                        sortable: true,
-                        align: "center"
-                    },
-                    {
-                        title: this.$t("views.public.user.status"),
-                        key: "status",
-                        align: "center",
-                        width: "70px",
-                        // component: {
-                        //     render: function(createElement) {
-                        //         let s = "新增"
-                        //         let type = this.scope.row.status == 'NEW' ? 'danger' : 'success'
-                        //         return createElement(
-                        //             "el-tag",
-                        //             {
-                        //                 attrs: {
-                        //                     type,
-                        //                     size: 'mini'
-                        //                 }
-                        //             },
-                        //             `${this.$t(s)}`
-                        //         );
-                        //     }
-                        // }
-                    },
-                    {
-                        title: this.$t("views.public.createDate"),
-                        key: "createDate",
-                        sortable: true,
-                        align: "center"
-                    }
-                ]
-            };
-        },
-        components: {
-            ElCol,
-            ElInput,
-            AddOrUpdate
-        },
-        methods: {
-            handleFormReset () {
-                this.$refs.dataForm.resetFields()
+import mixinViewModule from '@/mixins/view-module'
+import AddOrUpdate from './lizi-add-or-update'
+import ElInput from '../../../node_modules/element-ui/packages/input/src/input'
+import ElCol from 'element-ui/packages/col/src/col'
+export default {
+  mixins: [mixinViewModule],
+  data () {
+    return {
+      mixinViewModuleOptions: {
+        getDataListURL: '/so/salesorder/list',
+        getDataListIsPage: true,
+        updateURL: '/so/salesorder/update',
+        deleteURL: '/so/salesorder/delete',
+        deleteIsBatch: true,
+        exportURL: '/so/salesorder/export'
+      },
+      dataForm: {
+        bDate: new Date(),
+        custName: '11'
+      },
+      dataFormOp: {
+        username: 'like'
+      },
+      rowHandler: {
+        width: 160,
+        custom: [
+          {
+            text: this.$t('views.public.update'),
+            type: 'primary',
+            size: 'mini',
+            emit: 'user-update',
+            show: (index, row) => {
+              return this.$hasPermission('so:salesorder:update')
             }
+          },
+          {
+            text: this.$t('views.public.delete'),
+            type: 'danger',
+            size: 'mini',
+            emit: 'user-delete',
+            show: (index, row) => {
+              return this.$hasPermission('so:salesorder:delete')
+            }
+          }
+        ]
+      },
+      columns: [
+        {
+          title: '下单日期',
+          key: 'orderDate',
+          sortable: true,
+          width: '100px',
+          align: 'center'
+        },
+        {
+          title: '销售单号',
+          key: 'orderNum',
+          sortable: true,
+          align: 'center'
+        },
+        {
+          title: '客户名称',
+          key: 'custName',
+          sortable: true,
+          align: 'left'
+        },
+        {
+          title: '状态',
+          key: 'status',
+          sortable: true,
+          align: 'left'
+        },
+        {
+          title: '订单金额',
+          key: 'orderAmount',
+          sortable: true,
+          align: 'left'
+        },
+        {
+          title: '发运方式',
+          key: 'shipType',
+          sortable: true,
+          align: 'center'
+        },
+        {
+          title: '销售员',
+          key: 'pic',
+          sortable: true,
+          align: 'center'
+        },
+        {
+          title: this.$t('views.public.user.status'),
+          key: 'status',
+          align: 'center',
+          width: '70px'
+          // component: {
+          //     render: function(createElement) {
+          //         let s = "新增"
+          //         let type = this.scope.row.status == 'NEW' ? 'danger' : 'success'
+          //         return createElement(
+          //             "el-tag",
+          //             {
+          //                 attrs: {
+          //                     type,
+          //                     size: 'mini'
+          //                 }
+          //             },
+          //             `${this.$t(s)}`
+          //         );
+          //     }
+          // }
+        },
+        {
+          title: this.$t('views.public.createDate'),
+          key: 'createDate',
+          sortable: true,
+          align: 'center'
         }
+      ]
     }
+  },
+  components: {
+    ElCol,
+    ElInput,
+    AddOrUpdate
+  },
+  methods: {
+    handleFormReset () {
+      this.$refs.dataForm.resetFields()
+    }
+  }
+}
 </script>
 
 <style>

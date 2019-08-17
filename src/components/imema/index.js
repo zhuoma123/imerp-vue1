@@ -39,42 +39,42 @@ export default {
   },
   computed: {
     // 始终返回渲染组件
-    component() {
+    component () {
       if (this.type === 'select') return imSelector
       else {
         return 'div'
       }
     }
   },
-  render(h) {
+  render (h) {
     return h('div', {
       ref: 'selector',
       class: 'selector-component'
     }, [
-        h(this.component, {
-          ref: 'component',
-          props: {
-            dataType: this.dataType
-          },
-          on: {
-            change: e => this.$emit('change', e),
-            input: e=> {
-              if(!e.value) {
-                this.mapModel[this.mapKey] = this.mapModel[this.mapVal] = null
-              } else {
-                this.mapModel[this.mapKey]=e.key
-                this.mapModel[this.mapVal]=e.value
-              }
+      h(this.component, {
+        ref: 'component',
+        props: {
+          dataType: this.dataType
+        },
+        on: {
+          change: e => this.$emit('change', e),
+          input: e => {
+            if (!e.value) {
+              this.mapModel[this.mapKey] = this.mapModel[this.mapVal] = null
+            } else {
+              this.mapModel[this.mapKey] = e.key
+              this.mapModel[this.mapVal] = e.value
             }
           }
-        })
-      ])
+        }
+      })
+    ])
   },
   methods: {
 
   },
   watch: {
-    value: function(val, oldVal) {
+    value: function (val, oldVal) {
       let obj = {
         key: this.mapModel[this.mapKey],
         value: this.mapModel[this.mapVal]
@@ -83,9 +83,9 @@ export default {
     }
   },
   created () {
-    if(this.mapKeyVal) {
-      let kv = this.mapKeyVal.split(":")
-      if(kv.length == 2) {
+    if (this.mapKeyVal) {
+      let kv = this.mapKeyVal.split(':')
+      if (kv.length === 2) {
         this.mapKey = kv[0]
         this.mapVal = kv[1]
       } else {

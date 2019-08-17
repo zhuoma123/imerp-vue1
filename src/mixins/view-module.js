@@ -1,5 +1,7 @@
 import qs from 'qs'
 import XEUtils from 'xe-utils'
+import util from '@/libs/util.js'
+
 export default {
   data () {
     /* eslint-disable */
@@ -42,11 +44,13 @@ export default {
       pGrid: {},
       sGrid: {},
       addOrUpdate: {},
+      entityModel: {},
       isNew: false,
       tableProxy: {
         index: true, // 启用动态序号代理
         sort: true, // 启用排序代理
-        filter: true, // 启用筛选代理
+        filter: true, // 启用筛选代理,
+        autoLoad: true,
         ajax: {
           query: ({ page, sort, filters }) => {
             return this.vxeTabQuery({ page, sort, filters })
@@ -95,78 +99,63 @@ export default {
      * @param {*} item
      */
     init (item) {
-      if (item) {
-        this.dataForm = Object.assign({}, item)
-        this.isNew = false
-      } else {
-        this.isNew = true
-      }
+      this.isNew = !item
+      if (item) { this.entityModel = Object.assign({}, item) }
+
       this.visible = true
     },
     // 获取数据列表
-    getDataList (vxeDataForm) {
-      return new Promise((resolve, reject) => {
-        this.dataListLoading = true
-        this.$axios.post(
-          this.mixinViewModuleOptions.getDataListURL,
-          {
-            pageForm: this.mixinViewModuleOptions.getDataListIsPage ? {
-              order: this.order,
-              orderField: this.orderField,
-              page: this.mixinViewModuleOptions.getDataListIsPage ? this.page : null,
-              limit: this.mixinViewModuleOptions.getDataListIsPage ? this.limit : null
-            } : {},
-            dataForm: {
-              data: Object.assign({}, this.dataForm, vxeDataForm),
-              op: this.dataFormOp
-            }
+    async getDataList (vxeDataForm) {
+      this.dataListLoading = true
+      await this.$axios.post(
+        this.mixinViewModuleOptions.getDataListURL,
+        {
+          pageForm: this.mixinViewModuleOptions.getDataListIsPage ? {
+            order: this.order,
+            orderField: this.orderField,
+            page: this.mixinViewModuleOptions.getDataListIsPage ? this.page : null,
+            limit: this.mixinViewModuleOptions.getDataListIsPage ? this.limit : null
+          } : {},
+          dataForm: {
+            data: Object.assign({}, this.dataForm, vxeDataForm),
+            op: this.dataFormOp
           }
-        ).then(res => {
-          this.dataListLoading = false
-          this.dataList = this.mixinViewModuleOptions.getDataListIsPage ? res.list : res
-          this.total = this.mixinViewModuleOptions.getDataListIsPage ? res.totalCount : 0
-          resolve({
-            total: this.total,
-            list: this.dataList
-          })
-        }).catch(() => {
-          this.dataList = []
-          this.total = 0
-          this.dataListLoading = false
-          reject()
-        })
+        }
+      ).then(res => {
+        this.dataList = this.mixinViewModuleOptions.getDataListIsPage ? res.list : res
+        this.total = this.mixinViewModuleOptions.getDataListIsPage ? res.totalCount : 0
+      }).catch(() => {
+        this.dataList = []
+        this.total = 0
       })
+      this.dataListLoading = false
     },
-    vxeTabQuery ({ page, sort, filters }) {
+    vxeTabQuery ({ page, sort, filters }, dataForm) {
       // 处理排序条件
       if (sort && sort.field && sort.field !== '') {
         this.order = sort.order
         this.orderField = sort.field
       }
-      let vxeDataForm = {}
+      let vxeDataForm = dataForm || {}
       // 处理筛选条件
       filters.forEach(({ column, property, values }) => {
         vxeDataForm[property] = values.join(',')
       })
       return new Promise((resolve, reject) => {
-        if (this.isNew) {
-          resolve()
-        } else {
-          this.getDataList(vxeDataForm).then(() => {
-            resolve({
-              total: this.total,
-              list: this.dataList
-            })
-          }).catch(err => {
-            resolve()
+        this.getDataList(vxeDataForm).then(() => {
+          resolve({
+            total: this.total,
+            list: this.dataList
           })
-        }
+        }).catch(err => {
+          reject(err)
+        })
       })
     },
-    search () {
+    search (dataForm) {
       this.dataListLoading = true
       let vxeParams = { page: null, sort: null, filters: [] }
-      this.vxeTabQuery(vxeParams).then((resolve, rejects) => {
+      this.vxeTabQuery(vxeParams, dataForm).then((resolve, rejects) => {
         if (this.$refs.sGrid) {
           this.$refs.sGrid.loadData(this.dataList)
         } else { this.pGrid.loadData(this.dataList) }
@@ -207,7 +196,7 @@ export default {
                   this.btnDisable = false
                 }
               })
-            }).catch(error => {
+            }).catch(() => {
               this.btnDisable = false
               this.fullscreenLoading = false
             })
@@ -278,8 +267,8 @@ export default {
       }
     },
     // 提交
-    submitHandle (event,isAuto) {
-      let row = this.pGrid.getCurrentRow();
+    submitHandle (event, isAuto) {
+      let row = this.pGrid.getCurrentRow()
       if (!row) {
         return this.$message({
           message: '请选择要提交的记录',
@@ -292,7 +281,7 @@ export default {
         type: 'warning'
       }).then(() => {
         this.$axios.post(
-            this.mixinViewModuleOptions.submitURL,{"id":row.id,"isAuto":isAuto}
+          this.mixinViewModuleOptions.submitURL, { 'id': row.id, 'isAuto': isAuto }
         ).then(res => {
           this.$message({
             message: this.$t('views.public.success'),
@@ -379,10 +368,10 @@ export default {
         type: 'warning'
       }).then(() => {
         this.$axios.post(
-          `${this.mixinViewModuleOptions.deleteURL}${this.mixinViewModuleOptions.deleteIsBatch ? '' : '/' + id}`,
-          this.mixinViewModuleOptions.deleteIsBatch ? {
+          this.mixinViewModuleOptions.deleteURL,
+          {
             'data': data
-          } : {}
+          }
         ).then(res => {
           this.$message({
             message: this.$t('views.public.success'),
@@ -398,7 +387,7 @@ export default {
     // 导出
     exportHandle () {
       let params = qs.stringify({
-        'token': cookieGet('token'),
+        'token': util.cookies.get('token'),
         ...this.dataForm
       })
       window.location.href = `${window.SITE_CONFIG['apiURL']}${this.mixinViewModuleOptions.exportURL}?${params}`
@@ -486,18 +475,18 @@ export default {
   },
   watch: {
     visible: function (newName, oldName) {
-      if (this.$refs.sGrid && newName) {
-        this.dataList = []
-        this.$refs.sGrid.loadData(this.dataList)
-        if (this.isNew) {
-          debugger
-          this.$refs.sGrid.updateFooter()
-          // setTimeout(()=>{
-          this.$refs.dataForm.resetFields()
-          // }, 1000);
-        } else {
-          this.search()
-        }
+      if (newName) {
+        this.$nextTick(() => {
+          this.dataList = []
+          this.$refs.sGrid.loadData(this.dataList)
+          if (this.isNew) {
+            this.$refs.dataForm.resetFields()
+            this.$refs.sGrid.updateFooter()
+          } else {
+            this.dataForm = this.entityModel
+            this.search(this.entityModel)
+          }
+        })
       }
     }
   },

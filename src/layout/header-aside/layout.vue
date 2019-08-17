@@ -97,86 +97,86 @@
 </template>
 
 <script>
-import { sysMenuService, sysUserService } from "@api";
-import d2MenuSide from "./components/menu-side";
-import d2MenuHeader from "./components/menu-header";
-import d2Tabs from "./components/tabs";
-import d2HeaderFullscreen from "./components/header-fullscreen";
-import d2HeaderLocales from "./components/header-locales";
-import d2HeaderSearch from "./components/header-search";
-import d2HeaderSize from "./components/header-size";
-import d2HeaderTheme from "./components/header-theme";
-import d2HeaderUser from "./components/header-user";
-import d2HeaderLog from "./components/header-log";
-import d2HeaderColor from "./components/header-color";
-import { mapState, mapGetters, mapActions } from "vuex";
-import mixinSearch from "./mixins/search";
+import { sysUserService } from '@api'
+import d2MenuSide from './components/menu-side'
+import d2MenuHeader from './components/menu-header'
+import d2Tabs from './components/tabs'
+import d2HeaderFullscreen from './components/header-fullscreen'
+// import d2HeaderLocales from './components/header-locales'
+import d2HeaderSearch from './components/header-search'
+// import d2HeaderSize from './components/header-size'
+import d2HeaderTheme from './components/header-theme'
+import d2HeaderUser from './components/header-user'
+import d2HeaderLog from './components/header-log'
+import d2HeaderColor from './components/header-color'
+import { mapState, mapGetters, mapActions } from 'vuex'
+import mixinSearch from './mixins/search'
 export default {
-  name: "d2-layout-header-aside",
+  name: 'd2-layout-header-aside',
   mixins: [mixinSearch],
   components: {
     d2MenuSide,
     d2MenuHeader,
     d2Tabs,
     d2HeaderFullscreen,
-    d2HeaderLocales,
+    // d2HeaderLocales,
     d2HeaderSearch,
-    d2HeaderSize,
+    // d2HeaderSize,
     d2HeaderTheme,
     d2HeaderUser,
     d2HeaderLog,
     d2HeaderColor
   },
-  data() {
+  data () {
     return {
       // [侧边栏宽度] 正常状态
-      asideWidth: "200px",
+      asideWidth: '200px',
       // [侧边栏宽度] 折叠状态
-      asideWidthCollapse: "65px"
-    };
+      asideWidthCollapse: '65px'
+    }
   },
   computed: {
-    ...mapState("d2admin", {
+    ...mapState('d2admin', {
       keepAlive: state => state.page.keepAlive,
       grayActive: state => state.gray.active,
       transitionActive: state => state.transition.active,
       asideCollapse: state => state.menu.asideCollapse
     }),
-    ...mapGetters("d2admin", {
-      themeActiveSetting: "theme/activeSetting"
+    ...mapGetters('d2admin', {
+      themeActiveSetting: 'theme/activeSetting'
     }),
 
     /**
      * @description 最外层容器的背景图片样式
      */
-    styleLayoutMainGroup() {
+    styleLayoutMainGroup () {
       return {
         ...(this.themeActiveSetting.backgroundImage
           ? {
-              backgroundImage: `url('${this.$baseUrl}${this.themeActiveSetting.backgroundImage}')`
-            }
+            backgroundImage: `url('${this.$baseUrl}${this.themeActiveSetting.backgroundImage}')`
+          }
           : {})
-      };
+      }
     }
   },
-  created() {
+  created () {
     Promise.all([this.getUserInfo(), this.getPermissions()]).then(() => {
-      this.loading = false;
-    });
+      this.loading = false
+    })
   },
   methods: {
-    ...mapActions("d2admin/menu", ["asideCollapseToggle"]),
-    ...mapActions("d2admin/user", {
-      userInfoSet: "set"
+    ...mapActions('d2admin/menu', ['asideCollapseToggle']),
+    ...mapActions('d2admin/user', {
+      userInfoSet: 'set'
     }),
     /**
      * 接收点击切换侧边栏的按钮
      */
-    handleToggleAside() {
-      this.asideCollapseToggle();
+    handleToggleAside () {
+      this.asideCollapseToggle()
     },
     // [ renren ] 获取当前管理员信息
-    getUserInfo() {
+    getUserInfo () {
       return sysUserService
         .getInfo()
         .then(res => {
@@ -184,12 +184,12 @@ export default {
             id: res.userId,
             name: res.username,
             superAdmin: res.superAdmin
-          });
+          })
         })
-        .catch(() => {});
+        .catch(() => {})
     },
     // [ renren ] 获取权限
-    getPermissions() {
+    getPermissions () {
       /*
       return sysMenuService
         .getPermissions()
@@ -200,7 +200,7 @@ export default {
         */
     }
   }
-};
+}
 </script>
 
 <style lang="scss">
@@ -289,7 +289,7 @@ export default {
 
 .el-form-item--mini.el-form-item,
 .el-form-item--small.el-form-item {
-  margin-bottom: 5px;
+  margin-bottom: 3px;
 }
 
 .el-form-item__label {
@@ -317,13 +317,21 @@ export default {
   border: 0;
 }
 
-/*表格按钮*/
+/*表格*/
 .vxe-toolbar.size--mini, .vxe-toolbar.size--small {
-    padding: 8px 8px !important;
+  padding: 8px 8px !important;
 }
 
 .vxe-table.size--mini .vxe-body--column, .vxe-table.size--mini .vxe-footer--column, .vxe-table.size--mini .vxe-header--column {
-    padding: 3px 0 !important;
+  padding: 3px 0 !important;
+}
+
+.vxe-table .vxe-cell {
+  padding: 0 3px !important;
+}
+
+.vxe-table.fixed--left.size--mini .vxe-body--column, .vxe-table.fixed--right.size--mini .vxe-body--column, .vxe-table.vxe-editable.size--mini .vxe-body--column {
+  height: 30px !important;
 }
 
 /*弹出框*/

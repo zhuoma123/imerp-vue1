@@ -55,60 +55,60 @@
 </template>
 
 <script>
-import mixinViewModule from "@/mixins/view-module";
+import mixinViewModule from '@/mixins/view-module'
 export default {
   mixins: [mixinViewModule],
-  data() {
+  data () {
     return {
       mixinViewModuleOptions: {
-        getDataListURL: "/inv/onhand/list",
+        getDataListURL: '/inv/onhand/list',
         getDataListIsPage: true,
-        exportURL: "/inv/onhand/export"
+        exportURL: '/inv/onhand/export'
       },
       dataForm: {
-        companyName: "",
-        warehouseCode:"",
-        productCode:""
+        companyName: '',
+        warehouseCode: '',
+        productCode: ''
       },
       columns: [
         {
-          title: this.$t("views.public.common.companyName"),
-          key: "companyName",
+          title: this.$t('views.public.common.companyName'),
+          key: 'companyName',
           sortable: true,
-          align: "center"
+          align: 'center'
         },
         {
-          title: this.$t("views.public.common.warehouseCode"),
-          key: "warehouseCode",
+          title: this.$t('views.public.common.warehouseCode'),
+          key: 'warehouseCode',
           sortable: true,
-          align: "center"
+          align: 'center'
         },
         {
-          title: this.$t("views.public.common.productCode"),
-          key: "productCode",
+          title: this.$t('views.public.common.productCode'),
+          key: 'productCode',
           sortable: true,
-          align: "center"
+          align: 'center'
         },
         {
-          title: this.$t("views.public.common.uom"),
-          key: "uom",
+          title: this.$t('views.public.common.uom'),
+          key: 'uom',
           sortable: true,
-          align: "center"
+          align: 'center'
         },
         {
-          title: this.$t("views.public.onhand.inventoryQuantity"),
-          key: "inventoryQuantity",
+          title: this.$t('views.public.onhand.inventoryQuantity'),
+          key: 'inventoryQuantity',
           sortable: true,
-          align: "center"
+          align: 'center'
         },
         {
-          title: this.$t("views.public.onhand.price"),
-          key: "price",
+          title: this.$t('views.public.onhand.price'),
+          key: 'price',
           sortable: true,
-          align: "center"
+          align: 'center'
         }
       ]
-    };
+    }
   }
 }
 </script>

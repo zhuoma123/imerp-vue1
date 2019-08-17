@@ -96,11 +96,11 @@ new Vue({
           const rootMenu = matched[0]
           const pid = rootMenu.meta.menuId
           const curPid = this.$store.getters.menu.curAsidePid
-          if(!pid || pid === curPid) return
+          if (!pid || pid === curPid) return
           console.log('切换菜单-------' + rootMenu.meta.title)
           const menuList = this.$store.getters.menu.header || []
           const _side = menuList.filter(menu => menu.id === pid)
-          this.$store.commit('d2admin/menu/asideSet', {menu: _side.length > 0 ? _side[0].children : [], pid: pid})
+          this.$store.commit('d2admin/menu/asideSet', { menu: _side.length > 0 ? _side[0].children : [], pid: pid })
         }
       },
       immediate: true

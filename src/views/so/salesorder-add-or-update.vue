@@ -12,7 +12,6 @@
         size="mini"
         :rules="dataRule"
         ref="dataForm"
-        @keyup.enter.native="dataFormSubmit()"
         label-width="120px"
       >
         <el-row inline>
@@ -145,71 +144,25 @@ export default {
         id: 0,
         orderType: "",
         customerId: "",
-        orderDate: new Date("2019-08-16"),
-        planDeliveryDate: new Date("2019-08-16"),
-        orderAmount: "",
+        orderDate: new Date(),
+        planDeliveryDate: new Date(),
+        orderAmount: "0",
         shipType: "",
         remark: "",
         deletedFlag: "N"
       },
       dataRule: {
-        orderType: [
-          { required: true, message: "订单类型(销售/退货/报价)不能为空", trigger: "blur" }
-        ],
-        orderNum: [
-          { required: true, message: "订单号不能为空", trigger: "blur" }
-        ],
         customerId: [
-          { required: true, message: "客户id不能为空", trigger: "blur" }
+          { required: true, message: "客户不能为空", trigger: "blur" }
         ],
         orderDate: [
           { required: true, message: "销售日期不能为空", trigger: "blur" }
-        ],
-        pic: [
-          { required: true, message: "业务员id不能为空", trigger: "blur" }
-        ],
-        planDeliveryDate: [
-          { required: true, message: "要求交货期不能为空", trigger: "blur" }
-        ],
-        status: [
-          { required: true, message: "单据状态不能为空", trigger: "blur" }
-        ],
-        orderAmount: [
-          { required: true, message: "订单金额不能为空", trigger: "blur" }
-        ],
-        receiveAddress: [
-          { required: true, message: "收货地址不能为空", trigger: "blur" }
-        ],
-        receiveName: [
-          { required: true, message: "收货人不能为空", trigger: "blur" }
-        ],
-        receivePhone: [
-          { required: true, message: "收货人电话不能为空", trigger: "blur" }
-        ],
-        remark: [{ required: true, message: "备注不能为空", trigger: "blur" }],
-        companyId: [
-          { required: true, message: "公司不能为空", trigger: "blur" }
-        ],
-        deletedFlag: [
-          { required: true, message: "删除标记不能为空", trigger: "blur" }
-        ],
-        createBy: [
-          { required: true, message: "创建人不能为空", trigger: "blur" }
-        ],
-        createDate: [
-          { required: true, message: "创建日期不能为空", trigger: "blur" }
-        ],
-        updateBy: [
-          { required: true, message: "修改人不能为空", trigger: "blur" }
-        ],
-        updateDate: [
-          { required: true, message: "修改日期不能为空", trigger: "blur" }
         ]
       },
 
       itableColumn: [
-        { type: "selection", width: 30, align: "center" },
-        { type: "index", width: 30, align: "center" },
+        { type: "selection", width: 50, align: "center" },
+        { type: "index", width: 50, align: "center" },
         {
           title: "物料名称",
           field: "productName",
@@ -307,7 +260,7 @@ export default {
 
       if (queryString) {
         this.$axios
-          .post(this.mixinViewModuleOptions.prodURL, { name: queryString })
+          .post(this.mixinViewModuleOptions.prodURL, { name: queryString ,customerId:this.dataForm.customerId,lastPrice:1})
           .then(res => {
             for (var i = 0; i < res.length; i++) {
               res[i].value = res[i].val;
@@ -319,16 +272,13 @@ export default {
             }, 100 * Math.random());
           });
       }
-      //                clearTimeout(this.timeout)
-      //                this.timeout = setTimeout(() => {
-      //                    cb(results)
-      //                }, 100 * Math.random())
+
     },
     handleProcSelect(t, item) {
-      //                var row = this.$refs.sGrid.getCurrentRow();
       var row = t.row;
       if (item) {
         Object.assign(row, item);
+        row.productId = item.id;
         row.bPrice = item.salePrice;
       } else {
       }

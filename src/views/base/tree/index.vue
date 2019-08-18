@@ -43,23 +43,11 @@
             </el-form-item>
         </el-form>
         <!--data show-->
-        <!--<d2-crud
-                :columns="columns"
-                :options="options"
-                selectionRow
-                :row-handle="rowHandler"
-                :loading="dataListLoading"
-                :data="dataList"
-                @selection-change="dataListSelectionChangeHandle"
-                @sort-change="dataListSortChangeHandle"
-                @user-update="addOrUpdateHandleSetter"
-                @user-delete="deleteHandleSetter"
-                :tree-props="{children: 'children', hasChildren: 'hasChildren'}">
-        ></d2-crud>-->
         <el-card>
             <!-- 查询结果 -->
             <el-table v-loading="dataListLoading" :data="dataList" row-key="id" element-loading-text="正在查询中。。。"
-                      border fit highlight-current-row>
+                      border fit highlight-current-row @selection-change="dataListSelectionChangeHandle">
+                <el-table-column type="selection" width="55"/>
                 <el-table-column label="序号" type="index" align="center" show-overflow-tooltip width="50px"/>
                 <el-table-column align="center" label="类型" prop="type"/>
                 <el-table-column align="center" label="编码" prop="code"/>

@@ -72,8 +72,8 @@
 </template>
 
 <script>
-import mixinViewModule from "@/mixins/view-module";
-import AddOrUpdate from "./user-add-or-update";
+import mixinViewModule from '@/mixins/view-module'
+import AddOrUpdate from './user-add-or-update'
 
 export default {
   name: 'sys-user',
@@ -88,8 +88,8 @@ export default {
         exportURL: '/sys/user/export'
       },
       dataForm: {
-        username: "",
-        mobile: ""
+        username: '',
+        mobile: ''
       },
       dataFormOp: {
         username: 'like'
@@ -117,47 +117,47 @@ export default {
         ]
       },
       tableColumn: [
-        { type: "selection", width: 50, align: "center" },
-        { type: "index", width: 50, align: "center" },
+        { type: 'selection', width: 50, align: 'center' },
+        { type: 'index', width: 50, align: 'center' },
         {
-          title: this.$t("views.public.user.username"),
-          field: "username",
+          title: this.$t('views.public.user.username'),
+          field: 'username',
           sortable: true,
           align: 'center'
         },
         {
-          title: this.$t("views.public.user.deptName"),
-          field: "deptName",
+          title: this.$t('views.public.user.deptName'),
+          field: 'deptName',
           sortable: true,
           align: 'center'
         },
         {
-          title: this.$t("views.public.user.email"),
-          field: "email",
+          title: this.$t('views.public.user.email'),
+          field: 'email',
           sortable: true,
-          align: "center",
+          align: 'center',
           editRender: { name: 'input' }
         },
         {
-          title: this.$t("views.public.user.mobile"),
-          field: "mobile",
+          title: this.$t('views.public.user.mobile'),
+          field: 'mobile',
           sortable: true,
-          align: "center",
+          align: 'center',
           editRender: { name: 'input' }
         },
         {
-          title: this.$t("views.public.user.status"),
-          field: "status",
-          align: "center",
-          width: "70px",
+          title: this.$t('views.public.user.status'),
+          field: 'status',
+          align: 'center',
+          width: '70px',
           filters: [
-            { label: this.$t("views.public.user.status0"), value: 0 },
-            { label: this.$t("views.public.user.status1"), value: 1 }
+            { label: this.$t('views.public.user.status0'), value: 0 },
+            { label: this.$t('views.public.user.status1'), value: 1 }
           ]
         },
         {
-          title: this.$t("views.public.createDate"),
-          field: "createTime",
+          title: this.$t('views.public.createDate'),
+          field: 'createTime',
           sortable: true,
           align: 'center'
         }
@@ -172,11 +172,11 @@ export default {
             let formData = {
               sort: sort.property,
               order: sort.order
-            };
+            }
             // 处理筛选条件
             filters.forEach(({ column, property, values }) => {
-              formData[property] = values.join(",");
-            });
+              formData[property] = values.join(',')
+            })
             return new Promise(async (resolve, reject) => {
               await this.$axios.post(
                 this.mixinViewModuleOptions.getDataListURL,
@@ -203,7 +203,7 @@ export default {
               })
             })
           },
-          save: ({ body }) => {console.log(body)}
+          save: ({ body }) => { console.log(body) }
         },
         props: {
           list: 'list',
@@ -212,14 +212,14 @@ export default {
         }
       },
       toolbar: {
-        id: "full_edit_1",
+        id: 'full_edit_1',
         buttons: [
-          { code: "reload", name: "刷新" },
-          { code: "insert_actived", name: "新增" },
-//          { code: "mark_cancel", name: "取消" },
-          { code: "remove_selection", name: "移除" },
-          { code: "save", name: "保存" },
-          { code: "export", name: "导出.csv" }
+          { code: 'reload', name: '刷新' },
+          { code: 'insert_actived', name: '新增' },
+          //          { code: "mark_cancel", name: "取消" },
+          { code: 'remove_selection', name: '移除' },
+          { code: 'save', name: '保存' },
+          { code: 'export', name: '导出.csv' }
         ],
         resizable: {
           storage: true
@@ -228,7 +228,7 @@ export default {
           storage: true
         }
       }
-    };
+    }
   },
   components: {
     AddOrUpdate

@@ -32,13 +32,12 @@ router.beforeEach(async (to, from, next) => {
     next()
     NProgress.done()
   } else {
-    if(count > 1000) {
-      console.log('菜单加载多次--->登出')
+    if (count > 1000) {
       store.dispatch('d2admin/account/logout')
       NProgress.done()
       count = 0
       return
-    } 
+    }
     count++
     // 这里暂时将cookie里是否存有token作为验证是否登录的条件
     // 请根据自身业务需要修改
@@ -47,7 +46,6 @@ router.beforeEach(async (to, from, next) => {
     // 根据routers的值判断动态的菜单是否已经加载完成
     const isDynamicAddRoute = store.getters.permission.isDynamicAddRoute
     const menuList = util.session.get('menuList')
-    console.log('加载状态---->', hasToken, isDynamicAddRoute, menuList, count)
     if (hasToken) {
       try {
         // 确认已经加载多标签页数据 https://github.com/d2-projects/d2-admin/issues/201
@@ -56,15 +54,14 @@ router.beforeEach(async (to, from, next) => {
         await store.dispatch('d2admin/size/isLoaded')
         // 关闭搜索面板
         store.commit('d2admin/search/set', false)
-        
+
         if (isDynamicAddRoute) {
-          if(menuList && menuList.length > 0) {
-            console.log('动态的菜单已经加载完成--->', to.path)
+          if (menuList && menuList.length > 0) {
             next()
             NProgress.done()
             count = 0
             return
-          } else if(menuList.length == 0) {
+          } else if (menuList.length === 0) {
             this.$message.error('该用户无可用菜单，请刷新页面或联系系统管理员')
             next({ path: '/sys/login', query: { redirect: to.fullPath } })
             NProgress.done()
@@ -77,7 +74,6 @@ router.beforeEach(async (to, from, next) => {
         // 已经登录，根据后台返回菜单生成路由
         await store.dispatch('d2admin/permission/generateRoutes').then(() => {
           const redirect = decodeURIComponent(from.query.redirect || to.path)
-          console.log('路由路径--->', to.path, redirect)
           if (to.path === redirect || to.path === '/index') {
             // hack方法 确保addRoutes已完成 ,set the replace: true so the navigation will not leave a history record
             next({ ...to, replace: true })

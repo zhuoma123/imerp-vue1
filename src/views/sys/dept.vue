@@ -9,7 +9,7 @@
           clearable
         />
       </el-form-item>
-      
+
       <el-form-item>
         <el-button @click="getDataList()">{{ $t('views.public.query') }}</el-button>
       </el-form-item>
@@ -66,87 +66,84 @@
 </template>
 
 <script>
-import mixinViewModule from "@/mixins/view-module";
-import AddOrUpdate from "./user-add-or-update";
+import mixinViewModule from '@/mixins/view-module'
+import AddOrUpdate from './user-add-or-update'
 export default {
   mixins: [mixinViewModule],
-  data() {
+  data () {
     return {
       mixinViewModuleOptions: {
-        getDataListURL: "/sys/dept/list",
+        getDataListURL: '/sys/dept/list',
         getDataListIsPage: true,
-        deleteURL: "/sys/dept",
+        deleteURL: '/sys/dept',
         deleteIsBatch: true,
-        exportURL: "/sys/dept/export"
+        exportURL: '/sys/dept/export'
       },
       dataForm: {
-        name: ""
+        name: ''
       },
       dataFormOp: {
-        name: "like"
+        name: 'like'
       },
       rowHandler: {
         custom: [
           {
-            text: this.$t("views.public.update"),
+            text: this.$t('views.public.update'),
             type: 'primary',
             size: 'mini',
             emit: 'user-update',
             show: (index, row) => {
-              return this.$hasPermission("sys:dept:update");
+              return this.$hasPermission('sys:dept:update')
             }
           },
           {
-            text: this.$t("views.public.delete"),
+            text: this.$t('views.public.delete'),
             type: 'danger',
             size: 'mini',
             emit: 'user-delete',
             show: (index, row) => {
-              return this.$hasPermission("sys:dept:delete");
+              return this.$hasPermission('sys:dept:delete')
             }
           }
         ]
       },
       columns: [
         {
-          title: this.$t("views.public.dept.name"),
-          key: "name",
+          title: this.$t('views.public.dept.name'),
+          key: 'name',
           sortable: true,
-          align: "center"
+          align: 'center'
         },
         {
-          title: this.$t("views.public.dept.parentId"),
-          key: "parentId",
+          title: this.$t('views.public.dept.parentId'),
+          key: 'parentId',
           sortable: true,
-          align: "center"
+          align: 'center'
         },
         {
-          title: this.$t("views.public.dept.orderNum"),
-          key: "orderNum",
+          title: this.$t('views.public.dept.orderNum'),
+          key: 'orderNum',
           sortable: true,
-          align: "center"
+          align: 'center'
         },
         {
-          title: this.$t("views.public.dept.delFlag"),
-          key: "delFlag",
+          title: this.$t('views.public.dept.delFlag'),
+          key: 'delFlag',
           sortable: true,
-          align: "center"
-        },
-        
+          align: 'center'
+        }
+
       ]
-    };
+    }
   },
   components: {
     AddOrUpdate
   },
   methods: {
-    
+
   }
-  
- 
 
 }
-
 
 </script>
 

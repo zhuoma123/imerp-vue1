@@ -73,125 +73,125 @@
 </template>
 
 <script>
-  import mixinViewModule from "@/mixins/view-module";
+import mixinViewModule from '@/mixins/view-module'
 
-  export default {
+export default {
   mixins: [mixinViewModule],
-  data() {
+  data () {
     return {
       mixinViewModuleOptions: {
-        getDataListURL: "/inv/transactions/list",
+        getDataListURL: '/inv/transactions/list',
         getDataListIsPage: true,
-        exportURL: "/inv/transactions/export"
+        exportURL: '/inv/transactions/export'
       },
       dataForm: {
-        warehouseCode:"",
-        productCode:"",
-        beginTransactionDate:new Date(),
-        endTransactionDate:new Date(),
-        tranType:""
+        warehouseCode: '',
+        productCode: '',
+        beginTransactionDate: new Date(),
+        endTransactionDate: new Date(),
+        tranType: ''
       },
       columns: [
         {
-          title: this.$t("views.public.common.companyName"),
-          key: "companyName",
+          title: this.$t('views.public.common.companyName'),
+          key: 'companyName',
           sortable: true,
-          align: "center",
-          minWidth:"100"
+          align: 'center',
+          minWidth: '100'
         },
         {
-          title: this.$t("views.public.common.warehouseCode"),
-          key: "warehouseCode",
+          title: this.$t('views.public.common.warehouseCode'),
+          key: 'warehouseCode',
           sortable: true,
-          align: "center",
-          minWidth:"100"
+          align: 'center',
+          minWidth: '100'
         },
         {
-          title: this.$t("views.public.common.productCode"),
-          key: "productCode",
+          title: this.$t('views.public.common.productCode'),
+          key: 'productCode',
           sortable: true,
-          align: "center",
-          minWidth:"100"
+          align: 'center',
+          minWidth: '100'
         },
         {
-          title: this.$t("views.public.transactions.sourceCode"),
-          key: "sourceCode",
+          title: this.$t('views.public.transactions.sourceCode'),
+          key: 'sourceCode',
           sortable: true,
-          align: "center",
-          minWidth:"100"
+          align: 'center',
+          minWidth: '100'
         },
         {
-          title: this.$t("views.public.transactions.transactionReference"),
-          key: "transactionReference",
+          title: this.$t('views.public.transactions.transactionReference'),
+          key: 'transactionReference',
           sortable: true,
-          align: "center",
-          minWidth:"140"
+          align: 'center',
+          minWidth: '140'
         },
         {
-          title: this.$t("views.public.transactions.transactionQuantity"),
-          key: "transactionQuantity",
+          title: this.$t('views.public.transactions.transactionQuantity'),
+          key: 'transactionQuantity',
           sortable: true,
-          align: "center",
-          minWidth:"100"
+          align: 'center',
+          minWidth: '100'
         },
         {
-          title: this.$t("views.public.transactions.transactionUom"),
-          key: "transactionUom",
+          title: this.$t('views.public.transactions.transactionUom'),
+          key: 'transactionUom',
           sortable: true,
-          align: "center",
-          minWidth:"100"
+          align: 'center',
+          minWidth: '100'
         },
         {
-          title: this.$t("views.public.common.salePrice"),
-          key: "salePrice",
+          title: this.$t('views.public.common.salePrice'),
+          key: 'salePrice',
           sortable: true,
-          align: "center",
-          minWidth:"100"
+          align: 'center',
+          minWidth: '100'
         },
         {
-          title: this.$t("views.public.common.costPrice"),
-          key: "costPrice",
+          title: this.$t('views.public.common.costPrice'),
+          key: 'costPrice',
           sortable: true,
-          align: "center",
-          minWidth:"100"
+          align: 'center',
+          minWidth: '100'
         },
         {
-          title: this.$t("views.public.transactions.transactionDate"),
-          key: "transactionDate",
+          title: this.$t('views.public.transactions.transactionDate'),
+          key: 'transactionDate',
           sortable: true,
-          align: "center",
-          minWidth:"100"
+          align: 'center',
+          minWidth: '100'
         },
         {
-          title: this.$t("views.public.transactions.tranType"),
-          key: "tranType",
+          title: this.$t('views.public.transactions.tranType'),
+          key: 'tranType',
           sortable: true,
-          align: "center",
-          minWidth:"100"
+          align: 'center',
+          minWidth: '100'
         },
         {
-          title: this.$t("views.public.transactions.priorQuantity"),
-          key: "priorQuantity",
+          title: this.$t('views.public.transactions.priorQuantity'),
+          key: 'priorQuantity',
           sortable: true,
-          align: "center",
-          minWidth:"100"
+          align: 'center',
+          minWidth: '100'
         },
         {
-          title: this.$t("views.public.transactions.balanceQuantity"),
-          key: "balanceQuantity",
+          title: this.$t('views.public.transactions.balanceQuantity'),
+          key: 'balanceQuantity',
           sortable: true,
-          align: "center",
-          minWidth:"100"
+          align: 'center',
+          minWidth: '100'
         },
         {
-          title: this.$t("views.public.transactions.employeeName"),
-          key: "employeeName",
+          title: this.$t('views.public.transactions.employeeName'),
+          key: 'employeeName',
           sortable: true,
-          align: "center",
-          minWidth:"120"
+          align: 'center',
+          minWidth: '120'
         }
       ]
-    };
+    }
   }
 }
 </script>

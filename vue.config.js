@@ -18,7 +18,7 @@ module.exports = {
   publicPath,
   lintOnSave: true,
   devServer: {
-    publicPath, // 和 publicPath 保持一致
+    publicPath // 和 publicPath 保持一致
   },
   css: {
     loaderOptions: {
@@ -37,7 +37,7 @@ module.exports = {
       config.optimization.minimizer[0].options.terserOptions.compress.pure_funcs = ['console.log']
     }
   },
-  productionSourceMap: process.env.NODE_ENV !== 'development' ? false : true,
+  productionSourceMap: process.env.NODE_ENV === 'development',
   // 默认设置: https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-service/lib/config/base.js
   chainWebpack: config => {
     /**

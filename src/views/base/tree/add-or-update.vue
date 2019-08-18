@@ -135,9 +135,8 @@ export default {
     }
   },
   methods: {
-    init (pDataList) {
+    init () {
       this.visible = true
-      this.dataList = pDataList
       this.$nextTick(() => {
         this.$refs['dataForm'].resetFields()
         this.$refs['dataForm'].clearValidate()

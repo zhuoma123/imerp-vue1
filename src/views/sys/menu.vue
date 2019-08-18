@@ -9,7 +9,7 @@
           clearable
         />
       </el-form-item>
-      
+
       <el-form-item>
         <el-button @click="getDataList()">{{ $t('views.public.query') }}</el-button>
       </el-form-item>
@@ -66,104 +66,101 @@
 </template>
 
 <script>
-import mixinViewModule from "@/mixins/view-module";
-import AddOrUpdate from "./user-add-or-update";
+import mixinViewModule from '@/mixins/view-module'
+import AddOrUpdate from './user-add-or-update'
 export default {
   mixins: [mixinViewModule],
-  data() {
+  data () {
     return {
       mixinViewModuleOptions: {
-        getDataListURL: "/sys/menu/list",
+        getDataListURL: '/sys/menu/list',
         getDataListIsPage: true,
-        deleteURL: "/sys/menu",
+        deleteURL: '/sys/menu',
         deleteIsBatch: true,
-        exportURL: "/sys/menu/export"
+        exportURL: '/sys/menu/export'
       },
       dataForm: {
-        name: ""
+        name: ''
       },
       dataFormOp: {
-        name: "like"
+        name: 'like'
       },
       rowHandler: {
         custom: [
           {
-            text: this.$t("views.public.update"),
+            text: this.$t('views.public.update'),
             type: 'primary',
             size: 'mini',
             emit: 'user-update',
             show: (index, row) => {
-              return this.$hasPermission("sys:menu:update");
+              return this.$hasPermission('sys:menu:update')
             }
           },
           {
-            text: this.$t("views.public.delete"),
+            text: this.$t('views.public.delete'),
             type: 'danger',
             size: 'mini',
             emit: 'user-delete',
             show: (index, row) => {
-              return this.$hasPermission("sys:menu:delete");
+              return this.$hasPermission('sys:menu:delete')
             }
           }
         ]
       },
       columns: [
         {
-          title: this.$t("views.public.menu.name"),
-          key: "name",
+          title: this.$t('views.public.menu.name'),
+          key: 'name',
           sortable: true,
-          align: "center"
+          align: 'center'
         },
         {
-          title: this.$t("views.public.menu.parentId"),
-          key: "parentId",
+          title: this.$t('views.public.menu.parentId'),
+          key: 'parentId',
           sortable: true,
-          align: "center"
+          align: 'center'
         },
         {
-          title: this.$t("views.public.menu.url"),
-          key: "url",
+          title: this.$t('views.public.menu.url'),
+          key: 'url',
           sortable: true,
-          align: "center"
+          align: 'center'
         },
         {
-          title: this.$t("views.public.menu.perms"),
-          key: "perms",
+          title: this.$t('views.public.menu.perms'),
+          key: 'perms',
           sortable: true,
-          align: "center"
+          align: 'center'
         },
         {
-          title: this.$t("views.public.menu.type"),
-          key: "type",
+          title: this.$t('views.public.menu.type'),
+          key: 'type',
           sortable: true,
-          align: "center"
+          align: 'center'
         },
         {
-          title: this.$t("views.public.menu.icon"),
-          key: "icon",
+          title: this.$t('views.public.menu.icon'),
+          key: 'icon',
           sortable: true,
-          align: "center"
+          align: 'center'
         },
         {
-          title: this.$t("views.public.menu.orderNum"),
-          key: "orderNum",
+          title: this.$t('views.public.menu.orderNum'),
+          key: 'orderNum',
           sortable: true,
-          align: "center"
-        },
+          align: 'center'
+        }
       ]
-    };
+    }
   },
   components: {
     AddOrUpdate
   },
   methods: {
-    
+
   }
-  
- 
 
 }
-
 
 </script>
 

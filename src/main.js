@@ -35,6 +35,7 @@ import VXETablePluginElement from 'vxe-table-plugin-element'
 import 'vxe-table-plugin-element/dist/style.css'
 
 import ElAutocompleteItem from './views/so/select-item'
+import ImSelector from './components/imema'
 
 // 菜单和路由设置
 import router from './router'
@@ -56,6 +57,7 @@ Vue.use(d2VueFiltersDayjs)
 VXETable.use(VXETablePluginElement)
 Vue.use(VXETable)
 Vue.component('ElAutocompleteItem', ElAutocompleteItem)
+Vue.component('ImSelector', ImSelector)
 Vue.component('d2-grid-layout', GridLayout)
 Vue.component('d2-grid-item', GridItem)
 Vue.component('SplitPane', SplitPane)
@@ -94,11 +96,11 @@ new Vue({
           const rootMenu = matched[0]
           const pid = rootMenu.meta.menuId
           const curPid = this.$store.getters.menu.curAsidePid
-          if(!pid || pid === curPid) return
+          if (!pid || pid === curPid) return
           console.log('切换菜单-------' + rootMenu.meta.title)
           const menuList = this.$store.getters.menu.header || []
           const _side = menuList.filter(menu => menu.id === pid)
-          this.$store.commit('d2admin/menu/asideSet', {menu: _side.length > 0 ? _side[0].children : [], pid: pid})
+          this.$store.commit('d2admin/menu/asideSet', { menu: _side.length > 0 ? _side[0].children : [], pid: pid })
         }
       },
       immediate: true

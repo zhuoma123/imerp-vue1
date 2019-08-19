@@ -487,6 +487,51 @@ export default {
     },
     collapseChange () {
       setTimeout(this.computeHeight, 500)
+    },
+    enableTlbBtn({columns,row}) {
+      if(row.status==='NEW'){
+        if(this.$refs.btnAdd)this.$refs.btnAdd.disabled=false;
+        if(this.$refs.btnEdit)this.$refs.btnEdit.disabled=false;
+        if(this.$refs.btnDelete)this.$refs.btnDelete.disabled=false;
+        if(this.$refs.btnSubmit)this.$refs.btnSubmit.disabled=false;
+        if(this.$refs.btnAutoPick)this.$refs.btnAutoPick.disabled=false;
+        if(this.$refs.btnPick)this.$refs.btnPick.disabled=false;
+      }else if (row.status==='SUBMIT'){
+        if(this.$refs.btnAdd)this.$refs.btnAdd.disabled=false;
+        if(this.$refs.btnEdit)this.$refs.btnEdit.disabled=true;
+        if(this.$refs.btnDelete)this.$refs.btnDelete.disabled=true;
+        if(this.$refs.btnSubmit)this.$refs.btnSubmit.disabled=true;
+        if(this.$refs.btnAutoPick)this.$refs.btnAutoPick.disabled=false;
+        if(this.$refs.btnPick)this.$refs.btnPick.disabled=false;
+      }else if (row.status==='SENDED'){
+        if(this.$refs.btnAdd)this.$refs.btnAdd.disabled=false;
+        if(this.$refs.btnEdit)this.$refs.btnEdit.disabled=true;
+        if(this.$refs.btnDelete)this.$refs.btnDelete.disabled=true;
+        if(this.$refs.btnSubmit)this.$refs.btnSubmit.disabled=true;
+        if(this.$refs.btnAutoPick)this.$refs.btnAutoPick.disabled=true;
+        if(this.$refs.btnPick)this.$refs.btnPick.disabled=true;
+      }else if (row.status==='PICKUP'){
+        if(this.$refs.btnAdd)this.$refs.btnAdd.disabled=false;
+        if(this.$refs.btnEdit)this.$refs.btnEdit.disabled=true;
+        if(this.$refs.btnDelete)this.$refs.btnDelete.disabled=true;
+        if(this.$refs.btnSubmit)this.$refs.btnSubmit.disabled=true;
+        if(this.$refs.btnAutoPick)this.$refs.btnAutoPick.disabled=true;
+        if(this.$refs.btnPick)this.$refs.btnPick.disabled=true;
+      }else if (row.status==='CANCEL'){
+        if(this.$refs.btnAdd)this.$refs.btnAdd.disabled=false;
+        if(this.$refs.btnEdit)this.$refs.btnEdit.disabled=true;
+        if(this.$refs.btnDelete)this.$refs.btnDelete.disabled=true;
+        if(this.$refs.btnSubmit)this.$refs.btnSubmit.disabled=true;
+        if(this.$refs.btnAutoPick)this.$refs.btnAutoPick.disabled=true;
+        if(this.$refs.btnPick)this.$refs.btnPick.disabled=true;
+      }else if (row.status==='COMPLETED'){
+        if(this.$refs.btnAdd)this.$refs.btnAdd.disabled=false;
+        if(this.$refs.btnEdit)this.$refs.btnEdit.disabled=true;
+        if(this.$refs.btnDelete)this.$refs.btnDelete.disabled=true;
+        if(this.$refs.btnSubmit)this.$refs.btnSubmit.disabled=true;
+        if(this.$refs.btnAutoPick)this.$refs.btnAutoPick.disabled=true;
+        if(this.$refs.btnPick)this.$refs.btnPick.disabled=true;
+      }
     }
   },
   watch: {

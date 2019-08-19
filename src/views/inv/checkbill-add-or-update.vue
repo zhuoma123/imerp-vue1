@@ -161,17 +161,17 @@ export default {
           align: 'center'
         },
         {
-          title: '帐面数量',
-          field: 'quantityOld',
-          sortable: true,
-          align: 'center'
-        },
-        {
           title: '盘点数量',
           field: 'quantityNew',
           sortable: true,
           align: 'center',
           editRender: { name: 'input', autoselect: true }
+        },
+        {
+          title: '帐面数量',
+          field: 'quantityOld',
+          sortable: true,
+          align: 'center'
         },
         {
           title: '差异数',
@@ -249,7 +249,7 @@ export default {
         var quantityNew = row.quantityNew
         var quantityOld = row.quantityOld
         if (!Number.isNaN(quantityNew)) {
-          row.orderQty = Number(quantityOld) - quantityNew
+          row.orderQty = quantityNew-Number(quantityOld)
         }
       }
       this.$refs.sGrid.updateFooter()
@@ -272,11 +272,6 @@ export default {
           return null
         })
       ]
-    },
-    delsGrid: function () {
-      this.$refs.sGrid.removeSelecteds().then(() => {
-        this.$refs.sGrid.updateFooter()
-      })
     },
     prodSeach (queryString, cb) {
       if (queryString) {

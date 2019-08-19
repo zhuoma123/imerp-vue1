@@ -345,7 +345,6 @@ export default {
     },
     // 删除
     deleteHandleSetter (index) {
-      debugger
       let data
       if (this.mixinViewModuleOptions.deleteIsBatch && this.dataListSelections.length > 0) {
         data = this.dataListSelections.map(item => item[this.mixinViewModuleOptions.deleteIsBatchKey])
@@ -360,6 +359,23 @@ export default {
         const id = row.id
         if (id) {
           data = [id]
+        }
+      }
+      if (data===undefined){
+        return
+      }
+      for (let i = 0; i < this.dataListSelections.length; i++) {
+        const id=this.mixinViewModuleOptions.deleteIsBatchKey
+        let e=this.dataListSelections[i]
+        let childs=e.children
+        if (childs){
+          for(let i in childs){
+            let child=childs[i]
+            if (!data.includes(child[id])){
+              this.$message.error('被包含的子项必须被全部删除')
+              return
+            }
+          }
         }
       }
       this.$confirm(this.$t('public.prompt.info', { 'handle': this.$t('views.public.delete') }), this.$t('public.prompt.title'), {

@@ -1,4 +1,4 @@
-<template>
+<template scope="scope">
   <d2-container class="mod-sys__user">
     <el-form :inline="true" size="mini" :model="dataForm" @keyup.enter.native="getDataList()">
       <el-form-item>
@@ -6,7 +6,7 @@
           v-if="$hasPermission('sys:menu:save')"
           type="primary"
            icon="el-icon-edit"
-          @click="addOrUpdateHandle({})"
+          @click="addOrUpdateData()"
         >{{ $t('views.public.add') }}</el-button>
       </el-form-item>
       <el-form-item>
@@ -24,8 +24,7 @@
     border
     :tree-props="{children: 'children'}">
       <el-table-column prop="name" label="菜单名称" width="200" align="left" ></el-table-column>
-      <el-table-column prop="menuId" label="菜单ID" width="80" align="center"></el-table-column>
-      <el-table-column prop="parentId" label="父类ID" width="80" align="center"></el-table-column>
+      <el-table-column prop="parentName" label="上级菜单" width="100" align="center"></el-table-column>
       <el-table-column prop="url" label="菜单URL" align="center"></el-table-column>
       <el-table-column prop="perms" label="授权" width="200" align="center"></el-table-column>
       <el-table-column prop="type" label="类型" align="center"></el-table-column>
@@ -35,11 +34,11 @@
       <template slot-scope="scope">
         <el-button
           size="mini"
-          @click="handleEdit(scope.$index, scope.row)">编辑</el-button><br>
+          @click="addOrUpdateData(scope.row)">编辑</el-button><br>
         <el-button
           size="mini"
           type="danger"
-          @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+          @click="deleteHandleSetter(scope.row)">删除</el-button>
       </template>
     </el-table-column>
     </el-table>
@@ -50,7 +49,7 @@
 
 <script>
 import mixinViewModule from "@/mixins/view-module";
-import AddOrUpdate from "./user-add-or-update";
+import AddOrUpdate from "./menu-add-or-update";
 
 export default {
   mixins: [mixinViewModule],
@@ -58,7 +57,8 @@ export default {
     return {
       mixinViewModuleOptions: {
         getDataListURL: "/sys/menu/list",
-        deleteURL: "/sys/menu",
+        deleteURL: "/sys/menu/delete",
+        deleteIsBatchKey: 'menuId',
         deleteIsBatch: true,
         exportURL: "/sys/menu/export"
       },
@@ -97,7 +97,62 @@ export default {
     AddOrUpdate
   },
   methods: {
-
+ //增改
+   addOrUpdateData (row) {
+     debugger
+      this.addOrUpdateVisible = true;
+      if (row) {
+        this.$nextTick(() => {
+          this.$refs.addOrUpdate.dataForm.id = row.menuId;
+          this.$refs.addOrUpdate.update(row);
+        })
+      } else {
+        this.$nextTick(() => {
+          this.$refs.addOrUpdate.init();
+        })
+      }
+    },
+     // 删除
+    deleteHandleSetter (index) {
+      debugger
+      let data
+      if (this.mixinViewModuleOptions.deleteIsBatch && this.dataListSelections.length > 0) {
+        data = this.dataListSelections.map(item => item[this.mixinViewModuleOptions.deleteIsBatchKey])
+      }
+      let row
+      if (!index) {
+        row = undefined
+      } else {
+        row = index
+      }
+      if (row) {
+        const id = row.menuId
+        if (id) {
+          data = [id]
+        }
+      }
+      this.$confirm(this.$t('public.prompt.info', { 'handle': this.$t('views.public.delete') }), this.$t('public.prompt.title'), {
+        confirmButtonText: this.$t('views.public.confirm'),
+        cancelButtonText: this.$t('views.public.cancel'),
+        type: 'warning'
+      }).then(() => {
+        this.$axios.post(
+          `${this.mixinViewModuleOptions.deleteURL}${this.mixinViewModuleOptions.deleteIsBatch ? '' : '/' + id}`,
+          this.mixinViewModuleOptions.deleteIsBatch ? {
+            'data': data
+          } : {}
+        ).then(res => {
+          this.$message({
+            message: this.$t('views.public.success'),
+            type: 'success',
+            duration: 500,
+            onClose: () => {
+              this.getDataList()
+            }
+          })
+        }).catch(() => {})
+      }).catch(() => {})
+    }
   },
 
   mounted() {

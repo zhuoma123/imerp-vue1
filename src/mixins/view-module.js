@@ -284,8 +284,8 @@ export default {
       this.addOrUpdateVisible = true;
       if (row) {
         this.$nextTick(() => {
-          this.$refs.addOrUpdate.dataForm.id = row.id;
-          this.$refs.addOrUpdate.init();
+          this.$refs.addOrUpdate.dataForm.id = row.row.id;
+          this.$refs.addOrUpdate.update(row);
         })
       } else {
         this.$nextTick(() => {

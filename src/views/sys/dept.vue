@@ -18,7 +18,7 @@
           v-if="$hasPermission('sys:dept:save')"
           type="primary"
            icon="el-icon-edit"
-          @click="addOrUpdateHandleSetter({})"
+          @click="addOrUpdateData()"
         >{{ $t('views.public.add') }}</el-button>
       </el-form-item>
       <el-form-item>
@@ -39,7 +39,7 @@
     </el-form>
     <d2-crud
       ref="d2Crud"
-                                                                     
+      index-row                                                           
       :columns="columns"
       :options="options"
       selectionRow
@@ -48,7 +48,7 @@
       :data="dataList"
       @selection-change="dataListSelectionChangeHandle"
       @sort-change="dataListSortChangeHandle"
-      @user-update="addOrUpdateHandleSetter"
+      @user-update="addOrUpdateData"
       @user-delete="deleteHandleSetter"
     ></d2-crud>
     <!-- 分页 -->
@@ -71,7 +71,6 @@
 import mixinViewModule from "@/mixins/view-module";
 import AddOrUpdate from "./dept-add-or-update";
 export default {
-  name:"sys-dept",
   mixins: [mixinViewModule],
   data() {
     return {
@@ -80,8 +79,11 @@ export default {
         getDataListIsPage: true,
         deleteURL: "/sys/dept/delete",
         deleteIsBatch: true,
+        deleteIsBatchKey: 'deptId',
         exportURL: "/sys/dept/export"
-      },
+      },  
+      //增改
+      addOrUpdateVisible: false,
       dataForm: {
         name: ""
       },
@@ -95,7 +97,7 @@ export default {
             type: 'primary',
             size: 'mini',
             emit: 'user-update',
-            show: ({index,row}) => {
+            show: (index,row) => {
               return this.$hasPermission("sys:dept:update");
             }
           },
@@ -112,20 +114,14 @@ export default {
       },
       columns: [
         {
-          title: "id",
-          key: "deptId",
-          sortable: true,
-          align: "center",
-        },
-        {
           title: this.$t("views.public.dept.name"),
           key: "name",
           sortable: true,
           align: "center"
         },
         {
-          title: this.$t("views.public.dept.parentId"),
-          key: "parentId",
+          title: '上级部门名称',
+          key: "parentName",
           sortable: true,
           align: "center"
         },
@@ -149,7 +145,60 @@ export default {
     AddOrUpdate
   },
   methods: {
-   
+    //增改
+   addOrUpdateData (row) {
+      this.addOrUpdateVisible = true;
+      if (row) {
+        this.$nextTick(() => {
+          this.$refs.addOrUpdate.dataForm.id = row.row.deptId;
+          this.$refs.addOrUpdate.update(row.row);
+        })
+      } else {
+        this.$nextTick(() => {
+          this.$refs.addOrUpdate.init();
+        })
+      }
+    },
+     // 删除
+    deleteHandleSetter (index) {
+      let data
+      if (this.mixinViewModuleOptions.deleteIsBatch && this.dataListSelections.length > 0) {
+        data = this.dataListSelections.map(item => item[this.mixinViewModuleOptions.deleteIsBatchKey])
+      }
+      let row
+      if (!index) {
+        row = undefined
+      } else {
+        row = index.row
+      }
+      if (row) {
+        const id = row.deptId
+        if (id) {
+          data = [id]
+        }
+      }
+      this.$confirm(this.$t('public.prompt.info', { 'handle': this.$t('views.public.delete') }), this.$t('public.prompt.title'), {
+        confirmButtonText: this.$t('views.public.confirm'),
+        cancelButtonText: this.$t('views.public.cancel'),
+        type: 'warning'
+      }).then(() => {
+        this.$axios.post(
+          `${this.mixinViewModuleOptions.deleteURL}${this.mixinViewModuleOptions.deleteIsBatch ? '' : '/' + id}`,
+          this.mixinViewModuleOptions.deleteIsBatch ? {
+            'data': data
+          } : {}
+        ).then(res => {
+          this.$message({
+            message: this.$t('views.public.success'),
+            type: 'success',
+            duration: 500,
+            onClose: () => {
+              this.getDataList()
+            }
+          })
+        }).catch(() => {})
+      }).catch(() => {})
+    }
   }
   
  

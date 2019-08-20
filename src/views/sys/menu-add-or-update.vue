@@ -1,15 +1,15 @@
 <template>
-  <el-dialog class="abow-dialog" :visible.sync="visible" :title="dataForm.deptId==null ? $t('views.public.add') : $t('views.public.update')" :close-on-click-modal="false" :close-on-press-escape="false">
-    <el-form  :model="dataForm" ref="dataForm" @keyup.enter.native="dataFormSubmitHandle()" label-width="120px">
-      <el-form-item prop="name" :label="$t('views.public.dept.name')" :rules="{required: true, message: '部门名称不能为空', trigger: 'blur'}">
-        <el-input v-model="dataForm.name" :placeholder="$t('views.public.dept.name')" />
+  <el-dialog class="abow-dialog" :visible.sync="visible" :title="!dataForm.menuId ? $t('views.public.add') : $t('views.public.update')" :close-on-click-modal="false" :close-on-press-escape="false">
+    <el-form :model="dataForm" ref="dataForm" @keyup.enter.native="dataFormSubmitHandle()" label-width="120px">
+      <el-form-item prop="name" label="菜单名称" :rules="{required: true, message: '菜单名称不能为空', trigger: 'blur'}">
+        <el-input v-model="dataForm.name" placeholder="菜单名称" />
       </el-form-item>
-      <el-form-item prop="parentName" :label="$t('views.public.dept.parentId')" class="dept-list" >
+      <el-form-item prop="parentName" label="上级菜单" class="dept-list" >
         <el-popover v-model="deptListVisible" ref="deptListPopover" placement="bottom-start" trigger="click">
           <el-tree
             :data="deptList"
             :props="{ label: 'name', children: 'children' }"
-            node-key="deptId"
+            node-key="menuId"
             ref="deptListTree"
             :highlight-current="true"
             :expand-on-click-node="false"
@@ -19,21 +19,32 @@
         </el-popover>
         <el-input v-model="dataForm.parentName" v-popover:deptListPopover :readonly="true" :placeholder="$t('views.public.dept.parentId')"/>
       </el-form-item>
-      <el-form-item prop="parentId" :label="$t('views.public.dept.parentId')" v-show="false" >
-        <el-input v-model="dataForm.parentId" :placeholder="$t('views.public.dept.parentId')"/>
+      <el-form-item prop="parentId" label="上级菜单" v-show="false" >
+        <el-input v-model="dataForm.parentId" />
       </el-form-item>
-      <el-form-item prop="orderNum" :label="$t('views.public.dept.orderNum')">
-        <el-input v-model="dataForm.orderNum" :placeholder="$t('views.public.dept.orderNum')"/>
+      <el-form-item prop="url" label="菜单URL">
+        <el-input v-model="dataForm.url" placeholder="菜单URL"/>
       </el-form-item>
-      <el-form-item :label="$t('views.public.dept.delFlag')">
+      <el-form-item prop="perms" label="授权">
+        <el-input v-model="dataForm.perms" placeholder="多个用逗号分隔：如：sys.menu.save,sys.menu.update"/>
+      </el-form-item>
+     <el-form-item prop="icon" label="菜单图标">
+        <el-input v-model="dataForm.icon" placeholder="菜单图标"/>
+      </el-form-item>
+      <el-form-item prop="orderNum" label="排序">
+        <el-input v-model="dataForm.orderNum" placeholder="排序"/>
+      </el-form-item>
+      <el-form-item label="菜单类型">
        <template>
-      <el-radio-group v-model="dataForm.delFlag">
-        <el-radio :label="0">不删除</el-radio>
-        <el-radio :label="-1">删除</el-radio>
+      <el-radio-group v-model="dataForm.type">
+        <el-radio :label="0">导航栏</el-radio>
+        <el-radio :label="1">菜单</el-radio>
+        <el-radio :label="2">按钮</el-radio>
       </el-radio-group>
       </template>
       </el-form-item>
     </el-form>
+  
     <template slot="footer">
       <el-button @click="visible = false">{{ $t('views.public.cancel') }}</el-button>
       <el-button type="primary" @click="dataFormSubmitHandle()">{{ $t('views.public.confirm') }}</el-button>
@@ -50,33 +61,33 @@ export default {
       deptList: [],
       deptListVisible: false,
       dataForm: {
-        deptId: '',
+        menuId: '',
         name: '',
         parentId: '',
         parentName: '',
-        orderNum: 0,
-        delFlag: 0
+        orderNum: '1',
+        url: '',
+        perms:'',
+        type:1,
+        icon:''
       }
-     
     }
   },
   methods: {
-    
     init () {
       this.visible = true
-      this.dataForm.deptId=null
-      if(this.$refs.dataForm){
-        this.$refs.dataForm.resetFields()
-      }
-      this.$nextTick(() => { 
+      this.$nextTick(() => {
+        this.$refs['dataForm'].resetFields()
+        this.roleIdListDefault = []
         Promise.all([
           this.getDeptList()
         ]).then(() => {
-         
+          if (this.dataForm.menuId) {
+            // this.getInfo()
+          }
         })
       })
     },
-    
     update(row){
       this.visible = true
       this.$nextTick(() => {
@@ -85,23 +96,22 @@ export default {
         Promise.all([
           this.getDeptList()
         ]).then(() => {
-          if (this.dataForm.deptId) {
+          if (this.dataForm.menuId) {
              
           }
         })
       })
     },
-    // 获取部门列表
+    // 获取菜单列表
     getDeptList () {
-      return this.$axios.get('/sys/dept/select').then(res => {
+      return this.$axios.get('/sys/menu/select').then(res => {
         this.deptList = res
       }).catch(() => {})
     },
     
-    // 所属部门树, 选中
+    // 所属菜单树, 选中
     deptListTreeCurrentChangeHandle (data, node) {
-      debugger
-      this.dataForm.parentId = data.deptId
+      this.dataForm.parentId = data.menuId
       this.dataForm.parentName = data.name
       this.deptListVisible = false
     },
@@ -111,7 +121,7 @@ export default {
         if (!valid) {
           return false
         }
-        this.$axios[!this.dataForm.deptId ? 'post' : 'put']('/sys/dept/save', {
+        this.$axios[!this.dataForm.menuId ? 'post' : 'put']('/sys/menu/save', {
           ...this.dataForm
         }).then(res => {
           this.$message({

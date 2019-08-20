@@ -2,7 +2,7 @@
   <el-select
     :value="selectVal"
     :filterable="selType == 'dyamic'"
-    :placeholder="placeholder"
+    :placeholder="selPlaceholder"
     :remote="selType == 'dyamic'"
     :automatic-dropdown="selType == 'dyamic'"
     default-first-option
@@ -19,25 +19,6 @@
 </template>
 
 <script>
-// dataType对应的映射，用于生成对应的服务器访问地址
-const TYPE_MAP = {
-  customer: {
-    text: '请选择客户',
-    url: 'biz/customer',
-    type: 'dyamic'
-  },
-  code: {
-    text: '请选择',
-    url: 'code/',
-    type: 'static'
-  },
-  dict: {
-    text: '请选择',
-    url: 'dict/',
-    type: 'static'
-  }
-}
-
 export default {
   props: {
     value: {
@@ -46,6 +27,10 @@ export default {
     },
     // 组件业务类型
     dataType: {
+      type: String,
+      required: true
+    },
+    placeholder: {
       type: String,
       required: true
     }
@@ -57,7 +42,7 @@ export default {
       },
       selectVal: this.value,
       loading: false,
-      placeholder: '',
+      selPlaceholder: '',
       options: [],
       codeType: '',
       dType: '',
@@ -72,11 +57,13 @@ export default {
     } else {
       this.dType = this.dataType
     }
-    this.selType = TYPE_MAP[this.dType].type
+    this.selType = this.dType === 'biz' ? 'dyamic' : 'static'
     if (this.selType === 'static') {
       this._selLoadCode()
     }
-    this.placeholder = TYPE_MAP[this.dType].text
+    if (this.placeholder) {
+      this.selPlaceholder = this.placeholder
+    }
   },
   mounted () {
 
@@ -91,7 +78,7 @@ export default {
     async _selDyamicList (query) {
       this.loading = true
       await this.$axios.post(
-        '/common/' + TYPE_MAP[this.dType].url.replace(/^\//, '') + this.codeType,
+        '/common/' + this.dType.replace(/^\//, '') + '/' + this.codeType,
         { query: query }
       ).then(res => {
         this.loading = false

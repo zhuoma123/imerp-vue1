@@ -139,13 +139,16 @@ export default {
       this.visible = true
       this.$nextTick(() => {
         this.$refs['dataForm'].resetFields()
+        if (this.dataForm.id){
+          this.dataForm.id=undefined
+        }
         this.$refs['dataForm'].clearValidate()
       })
     },
     update (row) {
-      this.dataForm = Object.assign({}, row)
       this.visible = true
       this.$nextTick(() => {
+        this.dataForm = Object.assign({}, row)
         this.$refs['dataForm'].clearValidate()
       })
     },

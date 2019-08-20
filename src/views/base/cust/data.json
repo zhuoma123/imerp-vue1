@@ -142,7 +142,7 @@
         "key": "createDate",
         "sortable": true,
         "align": "center",
-        "width": "120px"
+        "width": "200px"
       },
       {
         "title": "修改人",
@@ -156,7 +156,7 @@
         "key": "updateDate",
         "sortable": true,
         "align": "center",
-        "width": "120px"
+        "width": "200px"
       }
     ],
     "input": {

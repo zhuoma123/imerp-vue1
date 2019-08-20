@@ -3,7 +3,7 @@
         <el-form :inline="true" size="mini" :model="dataForm" @keyup.enter.native="getDataList()">
             <el-form-item>
                 <el-input
-                        v-model="dataForm.username"
+                        v-model="dataForm.name"
                         :data-operate="dataFormOp.username"
                         :placeholder="$t('views.public.user.username')"
                         clearable

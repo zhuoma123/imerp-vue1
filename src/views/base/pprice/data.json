@@ -46,9 +46,9 @@
       }
     ],
     "input": {
-      "productId": "编号",
-      "salePrice": "名称",
-      "costPrice": "拼音码",
+      "productId": "产品编号",
+      "salePrice": "默认销售价",
+      "costPrice": "当前成本价",
       "remark": "备注"
     }
   }

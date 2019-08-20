@@ -43,20 +43,33 @@
             </el-form-item>
         </el-form>
         <!--data show-->
-        <d2-crud
-                :columns="columns"
-                :options="options"
-                selectionRow
-                :row-handle="rowHandler"
-                :loading="dataListLoading"
-                :data="dataList"
-                @selection-change="dataListSelectionChangeHandle"
-                @sort-change="dataListSortChangeHandle"
-                @user-update="addOrUpdateHandleSetter"
-                @user-delete="deleteHandleSetter"
-        ></d2-crud>
+        <el-card>
+            <!-- 查询结果 -->
+            <el-table v-loading="dataListLoading" :data="dataList" row-key="id" element-loading-text="正在查询中。。。"
+                      border fit highlight-current-row @selection-change="dataListSelectionChangeHandle">
+                <el-table-column type="selection" width="55"/>
+                <el-table-column label="序号" type="index" align="center" show-overflow-tooltip width="50px"/>
+                <el-table-column align="center" label="类型" prop="type"/>
+                <el-table-column align="center" label="编码" prop="code"/>
+                <el-table-column align="center" label="名称" prop="name"/>
+                <el-table-column align="center" label="排序序号" prop="orderNum"/>
+                <el-table-column align="center" label="是否系统数据" prop="sys">
+                    <template slot-scope="scope">
+                        <el-tag >{{ sysDic[scope.row.sys] }}</el-tag>
+                    </template>
+                </el-table-column>
+                <el-table-column align="center" label="备注" prop="remark"/>
+                <el-table-column align="center" label="更新人" prop="orderNum"/>
+                <el-table-column align="center" label="更新时间" prop="orderNum"/>
+                <el-table-column align="center" label="操作" class-name="small-padding" width="80px">
+                    <template slot-scope="scope">
+                        <el-button type="primary" size="mini" @click="add(scope.row)">编辑</el-button>
+                    </template>
+                </el-table-column>
+            </el-table>
+        </el-card>
         <!-- 弹窗, 新增 / 修改 -->
-        <AddOrUpdate v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList"/>
+        <AddOrUpdate v-if="addOrUpdateVisible" :parentDataList="dataList" ref="addOrUpdate" @refreshDataList="getDataList"/>
     </d2-container>
 </template>
 
@@ -67,6 +80,7 @@ import formMap from '../data'
 import data from './data'
 
 export default {
+  name: 'tree',
   mixins: [mixinViewModule],
   data () {
     return {
@@ -108,12 +122,28 @@ export default {
           }
         ]
       },
-      columns: data.data.form
+      columns: data.data.form,
+      sysDic: ['是', '否']
     }
   },
   components: {
     AddOrUpdate
   },
-  methods: {}
+  methods: {
+    add (row) {
+      let map = {}
+      map.row = row
+      this.addOrUpdateHandleSetter(map)
+    },
+    del (row) {
+      debugger
+      let map = {}
+      map.row = row
+      // this.deleteHandleSetter(map)
+    }
+  },
+  created () {
+    this.getDataList()
+  }
 }
 </script>

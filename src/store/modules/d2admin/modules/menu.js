@@ -87,7 +87,7 @@ export default {
      * @param {Array} menu menu setting
      * @param {Number} menu menu pid
      */
-    asideSet (state, {menu, pid}) {
+    asideSet (state, { menu, pid }) {
       // store 赋值
       state.aside = menu
       state.curAsidePid = pid

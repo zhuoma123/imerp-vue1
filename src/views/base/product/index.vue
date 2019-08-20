@@ -119,6 +119,7 @@ import AddOrUpdate from './add-or-update'
 import data from './data'
 
 export default {
+  name: 'product',
   mixins: [mixinViewModule],
   data () {
     return {

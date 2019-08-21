@@ -43,14 +43,6 @@
             </el-form-item>
             <el-form-item>
                 <el-input
-                        v-model="dataForm.categoryId"
-                        :data-operate="dataFormOp.likeOps"
-                        :placeholder="data.form.input.categoryId"
-                        clearable
-                />
-            </el-form-item>
-            <el-form-item>
-                <el-input
                         v-model="dataForm.madeinId"
                         :data-operate="dataFormOp.likeOps"
                         :placeholder="data.form.input.madeinId"

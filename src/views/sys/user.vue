@@ -24,7 +24,7 @@
         <el-button
           v-if="$hasPermission('sys:user:save')"
           type="primary"
-          @click="addOrUpdateHandle({})"
+          @click="addHandle"
         >{{ $t('views.public.add') }}</el-button>
       </el-form-item>
       <el-form-item>

@@ -4,10 +4,10 @@
                    :close-on-click-modal="false" :close-on-press-escape="false">
             <el-form :model="dataForm" :rules="rules" ref="dataForm" @keyup.enter.native="dataFormSubmitHandle()"
                      label-width="110px" :inline="true" style="width: 700px">
-                <el-form-item prop="code" :label="data.form.input.code" @click.native="showPid">
+                <el-form-item prop="code" :label="data.form.input.code" v-show="false" >
                     <el-input v-model="dataForm.code" :placeholder="data.form.input.code"/>
                 </el-form-item>
-                <el-form-item prop="name" :label="data.form.input.name">
+                <el-form-item prop="name" :label="data.form.input.name" @click.native="showPid">
                     <el-input v-model="dataForm.name" :placeholder="data.form.input.name"/>
                 </el-form-item>
                 <el-form-item prop="prefix" :label="data.form.input.prefix">
@@ -99,6 +99,7 @@
                         class="filter-tree"
                         default-expand-all
                         :filter-node-method="filterNode"
+                        @node-click="getSelectedMenu"
                 ></el-tree>
                 <div slot="footer" class="dialog-footer">
                     <div class="menuDia">
@@ -117,7 +118,7 @@
   export default {
     data () {
       return {
-        filterText: undefined,
+        filterText: '',
         menuFormVisible: false,
         menuList: [],
         data: data,
@@ -148,13 +149,8 @@
         typeData: [],
         rules: {
           name: [
-            {required: true, message: '名称不可缺少'},
-            {max: 6, message: '此处最多6个字符'}
-          ],
-          code: [
-            {required: true, message: '编码不可缺少'},
-            {max: 6, message: '此处最多6个字符', trigger: 'blur'}
-            ]
+            {required: true, message: '名称不可缺少'}
+          ]
         },
         defaultProps: {
           label: 'name',
@@ -167,6 +163,9 @@
         this.visible = true
         this.$nextTick(() => {
           this.$refs['dataForm'].resetFields()
+          if(this.dataForm.id){
+            this.dataForm.id=undefined
+          }
           this.$refs['dataForm'].clearValidate()
         })
       },
@@ -206,17 +205,13 @@
       showPid () {
         this.menuFormVisible = true
         this.$nextTick(() => {
-          this.menuList = this.typeData
+          // this.menuList
         })
       },
       getSelectedMenu () {
         let data = this.$refs.tree.getCurrentNode()
-        this.dataForm = data
-        let date = new Date()
-        this.dataForm.startDateActive = date
-        this.dataForm.year = date.getFullYear()
-        this.dataForm.month = date.getMonth() + 1
-        this.dataForm.day = date.getDate()
+        this.dataForm.code = data.code
+        this.dataForm.name = data.name
         this.menuFormVisible = false
       },
       filterNode (value, data) {
@@ -240,8 +235,24 @@
           })
         }).catch(() => {
         })
+      },
+      getMenuList(){
+        this.$axios.post('/base/ruletype/list',
+          { 'name': this.filterText }).then(res=>{
+        debugger
+          this.menuList=res
+        })
       }
+    },
+    created () {
+        this.getMenuList()
     }
+    //新建日期
+    // watch(){
+    //   visible:function f () {
+    //
+    //   }
+    // }
   }
 </script>
 

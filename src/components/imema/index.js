@@ -27,6 +27,7 @@ export default {
       type: String,
       required: true
     },
+    // 对应绑定的form表单
     mapModel: {
       type: Object,
       default: () => ({})
@@ -35,6 +36,12 @@ export default {
     mapKeyVal: {
       type: String,
       required: false
+    },
+    //
+    placeholder: {
+      type: String,
+      required: false,
+      default: '请选择'
     }
   },
   computed: {
@@ -54,7 +61,8 @@ export default {
       h(this.component, {
         ref: 'component',
         props: {
-          dataType: this.dataType
+          dataType: this.dataType,
+          placeholder: this.placeholder
         },
         on: {
           change: e => this.$emit('change', e),

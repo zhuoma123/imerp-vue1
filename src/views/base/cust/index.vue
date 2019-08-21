@@ -45,18 +45,46 @@
                 </el-button>
             </el-form-item>
         </el-form>
-        <d2-crud
-                :columns="columns"
-                :options="options"
-                selectionRow
-                :row-handle="rowHandler"
-                :loading="dataListLoading"
-                :data="dataList"
-                @selection-change="dataListSelectionChangeHandle"
-                @sort-change="dataListSortChangeHandle"
-                @user-update="addOrUpdateHandleSetter"
-                @user-delete="deleteHandleSetter"
-        ></d2-crud>
+        <el-card>
+            <!-- 查询结果 -->
+            <el-table v-loading="dataListLoading" :data="dataList" row-key="id" element-loading-text="正在查询中。。。"
+                      border fit highlight-current-row @selection-change="dataListSelectionChangeHandle"
+                      @row-dblclick="add">
+                <el-table-column type="selection" width="36"/>
+                <el-table-column label="序号" type="index" align="center" show-overflow-tooltip width="50px"/>
+                <el-table-column label="客户|供应商" align="center" prop="custVendor">
+                    <template slot-scope="scope">
+                        <el-tag >{{ vendor[scope.row.custVendor] }}</el-tag>
+                    </template>
+                </el-table-column>
+                <el-table-column label="名称" align="center" prop="name"/>
+                <el-table-column label="编号" align="center" prop="code"/>
+                <el-table-column label="职称" align="center" prop="shortName"/>
+                <el-table-column label="类型" align="center" prop="type"/>
+                <el-table-column label="公司电话" align="center" prop="tel"/>
+                <el-table-column label="公司传真" align="center" prop="fax"/>
+                <el-table-column label="公司邮箱" align="center" prop="email"/>
+                <el-table-column label="公司微信" align="center" prop="mm"/>
+                <el-table-column label="公司地址" align="center" prop="companyAddress"/>
+                <el-table-column label="法人" align="center" prop="legalMan"/>
+                <el-table-column label="公司网址" align="center" prop="webSite"/>
+                <el-table-column label="开户银行" align="center" prop="bank"/>
+                <el-table-column label="银行账号" align="center" prop="bankAccount"/>
+                <el-table-column label="纳税号" align="center" prop="taxNum"/>
+                <el-table-column label="拼音码" align="center" prop="pinyinCode"/>
+                <el-table-column label="五笔码" align="center" prop="wbCode"/>
+                <el-table-column label="业务员" align="center" prop="pic"/>
+                <el-table-column label="备注" align="center" prop="remark"/>
+                <el-table-column label="更新人" align="center" prop="updateBy"/>
+                <el-table-column label="更新时间" align="center" prop="updateDate"/>
+                <el-table-column align="center" label="操作" class-name="small-padding" width="160px">
+                    <template slot-scope="scope">
+                        <el-button type="primary" size="mini" @click="addOrUpdateHandleSetter(scope)">编辑</el-button>
+                        <el-button type="danger" size="mini" @click="deleteHandleSetter(scope)">删除</el-button>
+                    </template>
+                </el-table-column>
+            </el-table>
+        </el-card>
         <!-- 分页 -->
         <el-pagination
                 slot="footer"
@@ -76,7 +104,6 @@
 <script>
 import mixinViewModule from '@/mixins/view-module'
 import AddOrUpdate from './add-or-update'
-import data from './data'
 
 export default {
   name: 'cust',
@@ -114,36 +141,22 @@ export default {
       dataFormOp: {
         username: 'like'
       },
-      rowHandler: {
-        width: '160px',
-        custom: [
-          {
-            text: this.$t('views.public.update'),
-            type: 'primary',
-            size: 'mini',
-            emit: 'user-update',
-            show: (index, row) => {
-              return this.$hasPermission('sys:user:update')
-            }
-          },
-          {
-            text: this.$t('views.public.delete'),
-            type: 'danger',
-            size: 'mini',
-            emit: 'user-delete',
-            show: (index, row) => {
-              return this.$hasPermission('sys:user:delete')
-            }
-          }
-        ]
-      },
-      columns: data.form.columns
+      vendor: {
+        CUST: '顾客',
+        VENDOR: '供应商'
+      }
     }
   },
   components: {
     AddOrUpdate
   },
-  methods: {}
+  methods: {
+    add (row) {
+      let map = {}
+      map.row = row
+      this.addOrUpdateHandleSetter(map)
+    }
+  }
 }
 </script>
 

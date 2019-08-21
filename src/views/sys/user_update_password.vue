@@ -13,15 +13,27 @@
             ref="deptListTree"
             :highlight-current="true"
             :expand-on-click-node="false"
-            :default-checked-keys="checkkey"
             accordion
             @current-change="deptListTreeCurrentChangeHandle">
           </el-tree>
         </el-popover>
         <el-input v-model="dataForm.deptName" v-popover:deptListPopover :readonly="true" :placeholder="$t('views.public.user.deptName')"/>
       </el-form-item>
-      <el-form-item prop="deptId"  >
-        <el-input v-model="dataForm.deptId"/>
+      <el-form-item prop="password" :label="$t('views.public.user.password')" :class="{ 'is-required': !dataForm.id }">
+        <el-input v-model="dataForm.password" type="password" :placeholder="$t('views.public.user.password')"/>
+      </el-form-item>
+      <el-form-item prop="comfirmPassword" :label="$t('views.public.user.comfirmPassword')" :class="{ 'is-required': !dataForm.id }">
+        <el-input v-model="dataForm.comfirmPassword" type="password" :placeholder="$t('views.public.user.comfirmPassword')"/>
+      </el-form-item>
+      <el-form-item prop="realName" :label="$t('views.public.user.realName')">
+        <el-input v-model="dataForm.realName" :placeholder="$t('views.public.user.realName')"/>
+      </el-form-item>
+      <el-form-item prop="gender" :label="$t('views.public.user.gender')" size="mini">
+        <el-radio-group v-model="dataForm.gender">
+          <el-radio :label="0">{{ $t('views.public.user.gender0') }}</el-radio>
+          <el-radio :label="1">{{ $t('views.public.user.gender1') }}</el-radio>
+          <el-radio :label="2">{{ $t('views.public.user.gender2') }}</el-radio>
+        </el-radio-group>
       </el-form-item>
       <el-form-item prop="email" :label="$t('views.public.user.email')">
         <el-input v-model="dataForm.email" :placeholder="$t('views.public.user.email')"/>
@@ -71,8 +83,7 @@ export default {
         email: '',
         mobile: '',
         roleIdList: [],
-        status: 1,
-        checkkey:''
+        status: 1
       }
     }
   },
@@ -147,19 +158,19 @@ export default {
           }
         })
       })
-    },    
+    },
+    
     update(row){
       debugger
       this.visible = true
       this.$nextTick(() => {
         this.dataForm = Object.assign({}, row)
-        this.dataForm.checkkey=row.deptId
         this.$refs['dataForm'].clearValidate()
         Promise.all([
           this.getDeptList()
         ]).then(() => {
-          if (this.dataForm.userId) {
-           
+          if (this.dataForm.deptId) {
+             
           }
         })
       })

@@ -46,8 +46,9 @@
         <el-card>
             <!-- 查询结果 -->
             <el-table v-loading="dataListLoading" :data="dataList" row-key="id" element-loading-text="正在查询中。。。"
-                      border fit highlight-current-row @selection-change="dataListSelectionChangeHandle">
-                <el-table-column type="selection" width="55"/>
+                      border fit highlight-current-row @selection-change="dataListSelectionChangeHandle"
+                      @row-dblclick="add">
+                <el-table-column type="selection" width="36"/>
                 <el-table-column label="序号" type="index" align="center" show-overflow-tooltip width="50px"/>
                 <el-table-column align="center" label="类型" prop="type"/>
                 <el-table-column align="center" label="编码" prop="code"/>
@@ -63,7 +64,7 @@
                 <el-table-column align="center" label="更新时间" prop="updateDate"/>
                 <el-table-column align="center" label="操作" class-name="small-padding" width="80px">
                     <template slot-scope="scope">
-                        <el-button type="primary" size="mini" @click="add(scope.row)">编辑</el-button>
+                        <el-button type="primary" size="mini" @click="addOrUpdateHandleSetter(scope.row)">编辑</el-button>
                     </template>
                 </el-table-column>
             </el-table>
@@ -72,7 +73,7 @@
         <AddOrUpdate v-if="addOrUpdateVisible" :parentDataList="dataList" ref="addOrUpdate" @refreshDataList="getDataList"/>
     </d2-container>
 </template>
-O
+
 <script>
 import mixinViewModule from '@/mixins/view-module'
 import AddOrUpdate from './add-or-update'
@@ -99,29 +100,6 @@ export default {
       dataFormOp: {
         likeOps: 'like'
       },
-      rowHandler: {
-        width: '160px',
-        custom: [
-          {
-            text: this.$t('views.public.update'),
-            type: 'primary',
-            size: 'mini',
-            emit: 'user-update',
-            show: (index, row) => {
-              return this.$hasPermission('sys:user:update')
-            }
-          },
-          {
-            text: this.$t('views.public.delete'),
-            type: 'danger',
-            size: 'mini',
-            emit: 'user-delete',
-            show: (index, row) => {
-              return this.$hasPermission('sys:user:delete')
-            }
-          }
-        ]
-      },
       columns: data.data.form,
       sysDic: ['是', '否']
     }
@@ -134,12 +112,6 @@ export default {
       let map = {}
       map.row = row
       this.addOrUpdateHandleSetter(map)
-    },
-    del (row) {
-      debugger
-      let map = {}
-      map.row = row
-      // this.deleteHandleSetter(map)
     }
   },
   created () {

@@ -130,8 +130,9 @@ export default {
     }
   },
   watch: {
-    filterText (val) {
-      this.$refs.tree.filter(val)
+    filterText: function (val) {
+      console.log(val)
+      // this.$refs.tree.filter(val)
     }
   },
   methods: {
@@ -179,9 +180,7 @@ export default {
     },
     showPid () {
       this.menuFormVisible = true
-      debugger
       this.$nextTick(() => {
-        debugger
         this.menuList = [{ id: 0, name: '顶级菜单', children: this.parentDataList }]
       })
     },

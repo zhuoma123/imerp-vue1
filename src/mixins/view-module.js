@@ -478,11 +478,13 @@ export default {
     computeHeight () {
       let self = this
       if (self.$refs.pGrid) {
-        let toolbar = `${document.getElementsByClassName('vxe-toolbar')[0].clientHeight}`
-        let tableHeader = `${document.getElementsByClassName('vxe-table--header-wrapper')[0].clientHeight}`
-        let bodyClientHeight = `${document.getElementsByClassName('d2-container-full__body')[0].clientHeight}`
+        let toolbar = document.getElementsByClassName('vxe-toolbar')[0] ? `${document.getElementsByClassName('vxe-toolbar')[0].clientHeight}` : 0
+        let tableHeader = document.getElementsByClassName('vxe-table--header-wrapper')[0] ? `${document.getElementsByClassName('vxe-table--header-wrapper')[0].clientHeight}` : 0
+        let bodyClientHeight = document.getElementsByClassName('d2-container-full__body')[0] ? `${document.getElementsByClassName('d2-container-full__body')[0].clientHeight}` : 0
         let tableBody = self.$refs.pGrid.$el.getElementsByClassName('vxe-table--body-wrapper')[0]
-        tableBody.style.height = bodyClientHeight - toolbar - tableHeader + 'px'
+        let tableFoot = self.$refs.pGrid.showFooter ? 30 : 0
+        if(tableBody)
+          tableBody.style.height = Number(bodyClientHeight) - Number(toolbar) - Number(tableHeader) - tableFoot + 'px'
       }
     },
     collapseChange () {

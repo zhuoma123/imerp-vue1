@@ -42,6 +42,11 @@ export default {
       type: String,
       required: false,
       default: '请选择'
+    },
+    clearable: {
+      type: Boolean,
+      required: false,
+      default: true
     }
   },
   computed: {
@@ -62,7 +67,8 @@ export default {
         ref: 'component',
         props: {
           dataType: this.dataType,
-          placeholder: this.placeholder
+          placeholder: this.placeholder,
+          clearable: this.clearable
         },
         on: {
           change: e => this.$emit('change', e),

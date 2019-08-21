@@ -6,7 +6,11 @@
         "key": "custVendor",
         "sortable": true,
         "align": "center",
-        "width": "120px"
+        "width": "120px",
+        "filters": [
+          { "label": "CUST", "value": "顾客" },
+          { "label": "VENDOR", "value": "供应商" }
+        ]
       },
       {
         "title": "编号",

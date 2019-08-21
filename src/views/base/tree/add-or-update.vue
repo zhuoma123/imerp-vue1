@@ -115,8 +115,8 @@ export default {
           required: true, message: '父级菜单不可缺少', trigger: 'blur'
         }],
         type: [
-          {required: true, message: '类型不可缺少', trigger: 'blur'},
-          {max: 6, message: '此处最多6个字符', trigger: 'blur' }],
+          { required: true, message: '类型不可缺少', trigger: 'blur' },
+          { max: 6, message: '此处最多6个字符', trigger: 'blur' }],
         code: [{
           required: true, message: '编码不可缺少', trigger: 'blur'
         }]
@@ -139,13 +139,16 @@ export default {
       this.visible = true
       this.$nextTick(() => {
         this.$refs['dataForm'].resetFields()
+        if (this.dataForm.id) {
+          this.dataForm.id = undefined
+        }
         this.$refs['dataForm'].clearValidate()
       })
     },
     update (row) {
-      this.dataForm = Object.assign({}, row)
       this.visible = true
       this.$nextTick(() => {
+        this.dataForm = Object.assign({}, row)
         this.$refs['dataForm'].clearValidate()
       })
     },

@@ -59,8 +59,8 @@
                     </template>
                 </el-table-column>
                 <el-table-column align="center" label="备注" prop="remark"/>
-                <el-table-column align="center" label="更新人" prop="orderNum"/>
-                <el-table-column align="center" label="更新时间" prop="orderNum"/>
+                <el-table-column align="center" label="更新人" prop="updateBy"/>
+                <el-table-column align="center" label="更新时间" prop="updateDate"/>
                 <el-table-column align="center" label="操作" class-name="small-padding" width="80px">
                     <template slot-scope="scope">
                         <el-button type="primary" size="mini" @click="add(scope.row)">编辑</el-button>
@@ -72,7 +72,7 @@
         <AddOrUpdate v-if="addOrUpdateVisible" :parentDataList="dataList" ref="addOrUpdate" @refreshDataList="getDataList"/>
     </d2-container>
 </template>
-
+O
 <script>
 import mixinViewModule from '@/mixins/view-module'
 import AddOrUpdate from './add-or-update'

@@ -150,13 +150,7 @@ export default {
   components: {
     AddOrUpdate
   },
-  methods: {
-    add (row) {
-      let map = {}
-      map.row = row
-      this.addOrUpdateHandleSetter(map)
-    }
-  }
+  methods: {}
 }
 </script>
 

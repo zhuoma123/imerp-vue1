@@ -2,8 +2,8 @@
   "form": {
     "columns": [
       {
-        "title": "仓库ID",
-        "key": "warehouseId",
+        "title": "仓库",
+        "key": "warehouseName",
         "sortable": true,
         "align": "center",
         "width": "110px"
@@ -12,44 +12,28 @@
         "title": "货位名称",
         "key": "name",
         "sortable": true,
-        "align": "center",
-        "width": "120px"
+        "align": "center"
       },
       {
         "title": "备注",
         "key": "remark",
         "sortable": true,
         "align": "center"
-      },
-      {
-        "title": "创建人",
-        "key": "createBy",
-        "sortable": true,
-        "align": "center",
-        "width": "110px"
-      },
-      {
-        "title": "创建日期",
-        "key": "createDate",
-        "sortable": true,
-        "align": "center",
-        "width": "120px"
-      },{
+      }, {
         "title": "修改人",
         "key": "updateBy",
         "sortable": true,
-        "align": "center",
-        "width": "110px"
+        "align": "center"
       },
       {
         "title": "修改日期",
         "key": "updateDate",
         "sortable": true,
-        "align": "center",
-        "width": "120px"
+        "align": "center"
       }
     ],"input": {
-      "warehouseId": "仓库ID",
+      "warehouse": "仓库",
+      "warehouseName": "请输入仓库名称",
       "name": "货位名称",
       "remark": "备注"
     }

@@ -2,8 +2,8 @@
   "form": {
     "columns": [
       {
-        "title": "产品编号",
-        "key": "productId",
+        "title": "产品",
+        "key": "productName",
         "sortable": true,
         "align": "center"
       },{
@@ -21,17 +21,6 @@
         "key": "remark",
         "sortable": true,
         "align": "center"
-      },
-      {
-        "title": "创建人",
-        "key": "createBy",
-        "sortable": true,
-        "align": "center"
-      },{
-        "title": "创建日期",
-        "key": "createDate",
-        "sortable": true,
-        "align": "center"
       },{
         "title": "修改人",
         "key": "updateBy",
@@ -46,7 +35,7 @@
       }
     ],
     "input": {
-      "productId": "产品编号",
+      "productId": "产品",
       "salePrice": "默认销售价",
       "costPrice": "当前成本价",
       "remark": "备注"

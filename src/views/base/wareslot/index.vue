@@ -3,9 +3,9 @@
         <el-form :inline="true" size="mini" :model="dataForm" @keyup.enter.native="getDataList()">
             <el-form-item>
                 <el-input
-                        v-model="dataForm.warehouseId"
+                        v-model="dataForm.warehouseName"
                         :data-operate="dataFormOp.likeOps"
-                        :placeholder="data.form.input.warehouseId"
+                        :placeholder="data.form.input.warehouseName"
                         clearable
                 />
             </el-form-item>
@@ -56,6 +56,7 @@
                 @sort-change="dataListSortChangeHandle"
                 @user-update="addOrUpdateHandleSetter"
                 @user-delete="deleteHandleSetter"
+                @row-dblclick="add"
         ></d2-crud>
         <!-- 分页 -->
         <el-pagination
@@ -91,7 +92,7 @@ export default {
         deleteIsBatch: true
       },
       dataForm: {
-        warehouseId: undefined,
+        warehouseName: undefined,
         name: undefined
       },
       dataFormOp: {

@@ -21,6 +21,7 @@
     :data="dataList"
     style="width: 100%;margin-bottom: 20px;"
     row-key="menuId"
+    height="500"
     border
     :tree-props="{children: 'children'}">
       <el-table-column prop="name" label="菜单名称" width="200" align="left" ></el-table-column>
@@ -156,7 +157,7 @@ export default {
   },
 
   mounted() {
-    this.search()
+    this.getDataList()
   }
 
 }

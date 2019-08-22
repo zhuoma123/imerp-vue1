@@ -308,6 +308,11 @@ export default {
         })
       }
     },
+    add (row) {
+      let map = {}
+      map.row = row
+      this.addOrUpdateHandleSetter(map)
+    },
     // 删除
     deleteHandle (grid) {
       let ids = ''
@@ -537,6 +542,7 @@ export default {
   watch: {
     visible: function (newName, oldName) {
       if (newName) {
+        debugger
         this.$nextTick(() => {
           this.dataList = []
           this.$refs.sGrid.loadData(this.dataList)

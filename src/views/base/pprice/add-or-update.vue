@@ -1,10 +1,17 @@
 <template>
     <el-dialog :visible.sync="visible" :title="!dataForm.id ? $t('views.public.add') : $t('views.public.update')"
                :close-on-click-modal="false" :close-on-press-escape="false">
-        <el-form :model="dataForm" :rules="rules" ref="dataForm" @keyup.enter.native="dataFormSubmitHandle()"
+        <el-form :model="dataForm" :rules="rules" ref="dataForm"
                  label-width="120px">
-            <el-form-item prop="productId" :label="data.form.input.productId">
-                <el-input v-model="dataForm.productId" :placeholder="data.form.input.productId"/>
+            <el-form-item prop="productId" :label="data.form.input.productId" style="width: 520px">
+                <im-selector
+                        placeholder="请选择产品"
+                        v-model="dataForm.productId"
+                        :mapModel.sync="dataForm"
+                        mapKeyVal="productName:productId"
+                        dataType="biz.product"
+                        @change="changeCust">
+                </im-selector>
             </el-form-item>
             <el-form-item prop="salePrice" :label="data.form.input.salePrice">
                 <el-input v-model="dataForm.salePrice" :placeholder="data.form.input.salePrice"/>
@@ -37,11 +44,6 @@ export default {
         salePrice: undefined,
         costPrice: undefined,
         remark: undefined
-      },
-      rules: {
-        productId: [{
-          required: true, message: '产品ID不可缺少'
-        }]
       }
     }
   },
@@ -50,13 +52,16 @@ export default {
       this.visible = true
       this.$nextTick(() => {
         this.$refs['dataForm'].resetFields()
+        if (this.dataForm.id) {
+          this.dataForm.id = undefined
+        }
         this.$refs['dataForm'].clearValidate()
       })
     },
     update (row) {
-      this.dataForm = Object.assign({}, row)
       this.visible = true
       this.$nextTick(() => {
+        this.dataForm = Object.assign({}, row)
         this.$refs['dataForm'].clearValidate()
       })
     },

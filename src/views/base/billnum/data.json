@@ -109,7 +109,8 @@
         "key": "startDateActive",
         "sortable": true,
         "align": "center",
-        "width": "130px"
+        "width": "130px",
+        "formatter": "date_format(row,'')"
       },{
         "title": "有效结束日期",
         "key": "endDateActive",

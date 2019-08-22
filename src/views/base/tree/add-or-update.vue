@@ -115,8 +115,8 @@ export default {
           required: true, message: '父级菜单不可缺少', trigger: 'blur'
         }],
         type: [
-          {required: true, message: '类型不可缺少', trigger: 'blur'},
-          {max: 6, message: '此处最多6个字符', trigger: 'blur' }],
+          { required: true, message: '类型不可缺少', trigger: 'blur' },
+          { max: 6, message: '此处最多6个字符', trigger: 'blur' }],
         code: [{
           required: true, message: '编码不可缺少', trigger: 'blur'
         }]
@@ -130,8 +130,9 @@ export default {
     }
   },
   watch: {
-    filterText (val) {
-      this.$refs.tree.filter(val)
+    filterText: function (val) {
+      console.log(val)
+      // this.$refs.tree.filter(val)
     }
   },
   methods: {
@@ -139,8 +140,8 @@ export default {
       this.visible = true
       this.$nextTick(() => {
         this.$refs['dataForm'].resetFields()
-        if (this.dataForm.id){
-          this.dataForm.id=undefined
+        if (this.dataForm.id) {
+          this.dataForm.id = undefined
         }
         this.$refs['dataForm'].clearValidate()
       })
@@ -179,9 +180,7 @@ export default {
     },
     showPid () {
       this.menuFormVisible = true
-      debugger
       this.$nextTick(() => {
-        debugger
         this.menuList = [{ id: 0, name: '顶级菜单', children: this.parentDataList }]
       })
     },

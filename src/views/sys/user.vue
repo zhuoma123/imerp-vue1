@@ -24,14 +24,14 @@
         <el-button
           v-if="$hasPermission('sys:user:save')"
           type="primary"
-          @click="addHandle"
+          @click="addOrUpdateData()"
         >{{ $t('views.public.add') }}</el-button>
       </el-form-item>
       <el-form-item>
         <el-button
           v-if="$hasPermission('sys:user:delete')"
           type="danger"
-          @click="deleteHandle()"
+          @click="deleteHandleSetter()"
         >{{ $t('views.public.deleteBatch') }}</el-button>
       </el-form-item>
       <el-form-item>
@@ -42,19 +42,20 @@
         >{{ $t('views.public.export') }}</el-button>
       </el-form-item>
     </el-form>
-    <vxe-grid
-      border
-      resizable
-      highlight-hover-row
-      remote-filter
-      height="100%"
-      row-id="id"
-      :toolbar="toolbar"
-      :proxy-config="tableProxy"
-      :columns="tableColumn"
-      :select-config="{reserve: true}"
-      :edit-config="{trigger: 'click', mode: 'row', showStatus: true}"
-    ></vxe-grid>
+    <d2-crud
+      ref="d2Crud"
+      index-row                                                           
+      :columns="columns"
+      :options="options"
+      selectionRow
+      :row-handle="rowHandler"
+      :loading="dataListLoading"
+      :data="dataList"
+      @selection-change="dataListSelectionChangeHandle"
+      @sort-change="dataListSortChangeHandle"
+      @user-update="addOrUpdateData"
+      @user-delete="deleteHandleSetter"
+    ></d2-crud>
     <!-- 分页 -->
     <el-pagination
       slot="footer"
@@ -116,122 +117,98 @@ export default {
           }
         ]
       },
-      tableColumn: [
-        { type: 'selection', width: 50, align: 'center' },
-        { type: 'index', width: 50, align: 'center' },
+      columns: [
         {
-          title: this.$t('views.public.user.username'),
-          field: 'username',
+          title: this.$t("views.public.user.username"),
+          key: "username",
           sortable: true,
-          align: 'center'
+          align: "center"
         },
         {
-          title: this.$t('views.public.user.deptName'),
-          field: 'deptName',
+          title: '部门名称',
+          key: "deptName",
           sortable: true,
-          align: 'center'
+          align: "center"
         },
         {
-          title: this.$t('views.public.user.email'),
-          field: 'email',
+          title: this.$t("views.public.user.email"),
+          key: "email",
           sortable: true,
-          align: 'center',
-          editRender: { name: 'input' }
+          align: "center"
         },
         {
-          title: this.$t('views.public.user.mobile'),
-          field: 'mobile',
+          title: this.$t("views.public.user.mobile"),
+          key: "mobile",
           sortable: true,
-          align: 'center',
-          editRender: { name: 'input' }
+          align: "center"
         },
         {
-          title: this.$t('views.public.user.status'),
-          field: 'status',
-          align: 'center',
-          width: '70px',
-          filters: [
-            { label: this.$t('views.public.user.status0'), value: 0 },
-            { label: this.$t('views.public.user.status1'), value: 1 }
-          ]
-        },
-        {
-          title: this.$t('views.public.createDate'),
-          field: 'createTime',
+          title: this.$t("views.public.user.status"),
+          key: "status",
           sortable: true,
-          align: 'center'
+          align: "center"
         }
-      ],
-      tableProxy: {
-        index: true, // 启用动态序号代理
-        sort: true, // 启用排序代理
-        filter: true, // 启用筛选代理
-        ajax: {
-          query: ({ page, sort, filters }) => {
-            // 处理排序条件
-            let formData = {
-              sort: sort.property,
-              order: sort.order
-            }
-            // 处理筛选条件
-            filters.forEach(({ column, property, values }) => {
-              formData[property] = values.join(',')
-            })
-            return new Promise(async (resolve, reject) => {
-              await this.$axios.post(
-                this.mixinViewModuleOptions.getDataListURL,
-                {
-                  pageForm: {
-                    order: this.order,
-                    orderField: this.orderField,
-                    page: this.mixinViewModuleOptions.getDataListIsPage ? this.page : null,
-                    limit: this.mixinViewModuleOptions.getDataListIsPage ? this.limit : null
-                  },
-                  dataForm: {
-                    data: this.dataForm,
-                    op: this.dataFormOp
-                  }
-                }
-              ).then(res => {
-                console.log(this.mixinViewModuleOptions.getDataListIsPage)
-                this.total = res.totalCount
-                this.dataList = res.list
-              })
-              resolve({
-                total: this.total,
-                list: this.dataList
-              })
-            })
-          },
-          save: ({ body }) => { console.log(body) }
-        },
-        props: {
-          list: 'list',
-          result: 'list',
-          total: 'totalCount'
-        }
-      },
-      toolbar: {
-        id: 'full_edit_1',
-        buttons: [
-          { code: 'reload', name: '刷新' },
-          { code: 'insert_actived', name: '新增' },
-          //          { code: "mark_cancel", name: "取消" },
-          { code: 'remove_selection', name: '移除' },
-          { code: 'save', name: '保存' },
-          { code: 'export', name: '导出.csv' }
-        ],
-        resizable: {
-          storage: true
-        },
-        setting: {
-          storage: true
-        }
-      }
-    }
+      ]
+    };
   },
   components: {
     AddOrUpdate
+  },
+  methods: {
+    //增改
+   addOrUpdateData (row) {
+      this.addOrUpdateVisible = true;
+      if (row) {
+        this.$nextTick(() => {
+          this.$refs.addOrUpdate.dataForm.id = row.row.userId;
+          this.$refs.addOrUpdate.update(row.row);
+        })
+      } else {
+        this.$nextTick(() => {
+          this.$refs.addOrUpdate.init();
+        })
+      }
+    },
+     // 删除
+    deleteHandleSetter (index) {
+      let data
+      if (this.mixinViewModuleOptions.deleteIsBatch && this.dataListSelections.length > 0) {
+        data = this.dataListSelections.map(item => item[this.mixinViewModuleOptions.deleteIsBatchKey])
+      }
+      let row
+      if (!index) {
+        row = undefined
+      } else {
+        row = index.row
+      }
+      if (row) {
+        const id = row.userId
+        if (id) {
+          data = [id]
+        }
+      }
+      this.$confirm(this.$t('public.prompt.info', { 'handle': this.$t('views.public.delete') }), this.$t('public.prompt.title'), {
+        confirmButtonText: this.$t('views.public.confirm'),
+        cancelButtonText: this.$t('views.public.cancel'),
+        type: 'warning'
+      }).then(() => {
+        this.$axios.post(
+          `${this.mixinViewModuleOptions.deleteURL}${this.mixinViewModuleOptions.deleteIsBatch ? '' : '/' + id}`,
+          this.mixinViewModuleOptions.deleteIsBatch ? {
+            'data': data
+          } : {}
+        ).then(res => {
+          this.$message({
+            message: this.$t('views.public.success'),
+            type: 'success',
+            duration: 500,
+            onClose: () => {
+              this.getDataList()
+            }
+          })
+        }).catch(() => {})
+      }).catch(() => {})
+    }
   }
 }
 </script>

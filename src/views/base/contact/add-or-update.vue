@@ -3,8 +3,15 @@
                :close-on-click-modal="false" :close-on-press-escape="false" width="850px">
         <el-form :model="dataForm" :rules="rules" ref="dataForm" @keyup.enter.native="dataFormSubmitHandle()"
                  label-width="120px" :inline="true">
-            <el-form-item prop="custId" :label="data.form.input.custId">
-                <el-input v-model="dataForm.custId" :placeholder="data.form.input.custId"/>
+            <el-form-item label="顾客" prop="custId">
+                <im-selector
+                    placeholder="请选择客户"
+                    v-model="dataForm.custId"
+                    :mapModel.sync="dataForm"
+                    mapKeyVal="name:custId"
+                    dataType="biz.customer"
+                    @change="changeCust">
+                </im-selector>
             </el-form-item>
             <el-form-item prop="name" :label="data.form.input.name">
                 <el-input v-model="dataForm.name" :placeholder="data.form.input.name"/>
@@ -65,6 +72,12 @@ export default {
         code: [{
           required: true, message: '编码不可缺少'
         }]
+      },
+      vendor: {
+        remoteURL: '/common/biz/list',
+        loading: false,
+        dataList: [],
+        timeout: null
       }
     }
   },
@@ -73,13 +86,16 @@ export default {
       this.visible = true
       this.$nextTick(() => {
         this.$refs['dataForm'].resetFields()
+        if (this.dataForm.id) {
+          this.dataForm.id = undefined
+        }
         this.$refs['dataForm'].clearValidate()
       })
     },
     update (row) {
-      this.dataForm = Object.assign({}, row)
       this.visible = true
       this.$nextTick(() => {
+        this.dataForm = Object.assign({}, row)
         this.$refs['dataForm'].clearValidate()
       })
     },
@@ -107,6 +123,16 @@ export default {
         }).catch(() => {
         })
       })
+    },
+    vendorInfo: function (query) {
+      this.vendor.loading = true
+      this.$axios
+        .post(this.vendor.remoteURL, { query: query })
+        .then(res => {
+          this.vendor.loading = false
+          debugger
+          this.vendor.dataList = res
+        })
     }
   }
 }

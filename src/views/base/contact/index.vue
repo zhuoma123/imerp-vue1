@@ -76,6 +76,7 @@
                 @sort-change="dataListSortChangeHandle"
                 @user-update="addOrUpdateHandleSetter"
                 @user-delete="deleteHandleSetter"
+                @row-dblclick="add"
         ></d2-crud>
         <!-- 分页 -->
         <el-pagination
@@ -149,7 +150,13 @@ export default {
   components: {
     AddOrUpdate
   },
-  methods: {}
+  methods: {
+    add (row) {
+      let map = {}
+      map.row = row
+      this.addOrUpdateHandleSetter(map)
+    }
+  }
 }
 </script>
 

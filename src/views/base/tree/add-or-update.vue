@@ -2,8 +2,7 @@
   <div>
     <el-dialog :visible.sync="visible" :title="!dataForm.id ? $t('views.public.add') : $t('views.public.update')"
                :close-on-click-modal="false" :close-on-press-escape="false">
-      <el-form :model="dataForm" :rules="rules" :inline="true" ref="dataForm"
-               @keyup.enter.native="dataFormSubmitHandle()" label-width="105px">
+      <el-form :model="dataForm" :rules="rules" :inline="true" ref="dataForm" label-width="105px">
         <el-form-item prop="pname" :label="data.data.input.pname" @click.native="showPid">
           <el-input v-model="dataForm.pname" :placeholder="data.data.input.pname"/>
         </el-form-item>
@@ -75,10 +74,8 @@
 </template>
 
 <script>
-import mixinViewModule from '@/mixins/view-module'
 import data from './data'
 export default {
-  mixins: [mixinViewModule],
   data () {
     return {
       filterText: undefined,
@@ -115,8 +112,8 @@ export default {
           required: true, message: '父级菜单不可缺少', trigger: 'blur'
         }],
         type: [
-          {required: true, message: '类型不可缺少', trigger: 'blur'},
-          {max: 6, message: '此处最多6个字符', trigger: 'blur' }],
+          { required: true, message: '类型不可缺少', trigger: 'blur' },
+          { max: 6, message: '此处最多6个字符', trigger: 'blur' }],
         code: [{
           required: true, message: '编码不可缺少', trigger: 'blur'
         }]
@@ -130,8 +127,9 @@ export default {
     }
   },
   watch: {
-    filterText (val) {
-      this.$refs.tree.filter(val)
+    filterText: function (val) {
+      console.log(val)
+      // this.$refs.tree.filter(val)
     }
   },
   methods: {
@@ -139,8 +137,8 @@ export default {
       this.visible = true
       this.$nextTick(() => {
         this.$refs['dataForm'].resetFields()
-        if (this.dataForm.id){
-          this.dataForm.id=undefined
+        if (this.dataForm.id) {
+          this.dataForm.id = undefined
         }
         this.$refs['dataForm'].clearValidate()
       })
@@ -179,9 +177,7 @@ export default {
     },
     showPid () {
       this.menuFormVisible = true
-      debugger
       this.$nextTick(() => {
-        debugger
         this.menuList = [{ id: 0, name: '顶级菜单', children: this.parentDataList }]
       })
     },

@@ -29,7 +29,7 @@
         <el-input v-model="dataForm.perms" placeholder="多个用逗号分隔：如：sys.menu.save,sys.menu.update"/>
       </el-form-item>
      <el-form-item prop="icon" label="菜单图标">
-        <el-input v-model="dataForm.icon" placeholder="菜单图标"/>
+        <el-input v-model="dataForm.icon" aria-describedby="el-popover-5679" class="el-input el-popover__reference" placeholder="菜单图标"/>
       </el-form-item>
       <el-form-item prop="orderNum" label="排序">
         <el-input v-model="dataForm.orderNum" placeholder="排序"/>

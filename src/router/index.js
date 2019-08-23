@@ -82,7 +82,7 @@ router.beforeEach(async (to, from, next) => {
             next({ path: redirect })
             NProgress.done()
           }
-        })
+        }).catch(err => console.log(err))
       } catch (err) {
         next({ path: '/sys/login', query: { redirect: to.fullPath } })
         NProgress.done()

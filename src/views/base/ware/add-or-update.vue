@@ -1,10 +1,13 @@
 <template>
     <el-dialog :visible.sync="visible" :title="!dataForm.id ? $t('views.public.add') : $t('views.public.update')"
                :close-on-click-modal="false" :close-on-press-escape="false" width="850px">
-        <el-form :model="dataForm" :rules="rules" ref="dataForm" @keyup.enter.native="dataFormSubmitHandle()"
+        <el-form :model="dataForm" :rules="rules" ref="dataForm"
                  label-width="120px" :inline="true">
             <el-form-item prop="name" :label="data.form.input.name">
                 <el-input v-model="dataForm.name" :placeholder="data.form.input.name"/>
+            </el-form-item>
+            <el-form-item prop="code" :label="data.form.input.code">
+                <el-input v-model="dataForm.code" :placeholder="data.form.input.code"/>
             </el-form-item>
             <el-form-item prop="virtualFlag" :label="data.form.input.virtualFlag">
                 <el-input v-model="dataForm.virtualFlag" :placeholder="data.form.input.virtualFlag"/>
@@ -41,6 +44,7 @@ export default {
       data: data,
       visible: false,
       dataForm: {
+        id: undefined,
         code: undefined,
         name: undefined,
         address: undefined,
@@ -63,13 +67,16 @@ export default {
       this.visible = true
       this.$nextTick(() => {
         this.$refs['dataForm'].resetFields()
+        if (this.dataForm.id) {
+          this.dataForm.id = undefined
+        }
         this.$refs['dataForm'].clearValidate()
       })
     },
     update (row) {
-      this.dataForm = Object.assign({}, row)
       this.visible = true
       this.$nextTick(() => {
+        this.dataForm = Object.assign({}, row)
         this.$refs['dataForm'].clearValidate()
       })
     },

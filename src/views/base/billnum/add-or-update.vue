@@ -1,9 +1,9 @@
 <template>
     <div>
         <el-dialog :visible.sync="visible" :title="!dataForm.id ? $t('views.public.add') : $t('views.public.update')"
-                   :close-on-click-modal="false" :close-on-press-escape="false">
-            <el-form :model="dataForm" :rules="rules" ref="dataForm" @keyup.enter.native="dataFormSubmitHandle()"
-                     label-width="110px" :inline="true" style="width: 700px">
+                   :close-on-click-modal="false" :close-on-press-escape="false" width="55%">
+            <el-form :model="dataForm" :rules="rules" ref="dataForm"
+                     label-width="110px" :inline="true" style="width: 100%">
                 <el-form-item prop="code" :label="data.form.input.code" v-show="false" >
                     <el-input v-model="dataForm.code" :placeholder="data.form.input.code"/>
                 </el-form-item>
@@ -22,7 +22,7 @@
                 <el-form-item prop="sequenceLength" :label="data.form.input.sequenceLength">
                     <el-input v-model="dataForm.sequenceLength" :placeholder="data.form.input.sequenceLength"/>
                 </el-form-item>
-                <el-form-item prop="loopType" :label="data.form.input.loopType">
+                <el-form-item prop="loopType" :label="data.form.input.loopType" v-show="false">
                     <el-input v-model="dataForm.loopType" :placeholder="data.form.input.loopType"/>
                 </el-form-item>
                 <el-form-item prop="suffixSeprator" :label="data.form.input.suffixSeprator">
@@ -58,25 +58,25 @@
                     </el-date-picker>
                 </el-form-item>
                 <el-form-item prop="yearFlag" :label="data.form.input.yearFlag">
-                    <el-radio-group v-model="dataForm.yearFlag" style="width: 280px">
+                    <el-radio-group v-model="dataForm.yearFlag" style="width: 220px">
                         <el-radio :label='1'>是</el-radio>
                         <el-radio :label='0'>否</el-radio>
                     </el-radio-group>
                 </el-form-item>
                 <el-form-item prop="monthFlag" :label="data.form.input.monthFlag">
-                    <el-radio-group v-model="dataForm.monthFlag" style="width: 280px">
+                    <el-radio-group v-model="dataForm.monthFlag" style="width: 220px">
                         <el-radio :label='1'>是</el-radio>
                         <el-radio :label='0'>否</el-radio>
                     </el-radio-group>
                 </el-form-item>
                 <el-form-item prop="dayFlag" :label="data.form.input.dayFlag">
-                    <el-radio-group v-model="dataForm.dayFlag" style="width: 280px">
+                    <el-radio-group v-model="dataForm.dayFlag" style="width: 220px">
                         <el-radio :label='1'>是</el-radio>
                         <el-radio :label='0'>否</el-radio>
                     </el-radio-group>
                 </el-form-item>
                 <el-form-item prop="enabledFlag" :label="data.form.input.enabledFlag">
-                    <el-radio-group v-model="dataForm.enabledFlag" style="width: 280px">
+                    <el-radio-group v-model="dataForm.enabledFlag" style="width: 220px">
                         <el-radio :label='1'>是</el-radio>
                         <el-radio :label='0'>否</el-radio>
                     </el-radio-group>
@@ -113,147 +113,159 @@
 </template>
 
 <script>
-  import data from './data'
+import data from './data'
 
-  export default {
-    data () {
-      return {
-        filterText: '',
-        menuFormVisible: false,
-        menuList: [],
-        data: data,
-        visible: false,
-        dataForm: {
-          code: undefined,
-          name: undefined,
-          prefix: undefined,
-          prefixSeprator: undefined,
-          yearFlag: 1,
-          yLength: undefined,
-          monthFlag: 1,
-          dayFlag: 1,
-          sequenceLength: undefined,
-          loopType: undefined,
-          suffixSeprator: undefined,
-          suffix: undefined,
-          remark: undefined,
-          year: undefined,
-          month: undefined,
-          day: undefined,
-          sequenceNum: undefined,
-          enabledFlag: 1,
-          deletedFlag: undefined,
-          startDateActive: undefined,
-          endDateActive: undefined
-        },
-        typeData: [],
-        rules: {
-          name: [
-            {required: true, message: '名称不可缺少'}
-          ]
-        },
-        defaultProps: {
-          label: 'name',
-          id: 'code'
-        }
+export default {
+  data () {
+    return {
+      filterText: '',
+      menuFormVisible: false,
+      menuList: [],
+      data: data,
+      visible: false,
+      dataForm: {
+        typeId: undefined,
+        code: undefined,
+        name: undefined,
+        prefix: undefined,
+        prefixSeprator: undefined,
+        yearFlag: 1,
+        yLength: undefined,
+        monthFlag: 1,
+        dayFlag: 1,
+        sequenceLength: undefined,
+        loopType: undefined,
+        suffixSeprator: undefined,
+        suffix: undefined,
+        remark: undefined,
+        year: undefined,
+        month: undefined,
+        day: undefined,
+        sequenceNum: undefined,
+        enabledFlag: 1,
+        deletedFlag: undefined,
+        startDateActive: undefined,
+        endDateActive: undefined
+      },
+      typeData: [],
+      rules: {
+        name: [
+          { required: true, message: '名称不可缺少' }
+        ]
+      },
+      defaultProps: {
+        label: 'name',
+        id: 'code'
       }
+    }
+  },
+  methods: {
+    init () {
+      this.visible = true
+      this.$nextTick(() => {
+        this.$refs['dataForm'].resetFields()
+        if (this.dataForm.id) {
+          this.dataForm.id = undefined
+        }
+        this.$refs['dataForm'].clearValidate()
+      })
     },
-    methods: {
-      init () {
-        this.visible = true
-        this.$nextTick(() => {
-          this.$refs['dataForm'].resetFields()
-          if(this.dataForm.id){
-            this.dataForm.id=undefined
-          }
-          this.$refs['dataForm'].clearValidate()
-        })
-      },
-      update (row) {
+    update (row) {
+      this.visible = true
+      this.$nextTick(() => {
         this.dataForm = Object.assign({}, row)
-        this.visible = true
-        this.$nextTick(() => {
-          this.$refs['dataForm'].clearValidate()
-        })
-      },
-      // 表单提交
-      dataFormSubmitHandle () {
-        let th = this
-        this.$refs['dataForm'].validate(valid => {
-          if (!valid) {
-            return false
-          }
-          th.$axios({
-            url: '/base/billnum/save',
-            method: 'post',
-            data: th.dataForm
-          }).then(res => {
-            this.$message({
-              message: this.$t('views.public.success'),
-              type: 'success',
-              duration: 500,
-              onClose: () => {
-                this.visible = false
-                this.$emit('refreshDataList')
-              }
-            })
-          }).catch(() => {
-          })
-        })
-      },
-      // TODO
-      showPid () {
-        this.menuFormVisible = true
-        this.$nextTick(() => {
-          // this.menuList
-        })
-      },
-      getSelectedMenu () {
-        let data = this.$refs.tree.getCurrentNode()
-        this.dataForm.code = data.code
-        this.dataForm.name = data.name
-        this.menuFormVisible = false
-      },
-      filterNode (value, data) {
-        if (!value) return true
-        return data.label.indexOf(value) !== -1
-      },
-      typeProvider () {
-        this.$axios.post(
-          `${this.mixinViewModuleOptions.deleteURL}${this.mixinViewModuleOptions.deleteIsBatch ? '' : '/' + data}`,
-          this.mixinViewModuleOptions.deleteIsBatch ? {
-            'data': data
-          } : {}
-        ).then(res => {
+        this.$refs['dataForm'].clearValidate()
+      })
+    },
+    // 表单提交
+    dataFormSubmitHandle () {
+      let th = this
+      this.$refs['dataForm'].validate(valid => {
+        if (!valid) {
+          return false
+        }
+        th.$axios({
+          url: '/base/billnum/save',
+          method: 'post',
+          data: th.dataForm
+        }).then(res => {
           this.$message({
             message: this.$t('views.public.success'),
             type: 'success',
             duration: 500,
             onClose: () => {
-              this.getDataList()
+              this.visible = false
+              this.$emit('refreshDataList')
             }
           })
         }).catch(() => {
         })
-      },
-      getMenuList(){
-        this.$axios.post('/base/ruletype/list',
-          { 'name': this.filterText }).then(res=>{
-        debugger
-          this.menuList=res
-        })
-      }
+      })
     },
-    created () {
-        this.getMenuList()
+    // TODO
+    showPid () {
+      this.menuFormVisible = true
+      this.$nextTick(() => {
+        // this.menuList
+      })
+    },
+    getSelectedMenu () {
+      let data = this.$refs.tree.getCurrentNode()
+      this.dataForm = Object.assign({}, data)
+
+      let date = new Date()
+
+      this.dataForm.year = date.getFullYear()
+      this.dataForm.month = date.getMonth() + 1
+      this.dataForm.day = date.getDate()
+      this.dataForm.startDateActive = date
+
+      let endDate = new Date()
+      endDate.setFullYear(date.getFullYear() + 1)
+      this.dataForm.endDateActive = endDate
+
+      this.menuFormVisible = false
+    },
+    filterNode (value, data) {
+      // let data = this.menuList
+      debugger
+      if (!value) return true
+      return data.name.indexOf(value) !== -1
+    },
+    typeProvider () {
+      this.$axios.post(
+        `${this.mixinViewModuleOptions.deleteURL}${this.mixinViewModuleOptions.deleteIsBatch ? '' : '/' + data}`,
+        this.mixinViewModuleOptions.deleteIsBatch ? {
+          'data': data
+        } : {}
+      ).then(res => {
+        this.$message({
+          message: this.$t('views.public.success'),
+          type: 'success',
+          duration: 500,
+          onClose: () => {
+            this.getDataList()
+          }
+        })
+      }).catch(() => {
+      })
+    },
+    getMenuList () {
+      this.$axios.post('/base/ruletype/list',
+        { 'name': this.filterText }).then(res => {
+        this.menuList = res
+      })
     }
-    //新建日期
-    // watch(){
-    //   visible:function f () {
-    //
-    //   }
-    // }
+  },
+  created () {
+    this.getMenuList()
+  },
+  watch: {
+    filterText: function (val) {
+      this.$refs.tree.filter(val)
+    }
   }
+}
 </script>
 
 <style lang="scss">

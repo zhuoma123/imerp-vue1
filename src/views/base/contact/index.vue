@@ -3,9 +3,9 @@
         <el-form :inline="true" size="mini" :model="dataForm" @keyup.enter.native="getDataList()">
             <el-form-item>
                 <el-input
-                        v-model="dataForm.custId"
+                        v-model="dataForm.custName"
                         :data-opedrate="dataFormOp.likeOps"
-                        :placeholder="data.form.input.custId"
+                        :placeholder="data.form.input.custName"
                         clearable
                         style="width: 170px"
                 />
@@ -76,6 +76,7 @@
                 @sort-change="dataListSortChangeHandle"
                 @user-update="addOrUpdateHandleSetter"
                 @user-delete="deleteHandleSetter"
+                @row-dblclick="add"
         ></d2-crud>
         <!-- 分页 -->
         <el-pagination
@@ -113,7 +114,7 @@ export default {
       dataForm: {
         name: undefined,
         mobileNo: undefined,
-        custId: undefined,
+        custName: undefined,
         shortName: undefined
       },
       dataFormOp: {
@@ -149,7 +150,13 @@ export default {
   components: {
     AddOrUpdate
   },
-  methods: {}
+  methods: {
+    add (row) {
+      let map = {}
+      map.row = row
+      this.addOrUpdateHandleSetter(map)
+    }
+  }
 }
 </script>
 

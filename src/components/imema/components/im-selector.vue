@@ -8,6 +8,7 @@
     default-first-option
     :loading="loading"
     :remote-method="_selDyamicList"
+    :clearable="clearable"
     @change="e => _selChange(e)">
     <el-option
       v-for="item in options"
@@ -32,7 +33,13 @@ export default {
     },
     placeholder: {
       type: String,
-      required: true
+      required: false,
+      default: ''
+    },
+    clearable: {
+      type: Boolean,
+      required: false,
+      default: true
     }
   },
   data () {

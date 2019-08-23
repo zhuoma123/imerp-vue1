@@ -29,6 +29,7 @@
                 @sort-change="dataListSortChangeHandle"
                 @user-update="addOrUpdateHandleSetter"
                 @user-delete="deleteHandleSetter"
+                @row-dblclick="add"
         ></d2-crud>
         <!-- 分页 -->
         <el-pagination

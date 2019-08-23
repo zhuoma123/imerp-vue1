@@ -2,8 +2,8 @@
   "form": {
     "columns": [
       {
-        "title": "客户ID",
-        "key": "custId",
+        "title": "客户",
+        "key": "custName",
         "sortable": true,
         "align": "center",
         "width": "110px"
@@ -12,7 +12,8 @@
         "title": "姓名",
         "key": "name",
         "sortable": true,
-        "align": "center"
+        "align": "center",
+        "width": "160px"
       },
       {
         "title": "职务",
@@ -60,19 +61,6 @@
         "align": "center"
       },
       {
-        "title": "创建人",
-        "key": "createBy",
-        "sortable": true,
-        "align": "center",
-        "width": "120px"
-      },
-      {
-        "title": "创建日期",
-        "key": "createDate",
-        "sortable": true,
-        "align": "center",
-        "width": "120px"
-      },{
         "title": "修改人",
         "key": "updateBy",
         "sortable": true,
@@ -88,7 +76,7 @@
       }
     ],
     "input": {
-      "custId": "顾客ID",
+      "custName": "顾客",
       "name": "姓名",
       "shortName": "职务",
       "linkman": "首要联系人",

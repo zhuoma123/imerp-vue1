@@ -1,16 +1,19 @@
 <template>
     <el-dialog :visible.sync="visible" :title="!dataForm.id ? $t('views.public.add') : $t('views.public.update')"
                :close-on-click-modal="false" :close-on-press-escape="false" width="800px">
-        <el-form :model="dataForm" :rules="rules" ref="dataForm" @keyup.enter.native="dataFormSubmitHandle()"
+        <el-form :model="dataForm" :rules="rules" ref="dataForm"
                  label-width="120px" :inline="true">
             <el-form-item prop="custVendor" :label="data.form.input.custVendor">
-                <el-input v-model="dataForm.custVendor" :placeholder="data.form.input.custVendor"/>
-            </el-form-item>
-            <el-form-item prop="code" :label="data.form.input.code">
-                <el-input v-model="dataForm.code" :placeholder="data.form.input.code"/>
+                <el-radio-group v-model="dataForm.custVendor" style="width: 220px">
+                    <el-radio label='CUST'>顾客</el-radio>
+                    <el-radio label='VENDOR'>供应商</el-radio>
+                </el-radio-group>
             </el-form-item>
             <el-form-item prop="name" :label="data.form.input.name">
                 <el-input v-model="dataForm.name" :placeholder="data.form.input.name"/>
+            </el-form-item>
+            <el-form-item prop="code" :label="data.form.input.code">
+                <el-input v-model="dataForm.code" :placeholder="data.form.input.code"/>
             </el-form-item>
             <el-form-item prop="shortName" :label="data.form.input.shortName">
                 <el-input v-model="dataForm.shortName" :placeholder="data.form.input.shortName"/>
@@ -60,9 +63,6 @@
             <el-form-item prop="remark" :label="data.form.input.remark">
                 <el-input v-model="dataForm.remark" :placeholder="data.form.input.remark"/>
             </el-form-item>
-            <el-form-item prop="companyId" :label="data.form.input.companyId">
-                <el-input v-model="dataForm.companyId" :placeholder="data.form.input.companyId"/>
-            </el-form-item>
         </el-form>
         <template slot="footer">
             <el-button @click="visible = false">{{ $t('views.public.cancel') }}</el-button>
@@ -81,7 +81,7 @@ export default {
       visible: false,
       dataForm: {
         id: undefined,
-        custVendor: undefined,
+        custVendor: 'CUST',
         code: undefined,
         name: undefined,
         shortName: undefined,
@@ -105,9 +105,6 @@ export default {
       rules: {
         name: [{
           required: true, message: '名称不可缺少'
-        }],
-        code: [{
-          required: true, message: '编码不可缺少'
         }]
       }
     }
@@ -117,13 +114,16 @@ export default {
       this.visible = true
       this.$nextTick(() => {
         this.$refs['dataForm'].resetFields()
+        if (this.dataForm.id) {
+          this.dataForm.id = undefined
+        }
         this.$refs['dataForm'].clearValidate()
       })
     },
     update (row) {
-      this.dataForm = Object.assign({}, row)
       this.visible = true
       this.$nextTick(() => {
+        this.dataForm = Object.assign({}, row)
         this.$refs['dataForm'].clearValidate()
       })
     },

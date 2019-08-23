@@ -25,43 +25,22 @@
           </el-col>
           <el-col :span="8">
             <el-form-item label="仓库" prop="warehouseId">
-              <el-select
+              <im-selector
                 v-model="dataForm.warehouseId"
-                :loading="warehouseSel.loading"
-                :remote-method="selWarehouse"
-                filterable
-                remote
-                default-first-option
-                placeholder="请选择"
-              >
-                <el-option
-                  v-for="item in warehouseSel.dataList"
-                  :key="item.key"
-                  :label="item.key"
-                  :value="item.value"
-                ></el-option>
-              </el-select>
+                :mapModel.sync="dataForm"
+                mapKeyVal="warehouseCode:warehouseId"
+                dataType="biz.warehouse">
+              </im-selector>
             </el-form-item>
           </el-col>
           <el-col :span="8">
             <el-form-item label="负责人" prop="pic">
-              <el-select
+              <im-selector
                 v-model="dataForm.pic"
-                :loading="picSel.loading"
-                :remote-method="selPic"
-                filterable
-                remote
-                default-first-option
-                style="width:270px"
-                placeholder="请选择"
-              >
-                <el-option
-                  v-for="item in picSel.dataList"
-                  :key="item.key"
-                  :label="item.key"
-                  :value="item.value"
-                ></el-option>
-              </el-select>
+                :mapModel.sync="dataForm"
+                mapKeyVal="picName:pic"
+                dataType="biz.employee">
+              </im-selector>
             </el-form-item>
           </el-col>
         </el-row>
@@ -91,11 +70,13 @@
     >
       <template v-slot:buttons>
         <el-button
+          ref="btnLineAdd"
           size="mini"
           icon="el-icon-circle-plus"
           @click="$refs.sGrid.commitProxy('insert_actived')"
         >新增</el-button>
         <el-button
+          ref="btnLineDelete"
           type="danger"
           size="mini"
           icon="el-icon-delete"
@@ -104,8 +85,8 @@
       </template>
     </vxe-grid>
     <span slot="footer" class="dialog-footer">
-      <el-button type="danger" @click="visible = false">取消</el-button>
-      <el-button type="primary" :disabled="btnDisable" @click="dataFormSubmit">确定</el-button>
+      <el-button type="danger" ref="btnLineCancel" @click="visible = false">取消</el-button>
+      <el-button type="primary" ref="btnLineSave" :disabled="btnDisable" @click="dataFormSubmit">确定</el-button>
     </span>
   </el-dialog>
 </template>
@@ -129,7 +110,9 @@ export default {
       dataForm: {
         warehouseId: '',
         pic: '',
-        remark: '111'
+        remark: '',
+        warehouseCode:'',
+        picName:''
       },
       dataRule: {
         warehouseId: [
@@ -194,18 +177,6 @@ export default {
           editRender: { name: 'input', autoselect: true }
         }
       ],
-      picSel: {
-        remoteURL: '/common/biz/employee',
-        loading: false,
-        dataList: [],
-        timeout: null
-      },
-      warehouseSel: {
-        remoteURL: '/common/biz/warehouse',
-        loading: false,
-        dataList: [],
-        timeout: null
-      },
       toolbar: {
         id: 'full_edit_1',
         resizable: {
@@ -218,32 +189,6 @@ export default {
     }
   },
   methods: {
-    selPic: function (query) {
-      this.picSel.loading = true
-      this.$axios.post(this.picSel.remoteURL, { query: query }).then(res => {
-        this.picSel.loading = false
-        if (res && res.length > 0) {
-          this.picSel.dataList = []
-          for (var i = 0; i < res.length; i++) {
-            this.picSel.dataList.push(res[i])
-          }
-        } else this.picSel.dataList = []
-      })
-    },
-    selWarehouse: function (query) {
-      this.warehouseSel.loading = true
-      this.$axios
-        .post(this.warehouseSel.remoteURL, { query: query })
-        .then(res => {
-          this.warehouseSel.loading = false
-          if (res && res.length > 0) {
-            this.warehouseSel.dataList = []
-            for (var i = 0; i < res.length; i++) {
-              this.warehouseSel.dataList.push(res[i])
-            }
-          } else this.warehouseSel.dataList = []
-        })
-    },
     jsCy: function ({ column, row }) {
       if (column.property === 'quantityNew') {
         var quantityNew = row.quantityNew
@@ -290,12 +235,13 @@ export default {
     },
     handleProcSelect (t, item) {
       var row = t.row
+      debugger;
       if (item) {
         Object.assign(row, item)
         row.quantityOld = item.stock
-        row.uom = item.UNIT
-        row.productId = item.ID
-        row.productCode = item.CODE
+        row.uom = item.unit
+        row.productId = item.id
+        row.productCode = item.code
       } else {
       }
     }

@@ -42,6 +42,7 @@
 								:key="item.key"
 								:label="item.key"
 								:value="item.value"
+								
 							></el-option>
 						</el-select>
 					</el-form-item>
@@ -89,7 +90,6 @@
 			:columns="tableColumn"
 			:select-config="{reserve: true}"
 			:edit-config="{trigger: 'click', mode: 'row', showStatus: true}"
-			@cell-dblclick="cellDblClick"
 			@cell-click="enableTlbBtn"
 		>
 			<template v-slot:buttons>
@@ -119,23 +119,15 @@
 					@click="deleteHandle($refs.pGrid)"
 				>删除
 				</el-button>
+				
 				<el-button
-					ref="btnAutoPick"
+					ref="btnSubmit"
 					type="success"
 					size="mini"
 					icon="el-icon-check"
 					v-if="$hasPermission('inv:checkbill:submit')"
 					@click="submitHandle($refs.pGrid,true)"
-				>自动拣货
-				</el-button>
-				<el-button
-					ref="btnPick"
-					type="success"
-					size="mini"
-					icon="el-icon-check"
-					v-if="$hasPermission('inv:checkbill:submit')"
-					@click="submitHandle($refs.pGrid,false)"
-				>人工拣货
+				>提交
 				</el-button>
 				<el-button
 					type="info"

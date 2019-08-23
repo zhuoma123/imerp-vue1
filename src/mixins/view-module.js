@@ -544,6 +544,7 @@ export default {
             this.$refs.dataForm.resetFields()
             this.$refs.sGrid.updateFooter()
           } else {
+            debugger;
             this.dataForm = this.entityModel
             this.search(this.entityModel)
           }

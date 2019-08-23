@@ -5,60 +5,17 @@
         <template slot="title">
           查询条件<i class="el-icon-d-arrow-right" />
         </template>
-        <el-form size="mini" :inline="true" :model="dataForm" ref="dataForm" @keyup.enter.native="getDataList()"
-            label-width="90px" label-suffix="：" >
-          <el-form-item label="业务单号" prop="billNum">
-              <el-input v-model="dataForm.billNum" clearable ></el-input>
-          </el-form-item>
-          <el-form-item label="业务类型" prop="transactionType">
-              <el-input v-model="dataForm.transactionType" clearable ></el-input>
-          </el-form-item>
-          <el-form-item label-width="100px" label="上游业务单号" prop="sourceOrderNum">
-              <el-input v-model="dataForm.sourceOrderNum" clearable ></el-input>
-          </el-form-item>
-          <el-form-item label-width="120px" label="上游业务单据类型" prop="sourceOrderType">
-              <el-input v-model="dataForm.sourceOrderType" clearable ></el-input>
-          </el-form-item>
-          <el-form-item label="经办人" prop="pic">
-            <im-selector
-              v-model="dataForm.pic"
-              :mapModel.sync="dataForm"
-              mapKeyVal="pic"
-              dataType="biz/employee">
-              </im-selector>
-          </el-form-item>
-          <el-form-item label="状态" prop="status">
-              <im-selector
-              v-model="dataForm.status"
-              :mapModel.sync="dataForm"
-              mapKeyVal="status"
-              :clearable="false"
-              dataType="code.status">
-              </im-selector>
-          </el-form-item>
-          <el-form-item label="出入库日期" prop="inDate">
-            <el-date-picker
-            v-model="dataForm.inDate"
-            type="daterange"
-            align="right"
-            unlink-panels
-            range-separator="至"
-            start-placeholder="开始日期"
-            end-placeholder="结束日期"
-            value-format="yyyy-MM-dd"
-            :picker-options="pickerOptions">
-          </el-date-picker>
-          </el-form-item>
-          <el-form-item label="出入库仓库" prop="warehouse">
-              <el-input v-model="dataForm.warehouseId" clearable ></el-input>
-          </el-form-item>
-          <el-form-item>
-            <el-button type="primary" icon="el-icon-search" @click="search" >{{ $t('views.public.query') }}</el-button>
-          </el-form-item>
-          <el-form-item>
-            <el-button @click="handleFormReset"> <d2-icon name="refresh"/> 重置 </el-button>
-          </el-form-item>
-        </el-form>
+        <dynamic-form
+          v-model="dataForm"
+          :formprops="formprops"
+          ref="dynamic-form"
+          col-span='6,6,*,2'
+          :alldescriptors="descriptors">
+          <template slot="operations">
+            <el-button type="primary" icon="el-icon-search" @click="search" >查询</el-button>
+            <el-button icon="el-icon-refresh" @click="reset">重置</el-button>
+          </template>
+        </dynamic-form>
       </el-collapse-item>
     </el-collapse>
 
@@ -80,11 +37,7 @@
       show-footer
       >
       <template v-slot:buttons>
-        <el-button size="mini" icon="el-icon-circle-plus" v-if="$hasPermission('inv:inoutbill:save')" @click="addHandle">新增</el-button>
-        <el-button type="primary" size="mini" icon="el-icon-edit" v-if="$hasPermission('inv:inoutbill:save')" @click="updateHandle($refs.pGrid)">修改</el-button>
-        <el-button type="danger"  size="mini" icon="el-icon-delete" v-if="$hasPermission('inv:inoutbill:delete')" @click="deleteHandle($refs.pGrid)">删除</el-button>
-        <el-button type="success" size="mini" icon="el-icon-check" v-if="$hasPermission('inv:inoutbill:save')" >提交</el-button>
-        <el-button size="mini" icon="el-icon-user" v-if="$hasPermission('inv:inoutbill:save')" @click="pickHandle($refs.pGrid)">拣货</el-button>
+        <el-button type="primary" size="mini" icon="el-icon-user" v-if="$hasPermission('inv:inoutbill:save')" @click="updateHandle($refs.pGrid)">拣货</el-button>
         <el-button type="info" size="mini" icon="el-icon-printer" v-if="$hasPermission('inv:inoutbill:print')" >打印</el-button>
         <el-button type="info" size="mini" icon="fa fa-file-excel-o" v-if="$hasPermission('inv:inoutbill:export')" @click="$refs.pGrid.exportCsv()">  导出</el-button>
       </template>
@@ -103,37 +56,85 @@
     ></el-pagination>
 
     <!-- 弹窗, 新增 / 修改 -->
-    <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList"></add-or-update>
+    <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="search"></add-or-update>
   </d2-container>
 </template>
 
 <script>
 import AddOrUpdate from './inoutbill-add-or-update'
 import mixinViewModule from '@/mixins/view-module'
+import XEUtils from "xe-utils"
+
+const separate = {type: 'separate'}
+const placeholder = {type: 'placeholder'}
 export default {
+  name: 'inv-inoutbill',
   mixins: [mixinViewModule],
   data () {
     return {
       mixinViewModuleOptions: {
         getDataListURL: '/inv/inoutbill/list',
         getDataListIsPage: true,
-        updateURL: '/inv/inoutbill/update',
-        deleteURL: '/inv/inoutbill/delete',
+        updateURL: '/inv/inoutbill/save',
         deleteIsBatch: true,
         exportURL: '/inv/inoutbill/export'
       },
       dataForm: {
-          billNum:'',
-          transactionType:'',
-          sourceOrderType:'',
-          sourceOrderNum:'',
-          pic:'',
-          inDate:'',
-          status:'',
-          warehouse:''
-          },
+        billNum:null,
+        transactionType: null,
+        sourceOrderNum:null,
+        status: null,
+        warehouse: null
+      },
+      descriptors: {
+        billNum: { type: 'string', label: '业务单号'},
+        transactionType: { type: 'cust', label: '业务类型', 
+          desc:{
+            name:'im-selector',
+            props: {
+              mapKeyVal: "transactionType",
+              dataType: "code.tran_type",
+              clearable: true,
+              placeholder: '请选择业务类型'
+            }
+          }
+        },
+        status: { type: 'cust', label: '单据状态',
+          desc:{
+            name:'im-selector',
+            props: {
+              mapKeyVal: "status",
+              dataType: "code.status",
+              clearable: true
+            }
+          }
+        },
+        separate1: separate, 
+        sourceOrderNum: { type: 'string', label: '单据单号'},
+        warehouseId: { type: 'cust', label: '出入仓库', 
+          desc:{
+            name:'im-selector',
+            props: {
+              mapKeyVal: "warehouseId",
+              dataType: "biz.warehouse",
+              clearable: true
+            }
+          }
+        },
+        inDate: { type: 'cust', label: '入库日期',
+          desc: {
+            name: 'el-date-picker',
+            props: {
+              type: 'daterange',
+              rangeSeparator: "至",
+              startPlaceholder: "开始日期",
+              endPlaceholder: "结束日期",
+              valueFormat: "yyyy-MM-dd"
+            }
+          }
+        }
+      },
       tableColumn: [
-        { type: 'selection', width: 50, align: 'center' },
         { type: 'index', width: 50, align: 'center' },
         {
           title: '业务单号',
@@ -219,7 +220,7 @@ export default {
           align: 'center',
           formatter: ['toDateString', 'yyyy-MM-dd']
         },
-                    ],
+      ],
       toolbar: {
         id: 'inoutbill_toolbar_1',
         refresh: true,
@@ -236,11 +237,27 @@ export default {
     AddOrUpdate
   },
   methods: {
+    initSelData() {
+      for(const key in this.descriptors) {
+        if(XEUtils.get(this.descriptors[key], "desc.name") === 'im-selector') {
+          this.descriptors[key].desc.props.mapModel = this.dataForm
+        }
+        if(XEUtils.get(this.descriptors[key], "desc.name") === 'el-date-picker') {
+          this.descriptors[key].desc.props.pickerOptions = this.pickerOptions
+        }
+      }
+    },
     handleFormReset () {
       this.$refs.dataForm.resetFields()
+    },
+    reset () {
+      this.$nextTick(() => {
+        this.$refs['dynamic-form'].$refs['dynamic-form'].resetFields()
+      })
     }
   },
   mounted () {
+    this.initSelData()
   }
 }
 </script>

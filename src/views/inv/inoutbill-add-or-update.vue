@@ -1,90 +1,13 @@
 <template>
   <el-dialog
     :close-on-press-escape="false"
-    :title="isNew ? '出入库单新增' : '出入库单修改'"
+    title="仓库拣货"
     :close-on-click-modal="false"
     :visible.sync="visible"
     v-loading.fullscreen.lock="fullscreenLoading"
     class="abow_dialog"
     width="80%"
   >
-    <div>
-      <el-form
-        :model="dataForm"
-        labelSuffix="："
-        size="mini"
-        :rules="dataRule"
-        ref="dataForm"
-        @keyup.enter.native="dataFormSubmit()"
-        label-width="130px"
-      >
-        <el-row>
-          <el-col :span="8">
-            <el-form-item label="业务单号" prop="billNum">
-              <el-input v-model="dataForm.billNum" clearable></el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="业务类型" prop="transactionType">
-              <el-input v-model="dataForm.transactionType" clearable></el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="上游业务单号" prop="sourceOrderNum">
-              <el-input v-model="dataForm.sourceOrderNum" clearable></el-input>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="8">
-            <el-form-item label="上游业务单据类型" prop="sourceOrderType">
-              <el-input v-model="dataForm.sourceOrderType" clearable></el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="经办人" prop="pic">
-              <el-input v-model="dataForm.pic" clearable></el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="出入库日期" prop="inDate">
-              <el-date-picker
-                type="date"
-                placeholder="选择日期"
-                v-model="dataForm.InDate"
-                value-format="yyyy-MM-dd"
-                style="width: 100%;"
-              ></el-date-picker>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="8">
-            <el-form-item label="状态" prop="status">
-              <im-selector
-                v-model="dataForm.status"
-                :mapModel.sync="dataForm"
-                mapKeyVal="status"
-                :clearable="false"
-                data-type="code.status"
-              ></im-selector>
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="出入库仓库" prop="warehouseCode">
-              <el-input v-model="dataForm.warehouseCode" clearable></el-input>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col>
-            <el-form-item label="备注" prop="remark">
-              <el-input v-model="dataForm.remark" clearable></el-input>
-            </el-form-item>
-          </el-col>
-        </el-row>
-      </el-form>
-    </div>
     <vxe-grid
       border
       resizable
@@ -92,7 +15,6 @@
       class="vxe-table-element"
       remote-filter
       ref="sGrid"
-      height="330"
       :toolbar="toolbar"
       :proxy-config="tableProxy"
       :columns="tableColumn"
@@ -105,9 +27,13 @@
       show-footer
     >
       <template v-slot:buttons>
-        <label style="margin-left:30px;">产品条码:</label>
+        <label style="margin-left:30px;">产品条码：</label>
         <el-input class="barCode" v-model="dataForm.barCode" size="mini" clearable
         placeholder="请输入产品条码" @keyup.enter.native="doScan"></el-input>
+        <label style="margin-left:30px;">业务单据：</label>
+        <span>{{dataForm.billNum}}</span>
+        <label style="margin-left:30px;">业务类型：</label>
+        <span>{{dataForm.transactionTypeMean}}</span>
       </template>
     </vxe-grid>
     <span slot="footer" class="dialog-footer">
@@ -118,83 +44,37 @@
 </template>
 
 <script>
-import mixinViewModule from "@/mixins/view-module";
-import XEUtils from "xe-utils";
+import mixinViewModule from "@/mixins/view-module"
+import XEUtils from "xe-utils"
 export default {
+  name: 'inv-inoutbillline',
   mixins: [mixinViewModule],
   data() {
     return {
       mixinViewModuleOptions: {
         getDataListURL: "/inv/inoutbillline/list",
-        updateURL: "/inv/inoutbill/update",
+        updateURL: "/inv/inoutbill/save",
         deleteIsBatch: true,
         getDataListIsPage: false
       },
       visible: false,
       btnDisable: false,
       dataForm: {
-        id: "",
-        billNum: "",
-        transactionType: "",
-        sourceOrderType: "",
-        sourceOrderId: "",
-        sourceOrderNum: "",
-        pic: "",
-        inDate: "",
-        status: "",
-        warehouseId: "",
-        remark: "",
-        companyId: "",
-        deletedFlag: "",
-        createBy: "",
-        createDate: "",
-        updateBy: "",
-        updateDate: ""
-      },
-      dataRule: {
-        id: [{ required: true, message: "id不能为空", trigger: "blur" }],
-        billNum: [
-          { required: true, message: "业务单号不能为空", trigger: "blur" }
-        ],
-        transactionType: [
-          { required: true, message: "业务类型不能为空", trigger: "blur" }
-        ],
-        sourceOrderType: [
-          {
-            required: true,
-            message: "上游业务单据类型不能为空",
-            trigger: "blur"
-          }
-        ],
-        sourceOrderId: [
-          { required: true, message: "上游业务单id不能为空", trigger: "blur" }
-        ],
-        sourceOrderNum: [
-          { required: true, message: "上游业务单号不能为空", trigger: "blur" }
-        ],
-        inDate: [
-          { required: true, message: "出入库日期不能为空", trigger: "blur" }
-        ],
-        status: [{ required: true, message: "状态不能为空", trigger: "blur" }],
-        warehouseId: [
-          { required: true, message: "出入库仓库id不能为空", trigger: "blur" }
-        ]
       },
       tableProxy: {
         autoLoad: false
       },
       tableColumn: [
-        { type: "selection", width: 50, align: "center" },
         { type: "index", width: 50, align: "center" },
-        {
-          title: "货位",
-          field: "warehouseSlotId",
-          sortable: true,
-          align: "center"
-        },
         {
           title: "产品",
           field: "productCode",
+          sortable: true,
+          align: "center"
+        }, 
+        {
+          title: "条码",
+          field: "barCode",
           sortable: true,
           align: "center"
         },
@@ -239,33 +119,64 @@ export default {
         setting: {
           storage: true
         }
+      },
+      statusProps: {
+        clearable: true,
+        placeholder:"请选择状态"
       }
-    };
+    }
+  },
+  created() {
+    
   },
   methods: {
     doScan(e) {
       let val = e.target.value
       if(val && val.length>0) {
+        let isExist = false;
+        let isComplete = false;
         this.dataList.forEach(row => {
-          if(row.productCode === val) {
-            row.realQty = Number(row.realQty) + 1
+          let rQty = row.realQty || 0
+          if(row.barCode === val) {
+            isExist = true
+            if(rQty < row.qty)
+              row.realQty = Number(row.realQty) + 1
+            else 
+              isComplete = true
           }
         })
+        if(!isExist) {
+          this.dataForm.barCode = ''
+          return this.$message({
+            message: '条码不存在',
+            type: 'error',
+            duration: 2000
+          })
+        }
+        if(isComplete) {
+          this.dataForm.barCode = ''
+          return this.$message({
+            message: '条码['+val+']已完成拣货',
+            type: 'warn',
+            duration: 2000
+          })
+        }
         this.$refs.sGrid.updateFooter()
       }
     },
     cellClassName({ row, column }) {
-      if(row.qty < row.realQty && column.property  === 'realQty' )
+      let rQty = row.realQty || 0
+      if(row.qty > rQty && column.property  === 'realQty' )
         return 'col-red'
     }
   },
+  computed: {
+    
+  },
   mounted() {
-    this.$nextTick(() => {
-      if(this.$refs.dataForm)
-        this.$refs.dataForm.$el.readOnly = true 
-    })
+    
   }
-};
+}
 </script>
 <style lang="scss">
 .barCode {
@@ -277,5 +188,4 @@ export default {
   background-color: red;
   color: #fff;
 }
-
 </style>

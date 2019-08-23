@@ -2,13 +2,12 @@
   <el-select
     :value="selectVal"
     :filterable="selType == 'dyamic'"
-    :placeholder="selPlaceholder"
     :remote="selType == 'dyamic'"
     :automatic-dropdown="selType == 'dyamic'"
     default-first-option
     :loading="loading"
     :remote-method="_selDyamicList"
-    :clearable="clearable"
+    v-bind="curprops"
     @change="e => _selChange(e)">
     <el-option
       v-for="item in options"
@@ -31,22 +30,18 @@ export default {
       type: String,
       required: true
     },
-    placeholder: {
-      type: String,
-      required: false,
-      default: ''
-    },
     clearable: {
       type: Boolean,
-      required: false,
       default: true
-    }
+    },
+    placeholder: {
+      type: String,
+      default: '请选择'
+    },
+    selprops: Object
   },
   data () {
     return {
-      dataForm: {
-        // customerId: 1
-      },
       selectVal: this.value,
       loading: false,
       selPlaceholder: '',
@@ -54,7 +49,8 @@ export default {
       codeType: '',
       dType: '',
       selType: 'static',
-      lock: false
+      lock: false,
+      curprops: {}
     }
   },
   created () {
@@ -68,9 +64,10 @@ export default {
     if (this.selType === 'static') {
       this._selLoadCode()
     }
-    if (this.placeholder) {
-      this.selPlaceholder = this.placeholder
-    }
+    this.curprops = Object.assign({
+        clearable: this.clearable, 
+        placeholder: this.placeholder
+      }, this.selprops)
   },
   mounted () {
 

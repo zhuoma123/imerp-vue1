@@ -370,8 +370,5 @@ export default {
       bottom: 0;
     }
   }
-  .selector-component .el-select {
-    display: inline !important;
-  }
 }
 </style>

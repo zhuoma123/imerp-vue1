@@ -29,6 +29,10 @@ export default {
       fullscreenLoading: false,   // 全页面遮罩
       dataListSelections: [],     // 数据列表，多选项
       addOrUpdateVisible: false,   // 新增／更新，弹窗visible状态
+      // 表单属性
+      formprops: {
+        labelSuffix:'：'
+      },
       // 表格属性
       selectionRow: false,
       sortConfig: {
@@ -104,6 +108,9 @@ export default {
 
       this.visible = true
     },
+    initSelData () {
+
+    },
     // 获取数据列表
     async getDataList (vxeDataForm) {
       this.dataListLoading = true
@@ -170,38 +177,45 @@ export default {
     },
     // 表单提交
     dataFormSubmit () {
-      this.$refs.dataForm.validate(valid => {
-        if (valid) {
-          this.btnDisable = true
-          if (this.$refs.sGrid) {
-            this.dataForm.lineList = this.getItemListDate(this.$refs.sGrid)
+      if(this.$refs.dataForm) {
+        this.$refs.dataForm.validate(valid => {
+          if (valid) {
+            this.doSubmit()
           }
-          if (this.isNew) {
-            this.dataForm.__state = 'NEW'
-          } else {
-            this.dataForm.__state = 'MODIFIED'
-          }
-          this.fullscreenLoading = true
-          this.$axios
-            .post(this.mixinViewModuleOptions.updateURL, this.dataForm)
-            .then(() => {
-              this.fullscreenLoading = false
-              this.visible = false
-              this.$emit('refreshDataList')
-              this.$message({
-                message: '操作成功',
-                type: 'success',
-                duration: 1000,
-                onClose: () => {
-                  this.btnDisable = false
-                }
-              })
-            }).catch(() => {
+        })
+      } else {
+        this.doSubmit()
+      }
+    },
+    doSubmit() {
+      this.btnDisable = true
+      if (this.$refs.sGrid) {
+        this.dataForm.lineList = this.getItemListDate(this.$refs.sGrid)
+      }
+      if (this.isNew) {
+        this.dataForm.__state = 'NEW'
+      } else {
+        this.dataForm.__state = 'MODIFIED'
+      }
+      this.fullscreenLoading = true
+      this.$axios
+        .post(this.mixinViewModuleOptions.updateURL, this.dataForm)
+        .then(() => {
+          this.fullscreenLoading = false
+          this.visible = false
+          this.$emit('refreshDataList')
+          this.$message({
+            message: '操作成功',
+            type: 'success',
+            duration: 1000,
+            onClose: () => {
               this.btnDisable = false
-              this.fullscreenLoading = false
-            })
-        }
-      })
+            }
+          })
+        }).catch(() => {
+          this.btnDisable = false
+          this.fullscreenLoading = false
+        })
     },
     // 多选
     dataListSelectionChangeHandle (val) {
@@ -544,7 +558,6 @@ export default {
   watch: {
     visible: function (newName, oldName) {
       if (newName) {
-        debugger
         this.$nextTick(() => {
           this.dataList = []
           this.$refs.sGrid.loadData(this.dataList)
@@ -553,6 +566,7 @@ export default {
             this.$refs.sGrid.updateFooter()
           } else {
             this.dataForm = this.entityModel
+            this.initSelData()
             this.search(this.entityModel)
           }
         })

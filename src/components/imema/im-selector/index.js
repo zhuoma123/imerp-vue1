@@ -1,4 +1,4 @@
-import imSelector from './components/im-selector.vue'
+import imSelector from './selector.vue'
 export default {
   name: 'im-selector',
   components: {
@@ -37,17 +37,12 @@ export default {
       type: String,
       required: false
     },
-    //
-    placeholder: {
-      type: String,
-      required: false,
-      default: '请选择'
-    },
     clearable: {
       type: Boolean,
-      required: false,
       default: true
-    }
+    },
+    placeholder: String,
+    selprops: Object
   },
   computed: {
     // 始终返回渲染组件
@@ -68,7 +63,8 @@ export default {
         props: {
           dataType: this.dataType,
           placeholder: this.placeholder,
-          clearable: this.clearable
+          clearable: this.clearable,
+          selprops: this.selprops
         },
         on: {
           change: e => this.$emit('change', e),

@@ -6,6 +6,10 @@
         <d2-icon name="power-off" class="d2-mr-5"/>
         {{ $t('layout.header-aside.header-user.log-off') }}
       </el-dropdown-item>
+      <el-dropdown-item @click.native="reloadMenu">
+        <d2-icon name="refresh" class="d2-mr-5"/>
+        重新加载菜单
+      </el-dropdown-item>
     </el-dropdown-menu>
   </el-dropdown>
 </template>
@@ -21,6 +25,9 @@ export default {
   methods: {
     ...mapActions('d2admin/account', [
       'logout'
+    ]),
+    ...mapActions('d2admin/permission', [
+      'reloadMenu'
     ]),
     /**
      * @description 登出

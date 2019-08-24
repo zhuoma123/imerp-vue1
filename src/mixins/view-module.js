@@ -66,6 +66,16 @@ export default {
           total: 'totalCount'
         }
       },
+      toolbar: {
+        id: 'vxe_toolbar_1',
+        refresh: true,
+        resizable: {
+          storage: true
+        },
+        setting: {
+          storage: true
+        }
+      },
       //时间联动框
       pickerOptions: {
         shortcuts: [{
@@ -131,11 +141,15 @@ export default {
       ).then(res => {
         this.dataList = this.mixinViewModuleOptions.getDataListIsPage ? res.list : res
         this.total = this.mixinViewModuleOptions.getDataListIsPage ? res.totalCount : 0
+        this.getDataListCB(this, res)
       }).catch(() => {
         this.dataList = []
         this.total = 0
       })
       this.dataListLoading = false
+    },
+    getDataListCB(self, res) {
+
     },
     vxeTabQuery ({ page, sort, filters }, dataForm) {
       // 处理排序条件
@@ -173,7 +187,11 @@ export default {
         } else if (this.$refs.pGrid) {
           this.$refs.pGrid.updateFooter()
         }
+        this.vxeQueryCB(this)
       })
+    },
+    vxeQueryCB (self) {
+
     },
     // 表单提交
     dataFormSubmit () {
@@ -565,7 +583,6 @@ export default {
             this.$refs.dataForm.resetFields()
             this.$refs.sGrid.updateFooter()
           } else {
-            debugger;
             this.dataForm = this.entityModel
             this.initSelData()
             this.search(this.entityModel)

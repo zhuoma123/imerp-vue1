@@ -71,6 +71,7 @@ export default {
   name: 'inv-inoutbill',
   mixins: [mixinViewModule],
   data () {
+    console.log(this)
     return {
       mixinViewModuleOptions: {
         getDataListURL: '/inv/inoutbill/list',
@@ -239,9 +240,6 @@ export default {
   methods: {
     initSelData() {
       for(const key in this.descriptors) {
-        if(XEUtils.get(this.descriptors[key], "desc.name") === 'im-selector') {
-          this.descriptors[key].desc.props.mapModel = this.dataForm
-        }
         if(XEUtils.get(this.descriptors[key], "desc.name") === 'el-date-picker') {
           this.descriptors[key].desc.props.pickerOptions = this.pickerOptions
         }

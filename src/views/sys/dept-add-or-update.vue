@@ -1,5 +1,11 @@
 <template>
-  <el-dialog class="abow-dialog" :visible.sync="visible" :title="dataForm.deptId==null ? $t('views.public.add') : $t('views.public.update')" :close-on-click-modal="false" :close-on-press-escape="false">
+  <el-dialog class="abow-dialog" 
+  :visible.sync="visible" 
+  :title="dataForm.deptId==null ? $t('views.public.add') : $t('views.public.update')" 
+  :close-on-click-modal="false" 
+  :close-on-press-escape="false"
+  v-loading.fullscreen.lock="fullscreenLoading"
+  >
     <el-form  :model="dataForm" ref="dataForm" @keyup.enter.native="dataFormSubmitHandle()" label-width="120px">
       <el-form-item prop="name" :label="$t('views.public.dept.name')" :rules="{required: true, message: '部门名称不能为空', trigger: 'blur'}">
         <el-input v-model="dataForm.name" :placeholder="$t('views.public.dept.name')" />
@@ -106,14 +112,16 @@ export default {
       this.deptListVisible = false
     },
     // 表单提交
-    dataFormSubmitHandle: debounce(function () {
+    dataFormSubmitHandle () {
       this.$refs['dataForm'].validate((valid) => {
         if (!valid) {
           return false
         }
-        this.$axios[!this.dataForm.deptId ? 'post' : 'put']('/sys/dept/save', {
+        this.fullscreenLoading = true
+        this.$axios.post('/sys/dept/save', {
           ...this.dataForm
         }).then(res => {
+          this.fullscreenLoading = false
           this.$message({
             message: this.$t('views.public.success'),
             type: 'success',
@@ -123,9 +131,11 @@ export default {
               this.$emit('refreshDataList')
             }
           })
-        }).catch(() => {})
+        }).catch(() => {
+          this.fullscreenLoading = false
+        })
       })
-    }, 1000, { 'leading': true, 'trailing': false })
+    }
   }
 }
 </script>

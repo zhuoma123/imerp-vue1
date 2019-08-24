@@ -6,16 +6,12 @@ export default {
   },
   data () {
     return {
-      id: this.value,
-      mapObj: this.mapModel,
       mapKey: 'key',
       mapVal: 'value'
     }
   },
   props: {
-    value: {
-      default: ''
-    },
+    value: [String, Number],
     // 容器样式
     type: {
       type: String,
@@ -29,7 +25,7 @@ export default {
     },
     // 对应绑定的form表单
     mapModel: {
-      type: Object,
+      type: [Object, Function],
       default: () => ({})
     },
     // 下拉框对象的下拉显示属性-对应的值

@@ -3,7 +3,7 @@
     <el-form
       v-if="_value"
       ref="dynamic-form"
-      :model="_value"
+      v-model="_value"
       v-bind="formprops"
       :rules="descriptors"
     >

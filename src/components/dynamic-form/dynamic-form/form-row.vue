@@ -7,6 +7,7 @@
       :lang="lang"
       :label="findTypeDescriptor(descriptor).label || key"
       :prop="key"
+      :map-model="value"
       :label-width="labelWidth"
       :descriptor="descriptor"
       :language="language"

@@ -14,6 +14,7 @@
       <dynamic-input
         v-if="!isComplexType(typeDescriptor.type)"
         v-model="_value"
+        :map-model="mapModel"
         :size="size"
         :disabled="typeDescriptor.disabled"
         :type="typeDescriptor.type"
@@ -161,6 +162,7 @@ export default {
     },
     labelWidth: String,
     language: Object,
+    mapModel: Object,
     colSpan: Number
   },
   components: {

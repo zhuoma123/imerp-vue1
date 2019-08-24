@@ -4,6 +4,7 @@
     v-model="_value"
     v-if="!isSpecialType(type)"
     v-bind="custProps"
+    :map-model="mapModel"
     :is="name"
     :size="size"
     :disabled="disabled"
@@ -57,7 +58,8 @@ export default {
      * extend options of component
      * extends.options: [{ label: String, value: Any }] || [String] // select component's options
      */
-    extend: Object
+    extend: Object,
+    mapModel: Object
   },
   components: {},
   computed: {

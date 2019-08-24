@@ -72,6 +72,7 @@ export default {
     return {
       visible: false,
       deptList: [],
+      menuList: [],
       deptListVisible: false,
       dataForm: {
         roleId: '',
@@ -80,11 +81,10 @@ export default {
         deptName: '',
         deptIdList:[],
         menuIdList:[]
-      },
-     menuList:[]
+      }
     }
   },
-    created() {
+  created() {
     this.getDeptList()
     this.getMenuList()
   },
@@ -100,13 +100,33 @@ export default {
     
     update(row){
       this.visible = true
-      debugger
       this.$nextTick(() => {
         this.dataForm = Object.assign({}, row)
-        this.$refs.menuListTree.setCheckedKeys(row.menuIdList,true)
-         this.$refs.deptTree.setCheckedKeys(row.deptIdList,true)
+        let timer = setInterval(() => {
+          if(this.menuList.length > 0 && this.deptList.length > 0) {
+            this.setTree(row)
+            clearInterval(timer)
+          }
+          console.log('---------wait')
+        }, 500)
+        // while(true) {
+        //   console.log('--------wait', this.menuList.length, this.deptList.length)
+        //   if(this.menuList.length > 0 && this.deptList.length > 0)
+        //     break;
+        // }
+        
         this.$refs['dataForm'].clearValidate()
       })
+    },
+    setTree(row) {
+      this.$refs.menuListTree.setCheckedKeys([]);
+      this.$refs.deptTree.setCheckedKeys([])
+      for(let item in row.menuIdList) {
+        this.$refs.menuListTree.setChecked(row.menuIdList[item], true, false)
+      }
+      for(let item in row.deptIdList) {
+        this.$refs.deptTree.setChecked(row.deptIdList[item], true, false)
+      } 
     },
     // 获取部门列表
     getDeptList () {
@@ -129,7 +149,7 @@ export default {
     },
     // 数据, 选中
     deptIdListTreeCurrentChangeHandle (self) {
-      let res = self.$refs.deptTree.getCheckedNodes()
+      let res = self.$refs.deptTree.getCheckedNodes(false,true)
       self.dataForm.deptIdList = []
       res.forEach((item) => {
         self.dataForm.deptIdList.push(item.deptId)
@@ -139,7 +159,7 @@ export default {
        // 所属菜单树, 选中
     menuListTreeCurrentChangeHandle (self) {
       debugger
-       let res = self.$refs.menuListTree.getCheckedNodes()
+       let res = self.$refs.menuListTree.getCheckedNodes(false,true)
        self.dataForm.menuIdList = []
       res.forEach((item) => {
         self.dataForm.menuIdList.push(item.menuId)

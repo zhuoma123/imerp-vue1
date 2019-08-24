@@ -15,19 +15,11 @@
       </el-form-item>
       <el-form-item>
         <el-button
-          v-if="$hasPermission('sys:dept:save')"
+          v-if="$hasPermission('sys:role:save')"
           type="primary"
            icon="el-icon-edit"
           @click="addOrUpdateData()"
         >{{ $t('views.public.add') }}</el-button>
-      </el-form-item>
-      <el-form-item>
-        <el-button
-          v-if="$hasPermission('sys:dept:delete')"
-          type="danger"
-           icon="el-icon-delete"
-          @click="deleteHandleSetter()"
-        >{{ $t('views.public.deleteBatch') }}</el-button>
       </el-form-item>
       <el-form-item>
         <el-button
@@ -77,7 +69,7 @@ export default {
       mixinViewModuleOptions: {
         getDataListURL: "/sys/role/list",
         getDataListIsPage: true,
-        deleteURL: "/role/dept/delete",
+        deleteURL: "/sys/role/delete",
         deleteIsBatch: true,
         deleteIsBatchKey: 'roleId',
         exportURL: "/sys/role/export"

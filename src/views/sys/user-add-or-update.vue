@@ -13,14 +13,13 @@
             ref="deptListTree"
             :highlight-current="true"
             :expand-on-click-node="false"
-            :default-checked-keys="checkkey"
             accordion
             @current-change="deptListTreeCurrentChangeHandle">
           </el-tree>
         </el-popover>
         <el-input v-model="dataForm.deptName" v-popover:deptListPopover :readonly="true" :placeholder="$t('views.public.user.deptName')"/>
       </el-form-item>
-      <el-form-item prop="deptId"  >
+      <el-form-item prop="deptId" v-show="false" >
         <el-input v-model="dataForm.deptId"/>
       </el-form-item>
       <el-form-item prop="email" :label="$t('views.public.user.email')">
@@ -30,8 +29,8 @@
         <el-input v-model="dataForm.mobile" :placeholder="$t('views.public.user.mobile')"/>
       </el-form-item>
       <el-form-item prop="roleIdList" :label="$t('views.public.user.roleIdList')" class="role-list">
-        <el-select v-model="dataForm.roleIdList" multiple :placeholder="$t('views.public.user.roleIdList')">
-          <el-option v-for="role in roleList" :key="role.roleId" :label="role.roleName" :value="role.roleName"/>
+        <el-select v-model="dataForm.roleIds" multiple :placeholder="$t('views.public.user.roleIdList')">
+          <el-option v-for="role in roleList" :key="role.roleId" :label="role.roleName" :value="role.roleId"/>
         </el-select>
       </el-form-item>
       <el-form-item prop="status" :label="$t('views.public.user.status')" size="mini">
@@ -60,32 +59,35 @@ export default {
       roleList: [],
       roleIdListDefault: [],
       dataForm: {
-        id: '',
+        userId: '',
         username: '',
         deptId: '0',
         deptName: '',
         password: '',
         comfirmPassword: '',
-        realName: '',
+        roleIds: '',
         gender: 0,
         email: '',
         mobile: '',
         roleIdList: [],
-        status: 1,
-        checkkey:''
+        status: 1  
       }
     }
+  },
+  created() {
+    this.getDeptList()
+    this.getRoleList()
   },
   computed: {
     dataRule () {
       var validatePassword = (rule, value, callback) => {
-        if (!this.dataForm.id && !/\S/.test(value)) {
+        if (!this.dataForm.userId && !/\S/.test(value)) {
           return callback(new Error(this.$t('public.rules.required', { 'name': this.$t('views.public.user.password') })))
         }
         callback()
       }
       var validateComfirmPassword = (rule, value, callback) => {
-        if (!this.dataForm.id && !/\S/.test(value)) {
+        if (!this.dataForm.userId && !/\S/.test(value)) {
           return callback(new Error(this.$t('public.rules.required', { 'name': this.$t('views.public.user.comfirmPassword') })))
         }
         if (this.dataForm.password !== value) {
@@ -118,9 +120,6 @@ export default {
         comfirmPassword: [
           { validator: validateComfirmPassword, trigger: 'blur' }
         ],
-        realName: [
-          { required: true, message: this.$t('public.rules.required', { 'name': this.$t('views.public.user.realName') }), trigger: 'blur' }
-        ],
         email: [
           { required: true, message: this.$t('public.rules.required', { 'name': this.$t('views.public.user.email') }), trigger: 'blur' },
           { validator: validateEmail, trigger: 'blur' }
@@ -135,33 +134,19 @@ export default {
   methods: {
     init () {
       this.visible = true
+      this.dataForm.userId=null
+      this.dataForm.roleIds=null
       this.$nextTick(() => {
         this.$refs['dataForm'].resetFields()
         this.roleIdListDefault = []
-        Promise.all([
-          this.getDeptList(),
-          this.getRoleList()
-        ]).then(() => {
-          if (this.dataForm.id) {
-            // this.getInfo()
-          }
-        })
+       
       })
     },    
     update(row){
-      debugger
       this.visible = true
       this.$nextTick(() => {
         this.dataForm = Object.assign({}, row)
-        this.dataForm.checkkey=row.deptId
         this.$refs['dataForm'].clearValidate()
-        Promise.all([
-          this.getDeptList()
-        ]).then(() => {
-          if (this.dataForm.userId) {
-           
-          }
-        })
       })
     },
     // 获取部门列表
@@ -178,7 +163,7 @@ export default {
     },
     // 获取信息
     getInfo () {
-      this.$axios.get(`/sys/user/${this.dataForm.id}`).then(res => {
+      this.$axios.get(`/sys/user/${this.dataForm.userId}`).then(res => {
         this.dataForm = {
           ...this.dataForm,
           ...res,
@@ -207,7 +192,7 @@ export default {
         if (!valid) {
           return false
         }
-        this.$axios[!this.dataForm.id ? 'post' : 'put']('/sys/user/save', {
+        this.$axios[!this.dataForm.userId ? 'post' : 'put']('/sys/user/save', {
           ...this.dataForm,
           roleIdList: [
             ...this.dataForm.roleIdList,

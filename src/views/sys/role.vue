@@ -3,34 +3,29 @@
     <el-form :inline="true" size="mini" :model="dataForm" @keyup.enter.native="getDataList()">
       <el-form-item>
         <el-input
-          v-model="dataForm.username"
-          :data-operate="dataFormOp.username"
-          :placeholder="$t('views.public.user.username')"
+          v-model="dataForm.roleName"
+          :data-operate="dataFormOp.roleName"
+          placeholder="角色名称"
           clearable
         />
       </el-form-item>
-      <el-form-item>
-        <el-input
-          v-model="dataForm.mobile"
-          :data-operate="dataFormOp.mobile"
-          :placeholder="$t('views.public.user.mobile')"
-          clearable
-        />
-      </el-form-item>
+      
       <el-form-item>
         <el-button @click="getDataList()">{{ $t('views.public.query') }}</el-button>
       </el-form-item>
       <el-form-item>
         <el-button
-          v-if="$hasPermission('sys:user:save')"
+          v-if="$hasPermission('sys:dept:save')"
           type="primary"
+           icon="el-icon-edit"
           @click="addOrUpdateData()"
         >{{ $t('views.public.add') }}</el-button>
       </el-form-item>
       <el-form-item>
         <el-button
-          v-if="$hasPermission('sys:user:delete')"
+          v-if="$hasPermission('sys:dept:delete')"
           type="danger"
+           icon="el-icon-delete"
           @click="deleteHandleSetter()"
         >{{ $t('views.public.deleteBatch') }}</el-button>
       </el-form-item>
@@ -73,54 +68,54 @@
 </template>
 
 <script>
-import mixinViewModule from '@/mixins/view-module'
-import AddOrUpdate from './user-add-or-update'
-
+import mixinViewModule from "@/mixins/view-module";
+import AddOrUpdate from "./role-add-or-update";
 export default {
-  name: 'sys-user',
   mixins: [mixinViewModule],
-  data () {
+  data() {
     return {
       mixinViewModuleOptions: {
-        getDataListURL: '/sys/user/list',
+        getDataListURL: "/sys/role/list",
         getDataListIsPage: true,
-        deleteURL: '/sys/user',
+        deleteURL: "/role/dept/delete",
         deleteIsBatch: true,
-        exportURL: '/sys/user/export'
-      },
+        deleteIsBatchKey: 'roleId',
+        exportURL: "/sys/role/export"
+      },  
+      //增改
+      addOrUpdateVisible: false,
       dataForm: {
-        username: '',
-        mobile: ''
+        roleName: ""
       },
       dataFormOp: {
-        username: 'like'
+        roleName: "like"
       },
       rowHandler: {
         custom: [
           {
-            text: this.$t('views.public.update'),
+            text: this.$t("views.public.update"),
             type: 'primary',
             size: 'mini',
             emit: 'user-update',
-            show: (index, row) => {
-              return this.$hasPermission('sys:user:update')
+            show: (index,row) => {
+              return this.$hasPermission("sys:role:update");
             }
           },
           {
-            text: this.$t('views.public.delete'),
+            text: this.$t("views.public.delete"),
             type: 'danger',
             size: 'mini',
             emit: 'user-delete',
-            show: (index, row) => {
-              return this.$hasPermission('sys:user:delete')
+            show: ( index) => {
+              return this.$hasPermission("sys:role:delete");
             }
           }
         ]
       },
       columns: [
         {
-          title: this.$t("views.public.user.username"),
-          key: "username",
+          title: '角色名称',
+          key: "roleName",
           sortable: true,
           align: "center"
         },
@@ -131,29 +126,12 @@ export default {
           align: "center"
         },
         {
-          title: this.$t("views.public.user.email"),
-          key: "email",
-          sortable: true,
-          align: "center"
-        },
-        {
-          title: this.$t("views.public.user.mobile"),
-          key: "mobile",
-          sortable: true,
-          align: "center"
-        },
-        {
-          title: "角色",
-          key: "roleNames",
-          sortable: true,
-          align: "center"
-        },
-        {
-          title: this.$t("views.public.user.status"),
-          key: "status",
+          title: "创建时间",
+          key: "createTime",
           sortable: true,
           align: "center"
         }
+        
       ]
     };
   },
@@ -166,7 +144,7 @@ export default {
       this.addOrUpdateVisible = true;
       if (row) {
         this.$nextTick(() => {
-          this.$refs.addOrUpdate.dataForm.id = row.row.userId;
+          this.$refs.addOrUpdate.dataForm.id = row.row.roleId;
           this.$refs.addOrUpdate.update(row.row);
         })
       } else {
@@ -188,7 +166,7 @@ export default {
         row = index.row
       }
       if (row) {
-        const id = row.userId
+        const id = row.roleId
         if (id) {
           data = [id]
         }
@@ -216,8 +194,14 @@ export default {
       }).catch(() => {})
     }
   }
+  
+ 
+
 }
+
+
 </script>
 
 <style>
+
 </style>

@@ -1,14 +1,13 @@
 <template>
     <el-dialog :visible.sync="visible" :title="!dataForm.id ? $t('views.public.add') : $t('views.public.update')"
                :close-on-click-modal="false" :close-on-press-escape="false" width="850px">
-        <el-form :model="dataForm" :rules="rules" ref="dataForm" @keyup.enter.native="dataFormSubmitHandle()"
-                 label-width="120px" :inline="true">
+        <el-form :model="dataForm" :rules="rules" ref="dataForm" label-width="120px" :inline="true">
             <el-form-item label="顾客" prop="custId">
                 <im-selector
                     placeholder="请选择客户"
                     v-model="dataForm.custId"
                     :mapModel.sync="dataForm"
-                    mapKeyVal="name:custId"
+                    mapKeyVal="custName:custId"
                     dataType="biz.customer"
                     @change="changeCust">
                 </im-selector>

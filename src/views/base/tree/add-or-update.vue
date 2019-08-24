@@ -2,8 +2,7 @@
   <div>
     <el-dialog :visible.sync="visible" :title="!dataForm.id ? $t('views.public.add') : $t('views.public.update')"
                :close-on-click-modal="false" :close-on-press-escape="false">
-      <el-form :model="dataForm" :rules="rules" :inline="true" ref="dataForm"
-               @keyup.enter.native="dataFormSubmitHandle()" label-width="105px">
+      <el-form :model="dataForm" :rules="rules" :inline="true" ref="dataForm" label-width="105px">
         <el-form-item prop="pname" :label="data.data.input.pname" @click.native="showPid">
           <el-input v-model="dataForm.pname" :placeholder="data.data.input.pname"/>
         </el-form-item>
@@ -75,10 +74,8 @@
 </template>
 
 <script>
-import mixinViewModule from '@/mixins/view-module'
 import data from './data'
 export default {
-  mixins: [mixinViewModule],
   data () {
     return {
       filterText: undefined,

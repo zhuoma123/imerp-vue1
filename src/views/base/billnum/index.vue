@@ -169,11 +169,6 @@ export default {
           })
         }).catch(() => {})
       }).catch(() => {})
-    },
-    add (row) {
-      let map = {}
-      map.row = row
-      this.addOrUpdateHandleSetter(map)
     }
   }
 }

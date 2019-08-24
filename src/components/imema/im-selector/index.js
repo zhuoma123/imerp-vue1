@@ -1,4 +1,4 @@
-import imSelector from './components/im-selector.vue'
+import imSelector from './selector.vue'
 export default {
   name: 'im-selector',
   components: {
@@ -6,16 +6,12 @@ export default {
   },
   data () {
     return {
-      id: this.value,
-      mapObj: this.mapModel,
       mapKey: 'key',
       mapVal: 'value'
     }
   },
   props: {
-    value: {
-      default: ''
-    },
+    value: [String, Number],
     // 容器样式
     type: {
       type: String,
@@ -29,7 +25,7 @@ export default {
     },
     // 对应绑定的form表单
     mapModel: {
-      type: Object,
+      type: [Object, Function],
       default: () => ({})
     },
     // 下拉框对象的下拉显示属性-对应的值
@@ -37,12 +33,12 @@ export default {
       type: String,
       required: false
     },
-    //
-    placeholder: {
-      type: String,
-      required: false,
-      default: '请选择'
-    }
+    clearable: {
+      type: Boolean,
+      default: true
+    },
+    placeholder: String,
+    selprops: Object
   },
   computed: {
     // 始终返回渲染组件
@@ -62,7 +58,9 @@ export default {
         ref: 'component',
         props: {
           dataType: this.dataType,
-          placeholder: this.placeholder
+          placeholder: this.placeholder,
+          clearable: this.clearable,
+          selprops: this.selprops
         },
         on: {
           change: e => this.$emit('change', e),

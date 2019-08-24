@@ -1,15 +1,22 @@
 <template>
     <el-dialog :visible.sync="visible" :title="!dataForm.id ? $t('views.public.add') : $t('views.public.update')"
                :close-on-click-modal="false" :close-on-press-escape="false">
-        <el-form :model="dataForm" :rules="rules" ref="dataForm" @keyup.enter.native="dataFormSubmitHandle()"
+        <el-form :model="dataForm" :rules="rules" ref="dataForm"
                  label-width="120px">
-            <el-form-item prop="warehouseId" :label="data.form.input.warehouseId">
-                <el-input v-model="dataForm.warehouseId" :placeholder="data.form.input.warehouseId"/>
+            <el-form-item prop="warehouseId" :label="data.form.input.warehouse" style="width: 490px">
+                <im-selector
+                        placeholder="请选择仓库"
+                        v-model="dataForm.warehouseId"
+                        :mapModel.sync="dataForm"
+                        mapKeyVal="warehouseName:warehouseId"
+                        dataType="biz.warehouse"
+                        @change="changeCust">
+                </im-selector>
             </el-form-item>
-            <el-form-item prop="name" :label="data.form.input.name">
+            <el-form-item prop="name" :label="data.form.input.name" style="width: 217px">
                 <el-input v-model="dataForm.name" :placeholder="data.form.input.name"/>
             </el-form-item>
-            <el-form-item prop="remark" :label="data.form.input.remark">
+            <el-form-item prop="remark" :label="data.form.input.remark" style="width: 218px">
                 <el-input v-model="dataForm.remark" :placeholder="data.form.input.remark"/>
             </el-form-item>
         </el-form>
@@ -49,13 +56,16 @@ export default {
       this.visible = true
       this.$nextTick(() => {
         this.$refs['dataForm'].resetFields()
+        if (this.dataForm.id) {
+          this.dataForm.id = undefined
+        }
         this.$refs['dataForm'].clearValidate()
       })
     },
     update (row) {
-      this.dataForm = Object.assign({}, row)
       this.visible = true
       this.$nextTick(() => {
+        this.dataForm = Object.assign({}, row)
         this.$refs['dataForm'].clearValidate()
       })
     },

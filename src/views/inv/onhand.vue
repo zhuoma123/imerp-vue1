@@ -57,6 +57,7 @@
 <script>
 import mixinViewModule from '@/mixins/view-module'
 export default {
+  name: 'inv-onhand',
   mixins: [mixinViewModule],
   data () {
     return {

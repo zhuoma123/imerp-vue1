@@ -3,7 +3,7 @@ import util from '@/libs/util.js'
 import router from '@/router'
 import store from '@/store/index'
 import { sysAccountService } from '@api'
-import i18n from '../../../../i18n'
+import i18n from '@/i18n'
 
 export default {
   namespaced: true,
@@ -26,6 +26,9 @@ export default {
           password
         })
           .then(async res => {
+            // 先清除用户信息
+            await dispatch('clear')
+
             // 设置 cookie 一定要存 uuid 和 token 两个 cookie
             // 整个系统依赖这两个数据进行校验和存储
             // uuid 是用户身份唯一标识 用户注册的时候确定 并且不可改变 不可重复
@@ -52,23 +55,16 @@ export default {
      * @param {Object} param context
      * @param {Object} param confirm {Boolean} 是否需要确认
      */
-    logout ({ commit, dispatch }, { confirm = false } = {}) {
+    logout ({ commit, dispatch }, { confirm = false, msg } = {}) {
       /**
        * @description 注销
        */
       async function logout () {
-        console.log('----------用户登出，清空缓存----------')
-        // 删除cookie
-        util.cookies.remove('token')
-        util.cookies.remove('uuid')
-        // 清空 vuex 菜单信息
-        util.session.clear()
-        store.commit('d2admin/permission/SET_ISLOCK', false)
-        // 清空 vuex 用户信息
-        await dispatch('d2admin/user/set', {}, { root: true })
+        // 先清除用户信息
+        await dispatch('clear')
         // 跳转路由
         router.push({
-          name: '/sys/login'
+          name: 'login'
         })
       }
       // 判断是否需要确认
@@ -90,8 +86,25 @@ export default {
             })
           })
       } else {
+        if(msg) {
+          Message({
+            message:msg,
+            type: 'error'
+          })
+        }
         logout()
       }
+    },
+    async clear({ dispatch }) {
+      console.log('----------清空缓存----------')
+      // 删除cookie
+      util.cookies.remove('token')
+      util.cookies.remove('uuid')
+      // 清空 vuex 菜单信息
+      util.session.clear()
+      store.commit('d2admin/permission/SET_ISLOCK', false)
+      // 清空 vuex 用户信息
+      await dispatch('d2admin/user/set', {}, { root: true })
     },
     /**
      * @description 用户登录后从持久化数据加载一系列的设置

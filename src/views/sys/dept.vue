@@ -1,6 +1,6 @@
 <template>
   <d2-container class="mod-sys__user">
-    <el-form :inline="true" size="mini" :model="dataForm" @keyup.enter.native="getDataList()">
+    <el-form slot="header" :inline="true" size="mini" :model="dataForm" @keyup.enter.native="search()">
       <el-form-item>
         <el-input
           v-model="dataForm.name"
@@ -11,7 +11,7 @@
       </el-form-item>
       
       <el-form-item>
-        <el-button @click="getDataList()">{{ $t('views.public.query') }}</el-button>
+        <el-button @click="search()">{{ $t('views.public.query') }}</el-button>
       </el-form-item>
       <el-form-item>
         <el-button
@@ -37,46 +37,34 @@
         >{{ $t('views.public.export') }}</el-button>
       </el-form-item>
     </el-form>
-    <d2-crud
-      ref="d2Crud"
-      index-row                                                           
-      :columns="columns"
-      :options="options"
-      selectionRow
-      :row-handle="rowHandler"
-      :loading="dataListLoading"
-      :data="dataList"
-      @selection-change="dataListSelectionChangeHandle"
-      @sort-change="dataListSortChangeHandle"
-      @user-update="addOrUpdateData"
-      @user-delete="deleteHandleSetter"
-    ></d2-crud>
-    <!-- 分页 -->
-    <el-pagination
-      slot="footer"
-      :current-page="page"
-      :page-sizes="[10, 20, 50, 100]"
-      :page-size="limit"
-      :total="total"
-      layout="total, sizes, prev, pager, next, jumper"
-      @size-change="pageSizeChangeHandle"
-      @current-change="pageCurrentChangeHandle"
-    ></el-pagination>
+    <vxe-grid
+      border
+      resizable
+      highlight-hover-row
+      size="mini"
+      ref="pGrid"
+      :proxy-config="tableProxy"
+      :columns="tableColumn"
+      :tree-config="{ children: 'children', expandAll: true, indent: 8}"
+      :edit-config="{trigger: 'click', mode: 'row', showStatus: true}"
+      >
+    </vxe-grid>
     <!-- 弹窗, 新增 / 修改 -->
-    <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList" />
+    <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="search" />
   </d2-container>
 </template>
 
 <script>
 import mixinViewModule from "@/mixins/view-module";
 import AddOrUpdate from "./dept-add-or-update";
+import XEUtils from "xe-utils"
 export default {
   mixins: [mixinViewModule],
   data() {
     return {
       mixinViewModuleOptions: {
-        getDataListURL: "/sys/dept/listpage",
-        getDataListIsPage: true,
+        getDataListURL: "/sys/dept/list",
+        getDataListIsPage: false,
         deleteURL: "/sys/dept/delete",
         deleteIsBatch: true,
         deleteIsBatchKey: 'deptId',
@@ -112,32 +100,29 @@ export default {
           }
         ]
       },
-      columns: [
+      tableColumn: [
+        { type: 'selection', title: '全选', width: 100, treeNode: true },
         {
-          title: this.$t("views.public.dept.name"),
-          key: "name",
+          title: '部门名称',
+          field: 'name',
           sortable: true,
-          align: "center"
+          width: 400,
+          align: 'left',
+          treeNode: true
         },
         {
           title: '上级部门名称',
-          key: "parentName",
+          field: 'parentName',
           sortable: true,
-          align: "center"
+          align: 'center'
         },
         {
-          title: this.$t("views.public.dept.orderNum"),
-          key: "orderNum",
+          title: '排序',
+          field: 'orderNum',
           sortable: true,
-          align: "center"
-        },
-        {
-          title: this.$t("views.public.dept.delFlag"),
-          key: "delFlag",
-          sortable: true,
-          align: "center"
-        },
-        
+          width: 110,
+          align: 'center'
+        }
       ]
     };
   },
@@ -145,6 +130,12 @@ export default {
     AddOrUpdate
   },
   methods: {
+    getDataListCB(self, res) {
+      self.dataList = XEUtils.toArrayTree(self.dataList, { key: 'deptId', parentKey: 'parentId', children: 'children' })
+    },
+    vxeQueryCB (self) {
+      this.$refs.pGrid.setAllTreeExpansion(true)
+    },
     //增改
    addOrUpdateData (row) {
       this.addOrUpdateVisible = true;
@@ -200,12 +191,7 @@ export default {
       }).catch(() => {})
     }
   }
-  
- 
-
 }
-
-
 </script>
 
 <style>

@@ -2,7 +2,7 @@
     <div>
         <el-dialog :visible.sync="visible" :title="!dataForm.id ? $t('views.public.add') : $t('views.public.update')"
                    :close-on-click-modal="false" :close-on-press-escape="false" width="55%">
-            <el-form :model="dataForm" :rules="rules" ref="dataForm" @keyup.enter.native="dataFormSubmitHandle()"
+            <el-form :model="dataForm" :rules="rules" ref="dataForm"
                      label-width="110px" :inline="true" style="width: 100%">
                 <el-form-item prop="code" :label="data.form.input.code" v-show="false" >
                     <el-input v-model="dataForm.code" :placeholder="data.form.input.code"/>

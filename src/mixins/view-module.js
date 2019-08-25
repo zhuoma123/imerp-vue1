@@ -117,17 +117,10 @@ export default {
      */
     init (item, read) {
       this.isNew = !item
-<<<<<<< .mine
-      if (item) { this.entityModel = Object.assign({}, item) }
-
-
-
-=======
       if (item) { 
         this.entityModel = Object.assign({}, item) 
       }
       this.formReadOnly = read
->>>>>>> .theirs
       this.visible = true
     },
     initSelData () {
@@ -315,7 +308,6 @@ export default {
       })
     },
     // 修改
-
     updateHandle () {
       
     },
@@ -423,7 +415,6 @@ export default {
         return
       }
       for (let i = 0; i < this.dataListSelections.length; i++) {
-
         const id = this.mixinViewModuleOptions.deleteIsBatchKey
         let e = this.dataListSelections[i]
         let childs = e.children

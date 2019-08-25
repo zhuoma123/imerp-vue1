@@ -53,13 +53,15 @@ export default {
       type: String,
       required: true
     },
-    custDesc: Object,
+    custName: String,
+    custProps: Object,
     /**
      * extend options of component
      * extends.options: [{ label: String, value: Any }] || [String] // select component's options
      */
     extend: Object,
-    mapModel: Object
+    mapModel: Object,
+    readOnly: Boolean
   },
   components: {},
   computed: {
@@ -87,8 +89,7 @@ export default {
   },
   data () {
     return {
-      name: '',
-      custProps: {}
+      name: ''
     }
   },
   created () {
@@ -97,11 +98,9 @@ export default {
   methods: {
     init () {
       if(this.type === 'cust') {
-        this.name = (this.custDesc ? this.custDesc.name : null) || 'el-input'
+        this.name = (this.custName ? this.custName : null) || 'el-input'
       } else 
         this.name = TYPE_COMPONENT_MAP[this.type] || 'el-input'
-        
-      this.custProps = (this.custDesc ? this.custDesc.props : null) || {}
     },
     isSpecialType (type) {
       return ['integer', 'float', 'number', 'enum', 'date'].includes(type)

@@ -8,6 +8,14 @@
     class="abow_dialog"
     width="80%"
   >
+    <dynamic-form
+      v-model="dataForm"
+      :formprops="formprops"
+      ref="dynamic-form"
+      col-span='6,6,*,6'
+      :read-only='formReadOnly'
+      :alldescriptors="descriptors">
+    </dynamic-form>
     <vxe-grid
       border
       resizable
@@ -46,6 +54,8 @@
 <script>
 import mixinViewModule from "@/mixins/view-module"
 import XEUtils from "xe-utils"
+const separate = {type: 'separate'}
+const placeholder = {type: 'placeholder'}
 export default {
   name: 'inv-inoutbillline',
   mixins: [mixinViewModule],
@@ -60,6 +70,52 @@ export default {
       visible: false,
       btnDisable: false,
       dataForm: {
+
+      },
+      descriptors: {
+        billNum: { type: 'string', label: '业务单号', 
+          props: {
+            clearable: true
+          }
+        },
+        transactionType: { type: 'cust', label: '业务类型', 
+          name:'im-selector',
+          props: {
+            mapKeyVal: "transactionType",
+            dataType: "code.tran_type",
+            clearable: true,
+            placeholder: '请选择业务类型'
+          }
+        },
+        status: { type: 'cust', label: '单据状态',
+          name:'im-selector',
+          props: {
+            mapKeyVal: "status",
+            dataType: "code.status",
+            clearable: true
+          }
+        },
+        separate1: separate, 
+        sourceOrderNum: { type: 'string', label: '单据单号'},
+        warehouseId: { type: 'cust', label: '出入仓库', 
+          name:'im-selector',
+          props: {
+            mapKeyVal: "warehouseCode:warehouseId",
+            dataType: "biz.warehouse",
+            clearable: true
+          }
+        },
+        inDate: { type: 'cust', label: '入库日期', colspan: 1,
+          name: 'el-date-picker',
+          props: {
+            type: 'daterange',
+            rangeSeparator: "至",
+            startPlaceholder: "开始日期",
+            endPlaceholder: "结束日期",
+            valueFormat: "yyyy-MM-dd",
+            class:'input-class'
+          }
+        }
       },
       tableProxy: {
         autoLoad: false

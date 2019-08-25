@@ -33,6 +33,8 @@ export default {
       formprops: {
         labelSuffix:'：'
       },
+      // 子页面表单是否只读
+      formReadOnly: false,
       // 表格属性
       selectionRow: false,
       sortConfig: {
@@ -43,6 +45,7 @@ export default {
         stripe: true,
         border: true
       },
+      curStatus: '',
       visible: false,
       btnDisable: false,
       pGrid: {},
@@ -112,9 +115,19 @@ export default {
      * 该方法只用于子页面
      * @param {*} item
      */
-    init (item) {
+    init (item, read) {
       this.isNew = !item
+<<<<<<< .mine
       if (item) { this.entityModel = Object.assign({}, item) }
+
+
+
+=======
+      if (item) { 
+        this.entityModel = Object.assign({}, item) 
+      }
+      this.formReadOnly = read
+>>>>>>> .theirs
       this.visible = true
     },
     initSelData () {
@@ -269,10 +282,29 @@ export default {
       }
     },
     // 双击
-    cellDblClick ({ row }) {
+    cellDblClick ({row}, event) {
+      if(typeof row === 'undefined' || row === null) {
+        return this.$message({
+          message: '请选择要修改的记录',
+          type: 'warning'
+        })
+      }
       this.addOrUpdateVisible = true
       this.$nextTick(() => {
-        this.$refs.addOrUpdate.init(row)
+        let read = null
+        for(let r in this.$refs) {
+          if(r.startsWith('btnStatus')) {
+            let dc = this.$refs[r].$attrs['row-dbclick']
+            read = this.$refs[r].$attrs['form-readonly']
+            read = (typeof read !== 'undefined' && read !== null)
+            if(typeof dc !== 'undefined' && dc !== null) {
+              if(this.$refs[r].$el.style.display === 'none') {
+                return
+              }
+            }
+          }
+        }
+        this.$refs.addOrUpdate.init(row, read)
       })
     },
     // 新增
@@ -283,19 +315,9 @@ export default {
       })
     },
     // 修改
-    updateHandle (event) {
-      let row = this.pGrid.getCurrentRow()
-      this.addOrUpdateVisible = true
-      if (row) {
-        this.$nextTick(() => {
-          this.$refs.addOrUpdate.init(row)
-        })
-      } else {
-        return this.$message({
-          message: '请选择要修改的记录',
-          type: 'warning'
-        })
-      }
+
+    updateHandle () {
+      
     },
     // 提交
     submitHandle (event, isAuto) {
@@ -401,6 +423,7 @@ export default {
         return
       }
       for (let i = 0; i < this.dataListSelections.length; i++) {
+
         const id = this.mixinViewModuleOptions.deleteIsBatchKey
         let e = this.dataListSelections[i]
         let childs = e.children
@@ -430,7 +453,7 @@ export default {
             type: 'success',
             duration: 500,
             onClose: () => {
-              this.getDataList()
+              this.search()
             }
           })
         }).catch(() => {})
@@ -526,49 +549,14 @@ export default {
     collapseChange () {
       setTimeout(this.computeHeight, 500)
     },
-    enableTlbBtn ({ columns, row }) {
-      if (row.status === 'NEW') {
-        if (this.$refs.btnAdd) this.$refs.btnAdd.disabled = false
-        if (this.$refs.btnEdit) this.$refs.btnEdit.disabled = false
-        if (this.$refs.btnDelete) this.$refs.btnDelete.disabled = false
-        if (this.$refs.btnSubmit) this.$refs.btnSubmit.disabled = false
-        if (this.$refs.btnAutoPick) this.$refs.btnAutoPick.disabled = false
-        if (this.$refs.btnPick) this.$refs.btnPick.disabled = false
-      } else if (row.status === 'SUBMIT') {
-        if (this.$refs.btnAdd) this.$refs.btnAdd.disabled = false
-        if (this.$refs.btnEdit) this.$refs.btnEdit.disabled = true
-        if (this.$refs.btnDelete) this.$refs.btnDelete.disabled = true
-        if (this.$refs.btnSubmit) this.$refs.btnSubmit.disabled = true
-        if (this.$refs.btnAutoPick) this.$refs.btnAutoPick.disabled = false
-        if (this.$refs.btnPick) this.$refs.btnPick.disabled = false
-      } else if (row.status === 'SENDED') {
-        if (this.$refs.btnAdd) this.$refs.btnAdd.disabled = false
-        if (this.$refs.btnEdit) this.$refs.btnEdit.disabled = true
-        if (this.$refs.btnDelete) this.$refs.btnDelete.disabled = true
-        if (this.$refs.btnSubmit) this.$refs.btnSubmit.disabled = true
-        if (this.$refs.btnAutoPick) this.$refs.btnAutoPick.disabled = true
-        if (this.$refs.btnPick) this.$refs.btnPick.disabled = true
-      } else if (row.status === 'PICKUP') {
-        if (this.$refs.btnAdd) this.$refs.btnAdd.disabled = false
-        if (this.$refs.btnEdit) this.$refs.btnEdit.disabled = true
-        if (this.$refs.btnDelete) this.$refs.btnDelete.disabled = true
-        if (this.$refs.btnSubmit) this.$refs.btnSubmit.disabled = true
-        if (this.$refs.btnAutoPick) this.$refs.btnAutoPick.disabled = true
-        if (this.$refs.btnPick) this.$refs.btnPick.disabled = true
-      } else if (row.status === 'CANCEL') {
-        if (this.$refs.btnAdd) this.$refs.btnAdd.disabled = false
-        if (this.$refs.btnEdit) this.$refs.btnEdit.disabled = true
-        if (this.$refs.btnDelete) this.$refs.btnDelete.disabled = true
-        if (this.$refs.btnSubmit) this.$refs.btnSubmit.disabled = true
-        if (this.$refs.btnAutoPick) this.$refs.btnAutoPick.disabled = true
-        if (this.$refs.btnPick) this.$refs.btnPick.disabled = true
-      } else if (row.status === 'COMPLETED') {
-        if (this.$refs.btnAdd) this.$refs.btnAdd.disabled = false
-        if (this.$refs.btnEdit) this.$refs.btnEdit.disabled = true
-        if (this.$refs.btnDelete) this.$refs.btnDelete.disabled = true
-        if (this.$refs.btnSubmit) this.$refs.btnSubmit.disabled = true
-        if (this.$refs.btnAutoPick) this.$refs.btnAutoPick.disabled = true
-        if (this.$refs.btnPick) this.$refs.btnPick.disabled = true
+    currentChange ({row}) {
+      this.curStatus = row.status
+    },
+    btnStatus (obj, val) {
+      let enablestatus = obj.$attrs.enablestatus
+      if(enablestatus && enablestatus.length > 0) {
+        enablestatus = enablestatus.split(',')
+        obj.$el.style = 'display:' + (enablestatus.includes(val) ? 'inline-block' : 'none')
       }
     }
   },
@@ -595,6 +583,12 @@ export default {
             }
           }
         })
+      }
+    },
+    curStatus: function(val, oldVal) {
+      for(let item in this.$refs) {
+        if(item.startsWith('btnStatus'))
+          this.btnStatus(this.$refs[item], val)
       }
     }
   },

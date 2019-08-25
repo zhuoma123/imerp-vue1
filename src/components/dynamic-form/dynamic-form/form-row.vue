@@ -12,16 +12,19 @@
       :descriptor="descriptor"
       :language="language"
       :size="size"
-      :col-span="Number(colSpan.split(',')[index])"
+      :col-span="computedCol(descriptor, colSpan, index)"
       :background-color="backgroundColor"
       :bg-color-offset="bgColorOffset">
+      <template v-if="descriptor.type === 'slot'" :slot="descriptor.name">
+          <slot :name="descriptor.name">{{descriptor.name}}</slot>
+      </template>
     </dynamic-form-item>
   </el-row>
 </template>
 
 <script>
 import DynamicFormItem from '../dynamic-form-item/form-item'
-import { isComplexType, getLabelWidth, findTypeDescriptor } from '../utils'
+import { isComplexType, getLabelWidth, findTypeDescriptor, isNumber } from '../utils'
 import i18n from '../i18n'
 
 export default {
@@ -90,6 +93,19 @@ export default {
     },
     language () {
       return (this.languages || i18n)[this.lang]
+    },
+    computedCol () {
+      return function(descriptor, colSpan, index) {
+        const colspans = colSpan.split(',')
+        let colspan = Number(colSpan.split(',')[index])
+        if(descriptor.colspan && isNumber(descriptor.colspan)) {
+          for(let i = 1; i< descriptor.colspan; i++) {
+            if(index + i < colspans.length)
+              colspan += Number(colSpan.split(',')[index+i])
+          }
+        }
+        return colspan
+      }
     }
   },
   data () {
@@ -101,6 +117,7 @@ export default {
     this.init()
   },
   methods: {
+    isNumber,
     findTypeDescriptor,
     init () {
       this.initValue()

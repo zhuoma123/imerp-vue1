@@ -9,9 +9,9 @@
           v-model="dataForm"
           :formprops="formprops"
           ref="dynamic-form"
-          col-span='6,6,*,2'
+          col-span='6,6,*,6'
           :alldescriptors="descriptors">
-          <template slot="operations">
+          <template slot="btnsearch">
             <el-button type="primary" icon="el-icon-search" @click="search" >查询</el-button>
             <el-button icon="el-icon-refresh" @click="reset">重置</el-button>
           </template>
@@ -33,11 +33,17 @@
       :select-config="{reserve: true}"
       :edit-config="{trigger: 'click', mode: 'row', showStatus: true}"
       @cell-dblclick="cellDblClick"
+      @current-change='currentChange'
       :footer-method="footerMethod"
       show-footer
       >
       <template v-slot:buttons>
-        <el-button type="primary" size="mini" icon="el-icon-user" v-if="$hasPermission('inv:inoutbill:save')" @click="updateHandle($refs.pGrid)">拣货</el-button>
+        <el-button ref="btnStatusPick" type="primary" size="mini" icon="el-icon-user" 
+        enablestatus='NEW'
+        row-dbclick
+        form-readonly
+        v-if="$hasPermission('inv:inoutbill:save')" 
+        @click="e => cellDblClick({row: $refs.pGrid.getCurrentRow()}, e)">拣货</el-button>
         <el-button type="info" size="mini" icon="el-icon-printer" v-if="$hasPermission('inv:inoutbill:print')" >打印</el-button>
         <el-button type="info" size="mini" icon="fa fa-file-excel-o" v-if="$hasPermission('inv:inoutbill:export')" @click="$refs.pGrid.exportCsv()">  导出</el-button>
       </template>
@@ -71,7 +77,6 @@ export default {
   name: 'inv-inoutbill',
   mixins: [mixinViewModule],
   data () {
-    console.log(this)
     return {
       mixinViewModuleOptions: {
         getDataListURL: '/inv/inoutbill/list',
@@ -88,50 +93,51 @@ export default {
         warehouse: null
       },
       descriptors: {
-        billNum: { type: 'string', label: '业务单号'},
+        billNum: { type: 'string', label: '业务单号', 
+          props: {
+            clearable: true
+          }
+        },
         transactionType: { type: 'cust', label: '业务类型', 
-          desc:{
-            name:'im-selector',
-            props: {
-              mapKeyVal: "transactionType",
-              dataType: "code.tran_type",
-              clearable: true,
-              placeholder: '请选择业务类型'
-            }
+          name:'im-selector',
+          placeholder: '请选择业务类型',
+          props: {
+            mapKeyVal: "transactionType",
+            dataType: "code.tran_type",
+            clearable: true
           }
         },
         status: { type: 'cust', label: '单据状态',
-          desc:{
-            name:'im-selector',
-            props: {
-              mapKeyVal: "status",
-              dataType: "code.status",
-              clearable: true
-            }
+          name:'im-selector',
+          props: {
+            mapKeyVal: "status",
+            dataType: "code.status",
+            clearable: true
           }
+        },
+        btnSearch: {
+          type: 'slot',
+          name: 'btnsearch'
         },
         separate1: separate, 
         sourceOrderNum: { type: 'string', label: '单据单号'},
         warehouseId: { type: 'cust', label: '出入仓库', 
-          desc:{
-            name:'im-selector',
-            props: {
-              mapKeyVal: "warehouseId",
-              dataType: "biz.warehouse",
-              clearable: true
-            }
+          name:'im-selector',
+          props: {
+            mapKeyVal: "warehouseCode:warehouseId",
+            dataType: "biz.warehouse",
+            clearable: true
           }
         },
-        inDate: { type: 'cust', label: '入库日期',
-          desc: {
-            name: 'el-date-picker',
-            props: {
-              type: 'daterange',
-              rangeSeparator: "至",
-              startPlaceholder: "开始日期",
-              endPlaceholder: "结束日期",
-              valueFormat: "yyyy-MM-dd"
-            }
+        inDate: { type: 'cust', label: '入库日期', colspan: 1,
+          name: 'el-date-picker',
+          props: {
+            type: 'daterange',
+            rangeSeparator: "至",
+            startPlaceholder: "开始日期",
+            endPlaceholder: "结束日期",
+            valueFormat: "yyyy-MM-dd",
+            class:'input-class'
           }
         }
       },
@@ -231,7 +237,8 @@ export default {
         setting: {
           storage: true
         }
-      }
+      },
+      curStatus:''
     }
   },
   components: {
@@ -259,3 +266,6 @@ export default {
   }
 }
 </script>
+<style lang="scss">
+
+</style>

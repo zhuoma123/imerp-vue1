@@ -15,7 +15,11 @@
         :col-span="curColSpan"
         v-bind="$props"
         :label-width="labelWidth"
-      ></dynamic-form-row>
+      >
+      <template v-for="(item, key) in $slots" :slot="key">
+        <slot :name="key"></slot>
+      </template>
+      </dynamic-form-row>
       <el-form-item :size="size"  v-if="$slots.operations" class="operations" :label-width="labelWidth">
         <slot name="operations"></slot>
       </el-form-item>
@@ -81,7 +85,8 @@ export default {
     colSpan: {
       type: String,
       default: '*'
-    }
+    },
+    readOnly: Boolean
   },
   components: {
     DynamicFormRow
@@ -154,6 +159,13 @@ export default {
         }
 
         row[key] = this.alldescriptors[key]
+        if(this.readOnly) {
+          if(row[key].name === 'im-selector') {
+            row[key].disabled = this.readOnly
+          } else {
+            row[key].props = Object.assign({}, {readonly: this.readOnly}, row[key].props || {})
+          }
+        }
         if(row[key] && row[key].type !== 'cust') {
           this.descriptors[key] = this.alldescriptors[key]
         }

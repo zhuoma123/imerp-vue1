@@ -11,8 +11,7 @@
                         v-model="dataForm.warehouseId"
                         :mapModel.sync="dataForm"
                         mapKeyVal="warehouseName:warehouseId"
-                        dataType="biz.warehouse"
-                        @change="changeCust">
+                        dataType="biz.warehouse">
                 </im-selector>
             </el-form-item>
             <el-form-item prop="name" :label="data.form.input.name">
@@ -61,23 +60,6 @@ export default {
     }
   },
   methods: {
-    init () {
-      this.visible = true
-      this.$nextTick(() => {
-        this.$refs['dataForm'].resetFields()
-        if (this.dataForm.id) {
-          this.dataForm.id = undefined
-        }
-        this.$refs['dataForm'].clearValidate()
-      })
-    },
-    update (row) {
-      this.visible = true
-      this.$nextTick(() => {
-        this.dataForm = Object.assign({}, row)
-        this.$refs['dataForm'].clearValidate()
-      })
-    },
     // 表单提交
     dataFormSubmitHandle () {
       let th = this

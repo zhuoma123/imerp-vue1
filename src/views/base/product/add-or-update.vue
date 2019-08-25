@@ -20,7 +20,7 @@
                         :mapModel.sync="dataForm"
                         mapKeyVal="cName:categoryId"
                         dataType="biz.pcategory"
-                        @change="changeCust" style="width: 178px">
+                        style="width: 178px">
                 </im-selector>
             </el-form-item>
             <el-form-item prop="vehicleId" :label="data.form.input.vehicleId">
@@ -30,7 +30,7 @@
                         :mapModel.sync="dataForm"
                         mapKeyVal="vName:vehicleId"
                         dataType="biz.pvehicle"
-                        @change="changeCust" style="width: 178px">
+                        style="width: 178px">
                 </im-selector>
             </el-form-item>
             <el-form-item prop="brandId" :label="data.form.input.brandId">
@@ -39,8 +39,7 @@
                         v-model="dataForm.brandId"
                         :mapModel.sync="dataForm"
                         mapKeyVal="bName:brandId"
-                        dataType="biz.pbrand"
-                        @change="changeCust" style="width: 178px">
+                        dataType="biz.pbrand" style="width: 178px">
                 </im-selector>
             </el-form-item>
             <el-form-item prop="madeinId" :label="data.form.input.madeinId">
@@ -50,7 +49,7 @@
                         :mapModel.sync="dataForm"
                         mapKeyVal="mName:madeinId"
                         dataType="biz.pmadein"
-                        @change="changeCust" style="width: 178px">
+                        style="width: 178px">
                 </im-selector>
             </el-form-item>
             <el-form-item prop="barCode" :label="data.form.input.barCode">
@@ -81,7 +80,7 @@
                         :mapModel.sync="dataForm"
                         mapKeyVal="dName:defaultVendorId"
                         dataType="biz.customer"
-                        @change="changeCust" style="width: 178px">
+                        style="width: 178px">
                 </im-selector>
             </el-form-item>
             <el-form-item prop="pinyinCode" :label="data.form.input.status">
@@ -158,23 +157,6 @@ export default {
     }
   },
   methods: {
-    init () {
-      this.visible = true
-      this.$nextTick(() => {
-        this.$refs['dataForm'].resetFields()
-        if (this.dataForm.id) {
-          this.dataForm.id = undefined
-        }
-        this.$refs['dataForm'].clearValidate()
-      })
-    },
-    update (row) {
-      this.visible = true
-      this.$nextTick(() => {
-        this.dataForm = Object.assign({}, row)
-        this.$refs['dataForm'].clearValidate()
-      })
-    },
     // 表单提交
     dataFormSubmitHandle () {
       let th = this

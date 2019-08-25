@@ -11,7 +11,7 @@
                     :mapModel.sync="dataForm"
                     mapKeyVal="custName:custId"
                     dataType="biz.customer"
-                    @change="changeCust" style="width: 178px">
+                    style="width: 178px">
                 </im-selector>
             </el-form-item>
             <el-form-item prop="name" :label="data.form.input.name">

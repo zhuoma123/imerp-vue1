@@ -130,29 +130,6 @@ export default {
       dataFormOp: {
         username: 'like'
       },
-      rowHandler: {
-        width: '180px',
-        custom: [
-          {
-            text: this.$t('views.public.update'),
-            type: 'primary',
-            size: 'mini',
-            emit: 'user-update',
-            show: (index, row) => {
-              return this.$hasPermission('sys:user:update')
-            }
-          },
-          {
-            text: this.$t('views.public.delete'),
-            type: 'danger',
-            size: 'mini',
-            emit: 'user-delete',
-            show: (index, row) => {
-              return this.$hasPermission('sys:user:delete')
-            }
-          }
-        ]
-      },
       toolbar: {
         id: 'full_edit_1',
         refresh: true,
@@ -209,11 +186,6 @@ export default {
           sortable: true,
           align: 'center',
           width: '120px'
-        }, {
-          title: '公司',
-          field: 'companyId',
-          sortable: true,
-          align: 'center'
         },
         {
           title: '备注',

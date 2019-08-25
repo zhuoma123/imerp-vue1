@@ -80,8 +80,7 @@
         "field": "updateDate",
         "sortable": true,
         "align": "center",
-        "width": "110px",
-        formatter: ['toDateString', 'yyyy-MM-dd']
+        "width": "110px"
       }
     ],
     "input": {

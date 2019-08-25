@@ -295,7 +295,7 @@ export default {
         setting: {
           storage: true
         }
-      },
+      }
     }
   },
   components: {

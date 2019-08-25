@@ -12,7 +12,7 @@
                         :mapModel.sync="dataForm"
                         mapKeyVal="productName:productId"
                         dataType="biz.product"
-                        @change="changeCust" style="width: 300px">
+                        style="width: 300px">
                 </im-selector>
             </el-form-item>
             <el-form-item prop="salePrice" :label="data.form.input.salePrice">
@@ -53,27 +53,15 @@ export default {
         salePrice: undefined,
         costPrice: undefined,
         remark: undefined
+      },
+      rules: {
+        productId: [{
+          required: true, message: '产品名称不可缺少'
+        }]
       }
     }
   },
   methods: {
-    init () {
-      this.visible = true
-      this.$nextTick(() => {
-        this.$refs['dataForm'].resetFields()
-        if (this.dataForm.id) {
-          this.dataForm.id = undefined
-        }
-        this.$refs['dataForm'].clearValidate()
-      })
-    },
-    update (row) {
-      this.visible = true
-      this.$nextTick(() => {
-        this.dataForm = Object.assign({}, row)
-        this.$refs['dataForm'].clearValidate()
-      })
-    },
     // 表单提交
     dataFormSubmitHandle () {
       let th = this

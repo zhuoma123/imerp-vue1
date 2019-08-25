@@ -1,12 +1,13 @@
 <template>
     <div>
-        <el-dialog :visible.sync="visible" :title="!dataForm.id ? $t('views.public.add') : $t('views.public.update')"
+        <el-dialog :visible.sync="visible" :title="isNew ? '新增' : '修改'"
                    :close-on-click-modal="false" :close-on-press-escape="false" width="55%">
             <el-form :model="dataForm" :rules="rules" ref="dataForm"
-                     label-width="110px" :inline="true" style="width: 100%">
-                <el-form-item prop="code" :label="data.form.input.code" v-show="false" >
-                    <el-input v-model="dataForm.code" :placeholder="data.form.input.code"/>
-                </el-form-item>
+                     label-width="110px" :inline="true" style="width: 100%; margin: 20px" labelSuffix="："
+                     size="mini" >
+                <!--dataForm must be showed all-->
+                <el-form-item prop="id" v-show="false" />
+                <el-form-item prop="code" v-show="false" />
                 <el-form-item prop="name" :label="data.form.input.name" @click.native="showPid">
                     <el-input v-model="dataForm.name" :placeholder="data.form.input.name"/>
                 </el-form-item>
@@ -34,6 +35,20 @@
                 <el-form-item prop="remark" :label="data.form.input.remark">
                     <el-input v-model="dataForm.remark" :placeholder="data.form.input.remark"/>
                 </el-form-item>
+                <el-form-item prop="startDateActive" :label="data.form.input.startDateActive">
+                    <el-date-picker
+                            v-model="dataForm.startDateActive"
+                            type="date"
+                            :placeholder="data.form.input.startDateActive" style="width: 178px">
+                    </el-date-picker>
+                </el-form-item>
+                <el-form-item prop="endDateActive" :label="data.form.input.endDateActive">
+                    <el-date-picker
+                            v-model="dataForm.endDateActive"
+                            type="date"
+                            :placeholder="data.form.input.endDateActive" style="width: 178px">
+                    </el-date-picker>
+                </el-form-item>
                 <el-form-item prop="year" :label="data.form.input.year">
                     <el-input v-model="dataForm.year" :placeholder="data.form.input.year"/>
                 </el-form-item>
@@ -43,28 +58,14 @@
                 <el-form-item prop="day" :label="data.form.input.day">
                     <el-input v-model="dataForm.day" :placeholder="data.form.input.day"/>
                 </el-form-item>
-                <el-form-item prop="startDateActive" :label="data.form.input.startDateActive">
-                    <el-date-picker
-                            v-model="dataForm.startDateActive"
-                            type="date"
-                            :placeholder="data.form.input.startDateActive">
-                    </el-date-picker>
-                </el-form-item>
-                <el-form-item prop="endDateActive" :label="data.form.input.endDateActive">
-                    <el-date-picker
-                            v-model="dataForm.endDateActive"
-                            type="date"
-                            :placeholder="data.form.input.endDateActive">
-                    </el-date-picker>
-                </el-form-item>
                 <el-form-item prop="yearFlag" :label="data.form.input.yearFlag">
-                    <el-radio-group v-model="dataForm.yearFlag" style="width: 220px">
+                    <el-radio-group v-model="dataForm.yearFlag" style="width: 178x">
                         <el-radio :label='1'>是</el-radio>
                         <el-radio :label='0'>否</el-radio>
                     </el-radio-group>
                 </el-form-item>
                 <el-form-item prop="monthFlag" :label="data.form.input.monthFlag">
-                    <el-radio-group v-model="dataForm.monthFlag" style="width: 220px">
+                    <el-radio-group v-model="dataForm.monthFlag" style="width: 178px">
                         <el-radio :label='1'>是</el-radio>
                         <el-radio :label='0'>否</el-radio>
                     </el-radio-group>
@@ -84,7 +85,7 @@
             </el-form>
             <template slot="footer">
                 <el-button @click="visible = false">{{ $t('views.public.cancel') }}</el-button>
-                <el-button type="primary" @click="dataFormSubmitHandle()">{{ $t('views.public.confirm') }}</el-button>
+                <el-button type="primary" @click="dataFormSubmit">{{ $t('views.public.confirm') }}</el-button>
             </template>
         </el-dialog>
         <el-dialog title="菜单选择" :visible.sync="menuFormVisible" width="388px">
@@ -114,10 +115,18 @@
 
 <script>
 import data from './data'
+import mixinViewModule from '@/mixins/view-module'
 
 export default {
+  mixins: [mixinViewModule],
   data () {
     return {
+      mixinViewModuleOptions: {
+        getDataListURL: '/base/billnum/list',
+        updateURL: '/base/billnum/save',
+        getDataListIsPage: false,
+        activatedIsNeed: false
+      },
       filterText: '',
       menuFormVisible: false,
       menuList: [],
@@ -160,48 +169,6 @@ export default {
     }
   },
   methods: {
-    init () {
-      this.visible = true
-      this.$nextTick(() => {
-        this.$refs['dataForm'].resetFields()
-        if (this.dataForm.id) {
-          this.dataForm.id = undefined
-        }
-        this.$refs['dataForm'].clearValidate()
-      })
-    },
-    update (row) {
-      this.visible = true
-      this.$nextTick(() => {
-        this.dataForm = Object.assign({}, row)
-        this.$refs['dataForm'].clearValidate()
-      })
-    },
-    // 表单提交
-    dataFormSubmitHandle () {
-      let th = this
-      this.$refs['dataForm'].validate(valid => {
-        if (!valid) {
-          return false
-        }
-        th.$axios({
-          url: '/base/billnum/save',
-          method: 'post',
-          data: th.dataForm
-        }).then(res => {
-          this.$message({
-            message: this.$t('views.public.success'),
-            type: 'success',
-            duration: 500,
-            onClose: () => {
-              this.visible = false
-              this.$emit('refreshDataList')
-            }
-          })
-        }).catch(() => {
-        })
-      })
-    },
     // TODO
     showPid () {
       this.menuFormVisible = true

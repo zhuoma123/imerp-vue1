@@ -1,9 +1,11 @@
 <template>
-    <el-dialog :visible.sync="visible" :title="!dataForm.id ? $t('views.public.add') : $t('views.public.update')"
-               :close-on-click-modal="false" :close-on-press-escape="false">
+    <el-dialog :visible.sync="visible" :title="isNew ? $t('views.public.add') : $t('views.public.update')"
+               :close-on-click-modal="false" :close-on-press-escape="false" width="500px">
         <el-form :model="dataForm" :rules="rules" ref="dataForm"
-                 label-width="120px">
-            <el-form-item prop="warehouseId" :label="data.form.input.warehouse" style="width: 490px">
+                 label-width="120px" labelSuffix="："
+                 size="mini">
+            <el-form-item prop="id" v-show="false" />
+            <el-form-item prop="warehouseId" :label="data.form.input.warehouse" style="width: 410px">
                 <im-selector
                         placeholder="请选择仓库"
                         v-model="dataForm.warehouseId"
@@ -13,11 +15,11 @@
                         @change="changeCust">
                 </im-selector>
             </el-form-item>
-            <el-form-item prop="name" :label="data.form.input.name" style="width: 217px">
-                <el-input v-model="dataForm.name" :placeholder="data.form.input.name"/>
+            <el-form-item prop="name" :label="data.form.input.name">
+                <el-input v-model="dataForm.name" :placeholder="data.form.input.name" style="width: 200px"/>
             </el-form-item>
-            <el-form-item prop="remark" :label="data.form.input.remark" style="width: 218px">
-                <el-input v-model="dataForm.remark" :placeholder="data.form.input.remark"/>
+            <el-form-item prop="remark" :label="data.form.input.remark" >
+                <el-input v-model="dataForm.remark" :placeholder="data.form.input.remark" style="width: 200px"/>
             </el-form-item>
         </el-form>
         <template slot="footer">
@@ -29,10 +31,17 @@
 
 <script>
 import data from './data'
-
+import mixinViewModule from '@/mixins/view-module'
 export default {
+  mixins: [mixinViewModule],
   data () {
     return {
+      mixinViewModuleOptions: {
+        getDataListURL: '/base/warehouseslot/list',
+        updateURL: '/base/warehouseslot/save',
+        getDataListIsPage: false,
+        activatedIsNeed: false
+      },
       data: data,
       visible: false,
       dataForm: {

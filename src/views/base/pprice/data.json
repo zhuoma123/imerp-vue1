@@ -1,39 +1,5 @@
 {
   "form": {
-    "columns": [
-      {
-        "title": "产品",
-        "key": "productName",
-        "sortable": true,
-        "align": "center"
-      },{
-        "title": "默认销售价",
-        "key": "salePrice",
-        "sortable": true,
-        "align": "center"
-      },{
-        "title": "当前成本价",
-        "key": "costPrice",
-        "sortable": true,
-        "align": "center"
-      },{
-        "title": "备注",
-        "key": "remark",
-        "sortable": true,
-        "align": "center"
-      },{
-        "title": "修改人",
-        "key": "updateBy",
-        "sortable": true,
-        "align": "center"
-      },
-      {
-        "title": "修改日期",
-        "key": "updateDate",
-        "sortable": true,
-        "align": "center"
-      }
-    ],
     "input": {
       "productId": "产品",
       "salePrice": "默认销售价",

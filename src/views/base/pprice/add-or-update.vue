@@ -1,26 +1,28 @@
 <template>
-    <el-dialog :visible.sync="visible" :title="!dataForm.id ? $t('views.public.add') : $t('views.public.update')"
-               :close-on-click-modal="false" :close-on-press-escape="false">
+    <el-dialog :visible.sync="visible" :title="isNew ? $t('views.public.add') : $t('views.public.update')"
+               :close-on-click-modal="false" :close-on-press-escape="false" width="450px">
         <el-form :model="dataForm" :rules="rules" ref="dataForm"
-                 label-width="120px">
-            <el-form-item prop="productId" :label="data.form.input.productId" style="width: 520px">
+                 label-width="120px" labelSuffix="："
+                 size="mini">
+            <el-form-item prop="id" v-show="false" />
+            <el-form-item prop="productId" :label="data.form.input.productId">
                 <im-selector
                         placeholder="请选择产品"
                         v-model="dataForm.productId"
                         :mapModel.sync="dataForm"
                         mapKeyVal="productName:productId"
                         dataType="biz.product"
-                        @change="changeCust">
+                        @change="changeCust" style="width: 300px">
                 </im-selector>
             </el-form-item>
             <el-form-item prop="salePrice" :label="data.form.input.salePrice">
-                <el-input v-model="dataForm.salePrice" :placeholder="data.form.input.salePrice"/>
+                <el-input v-model="dataForm.salePrice" :placeholder="data.form.input.salePrice" style="width: 193px"/>
             </el-form-item>
             <el-form-item prop="costPrice" :label="data.form.input.costPrice">
-                <el-input v-model="dataForm.costPrice" :placeholder="data.form.input.costPrice"/>
+                <el-input v-model="dataForm.costPrice" :placeholder="data.form.input.costPrice" style="width: 193px"/>
             </el-form-item>
             <el-form-item prop="remark" :label="data.form.input.remark">
-                <el-input v-model="dataForm.remark" :placeholder="data.form.input.remark"/>
+                <el-input v-model="dataForm.remark" :placeholder="data.form.input.remark" style="width: 193px"/>
             </el-form-item>
         </el-form>
         <template slot="footer">
@@ -32,10 +34,17 @@
 
 <script>
 import data from './data'
-
+import mixinViewModule from '@/mixins/view-module'
 export default {
+  mixins: [mixinViewModule],
   data () {
     return {
+      mixinViewModuleOptions: {
+        getDataListURL: '/base/productprice/list',
+        updateURL: '/base/productprice/save',
+        getDataListIsPage: false,
+        activatedIsNeed: false
+      },
       data: data,
       visible: false,
       dataForm: {

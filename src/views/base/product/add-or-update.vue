@@ -1,7 +1,9 @@
 <template>
-    <el-dialog :visible.sync="visible" :title="!dataForm.id ? $t('views.public.add') : $t('views.public.update')"
+    <el-dialog :visible.sync="visible" :title="isNew ? $t('views.public.add') : $t('views.public.update')"
                :close-on-click-modal="false" :close-on-press-escape="false" width="850px">
-        <el-form :model="dataForm" :rules="rules" ref="dataForm" label-width="120px" :inline="true">
+        <el-form :model="dataForm" :rules="rules" ref="dataForm" label-width="120px" :inline="true" labelSuffix="："
+                 size="mini">
+            <el-form-item prop="id" v-show="false" />
             <el-form-item prop="name" :label="data.form.input.name">
                 <el-input v-model="dataForm.name" :placeholder="data.form.input.name"/>
             </el-form-item>
@@ -18,7 +20,7 @@
                         :mapModel.sync="dataForm"
                         mapKeyVal="cName:categoryId"
                         dataType="biz.pcategory"
-                        @change="changeCust">
+                        @change="changeCust" style="width: 178px">
                 </im-selector>
             </el-form-item>
             <el-form-item prop="vehicleId" :label="data.form.input.vehicleId">
@@ -28,7 +30,7 @@
                         :mapModel.sync="dataForm"
                         mapKeyVal="vName:vehicleId"
                         dataType="biz.pvehicle"
-                        @change="changeCust">
+                        @change="changeCust" style="width: 178px">
                 </im-selector>
             </el-form-item>
             <el-form-item prop="brandId" :label="data.form.input.brandId">
@@ -38,7 +40,7 @@
                         :mapModel.sync="dataForm"
                         mapKeyVal="bName:brandId"
                         dataType="biz.pbrand"
-                        @change="changeCust">
+                        @change="changeCust" style="width: 178px">
                 </im-selector>
             </el-form-item>
             <el-form-item prop="madeinId" :label="data.form.input.madeinId">
@@ -48,7 +50,7 @@
                         :mapModel.sync="dataForm"
                         mapKeyVal="mName:madeinId"
                         dataType="biz.pmadein"
-                        @change="changeCust">
+                        @change="changeCust" style="width: 178px">
                 </im-selector>
             </el-form-item>
             <el-form-item prop="barCode" :label="data.form.input.barCode">
@@ -79,7 +81,7 @@
                         :mapModel.sync="dataForm"
                         mapKeyVal="dName:defaultVendorId"
                         dataType="biz.customer"
-                        @change="changeCust">
+                        @change="changeCust" style="width: 178px">
                 </im-selector>
             </el-form-item>
             <el-form-item prop="pinyinCode" :label="data.form.input.status">
@@ -110,10 +112,18 @@
 
 <script>
 import data from './data'
+import mixinViewModule from '@/mixins/view-module'
 
 export default {
+  mixins: [mixinViewModule],
   data () {
     return {
+      mixinViewModuleOptions: {
+        getDataListURL: '/base/product/list',
+        updateURL: '/base/product/save',
+        getDataListIsPage: false,
+        activatedIsNeed: false
+      },
       data: data,
       visible: false,
       dataForm: {

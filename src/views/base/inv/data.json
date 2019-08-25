@@ -3,98 +3,85 @@
     "columns": [
       {
         "title": "需求日期",
-        "key": "requirementDate",
+        "field": "requirementDate",
         "sortable": true,
         "align": "center",
         "width": "110px"
       },
       {
         "title": "公司编号",
-        "key": "companyId",
+        "field": "companyId",
         "sortable": true,
         "align": "center",
         "width": "110px"
       },
       {
         "title": "产品Id",
-        "key": "productId",
+        "field": "productId",
         "sortable": true,
         "align": "center",
         "width": "110px"
       },
       {
         "title": "仓库Id",
-        "key": "warehouseId",
+        "field": "warehouseId",
         "sortable": true,
         "align": "center",
         "width": "110px"
       },
       {
         "title": "保留类型",
-        "key": "tranType",
+        "field": "tranType",
         "sortable": true,
         "align": "center",
         "width": "110px"
       },
       {
         "title": "需求来源单头Id",
-        "key": "demandSourceHeaderId",
+        "field": "demandSourceHeaderId",
         "sortable": true,
         "align": "center",
         "width": "140px"
       },
       {
         "title": "需求来源行Id",
-        "key": "demandSourceLineId",
+        "field": "demandSourceLineId",
         "sortable": true,
         "align": "center",
         "width": "160px"
       },{
         "title": "保留量计量单位",
-        "key": "reservationUomCode",
+        "field": "reservationUomCode",
         "sortable": true,
         "align": "center",
         "width": "140px"
       },{
         "title": "保留数量",
-        "key": "reservationQuantity",
+        "field": "reservationQuantity",
         "sortable": true,
         "align": "center",
         "width": "110px"
       },
       {
         "title": "备注",
-        "key": "remark",
+        "field": "remark",
         "sortable": true,
         "align": "center"
       },
       {
-        "title": "创建人",
-        "key": "createBy",
-        "sortable": true,
-        "align": "center",
-        "width": "110px"
-      },
-      {
-        "title": "创建日期",
-        "key": "createDate",
-        "sortable": true,
-        "align": "center",
-        "width": "110px"
-      },
-      {
         "title": "修改人",
-        "key": "updateBy",
+        "field": "updateBy",
         "sortable": true,
         "align": "center",
         "width": "110px"
       },
       {
         "title": "修改日期",
-        "key": "updateDate",
+        "field": "updateDate",
         "sortable": true,
         "align": "center",
-        "width": "110px"
+        "width": "110px",
+        formatter: ['toDateString', 'yyyy-MM-dd']
       }
     ],
     "input": {

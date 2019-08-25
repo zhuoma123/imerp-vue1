@@ -1,8 +1,10 @@
 <template>
   <div>
-    <el-dialog :visible.sync="visible" :title="!dataForm.id ? $t('views.public.add') : $t('views.public.update')"
+    <el-dialog :visible.sync="visible" :title="isNew ? $t('views.public.add') : $t('views.public.update')"
                :close-on-click-modal="false" :close-on-press-escape="false">
-      <el-form :model="dataForm" :rules="rules" :inline="true" ref="dataForm" label-width="105px">
+      <el-form :model="dataForm" :rules="rules" :inline="true" ref="dataForm" label-width="105px" labelSuffix="："
+               size="mini">
+        <el-form-item prop="id" v-show="false" />
         <el-form-item prop="pname" :label="data.data.input.pname" @click.native="showPid">
           <el-input v-model="dataForm.pname" :placeholder="data.data.input.pname"/>
         </el-form-item>
@@ -45,7 +47,7 @@
       </el-form>
       <template slot="footer">
         <el-button @click="visible = false">{{ $t('views.public.cancel') }}</el-button>
-        <el-button type="primary" @click="dataFormSubmitHandle()">{{ $t('views.public.confirm') }}</el-button>
+        <el-button type="primary" @click="dataFormSubmit">{{ $t('views.public.confirm') }}</el-button>
       </template>
     </el-dialog>
     <el-dialog title="菜单选择" :visible.sync="menuFormVisible" width="388px">
@@ -74,10 +76,18 @@
 </template>
 
 <script>
+import mixinViewModule from '@/mixins/view-module'
 import data from './data'
 export default {
+  mixins: [mixinViewModule],
   data () {
     return {
+      mixinViewModuleOptions: {
+        getDataListURL: '/base/tree/list',
+        updateURL: '/base/tree/save',
+        getDataListIsPage: false,
+        activatedIsNeed: false
+      },
       filterText: undefined,
       menuList: [],
       defaultProps: {
@@ -133,48 +143,6 @@ export default {
     }
   },
   methods: {
-    init () {
-      this.visible = true
-      this.$nextTick(() => {
-        this.$refs['dataForm'].resetFields()
-        if (this.dataForm.id) {
-          this.dataForm.id = undefined
-        }
-        this.$refs['dataForm'].clearValidate()
-      })
-    },
-    update (row) {
-      this.visible = true
-      this.$nextTick(() => {
-        this.dataForm = Object.assign({}, row)
-        this.$refs['dataForm'].clearValidate()
-      })
-    },
-    // 表单提交
-    dataFormSubmitHandle () {
-      let th = this
-      this.$refs['dataForm'].validate(valid => {
-        if (!valid) {
-          return false
-        }
-        th.$axios({
-          url: '/base/tree/save',
-          method: 'post',
-          data: th.dataForm
-        }).then(res => {
-          this.$message({
-            message: this.$t('views.public.success'),
-            type: 'success',
-            duration: 500,
-            onClose: () => {
-              this.visible = false
-              this.$emit('refreshDataList')
-            }
-          })
-        }).catch(() => {
-        })
-      })
-    },
     showPid () {
       this.menuFormVisible = true
       this.$nextTick(() => {

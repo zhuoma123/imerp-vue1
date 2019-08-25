@@ -101,7 +101,6 @@ export default {
     init (item) {
       this.isNew = !item
       if (item) { this.entityModel = Object.assign({}, item) }
-
       this.visible = true
     },
     // 获取数据列表
@@ -366,17 +365,17 @@ export default {
           data = [id]
         }
       }
-      if (data===undefined){
+      if (data === undefined) {
         return
       }
       for (let i = 0; i < this.dataListSelections.length; i++) {
-        const id=this.mixinViewModuleOptions.deleteIsBatchKey
-        let e=this.dataListSelections[i]
-        let childs=e.children
-        if (childs){
-          for(let i in childs){
-            let child=childs[i]
-            if (!data.includes(child[id])){
+        const id = this.mixinViewModuleOptions.deleteIsBatchKey
+        let e = this.dataListSelections[i]
+        let childs = e.children
+        if (childs) {
+          for (let i in childs) {
+            let child = childs[i]
+            if (!data.includes(child[id])) {
               this.$message.error('被包含的子项必须被全部删除')
               return
             }
@@ -493,65 +492,73 @@ export default {
     collapseChange () {
       setTimeout(this.computeHeight, 500)
     },
-    enableTlbBtn({columns,row}) {
-      if(row.status==='NEW'){
-        if(this.$refs.btnAdd)this.$refs.btnAdd.disabled=false;
-        if(this.$refs.btnEdit)this.$refs.btnEdit.disabled=false;
-        if(this.$refs.btnDelete)this.$refs.btnDelete.disabled=false;
-        if(this.$refs.btnSubmit)this.$refs.btnSubmit.disabled=false;
-        if(this.$refs.btnAutoPick)this.$refs.btnAutoPick.disabled=false;
-        if(this.$refs.btnPick)this.$refs.btnPick.disabled=false;
-      }else if (row.status==='SUBMIT'){
-        if(this.$refs.btnAdd)this.$refs.btnAdd.disabled=false;
-        if(this.$refs.btnEdit)this.$refs.btnEdit.disabled=true;
-        if(this.$refs.btnDelete)this.$refs.btnDelete.disabled=true;
-        if(this.$refs.btnSubmit)this.$refs.btnSubmit.disabled=true;
-        if(this.$refs.btnAutoPick)this.$refs.btnAutoPick.disabled=false;
-        if(this.$refs.btnPick)this.$refs.btnPick.disabled=false;
-      }else if (row.status==='SENDED'){
-        if(this.$refs.btnAdd)this.$refs.btnAdd.disabled=false;
-        if(this.$refs.btnEdit)this.$refs.btnEdit.disabled=true;
-        if(this.$refs.btnDelete)this.$refs.btnDelete.disabled=true;
-        if(this.$refs.btnSubmit)this.$refs.btnSubmit.disabled=true;
-        if(this.$refs.btnAutoPick)this.$refs.btnAutoPick.disabled=true;
-        if(this.$refs.btnPick)this.$refs.btnPick.disabled=true;
-      }else if (row.status==='PICKUP'){
-        if(this.$refs.btnAdd)this.$refs.btnAdd.disabled=false;
-        if(this.$refs.btnEdit)this.$refs.btnEdit.disabled=true;
-        if(this.$refs.btnDelete)this.$refs.btnDelete.disabled=true;
-        if(this.$refs.btnSubmit)this.$refs.btnSubmit.disabled=true;
-        if(this.$refs.btnAutoPick)this.$refs.btnAutoPick.disabled=true;
-        if(this.$refs.btnPick)this.$refs.btnPick.disabled=true;
-      }else if (row.status==='CANCEL'){
-        if(this.$refs.btnAdd)this.$refs.btnAdd.disabled=false;
-        if(this.$refs.btnEdit)this.$refs.btnEdit.disabled=true;
-        if(this.$refs.btnDelete)this.$refs.btnDelete.disabled=true;
-        if(this.$refs.btnSubmit)this.$refs.btnSubmit.disabled=true;
-        if(this.$refs.btnAutoPick)this.$refs.btnAutoPick.disabled=true;
-        if(this.$refs.btnPick)this.$refs.btnPick.disabled=true;
-      }else if (row.status==='COMPLETED'){
-        if(this.$refs.btnAdd)this.$refs.btnAdd.disabled=false;
-        if(this.$refs.btnEdit)this.$refs.btnEdit.disabled=true;
-        if(this.$refs.btnDelete)this.$refs.btnDelete.disabled=true;
-        if(this.$refs.btnSubmit)this.$refs.btnSubmit.disabled=true;
-        if(this.$refs.btnAutoPick)this.$refs.btnAutoPick.disabled=true;
-        if(this.$refs.btnPick)this.$refs.btnPick.disabled=true;
+    enableTlbBtn ({ columns, row }) {
+      if (row.status === 'NEW') {
+        if (this.$refs.btnAdd) this.$refs.btnAdd.disabled = false
+        if (this.$refs.btnEdit) this.$refs.btnEdit.disabled = false
+        if (this.$refs.btnDelete) this.$refs.btnDelete.disabled = false
+        if (this.$refs.btnSubmit) this.$refs.btnSubmit.disabled = false
+        if (this.$refs.btnAutoPick) this.$refs.btnAutoPick.disabled = false
+        if (this.$refs.btnPick) this.$refs.btnPick.disabled = false
+      } else if (row.status === 'SUBMIT') {
+        if (this.$refs.btnAdd) this.$refs.btnAdd.disabled = false
+        if (this.$refs.btnEdit) this.$refs.btnEdit.disabled = true
+        if (this.$refs.btnDelete) this.$refs.btnDelete.disabled = true
+        if (this.$refs.btnSubmit) this.$refs.btnSubmit.disabled = true
+        if (this.$refs.btnAutoPick) this.$refs.btnAutoPick.disabled = false
+        if (this.$refs.btnPick) this.$refs.btnPick.disabled = false
+      } else if (row.status === 'SENDED') {
+        if (this.$refs.btnAdd) this.$refs.btnAdd.disabled = false
+        if (this.$refs.btnEdit) this.$refs.btnEdit.disabled = true
+        if (this.$refs.btnDelete) this.$refs.btnDelete.disabled = true
+        if (this.$refs.btnSubmit) this.$refs.btnSubmit.disabled = true
+        if (this.$refs.btnAutoPick) this.$refs.btnAutoPick.disabled = true
+        if (this.$refs.btnPick) this.$refs.btnPick.disabled = true
+      } else if (row.status === 'PICKUP') {
+        if (this.$refs.btnAdd) this.$refs.btnAdd.disabled = false
+        if (this.$refs.btnEdit) this.$refs.btnEdit.disabled = true
+        if (this.$refs.btnDelete) this.$refs.btnDelete.disabled = true
+        if (this.$refs.btnSubmit) this.$refs.btnSubmit.disabled = true
+        if (this.$refs.btnAutoPick) this.$refs.btnAutoPick.disabled = true
+        if (this.$refs.btnPick) this.$refs.btnPick.disabled = true
+      } else if (row.status === 'CANCEL') {
+        if (this.$refs.btnAdd) this.$refs.btnAdd.disabled = false
+        if (this.$refs.btnEdit) this.$refs.btnEdit.disabled = true
+        if (this.$refs.btnDelete) this.$refs.btnDelete.disabled = true
+        if (this.$refs.btnSubmit) this.$refs.btnSubmit.disabled = true
+        if (this.$refs.btnAutoPick) this.$refs.btnAutoPick.disabled = true
+        if (this.$refs.btnPick) this.$refs.btnPick.disabled = true
+      } else if (row.status === 'COMPLETED') {
+        if (this.$refs.btnAdd) this.$refs.btnAdd.disabled = false
+        if (this.$refs.btnEdit) this.$refs.btnEdit.disabled = true
+        if (this.$refs.btnDelete) this.$refs.btnDelete.disabled = true
+        if (this.$refs.btnSubmit) this.$refs.btnSubmit.disabled = true
+        if (this.$refs.btnAutoPick) this.$refs.btnAutoPick.disabled = true
+        if (this.$refs.btnPick) this.$refs.btnPick.disabled = true
       }
     }
   },
   watch: {
     visible: function (newName, oldName) {
       if (newName) {
-        debugger
         this.$nextTick(() => {
-          this.dataList = []
-          this.$refs.sGrid.loadData(this.dataList)
-          if (this.isNew) {
-            this.$refs.dataForm.resetFields()
-            this.$refs.sGrid.updateFooter()
+          debugger
+          if (this.$refs.sGrid) {
+            this.dataList = []
+            this.$refs.sGrid.loadData(this.dataList)
+            if (this.isNew) {
+              this.$refs.dataForm.resetFields()
+              this.$refs.sGrid.updateFooter()
+            } else {
+              this.dataForm = this.entityModel
+              this.search(this.entityModel)
+            }
           } else {
-            this.dataForm = this.entityModel
-            this.search(this.entityModel)
+            if (this.isNew) {
+              this.$refs.dataForm.resetFields()
+            } else {
+              this.dataForm = this.entityModel
+            }
           }
         })
       }

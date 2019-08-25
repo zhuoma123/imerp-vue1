@@ -18,7 +18,7 @@
       </el-form-item>
     </el-form>
     <el-table
-    :data="dataList"
+    :data="dataList.filter(row => !searchname || row.name.toLowerCase().includes(searchname.toLowerCase()))"
     style="width: 100%;margin-bottom: 20px;"
     row-key="menuId"
     height="500"
@@ -28,14 +28,40 @@
       <el-table-column prop="parentName" label="上级菜单" width="100" align="center"></el-table-column>
       <el-table-column prop="url" label="菜单URL" align="center"></el-table-column>
       <el-table-column prop="perms" label="授权" width="200" align="center"></el-table-column>
-      <el-table-column prop="type" label="类型" align="center"></el-table-column>
-      <el-table-column prop="icon" label="菜单图标" align="center"></el-table-column>
+      <el-table-column prop="type" label="类型" align="center">
+        <template slot-scope="scope">
+          <el-tag
+          :type="scope.row.type === 2 ? 'primary' : 'success'"
+          disable-transitions>
+          <template v-if="scope.row.type === 0">
+            导航栏
+          </template>
+          <template v-else-if="scope.row.type === 1">
+            菜单
+          </template>
+          <template v-else>
+            按键
+          </template>
+          </el-tag>
+      </template>
+      </el-table-column>
+      <el-table-column prop="icon" label="菜单图标" align="center" icon="icon">
+        <template slot-scope="scope">
+          <i :class="'fa fa-' + scope.row.icon"/>
+        </template>
+      </el-table-column>
       <el-table-column prop="orderNum" label="排序" align="center"></el-table-column>
-      <el-table-column label="操作" align="center">
+      <el-table-column align="left" width="150">
+      <template slot="header" slot-scope="scope">
+        <el-input
+          v-model="searchname"
+          size="mini"
+          placeholder="输入关键字搜索"/>
+      </template>
       <template slot-scope="scope">
         <el-button
           size="mini"
-          @click="addOrUpdateData(scope.row)">编辑</el-button><br>
+          @click="addOrUpdateData(scope.row)">编辑</el-button>
         <el-button
           size="mini"
           type="danger"
@@ -63,6 +89,7 @@ export default {
         deleteIsBatch: true,
         exportURL: "/sys/menu/export"
       },
+      searchname: '',
       dataForm: {
         name: ""
       },
@@ -180,6 +207,10 @@ export default {
             color: #e50021;
         }
     }
+  .el-table-column .cell {
+  white-space: pre-line;
+}
     
 }
+
 </style>

@@ -331,7 +331,12 @@ export default {
 }
 
 .vxe-table.fixed--left.size--mini .vxe-body--column, .vxe-table.fixed--right.size--mini .vxe-body--column, .vxe-table.vxe-editable.size--mini .vxe-body--column {
-  height: 30px !important;
+  height: 28px !important;
+}
+
+.vxe-table .vxe-body--column.col--selected:not(.col--checked) {
+    -webkit-box-shadow: inset 0 0 0 1px #409eff !important;
+    box-shadow: inset 0 0 0 1px #409eff !important;
 }
 
 /*弹出框*/
@@ -356,6 +361,7 @@ export default {
       z-index: 1;
       overflow: hidden;
       overflow-y: auto;
+      padding: 10px;
     }
     .el-dialog__footer{
       position: absolute;

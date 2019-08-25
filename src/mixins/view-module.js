@@ -29,6 +29,10 @@ export default {
       fullscreenLoading: false,   // 全页面遮罩
       dataListSelections: [],     // 数据列表，多选项
       addOrUpdateVisible: false,   // 新增／更新，弹窗visible状态
+      // 表单属性
+      formprops: {
+        labelSuffix:'：'
+      },
       // 表格属性
       selectionRow: false,
       sortConfig: {
@@ -60,6 +64,16 @@ export default {
           list: 'list',
           result: 'list',
           total: 'totalCount'
+        }
+      },
+      toolbar: {
+        id: 'vxe_toolbar_1',
+        refresh: true,
+        resizable: {
+          storage: true
+        },
+        setting: {
+          storage: true
         }
       },
       //时间联动框
@@ -103,6 +117,9 @@ export default {
       if (item) { this.entityModel = Object.assign({}, item) }
       this.visible = true
     },
+    initSelData () {
+
+    },
     // 获取数据列表
     async getDataList (vxeDataForm) {
       this.dataListLoading = true
@@ -123,11 +140,15 @@ export default {
       ).then(res => {
         this.dataList = this.mixinViewModuleOptions.getDataListIsPage ? res.list : res
         this.total = this.mixinViewModuleOptions.getDataListIsPage ? res.totalCount : 0
+        this.getDataListCB(this, res)
       }).catch(() => {
         this.dataList = []
         this.total = 0
       })
       this.dataListLoading = false
+    },
+    getDataListCB(self, res) {
+
     },
     vxeTabQuery ({ page, sort, filters }, dataForm) {
       // 处理排序条件
@@ -165,42 +186,53 @@ export default {
         } else if (this.$refs.pGrid) {
           this.$refs.pGrid.updateFooter()
         }
+        this.vxeQueryCB(this)
       })
+    },
+    vxeQueryCB (self) {
+
     },
     // 表单提交
     dataFormSubmit () {
-      this.$refs.dataForm.validate(valid => {
-        if (valid) {
-          this.btnDisable = true
-          if (this.$refs.sGrid) {
-            this.dataForm.lineList = this.getItemListDate(this.$refs.sGrid)
+      if(this.$refs.dataForm) {
+        this.$refs.dataForm.validate(valid => {
+          if (valid) {
+            this.doSubmit()
           }
-          if (this.isNew) {
-            this.dataForm.__state = 'NEW'
-          } else {
-            this.dataForm.__state = 'MODIFIED'
-          }
-          this.fullscreenLoading = true
-          this.$axios
-            .post(this.mixinViewModuleOptions.updateURL, this.dataForm)
-            .then(() => {
-              this.fullscreenLoading = false
-              this.visible = false
-              this.$emit('refreshDataList')
-              this.$message({
-                message: '操作成功',
-                type: 'success',
-                duration: 1000,
-                onClose: () => {
-                  this.btnDisable = false
-                }
-              })
-            }).catch(() => {
+        })
+      } else {
+        this.doSubmit()
+      }
+    },
+    doSubmit() {
+      this.btnDisable = true
+      if (this.$refs.sGrid) {
+        this.dataForm.lineList = this.getItemListDate(this.$refs.sGrid)
+      }
+      if (this.isNew) {
+        this.dataForm.__state = 'NEW'
+      } else {
+        this.dataForm.__state = 'MODIFIED'
+      }
+      this.fullscreenLoading = true
+      this.$axios
+        .post(this.mixinViewModuleOptions.updateURL, this.dataForm)
+        .then(() => {
+          this.fullscreenLoading = false
+          this.visible = false
+          this.$emit('refreshDataList')
+          this.$message({
+            message: '操作成功',
+            type: 'success',
+            duration: 1000,
+            onClose: () => {
               this.btnDisable = false
-              this.fullscreenLoading = false
-            })
-        }
-      })
+            }
+          })
+        }).catch(() => {
+          this.btnDisable = false
+          this.fullscreenLoading = false
+        })
     },
     // 多选
     dataListSelectionChangeHandle (val) {
@@ -482,11 +514,13 @@ export default {
     computeHeight () {
       let self = this
       if (self.$refs.pGrid) {
-        let toolbar = `${document.getElementsByClassName('vxe-toolbar')[0].clientHeight}`
-        let tableHeader = `${document.getElementsByClassName('vxe-table--header-wrapper')[0].clientHeight}`
-        let bodyClientHeight = `${document.getElementsByClassName('d2-container-full__body')[0].clientHeight}`
+        let toolbar = document.getElementsByClassName('vxe-toolbar')[0] ? `${document.getElementsByClassName('vxe-toolbar')[0].clientHeight}` : 0
+        let tableHeader = document.getElementsByClassName('vxe-table--header-wrapper')[0] ? `${document.getElementsByClassName('vxe-table--header-wrapper')[0].clientHeight}` : 0
+        let bodyClientHeight = document.getElementsByClassName('d2-container-full__body')[0] ? `${document.getElementsByClassName('d2-container-full__body')[0].clientHeight}` : 0
         let tableBody = self.$refs.pGrid.$el.getElementsByClassName('vxe-table--body-wrapper')[0]
-        tableBody.style.height = bodyClientHeight - toolbar - tableHeader + 'px'
+        let tableFoot = self.$refs.pGrid.showFooter ? 30 : 0
+        if(tableBody)
+          tableBody.style.height = Number(bodyClientHeight) - Number(toolbar) - Number(tableHeader) - tableFoot + 'px'
       }
     },
     collapseChange () {
@@ -542,7 +576,6 @@ export default {
     visible: function (newName, oldName) {
       if (newName) {
         this.$nextTick(() => {
-          debugger
           if (this.$refs.sGrid) {
             this.dataList = []
             this.$refs.sGrid.loadData(this.dataList)
@@ -551,9 +584,10 @@ export default {
               this.$refs.sGrid.updateFooter()
             } else {
               this.dataForm = this.entityModel
+              this.initSelData()
               this.search(this.entityModel)
             }
-          } else {
+          }else{
             if (this.isNew) {
               this.$refs.dataForm.resetFields()
             } else {

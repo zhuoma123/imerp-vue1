@@ -1,33 +1,25 @@
 <template>
   <d2-container class="mod-sys__user">
-    <el-form slot="header" :inline="true" size="mini" :model="dataForm" @keyup.enter.native="search()">
+    <el-form :inline="true" size="mini" :model="dataForm" @keyup.enter.native="getDataList()">
       <el-form-item>
         <el-input
-          v-model="dataForm.name"
-          :data-operate="dataFormOp.name"
-          :placeholder="$t('views.public.dept.name')"
+          v-model="dataForm.roleName"
+          :data-operate="dataFormOp.roleName"
+          placeholder="角色名称"
           clearable
         />
       </el-form-item>
       
       <el-form-item>
-        <el-button @click="search()">{{ $t('views.public.query') }}</el-button>
+        <el-button @click="getDataList()">{{ $t('views.public.query') }}</el-button>
       </el-form-item>
       <el-form-item>
         <el-button
-          v-if="$hasPermission('sys:dept:save')"
+          v-if="$hasPermission('sys:role:save')"
           type="primary"
            icon="el-icon-edit"
           @click="addOrUpdateData()"
         >{{ $t('views.public.add') }}</el-button>
-      </el-form-item>
-      <el-form-item>
-        <el-button
-          v-if="$hasPermission('sys:dept:delete')"
-          type="danger"
-           icon="el-icon-delete"
-          @click="deleteHandleSetter()"
-        >{{ $t('views.public.deleteBatch') }}</el-button>
       </el-form-item>
       <el-form-item>
         <el-button
@@ -37,46 +29,58 @@
         >{{ $t('views.public.export') }}</el-button>
       </el-form-item>
     </el-form>
-    <vxe-grid
-      border
-      resizable
-      highlight-hover-row
-      size="mini"
-      ref="pGrid"
-      :proxy-config="tableProxy"
-      :columns="tableColumn"
-      :tree-config="{ children: 'children', expandAll: true, indent: 8}"
-      :edit-config="{trigger: 'click', mode: 'row', showStatus: true}"
-      >
-    </vxe-grid>
+    <d2-crud
+      ref="d2Crud"
+      index-row                                                           
+      :columns="columns"
+      :options="options"
+      selectionRow
+      :row-handle="rowHandler"
+      :loading="dataListLoading"
+      :data="dataList"
+      @selection-change="dataListSelectionChangeHandle"
+      @sort-change="dataListSortChangeHandle"
+      @user-update="addOrUpdateData"
+      @user-delete="deleteHandleSetter"
+    ></d2-crud>
+    <!-- 分页 -->
+    <el-pagination
+      slot="footer"
+      :current-page="page"
+      :page-sizes="[10, 20, 50, 100]"
+      :page-size="limit"
+      :total="total"
+      layout="total, sizes, prev, pager, next, jumper"
+      @size-change="pageSizeChangeHandle"
+      @current-change="pageCurrentChangeHandle"
+    ></el-pagination>
     <!-- 弹窗, 新增 / 修改 -->
-    <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="search" />
+    <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList" />
   </d2-container>
 </template>
 
 <script>
 import mixinViewModule from "@/mixins/view-module";
-import AddOrUpdate from "./dept-add-or-update";
-import XEUtils from "xe-utils"
+import AddOrUpdate from "./role-add-or-update";
 export default {
   mixins: [mixinViewModule],
   data() {
     return {
       mixinViewModuleOptions: {
-        getDataListURL: "/sys/dept/list",
-        getDataListIsPage: false,
-        deleteURL: "/sys/dept/delete",
+        getDataListURL: "/sys/role/list",
+        getDataListIsPage: true,
+        deleteURL: "/sys/role/delete",
         deleteIsBatch: true,
-        deleteIsBatchKey: 'deptId',
-        exportURL: "/sys/dept/export"
+        deleteIsBatchKey: 'roleId',
+        exportURL: "/sys/role/export"
       },  
       //增改
       addOrUpdateVisible: false,
       dataForm: {
-        name: ""
+        roleName: ""
       },
       dataFormOp: {
-        name: "like"
+        roleName: "like"
       },
       rowHandler: {
         custom: [
@@ -86,7 +90,7 @@ export default {
             size: 'mini',
             emit: 'user-update',
             show: (index,row) => {
-              return this.$hasPermission("sys:dept:update");
+              return this.$hasPermission("sys:role:update");
             }
           },
           {
@@ -95,34 +99,31 @@ export default {
             size: 'mini',
             emit: 'user-delete',
             show: ( index) => {
-              return this.$hasPermission("sys:dept:delete");
+              return this.$hasPermission("sys:role:delete");
             }
           }
         ]
       },
-      tableColumn: [
-        { type: 'selection', title: '全选', width: 100, treeNode: true },
+      columns: [
+        {
+          title: '角色名称',
+          key: "roleName",
+          sortable: true,
+          align: "center"
+        },
         {
           title: '部门名称',
-          field: 'name',
+          key: "deptName",
           sortable: true,
-          width: 400,
-          align: 'left',
-          treeNode: true
+          align: "center"
         },
         {
-          title: '上级部门名称',
-          field: 'parentName',
+          title: "创建时间",
+          key: "createTime",
           sortable: true,
-          align: 'center'
-        },
-        {
-          title: '排序',
-          field: 'orderNum',
-          sortable: true,
-          width: 110,
-          align: 'center'
+          align: "center"
         }
+        
       ]
     };
   },
@@ -130,18 +131,12 @@ export default {
     AddOrUpdate
   },
   methods: {
-    getDataListCB(self, res) {
-      self.dataList = XEUtils.toArrayTree(self.dataList, { key: 'deptId', parentKey: 'parentId', children: 'children' })
-    },
-    vxeQueryCB (self) {
-      this.$refs.pGrid.setAllTreeExpansion(true)
-    },
     //增改
    addOrUpdateData (row) {
       this.addOrUpdateVisible = true;
       if (row) {
         this.$nextTick(() => {
-          this.$refs.addOrUpdate.dataForm.id = row.row.deptId;
+          this.$refs.addOrUpdate.dataForm.id = row.row.roleId;
           this.$refs.addOrUpdate.update(row.row);
         })
       } else {
@@ -163,7 +158,7 @@ export default {
         row = index.row
       }
       if (row) {
-        const id = row.deptId
+        const id = row.roleId
         if (id) {
           data = [id]
         }
@@ -191,7 +186,12 @@ export default {
       }).catch(() => {})
     }
   }
+  
+ 
+
 }
+
+
 </script>
 
 <style>

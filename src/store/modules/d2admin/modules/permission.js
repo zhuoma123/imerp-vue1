@@ -266,6 +266,11 @@ const actions = {
       }
       resolve()
     })
+  },
+  async reloadMenu({ commit, state, dispatch }) {
+    util.session.set('menuList',null)
+    commit('SET_ISLOCK', false)
+    dispatch('generateRoutes')
   }
 }
 

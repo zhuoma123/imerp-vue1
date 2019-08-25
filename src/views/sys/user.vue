@@ -143,6 +143,12 @@ export default {
           align: "center"
         },
         {
+          title: "角色",
+          key: "roleNames",
+          sortable: true,
+          align: "center"
+        },
+        {
           title: this.$t("views.public.user.status"),
           key: "status",
           sortable: true,

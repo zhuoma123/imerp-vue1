@@ -1,6 +1,6 @@
 <template>
   <el-select
-    v-if="!selprops.disabled"
+    v-if="!curprops.disabled"
     :value="selectVal"
     :filterable="selType == 'dyamic'"
     :remote="selType == 'dyamic'"
@@ -8,7 +8,7 @@
     default-first-option
     :loading="loading"
     :remote-method="_selDyamicList"
-    v-bind="selprops"
+    v-bind="curprops"
     @change="e => _selChange(e)">
     <el-option
       v-for="item in options"
@@ -43,7 +43,8 @@ export default {
       codeType: '',
       dType: '',
       selType: 'static',
-      lock: false
+      lock: false,
+      curprops: this.selprops
     }
   },
   created () {
@@ -103,6 +104,9 @@ export default {
       } else { 
         this.selectVal = e 
       }
+    },
+    selpropsChange(props) {
+      this.curprops = Object.assign({}, this.curprops, props)
     }
   },
   watch: {

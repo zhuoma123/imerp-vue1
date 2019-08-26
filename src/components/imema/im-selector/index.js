@@ -64,7 +64,7 @@ export default {
         ref: 'component',
         props: {
           dataType: this.dataType,
-          selprops:this.curProps
+          selprops: this.curProps
         },
         on: {
           change: e => this.$emit('change', e),
@@ -87,6 +87,9 @@ export default {
         value: this.mapModel[this.mapVal]
       }
       this.$refs.component._setVal(obj)
+    },
+    disabled: function(val, oldVal) {
+      this.$refs.component.selpropsChange({disabled: val})
     }
   },
   created () {

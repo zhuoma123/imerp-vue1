@@ -8,7 +8,7 @@
         <dynamic-form
           v-model="dataForm"
           :formprops="formprops"
-          ref="dynamic-form"
+          ref="dataForm"
           col-span='6,6,*,6'
           :alldescriptors="descriptors">
           <template slot="btnsearch">
@@ -71,8 +71,6 @@ import AddOrUpdate from './inoutbill-add-or-update'
 import mixinViewModule from '@/mixins/view-module'
 import XEUtils from "xe-utils"
 
-const separate = {type: 'separate'}
-const placeholder = {type: 'placeholder'}
 export default {
   name: 'inv-inoutbill',
   mixins: [mixinViewModule],
@@ -120,9 +118,9 @@ export default {
           type: 'slot',
           name: 'btnsearch'
         },
-        separate1: separate, 
+        separate1: this.$g.separate, 
         sourceOrderNum: { type: 'string', label: '单据单号'},
-        warehouseId: { type: 'cust', label: '出入仓库', 
+        warehouseId: { type: 'cust', label: '仓库', 
           name:'im-selector',
           props: {
             mapKeyVal: "warehouseCode:warehouseId",
@@ -130,15 +128,13 @@ export default {
             clearable: true
           }
         },
-        inDate: { type: 'cust', label: '入库日期', colspan: 1,
-          name: 'el-date-picker',
+        inDate: { type: 'date', label: '入库日期', 
           props: {
             type: 'daterange',
             rangeSeparator: "至",
             startPlaceholder: "开始日期",
             endPlaceholder: "结束日期",
-            valueFormat: "yyyy-MM-dd",
-            class:'input-class'
+            valueFormat: "yyyy-MM-dd"
           }
         }
       },
@@ -255,11 +251,6 @@ export default {
     },
     handleFormReset () {
       this.$refs.dataForm.resetFields()
-    },
-    reset () {
-      this.$nextTick(() => {
-        this.$refs['dynamic-form'].$refs['dynamic-form'].resetFields()
-      })
     }
   },
   mounted () {
@@ -268,5 +259,4 @@ export default {
 }
 </script>
 <style lang="scss">
-
 </style>

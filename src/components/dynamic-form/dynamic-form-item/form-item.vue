@@ -1,7 +1,7 @@
 <template>
   <el-col :span="colSpan">
     <el-form-item
-      v-show="!descriptor.hidden"
+      v-show="!curDescriptor.hidden"
       class="dynamic-form-item"
       :ref="prop"
       :label="(labelWidth === '0px' || typeDescriptor.type === 'slot') ? '' : (label || prop)"
@@ -17,10 +17,10 @@
         v-model="_value"
         :map-model="mapModel"
         :size="size"
-        :disabled="typeDescriptor.disabled"
+        :disabled="curProps.disabled"
         :type="typeDescriptor.type"
         :custName="typeDescriptor.name"
-        :custProps="typeDescriptor.props"
+        :custProps="curProps"
         :extend="{ options: typeDescriptor.options || typeDescriptor.enum }"
         :placeholder="typeDescriptor.placeholder">
       </dynamic-input>
@@ -182,22 +182,26 @@ export default {
       }
     },
     typeDescriptor () {
-      return findTypeDescriptor(this.descriptor)
+      let typer = findTypeDescriptor(this.curDescriptor)
+      this.curProps = Object.assign({disabled: typer.disabled}, typer.props)
+      return typer
     },
     subFormBackgroundColor () {
       return this.bgColorOffset ? darkenColor(this.backgroundColor, this.bgColorOffset) : 'none'
     },
     tranDescriptor () {
-      let tem = Object.assign({}, this.descriptor)
+      let tem = Object.assign({}, this.curDescriptor)
       if(tem.type === 'cust') {
-        tem.type = 'string'
+        tem.type = tem.ruletype || 'string'
       }
       return tem
     }
   },
   data () {
     return {
-      hashMapKey: ''
+      hashMapKey: '',
+      curDescriptor: this.descriptor,
+      curProps: {}
     }
   },
   created () {
@@ -229,6 +233,10 @@ export default {
     },
     deleteItem (index) {
       this._value.splice(index, 1)
+    },
+    propsChange (descriptors) {
+      this.curDescriptor = descriptors[this.prop]
+      this.curProps = this.typeDescriptor.props
     }
   }
 }

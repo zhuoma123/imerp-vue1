@@ -9,7 +9,7 @@
 				<dynamic-form
 					v-model="dataForm"
 					:formprops="formprops"
-					ref="dynamic-form"
+					ref="dataForm"
 					col-span='6,6,6,*'
 					:alldescriptors="descriptors">
 					<template slot="btnsearch">
@@ -148,6 +148,7 @@
 					},
 					warehouseId: {
 						type: 'cust', label: '仓库',
+						ruletype: 'integer',
 						name: 'im-selector',
 						props: {
 							mapKeyVal: "warehouseCode:warehouseId",

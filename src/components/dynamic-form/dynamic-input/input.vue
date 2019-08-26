@@ -17,7 +17,7 @@
     <el-option v-for="option in _options" :key="option.label" :value="option.value" :label="option.label" :disabled="option.disabled"></el-option>
   </el-select>
   <!-- date type use el-date-picker -->
-  <el-date-picker v-bind="custProps" v-else-if="type === 'date'" class="dynamic-input" v-model="_value" :size="size" :disabled="disabled" type="datetime" :placeholder="placeholder"></el-date-picker>
+  <el-date-picker v-bind="custProps" v-else-if="type === 'date'" class="dynamic-input" v-model="_value" :size="size" :disabled="disabled" :type="custProps.type || datetime" :placeholder="placeholder"></el-date-picker>
 </template>
 
 <script>
@@ -60,8 +60,7 @@ export default {
      * extends.options: [{ label: String, value: Any }] || [String] // select component's options
      */
     extend: Object,
-    mapModel: Object,
-    readOnly: Boolean
+    mapModel: Object
   },
   components: {},
   computed: {
@@ -85,6 +84,11 @@ export default {
       } else {
         return []
       }
+    }
+  },
+  watch: {
+    custProps: function(val, oldVal) {
+      console.log('----input---', val, oldVal)
     }
   },
   data () {

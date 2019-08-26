@@ -2,6 +2,8 @@ import qs from 'qs'
 import XEUtils from 'xe-utils'
 import util from '@/libs/util.js'
 
+
+
 export default {
   data () {
     /* eslint-disable */
@@ -294,7 +296,6 @@ export default {
       this.$nextTick(() => {
         let read = null
         for(let r in this.$refs) {
-          debugger;
           if(r.startsWith('btnStatus')) {
             let dc = this.$refs[r].$attrs['row-dbclick']
             read = this.$refs[r].$attrs['form-readonly']
@@ -559,6 +560,11 @@ export default {
         enablestatus = enablestatus.split(',')
         obj.$el.style = 'display:' + (enablestatus.includes(val) ? 'inline-block' : 'none')
       }
+    },
+    reset () {
+      this.$nextTick(() => {
+        this.$refs['dataForm'].resetFields()
+      })
     }
   },
   watch: {
@@ -569,7 +575,7 @@ export default {
             this.dataList = []
             this.$refs.sGrid.loadData(this.dataList)
             if (this.isNew) {
-              this.$refs.dataForm.resetFields()
+              this.reset()
               this.$refs.sGrid.updateFooter()
             } else {
               this.dataForm = this.entityModel
@@ -578,7 +584,7 @@ export default {
             }
           }else{
             if (this.isNew) {
-              this.$refs.dataForm.resetFields()
+              this.reset()
             } else {
               this.dataForm = this.entityModel
             }

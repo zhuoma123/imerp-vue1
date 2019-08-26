@@ -1,13 +1,14 @@
 <template>
   <el-row>
     <dynamic-form-item
+      ref="formItem"
       v-for="(descriptor, key, index) in descriptors"
-      v-model="value[key]"
+      v-model="_value[key]"
       :key="key"
       :lang="lang"
       :label="findTypeDescriptor(descriptor).label || key"
       :prop="key"
-      :map-model="value"
+      :map-model="_value"
       :label-width="labelWidth"
       :descriptor="descriptor"
       :language="language"
@@ -84,6 +85,15 @@ export default {
     DynamicFormItem
   },
   computed: {
+    _value: {
+      get () {
+        return this.value
+      },
+      set (value) {
+        console.log('------set row-----', value)
+        this.value = value
+      }
+    },
     style () {
       const style = {
         fontSize: `${this.fontSize}px`,
@@ -157,24 +167,14 @@ export default {
         }
       }
     },
-    validate (func) {
-      if (typeof func === 'function') {
-        this.$refs['dynamic-form'].validate(valid => {
-          func(valid)
-        })
-      } else {
-        return new Promise((resolve, reject) => {
-          this.$refs['dynamic-form'].validate(valid => {
-            resolve(valid)
-          })
-        })
+    propsChange (formRow) {
+      for(const key in this.descriptors) {
+        Object.assign(this.descriptors[key].props, formRow[key].props)
       }
-    },
-    resetFields () {
-      this.$refs['dynamic-form'].resetFields()
-    },
-    clearValidate () {
-      this.$refs['dynamic-form'].clearValidate()
+      
+      this.$refs.formItem.forEach(item =>{
+        item.propsChange(this.descriptors)
+      })
     }
   }
 }

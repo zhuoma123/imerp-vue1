@@ -51,7 +51,7 @@
       <dynamic-form
         v-model="dataForm"
         :formprops="formprops"
-        ref="dynamic-form"
+        ref="dataForm"
         col-span='8,8,8'
         :read-only='formReadOnly'
         :alldescriptors="descriptors">
@@ -128,6 +128,7 @@ export default {
           }
         },
         warehouseId: { type: 'cust', label: '仓库',
+          ruletype: 'integer',
           name:'im-selector',
           props: {
             mapKeyVal: "warehouseCode:warehouseId",

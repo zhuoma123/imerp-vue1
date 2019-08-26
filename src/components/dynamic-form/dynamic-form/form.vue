@@ -3,11 +3,12 @@
     <el-form
       v-if="_value"
       ref="dynamic-form"
-      v-model="_value"
+      :model.sync="_value"
       v-bind="formprops"
       :rules="descriptors"
     >
       <dynamic-form-row
+        ref="formRow"
         v-for="(row, key) in rowDescriptors"
         v-model="_value"
         :key="key"
@@ -94,6 +95,7 @@ export default {
   computed: {
     _value: {
       get () {
+        console.log('-----val----', this.value)
         return this.value
       },
       set (value) {
@@ -130,6 +132,20 @@ export default {
         ret = this.colSpan.replace(/(.*)\*/ig, '$1' + (all+every)).replace(/\*/ig, every)
       }
       return ret
+    }
+  },
+  watch: {
+    readOnly: function(val, oldVal) {
+      this.rowDescriptors.forEach((row, idx) =>{
+        Object.keys(row).forEach(key => {
+          if(row[key].name === 'im-selector') {
+            Object.assign(row[key].props, {disabled: val})
+          } else {
+            Object.assign(row[key].props, {readonly: val})
+          }
+        })
+        this.$refs.formRow[idx].propsChange(row)
+      })
     }
   },
   data () {
@@ -172,6 +188,25 @@ export default {
       }
       if(row)
         this.rowDescriptors.push(row)
+    },
+    validate (func) {
+      if (typeof func === 'function') {
+        this.$refs['dynamic-form'].validate(valid => {
+          func(valid)
+        })
+      } else {
+        return new Promise((resolve, reject) => {
+          this.$refs['dynamic-form'].validate(valid => {
+            resolve(valid)
+          })
+        })
+      }
+    },
+    resetFields () {
+      this.$refs['dynamic-form'].resetFields()
+    },
+    clearValidate () {
+      this.$refs['dynamic-form'].clearValidate()
     }
   }
 }

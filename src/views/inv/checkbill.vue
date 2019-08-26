@@ -94,15 +94,18 @@
 		>
 			<template v-slot:buttons>
 				<el-button
-					ref="btnAdd"
+					ref="btnStatusAdd"
 					size="mini"
 					icon="el-icon-circle-plus"
+					enablestatus='NEW,COMPLETED'
+					row-dbclick
+					form-readonly
 					v-if="$hasPermission('inv:checkbill:save')"
 					@click="addHandle"
 				>新增
 				</el-button>
 				<el-button
-					ref="btnEdit"
+					ref="btnStatusEdit"
 					type="primary"
 					size="mini"
 					icon="el-icon-edit"
@@ -111,7 +114,7 @@
 				>修改
 				</el-button>
 				<el-button
-					ref="btnDelete"
+					ref="btnStatusDelete"
 					type="danger"
 					size="mini"
 					icon="el-icon-delete"
@@ -121,7 +124,7 @@
 				</el-button>
 				
 				<el-button
-					ref="btnSubmit"
+					ref="btnStatusSubmit"
 					type="success"
 					size="mini"
 					icon="el-icon-check"

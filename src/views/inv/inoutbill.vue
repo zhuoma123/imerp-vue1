@@ -108,6 +108,7 @@ export default {
           }
         },
         status: { type: 'cust', label: '单据状态',
+          placeholder: '请选择状态',
           name:'im-selector',
           props: {
             mapKeyVal: "status",

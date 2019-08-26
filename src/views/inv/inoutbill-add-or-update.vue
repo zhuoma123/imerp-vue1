@@ -35,18 +35,14 @@
       show-footer
     >
       <template v-slot:buttons>
-        <label style="margin-left:30px;">产品条码：</label>
-        <el-input class="barCode" v-model="dataForm.barCode" size="mini" clearable
-        placeholder="请输入产品条码" @keyup.enter.native="doScan"></el-input>
-        <label style="margin-left:30px;">业务单据：</label>
-        <span>{{dataForm.billNum}}</span>
-        <label style="margin-left:30px;">业务类型：</label>
-        <span>{{dataForm.transactionTypeMean}}</span>
+        <label style="margin-left:30px;">输入产品条码：</label>
+        <el-input ref="barCodeInput" class="barCode" v-model="dataForm.barCode" size="mini" 
+        clearable @keyup.enter.native="doScan"></el-input>
       </template>
     </vxe-grid>
     <span slot="footer" class="dialog-footer">
       <el-button type="danger" @click="visible = false">取消</el-button>
-      <el-button type="primary" :disabled="btnDisable" @click="dataFormSubmit">确定</el-button>
+      <el-button v-show="enableSubmit" type="primary" :disabled="btnDisable" @click="dataFormSubmit">确定</el-button>
     </span>
   </el-dialog>
 </template>
@@ -183,9 +179,15 @@ export default {
     }
   },
   created() {
-    
+
   },
   methods: {
+    initCB() {
+      this.$nextTick(() => {
+        if(this.$refs.barCodeInput)
+          this.$refs.barCodeInput.focus()
+      })
+    },
     doScan(e) {
       let val = e.target.value
       if(val && val.length>0) {

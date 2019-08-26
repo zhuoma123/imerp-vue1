@@ -35,6 +35,8 @@ export default {
       },
       // 子页面表单是否只读
       formReadOnly: false,
+      // 子页面表单是否提交
+      enableSubmit: true,
       // 表格属性
       selectionRow: false,
       sortConfig: {
@@ -115,13 +117,19 @@ export default {
      * 该方法只用于子页面
      * @param {*} item
      */
-    init (item, read) {
+    init (item, read, sub=true) {
       this.isNew = !item
       if (item) { 
         this.entityModel = Object.assign({}, item) 
       }
       this.formReadOnly = read
+      this.enableSubmit = sub
       this.visible = true
+      this.initCB()
+    },
+    // 初始化回调
+    initCB() {
+
     },
     initSelData () {
 
@@ -292,6 +300,7 @@ export default {
             read = (typeof read !== 'undefined' && read !== null)
             if(typeof dc !== 'undefined' && dc !== null) {
               if(this.$refs[r].$el.style.display === 'none') {
+                this.$refs.addOrUpdate.init(row, read, false)
                 return
               }
             }

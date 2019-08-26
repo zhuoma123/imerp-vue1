@@ -117,7 +117,7 @@ export default {
      * 该方法只用于子页面
      * @param {*} item
      */
-    init (item, read, sub=true) {
+    init (item, read=false, sub=true) {
       this.isNew = !item
       if (item) { 
         this.entityModel = Object.assign({}, item) 
@@ -294,6 +294,7 @@ export default {
       this.$nextTick(() => {
         let read = null
         for(let r in this.$refs) {
+          debugger;
           if(r.startsWith('btnStatus')) {
             let dc = this.$refs[r].$attrs['row-dbclick']
             read = this.$refs[r].$attrs['form-readonly']

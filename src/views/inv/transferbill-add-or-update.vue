@@ -86,7 +86,7 @@
 		</vxe-grid>
 		<span slot="footer" class="dialog-footer">
       <el-button type="danger" @click="visible = false">取消</el-button>
-      <el-button type="primary" :disabled="btnDisable" @click="dataFormSubmit">确定</el-button>
+      <el-button type="primary" v-show="enableSubmit" :disabled="btnDisable" @click="dataFormSubmit">确定</el-button>
     </span>
 	</el-dialog>
 </template>

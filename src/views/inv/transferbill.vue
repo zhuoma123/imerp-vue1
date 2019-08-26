@@ -73,21 +73,28 @@
 			:columns="tableColumn"
 			:select-config="{reserve: true}"
 			:edit-config="{trigger: 'click', mode: 'row', showStatus: true}"
-			@cell-dblclick="cellDblClick">
+			@cell-dblclick="cellDblClick"
+			@current-change='currentChange'>
 			<template v-slot:buttons>
-				<el-button size="mini" icon="el-icon-circle-plus" v-if="$hasPermission('inv:transferbill:save')"
+				<el-button ref="btnStatusAdd" size="mini" icon="el-icon-circle-plus" v-if="$hasPermission('inv:transferbill:save')"
 				           @click="addHandle">新增
 				</el-button>
-				<el-button type="primary" size="mini" icon="el-icon-edit" v-if="$hasPermission('inv:transferbill:save')"
+				<el-button ref="btnStatusEdit"
+				           enablestatus='NEW'
+				           row-dbclick
+				           form-readonly type="primary" size="mini" icon="el-icon-edit" v-if="$hasPermission('inv:transferbill:save')"
 				           @click="updateHandle($refs.pGrid)">修改
 				</el-button>
-				<el-button type="danger" size="mini" icon="el-icon-delete" v-if="$hasPermission('inv:transferbill:delete')"
+				<el-button ref="btnStatusDelete"
+				           enablestatus='NEW' type="danger" size="mini" icon="el-icon-delete" v-if="$hasPermission('inv:transferbill:delete')"
 				           @click="deleteHandle($refs.pGrid)">删除
 				</el-button>
-				<el-button type="success" size="mini" icon="el-icon-check" v-if="$hasPermission('inv:transferbill:save')"
+				<el-button ref="btnStatusAutoPick"
+				           enablestatus='NEW' type="success" size="mini" icon="el-icon-check" v-if="$hasPermission('inv:transferbill:submit')"
 				           @click="submitHandle($refs.pGrid,true)">自动拣货
 				</el-button>
-				<el-button type="success" size="mini" icon="el-icon-check" v-if="$hasPermission('inv:transferbill:save')"
+				<el-button ref="btnStatusPick"
+				           enablestatus='NEW' type="success" size="mini" icon="el-icon-check" v-if="$hasPermission('inv:transferbill:submit')"
 				           @click="submitHandle($refs.pGrid,false)">人工拣货
 				</el-button>
 				<el-button type="info" size="mini" icon="el-icon-printer" v-if="$hasPermission('inv:transferbill:print')">打印
@@ -111,7 +118,7 @@
 		></el-pagination>
 		
 		<!-- 弹窗, 新增 / 修改 -->
-		<add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList"></add-or-update>
+		<add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="search"></add-or-update>
 	</d2-container>
 </template>
 

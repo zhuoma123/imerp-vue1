@@ -331,10 +331,10 @@ export default {
           type: 'warning'
         })
       }
-      this.$confirm('确定要提交吗，提交后不能在修改！', { 'handle': '提交' }, '确认操作', {
+      this.$confirm('确定要提交吗，提交后不能在修改！', '操作操作', {
         confirmButtonText: this.$t('views.public.confirm'),
         cancelButtonText: this.$t('views.public.cancel'),
-        type: 'warning'
+        type: 'info'
       }).then(() => {
         this.$axios.post(
           this.mixinViewModuleOptions.submitURL, { 'id': row.id, 'isAuto': isAuto }
@@ -370,6 +370,35 @@ export default {
       this.addOrUpdateHandleSetter(map)
     },
     // 删除
+    deleteEntityHandle (grid) {
+      let row = this.pGrid.getCurrentRow()
+      if (!row) {
+        return this.$message({
+          message: '请选择要删除的记录',
+          type: 'error'
+        })
+      }
+      this.$confirm('确定要删除选中的记录吗！', '操作提示', {
+        confirmButtonText: this.$t('views.public.confirm'),
+        cancelButtonText: this.$t('views.public.cancel'),
+        type: 'error'
+      }).then(() => {
+        row.__state='DELETED'
+        this.$axios.post(
+          this.mixinViewModuleOptions.updateURL,row
+        ).then(res => {
+          this.$message({
+            message: this.$t('views.public.success'),
+            type: 'success',
+            duration: 500,
+            onClose: () => {
+              this.search()
+            }
+          })
+        }).catch(() => {})
+      }).catch(() => {})
+    },
+    // 删除
     deleteHandle (grid) {
       let ids = ''
       this.dataListSelections = grid.getSelectRecords()
@@ -384,10 +413,10 @@ export default {
       } else {
         ids = this.dataListSelections.map(item => item.id).join()
       }
-      this.$confirm('确定要删除选中的记录', { 'handle': '删除' }, '确认操作', {
+      this.$confirm('确定要删除选中的记录', '操作提示', {
         confirmButtonText: this.$t('views.public.confirm'),
         cancelButtonText: this.$t('views.public.cancel'),
-        type: 'warning'
+        type: 'error'
       }).then(() => {
         this.$axios.post(
           this.mixinViewModuleOptions.deleteURL,

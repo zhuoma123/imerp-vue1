@@ -1,6 +1,6 @@
 <template>
 	<el-dialog
-		:title="isNew ? '采购单新增' : '采购单修改'"
+		:title="isNew ? '采购退货单新增' : '采购退货单修改'"
 		:close-on-click-modal="false"
 		:visible.sync="visible"
 		v-loading.fullscreen.lock="fullscreenLoading"
@@ -67,7 +67,7 @@
 				visible: false,
 				btnDisable: false,
 				dataForm: {
-				  orderType:'PO',
+				  orderType:'PO_RETURN',
 					vendorId: '',
 					contactName: '',
 					contactPhone: '',
@@ -78,7 +78,7 @@
 				},
 				descriptors: {
 					orderNum: {
-						type: 'string', label: '采购单号', disabled: "disabled",
+						type: 'string', label: '采购退货单号', disabled: "disabled",
 						props: {
 							clearable: true
 						}
@@ -93,7 +93,7 @@
 						}
 					},
 					agentId: {
-						type: 'cust', label: '采购员',ruletype:'integer',
+						type: 'cust', label: '负责人',ruletype:'integer',
 						name: 'im-selector',
 						props: {
 							mapKeyVal: "agentName:agentId",
@@ -109,13 +109,13 @@
             }
           },
           planDeliveryDate: {
-            type: 'cust', label: '计划交货日期',
+            type: 'cust', label: '计划退回日期',
             name: 'el-date-picker',
             props: {
               valueFormat: "yyyy-MM-dd"
             },
           },
-          warehouseId: { type: 'cust', label: '仓库',ruletype:'integer',
+          warehouseId: { type: 'cust', label: '退货仓库',ruletype:'integer',
             name:'im-selector',
             props: {
               mapKeyVal: "warehouseCode:warehouseId",
@@ -134,10 +134,10 @@
 				},
 				dataRule: {
 					vendorId: [
-						{required: true, message: "供应商ID不能为空", trigger: "blur"}
+						{required: true, message: "供应商不能为空", trigger: "blur"}
 					],
 					agentId: [
-						{required: true, message: "采购员不能为空", trigger: "blur"}
+						{required: true, message: "负责人不能为空", trigger: "blur"}
 					],
 				},
 				tableProxy: {
@@ -167,27 +167,33 @@
             align: 'center'
           },
 					{
-						title: '下单数',
+						title: '退货数',
 						field: 'orderQty',
 						sortable: true,
 						align: 'center',
-						editRender: {name: "input"}
+						editRender: {name: "input"},
+						editPost: function (column, row) {
+							var qty = row.orderQty
+							if (!Number.isNaN(qty)) {
+								return -Math.abs(Number(qty))
+							}
+						},
 					},
 					{
-						title: '实际收货数',
+						title: '实际退货数',
 						field: 'realQty',
 						sortable: true,
 						align: 'center'
 					},
 					{
-						title: '采购价',
+						title: '退货价',
 						field: 'price',
 						sortable: true,
 						align: 'center',
 						editRender: {name: "input"}
 					},
           {
-            title: '采购总金额',
+            title: '退货总金额',
             field: 'totalPrice',
             align: 'left',
             formatter: ['toFixedString', 2],
@@ -244,6 +250,7 @@
 					row.uom = item.unit
 					row.productId = item.id
 					row.productCode = item.code
+					row.price=item.costPrice
 				} else {
 				}
 			}

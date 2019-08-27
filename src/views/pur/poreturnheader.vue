@@ -36,30 +36,30 @@
 			@current-change='currentChange'>
 			<template v-slot:buttons>
 				<el-button ref="btnStatusAdd" enablestatus='NEW,COMPLETED' size="mini" icon="el-icon-circle-plus"
-				           v-if="$hasPermission('pur:poheader:save')" @click="addHandle">新增
+				           v-if="$hasPermission('pur:poreturnheader:save')" @click="addHandle">新增
 				</el-button>
 				<el-button ref="btnStatusEdit"
 				           enablestatus='NEW'
 				           row-dbclick
 				           form-readonly type="primary" size="mini" icon="el-icon-edit"
-				           v-if="$hasPermission('pur:poheader:save')"
+				           v-if="$hasPermission('pur:poreturnheader:save')"
 				           @click="e => cellDblClick({row: $refs.pGrid.getCurrentRow()}, e)">修改
 				</el-button>
 				<el-button ref="btnStatusDelete"
 				           enablestatus='NEW' type="danger" size="mini" icon="el-icon-delete"
-				           v-if="$hasPermission('pur:poheader:delete')" @click="deleteEntityHandle($refs.pGrid)">删除
+				           v-if="$hasPermission('pur:poreturnheader:delete')" @click="deleteEntityHandle($refs.pGrid)">删除
 				</el-button>
 				<el-button ref="btnStatusAutoPick"
 				           enablestatus='NEW' type="success" size="mini" icon="el-icon-check"
-				           v-if="$hasPermission('pur:poheader:submit')" @click="submitHandle($refs.pGrid,true)">自动入库
+				           v-if="$hasPermission('pur:poreturnheader:submit')" @click="submitHandle($refs.pGrid,true)">自动入库
 				</el-button>
         <el-button ref="btnStatusPick"
                    enablestatus='NEW' type="success" size="mini" icon="el-icon-check"
-                   v-if="$hasPermission('pur:poheader:submit')" @click="submitHandle($refs.pGrid,false)">人工入库
+                   v-if="$hasPermission('pur:poreturnheader:submit')" @click="submitHandle($refs.pGrid,false)">人工入库
         </el-button>
-				<el-button type="info" size="mini" icon="el-icon-printer" v-if="$hasPermission('pur:poheader:print')">打印
+				<el-button type="info" size="mini" icon="el-icon-printer" v-if="$hasPermission('pur:poreturnheader:print')">打印
 				</el-button>
-				<el-button type="info" size="mini" icon="fa fa-file-excel-o" v-if="$hasPermission('pur:poheader:export')"
+				<el-button type="info" size="mini" icon="fa fa-file-excel-o" v-if="$hasPermission('pur:poreturnheader:export')"
 				           @click="$refs.pGrid.exportCsv()"> 导出
 				</el-button>
 			</template>
@@ -83,11 +83,11 @@
 </template>
 
 <script>
-	import AddOrUpdate from './poheader-add-or-update'
+	import AddOrUpdate from './poreturnheader-add-or-update'
 	import mixinViewModule from '@/mixins/view-module'
   const separate = {type: 'separate'}
 	export default {
-		name: 'pur-poheader',
+		name: 'pur-poreturnheader',
 		mixins: [mixinViewModule],
 		data() {
 			return {
@@ -101,7 +101,7 @@
         order: 'desc',
         orderField: 'id',
 				dataForm: {
-					orderType:'PO',
+					orderType:'PO_RETURN',
 					orderNum: '',
 					vendorId: '',
           warehouseId: '',
@@ -110,7 +110,7 @@
 				},
         descriptors: {
           orderNum: {
-            type: 'string', label: '采购单号',
+            type: 'string', label: '采购退货单号',
             props: {
               clearable: true
             }
@@ -145,7 +145,7 @@
             }
           },
           orderDate: {
-            type: 'cust', label: '采购日期', colspan: 2,
+            type: 'cust', label: '采购退货日期', colspan: 2,
             name: 'el-date-picker',
             props: {
               type: 'daterange',
@@ -178,7 +178,7 @@
 				tableColumn: [
 					{type: 'index', width: 30, align: 'center'},
 					{
-						title: '采购单号',
+						title: '采购退货单号',
 						field: 'orderNum',
 						sortable: true,
 						align: 'center'
@@ -196,20 +196,20 @@
             align: 'center'
           },
 					{
-						title: '采购日期',
+						title: '采购退货日期',
 						field: 'orderDate',
 						sortable: true,
 						align: 'center',
 						formatter: ['toDateString', 'yyyy-MM-dd']
 					},
 					{
-						title: '采购员',
+						title: '负责人',
 						field: 'agentName',
 						sortable: true,
 						align: 'center'
 					},
 					{
-						title: '计划交货期',
+						title: '计划退回日期',
 						field: 'planDeliveryDate',
 						sortable: true,
 						align: 'center',
@@ -222,7 +222,7 @@
 						align: 'center'
 					},
 					{
-						title: '采购总金额',
+						title: '采购退货总金额',
 						field: 'orderAmount',
 						sortable: true,
 						align: 'center'

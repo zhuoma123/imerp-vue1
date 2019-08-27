@@ -5,58 +5,17 @@
 				<template slot="title">
 					查询条件<i class="el-icon-d-arrow-right"/>
 				</template>
-				<el-form size="mini" :inline="true" :model="dataForm" ref="dataForm" @keyup.enter.native="getDataList()"
-				         label-width="90px" label-suffix="：">
-					<el-form-item label="调拨单号" prop="orderNum">
-						<el-input v-model="dataForm.orderNum" clearable></el-input>
-					</el-form-item>
-					<el-form-item label="调出仓" prop="fromWarehouseId">
-            <im-selector
-              v-model="dataForm.fromWarehouseId"
-              :mapModel.sync="dataForm"
-              mapKeyVal="fromWarehouseCode:fromWarehouseId"
-              dataType="biz.warehouse">
-            </im-selector>
-					</el-form-item>
-					<el-form-item label="调入仓" prop="toWarehouseId">
-            <im-selector
-              v-model="dataForm.toWarehouseId"
-              :mapModel.sync="dataForm"
-              mapKeyVal="toWarehouseCode:toWarehouseId"
-              dataType="biz.warehouse">
-            </im-selector>
-					</el-form-item>
-					<el-form-item label="调拨日期" prop="transferDate">
-						<el-date-picker
-							v-model="dataForm.transferDate"
-							type="daterange"
-							align="right"
-							unlink-panels
-							range-separator="至"
-							start-placeholder="开始日期"
-							end-placeholder="结束日期"
-							value-format="yyyy-MM-dd"
-							:picker-options="pickerOptions">
-						</el-date-picker>
-					</el-form-item>
-					<el-form-item label="状态" prop="status">
-						<im-selector
-							v-model="dataForm.status"
-							:mapModel.sync="dataForm"
-							mapKeyVal="status"
-							dataType="code.status">
-						</im-selector>
-					</el-form-item>
-					<el-form-item>
-						<el-button type="primary" icon="el-icon-search" @click="search">{{ $t('views.public.query') }}</el-button>
-					</el-form-item>
-					<el-form-item>
-						<el-button @click="handleFormReset">
-							<d2-icon name="refresh"/>
-							重置
-						</el-button>
-					</el-form-item>
-				</el-form>
+				<dynamic-form
+					v-model="dataForm"
+					:formprops="formprops"
+					ref="dataForm"
+					col-span='6,6,6,*'
+					:alldescriptors="descriptors">
+					<template slot="btnsearch">
+						<el-button type="primary" icon="el-icon-search" @click="search">查询</el-button>
+						<el-button icon="el-icon-refresh" @click="reset">重置</el-button>
+					</template>
+				</dynamic-form>
 			</el-collapse-item>
 		</el-collapse>
 		
@@ -76,25 +35,30 @@
 			@cell-dblclick="cellDblClick"
 			@current-change='currentChange'>
 			<template v-slot:buttons>
-				<el-button ref="btnStatusAdd" size="mini" icon="el-icon-circle-plus" v-if="$hasPermission('inv:transferbill:save')"
+				<el-button ref="btnStatusAdd" size="mini" icon="el-icon-circle-plus"
+				           v-if="$hasPermission('inv:transferbill:save')"
 				           @click="addHandle">新增
 				</el-button>
 				<el-button ref="btnStatusEdit"
 				           enablestatus='NEW'
 				           row-dbclick
-				           form-readonly type="primary" size="mini" icon="el-icon-edit" v-if="$hasPermission('inv:transferbill:save')"
-				           @click="updateHandle($refs.pGrid)">修改
+				           form-readonly type="primary" size="mini" icon="el-icon-edit"
+				           v-if="$hasPermission('inv:transferbill:save')"
+				           @click="e => cellDblClick({row: $refs.pGrid.getCurrentRow()}, e)">修改
 				</el-button>
 				<el-button ref="btnStatusDelete"
-				           enablestatus='NEW' type="danger" size="mini" icon="el-icon-delete" v-if="$hasPermission('inv:transferbill:delete')"
-				           @click="deleteHandle($refs.pGrid)">删除
+				           enablestatus='NEW' type="danger" size="mini" icon="el-icon-delete"
+				           v-if="$hasPermission('inv:transferbill:delete')"
+				           @click="deleteEntityHandle($refs.pGrid)">删除
 				</el-button>
 				<el-button ref="btnStatusAutoPick"
-				           enablestatus='NEW' type="success" size="mini" icon="el-icon-check" v-if="$hasPermission('inv:transferbill:submit')"
+				           enablestatus='NEW' type="success" size="mini" icon="el-icon-check"
+				           v-if="$hasPermission('inv:transferbill:submit')"
 				           @click="submitHandle($refs.pGrid,true)">自动拣货
 				</el-button>
 				<el-button ref="btnStatusPick"
-				           enablestatus='NEW' type="success" size="mini" icon="el-icon-check" v-if="$hasPermission('inv:transferbill:submit')"
+				           enablestatus='NEW' type="success" size="mini" icon="el-icon-check"
+				           v-if="$hasPermission('inv:transferbill:submit')"
 				           @click="submitHandle($refs.pGrid,false)">人工拣货
 				</el-button>
 				<el-button type="info" size="mini" icon="el-icon-printer" v-if="$hasPermission('inv:transferbill:print')">打印
@@ -126,6 +90,7 @@
 	import AddOrUpdate from './transferbill-add-or-update'
 	import mixinViewModule from '@/mixins/view-module'
 
+	const separate = {type: 'separate'}
 	export default {
 		name: 'inv-transferbill',
 		mixins: [mixinViewModule],
@@ -134,8 +99,7 @@
 				mixinViewModuleOptions: {
 					getDataListURL: '/inv/transferbill/list',
 					getDataListIsPage: true,
-					updateURL: '/inv/transferbill/update',
-					deleteURL: '/inv/transferbill/delete',
+					updateURL: '/inv/transferbill/save',
 					submitURL: '/inv/transferbill/submit',
 					exportURL: '/inv/transferbill/export'
 				},
@@ -147,6 +111,59 @@
 					toWarehouseId: null,
 					transferDate: null,
 					status: null
+				},
+				descriptors: {
+					orderNum: {
+						type: 'string', label: '调拨单号',
+						props: {
+							clearable: true
+						}
+					},
+					fromWarehouseId: {
+						type: 'cust', label: '调出仓库', ruletype: 'integer',
+						name: 'im-selector',
+						props: {
+							mapKeyVal: "fromWarehouseCode:fromWarehouseId",
+							dataType: "biz.warehouse",
+							clearable: true
+						}
+					},
+					toWarehouseId: {
+						type: 'cust', label: '调入仓库', ruletype: 'integer',
+						name: 'im-selector',
+						props: {
+							mapKeyVal: "toWarehouseCode:toWarehouseId",
+							dataType: "biz.warehouse",
+							clearable: true
+						}
+					},
+					separate1: separate,
+					transferDate: {
+						type: 'cust', label: '调拨日期', colspan: 2,
+						name: 'el-date-picker',
+						props: {
+							type: 'daterange',
+							rangeSeparator: "至",
+							startPlaceholder: "开始日期",
+							endPlaceholder: "结束日期",
+							valueFormat: "yyyy-MM-dd",
+							class: 'input-class'
+						}
+					},
+					status: {
+						type: 'cust', label: '单据状态',
+						placeholder: '请选择状态',
+						name: 'im-selector',
+						props: {
+							mapKeyVal: "status",
+							dataType: "code.status",
+							clearable: true
+						}
+					},
+					btnSearch: {
+						type: 'slot',
+						name: 'btnsearch'
+					},
 				},
 				tableColumn: [
 					{type: 'index', width: 30, align: 'center'},

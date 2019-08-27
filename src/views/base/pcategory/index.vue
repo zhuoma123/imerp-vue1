@@ -76,7 +76,7 @@
                         type="danger"
                         size="mini"
                         icon="el-icon-delete"
-                        @click="deleteHandle($refs.pGrid)"
+                        @click="deleteHandleSetter($refs.pGrid)"
                 >删除
                 </el-button>
             </template>
@@ -111,7 +111,7 @@ export default {
       mixinViewModuleOptions: {
         getDataListURL: '/base/productcategory/list',
         getDataListIsPage: true,
-        deleteURL: '/base/productcategory',
+        deleteURL: '/base/productcategory/delete',
         deleteIsBatch: true
       },
       dataForm: {
@@ -120,29 +120,6 @@ export default {
       },
       dataFormOp: {
         liekOps: 'like'
-      },
-      rowHandler: {
-        width: '160px',
-        custom: [
-          {
-            text: this.$t('views.public.update'),
-            type: 'primary',
-            size: 'mini',
-            emit: 'user-update',
-            show: (index, row) => {
-              return this.$hasPermission('sys:user:update')
-            }
-          },
-          {
-            text: this.$t('views.public.delete'),
-            type: 'danger',
-            size: 'mini',
-            emit: 'user-delete',
-            show: (index, row) => {
-              return this.$hasPermission('sys:user:delete')
-            }
-          }
-        ]
       },
       toolbar: {
         id: 'full_edit_1',

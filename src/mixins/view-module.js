@@ -147,7 +147,7 @@ export default {
       })
       this.dataListLoading = false
     },
-    getDataListCB(self, res) {
+    getDataListCB (self, res) {
 
     },
     vxeTabQuery ({ page, sort, filters }, dataForm) {
@@ -194,7 +194,7 @@ export default {
     },
     // 表单提交
     dataFormSubmit () {
-      if(this.$refs.dataForm) {
+      if (this.$refs.dataForm) {
         this.$refs.dataForm.validate(valid => {
           if (valid) {
             this.doSubmit()
@@ -204,7 +204,7 @@ export default {
         this.doSubmit()
       }
     },
-    doSubmit() {
+    doSubmit () {
       this.btnDisable = true
       if (this.$refs.sGrid) {
         this.dataForm.lineList = this.getItemListDate(this.$refs.sGrid)
@@ -345,6 +345,41 @@ export default {
       this.addOrUpdateHandleSetter(map)
     },
     // 删除
+    deleteHandleSetter (grid) {
+      let ids = ''
+      this.dataListSelections = grid.getSelectRecords()
+      if (grid.getSelectRecords().length === 0) {
+        if (!grid.getCurrentRow()) {
+          return this.$message({
+            message: '请选择要删除的记录',
+            type: 'warning'
+          })
+        }
+        ids = [grid.getCurrentRow().id]
+      } else {
+        ids = this.dataListSelections.map(item => item.id).join()
+      }
+      this.$confirm('确定要删除选中的记录', { 'handle': '删除' }, '确认操作', {
+        confirmButtonText: this.$t('views.public.confirm'),
+        cancelButtonText: this.$t('views.public.cancel'),
+        type: 'warning'
+      }).then(() => {
+        this.$axios.post(
+          this.mixinViewModuleOptions.deleteURL,
+          { 'ids': ids }
+        ).then(res => {
+          this.$message({
+            message: this.$t('views.public.success'),
+            type: 'success',
+            duration: 500,
+            onClose: () => {
+              this.search()
+            }
+          })
+        }).catch(() => {})
+      }).catch(() => {})
+    },
+    // 删除
     deleteHandle (grid) {
       let ids = ''
       this.dataListSelections = grid.getSelectRecords()
@@ -374,63 +409,6 @@ export default {
             duration: 500,
             onClose: () => {
               this.search()
-            }
-          })
-        }).catch(() => {})
-      }).catch(() => {})
-    },
-    // 删除
-    deleteHandleSetter (index) {
-      let data
-      if (this.mixinViewModuleOptions.deleteIsBatch && this.dataListSelections.length > 0) {
-        data = this.dataListSelections.map(item => item[this.mixinViewModuleOptions.deleteIsBatchKey])
-      }
-      let row
-      if (!index) {
-        row = undefined
-      } else {
-        row = index.row
-      }
-      if (row) {
-        const id = row.id
-        if (id) {
-          data = [id]
-        }
-      }
-      if (data === undefined) {
-        return
-      }
-      for (let i = 0; i < this.dataListSelections.length; i++) {
-        const id = this.mixinViewModuleOptions.deleteIsBatchKey
-        let e = this.dataListSelections[i]
-        let childs = e.children
-        if (childs) {
-          for (let i in childs) {
-            let child = childs[i]
-            if (!data.includes(child[id])) {
-              this.$message.error('被包含的子项必须被全部删除')
-              return
-            }
-          }
-        }
-      }
-      this.$confirm(this.$t('public.prompt.info', { 'handle': this.$t('views.public.delete') }), this.$t('public.prompt.title'), {
-        confirmButtonText: this.$t('views.public.confirm'),
-        cancelButtonText: this.$t('views.public.cancel'),
-        type: 'warning'
-      }).then(() => {
-        this.$axios.post(
-          this.mixinViewModuleOptions.deleteURL,
-          {
-            'data': data
-          }
-        ).then(res => {
-          this.$message({
-            message: this.$t('views.public.success'),
-            type: 'success',
-            duration: 500,
-            onClose: () => {
-              this.getDataList()
             }
           })
         }).catch(() => {})
@@ -519,8 +497,7 @@ export default {
         let bodyClientHeight = document.getElementsByClassName('d2-container-full__body')[0] ? `${document.getElementsByClassName('d2-container-full__body')[0].clientHeight}` : 0
         let tableBody = self.$refs.pGrid.$el.getElementsByClassName('vxe-table--body-wrapper')[0]
         let tableFoot = self.$refs.pGrid.showFooter ? 30 : 0
-        if(tableBody)
-          tableBody.style.height = Number(bodyClientHeight) - Number(toolbar) - Number(tableHeader) - tableFoot + 'px'
+        if (tableBody) { tableBody.style.height = Number(bodyClientHeight) - Number(toolbar) - Number(tableHeader) - tableFoot + 'px' }
       }
     },
     collapseChange () {
@@ -587,7 +564,7 @@ export default {
               this.initSelData()
               this.search(this.entityModel)
             }
-          }else{
+          } else {
             if (this.isNew) {
               this.$refs.dataForm.resetFields()
             } else {

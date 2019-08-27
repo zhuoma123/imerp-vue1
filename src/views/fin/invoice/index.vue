@@ -5,29 +5,26 @@
                 <template slot="title">
                     查询条件<i class="el-icon-d-arrow-right"/>
                 </template>
-                <el-form :inline="true" size="mini" :model="dataForm"
-                         @keyup.enter.native="getDataList()" ref="dataForm">
+                <el-form :inline="true" size="mini" @keyup.enter.native="getDataList()" :model="dataForm"
+                         ref="dataForm">
                     <el-form-item prop="code">
                         <el-input
                                 v-model="dataForm.code"
-                                :data-operate="dataFormOp.likeOps"
-                                :placeholder="data.form.input.code"
+                                :placeholder="data.form.invoice.code"
                                 clearable
                         />
                     </el-form-item>
-                    <el-form-item prop="name">
+                    <el-form-item prop="customerName">
                         <el-input
-                                v-model="dataForm.name"
-                                :data-operate="dataFormOp.likeOps"
-                                :placeholder="data.form.input.name"
+                                v-model="dataForm.customerName"
+                                :placeholder="data.form.invoice.customerName"
                                 clearable
                         />
                     </el-form-item>
-                    <el-form-item prop="mobileNo">
+                    <el-form-item prop="ivDate">
                         <el-input
-                                v-model="dataForm.mobileNo"
-                                :data-operate="dataFormOp.likeOps"
-                                :placeholder="data.form.input.mobileNo"
+                                v-model="dataForm.ivDate"
+                                :placeholder="data.form.invoice.ivDate"
                                 clearable
                         />
                     </el-form-item>
@@ -50,6 +47,7 @@
                 border
                 resizable
                 highlight-current-row
+                height="390px"
                 remote-filter
                 size="mini"
                 ref="pGrid"
@@ -108,27 +106,25 @@
 <script>
 import mixinViewModule from '@/mixins/view-module'
 import AddOrUpdate from './add-or-update'
-import data from './data'
+import data from '../data'
 
 export default {
-  name: 'ware',
+  name: 'invoice',
   mixins: [mixinViewModule],
   data () {
     return {
       data: data,
       mixinViewModuleOptions: {
-        getDataListURL: '/base/warehouse/list',
+        getDataListURL: '/fin/invoice/list',
         getDataListIsPage: true,
-        deleteURL: '/base/warehouse/delete',
-        deleteIsBatch: true
+        deleteURL: '/fin/invoice/delete',
+        deleteIsBatch: true,
+        deleteIsBatchKey: 'id'
       },
       dataForm: {
         code: undefined,
-        name: undefined,
-        mobileNo: undefined
-      },
-      dataFormOp: {
-        username: 'like'
+        customerName: undefined,
+        ivDate: undefined
       },
       toolbar: {
         id: 'full_edit_1',
@@ -141,72 +137,119 @@ export default {
         }
       },
       columns: [
+        { type: 'index', width: 60, fixed: 'left' },
         {
-          title: '仓库编号',
+          title: '编号',
           field: 'code',
           sortable: true,
           align: 'center',
           width: '110px'
         },
         {
-          title: '仓库名称',
+          title: '票据名称',
           field: 'name',
           sortable: true,
           align: 'center',
           width: '110px'
-        },
-        {
-          title: '虚拟仓标志',
-          field: 'virtualFlag',
-          sortable: true,
-          align: 'center',
-          width: '120px'
         }, {
-          title: '仓库地址',
-          field: 'address',
+          title: '往来单位',
+          field: 'customerName',
           sortable: true,
           align: 'center',
           width: '110px'
         }, {
-          title: '仓库负责人',
-          field: 'pic',
+          title: '票据日期',
+          field: 'invDate',
           sortable: true,
           align: 'center',
-          width: '120px'
-        },
-        {
-          title: '负责人手机',
-          field: 'mobileNo',
-          sortable: true,
-          align: 'center',
-          width: '130px'
+          width: '110px'
         }, {
-          title: '办公电话',
-          field: 'tel',
+          title: '票据金额',
+          field: 'amount',
           sortable: true,
           align: 'center',
-          width: '120px'
+          width: '110px'
+        }, {
+          title: '摘要',
+          field: 'summary',
+          sortable: true,
+          align: 'center',
+          width: '110px'
+        },
+
+        {
+          title: '票据类型',
+          field: 'ivType',
+          sortable: true,
+          align: 'center',
+          width: '110px'
         },
         {
+          title: '公司名称',
+          field: 'cpName',
+          sortable: true,
+          align: 'center',
+          width: '110px'
+        },
+        {
+          title: '税号',
+          field: 'taxNum',
+          sortable: true,
+          align: 'center',
+          width: '110px'
+        },
+        {
+          title: '单位地址',
+          field: 'apAddress',
+          sortable: true,
+          align: 'center',
+          width: '110px'
+        },
+        {
+          title: '电话号码',
+          field: 'cpPhone',
+          sortable: true,
+          align: 'center',
+          width: '110px'
+        },
+        {
+          title: '开户银行',
+          field: 'cpBank',
+          sortable: true,
+          align: 'center',
+          width: '110px'
+        },
+        {
+          title: '银行账户',
+          field: 'cpBankNum',
+          sortable: true,
+          align: 'center',
+          width: '110px'
+        },
+        {
+          title: '状态',
+          field: 'status',
+          sortable: true,
+          align: 'center',
+          width: '110px'
+        }, {
           title: '备注',
           field: 'remark',
           sortable: true,
-          align: 'center'
-        },
-        {
-          title: '修改人',
+          align: 'center',
+          width: '110px'
+        }, {
+          title: '更新人',
           field: 'updateBy',
           sortable: true,
           align: 'center',
           width: '110px'
-        },
-        {
-          title: '修改日期',
+        }, {
+          title: '更新日期',
           field: 'updateDate',
           sortable: true,
           align: 'center',
-          width: '120px',
-          formatter: ['toDateString', 'yyyy-MM-dd']
+          width: '110px'
         }
       ]
     }

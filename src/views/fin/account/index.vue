@@ -5,29 +5,26 @@
                 <template slot="title">
                     查询条件<i class="el-icon-d-arrow-right"/>
                 </template>
-                <el-form :inline="true" size="mini" :model="dataForm"
-                         @keyup.enter.native="getDataList()" ref="dataForm">
-                    <el-form-item prop="code">
-                        <el-input
-                                v-model="dataForm.code"
-                                :data-operate="dataFormOp.likeOps"
-                                :placeholder="data.form.input.code"
-                                clearable
-                        />
-                    </el-form-item>
+                <el-form :inline="true" size="mini" @keyup.enter.native="getDataList()" :model="dataForm"
+                         ref="dataForm">
                     <el-form-item prop="name">
                         <el-input
                                 v-model="dataForm.name"
-                                :data-operate="dataFormOp.likeOps"
-                                :placeholder="data.form.input.name"
+                                :placeholder="data.form.account.name"
                                 clearable
                         />
                     </el-form-item>
-                    <el-form-item prop="mobileNo">
+                    <el-form-item prop="bankName">
                         <el-input
-                                v-model="dataForm.mobileNo"
-                                :data-operate="dataFormOp.likeOps"
-                                :placeholder="data.form.input.mobileNo"
+                                v-model="dataForm.bankName"
+                                :placeholder="data.form.account.bankName"
+                                clearable
+                        />
+                    </el-form-item>
+                    <el-form-item prop="bankNum">
+                        <el-input
+                                v-model="dataForm.bankNum"
+                                :placeholder="data.form.account.bankNum"
                                 clearable
                         />
                     </el-form-item>
@@ -108,27 +105,25 @@
 <script>
 import mixinViewModule from '@/mixins/view-module'
 import AddOrUpdate from './add-or-update'
-import data from './data'
+import data from '../data'
 
 export default {
-  name: 'ware',
+  name: 'account',
   mixins: [mixinViewModule],
   data () {
     return {
       data: data,
       mixinViewModuleOptions: {
-        getDataListURL: '/base/warehouse/list',
+        getDataListURL: '/fin/account/list',
         getDataListIsPage: true,
-        deleteURL: '/base/warehouse/delete',
-        deleteIsBatch: true
+        deleteURL: '/fin/account/delete',
+        deleteIsBatch: true,
+        deleteIsBatchKey: 'id'
       },
       dataForm: {
-        code: undefined,
-        name: undefined,
-        mobileNo: undefined
-      },
-      dataFormOp: {
-        username: 'like'
+        bankName: undefined,
+        bankNum: undefined,
+        name: undefined
       },
       toolbar: {
         id: 'full_edit_1',
@@ -141,72 +136,52 @@ export default {
         }
       },
       columns: [
+        { type: 'index', width: 60, fixed: 'left' },
         {
-          title: '仓库编号',
-          field: 'code',
-          sortable: true,
-          align: 'center',
-          width: '110px'
-        },
-        {
-          title: '仓库名称',
+          title: '账户名称',
           field: 'name',
           sortable: true,
-          align: 'center',
-          width: '110px'
-        },
-        {
-          title: '虚拟仓标志',
-          field: 'virtualFlag',
-          sortable: true,
-          align: 'center',
-          width: '120px'
+          align: 'center'
         }, {
-          title: '仓库地址',
-          field: 'address',
+          title: '开户行',
+          field: 'bankName',
           sortable: true,
-          align: 'center',
-          width: '110px'
+          align: 'center'
         }, {
-          title: '仓库负责人',
-          field: 'pic',
+          title: '账号',
+          field: 'bankNum',
           sortable: true,
-          align: 'center',
-          width: '120px'
-        },
-        {
-          title: '负责人手机',
-          field: 'mobileNo',
-          sortable: true,
-          align: 'center',
-          width: '130px'
+          align: 'center'
         }, {
-          title: '办公电话',
-          field: 'tel',
+          title: '账户初始余额',
+          field: 'initBalance',
           sortable: true,
-          align: 'center',
-          width: '120px'
-        },
-        {
+          align: 'center'
+        }, {
+          title: '当前余额',
+          field: 'balance',
+          sortable: true,
+          align: 'center'
+        }, {
+          title: '状态',
+          field: 'status',
+          sortable: true,
+          align: 'center'
+        }, {
           title: '备注',
           field: 'remark',
           sortable: true,
           align: 'center'
-        },
-        {
-          title: '修改人',
+        }, {
+          title: '更新人',
           field: 'updateBy',
           sortable: true,
-          align: 'center',
-          width: '110px'
-        },
-        {
-          title: '修改日期',
+          align: 'center'
+        }, {
+          title: '更新日期',
           field: 'updateDate',
           sortable: true,
-          align: 'center',
-          width: '120px',
-          formatter: ['toDateString', 'yyyy-MM-dd']
+          align: 'center'
         }
       ]
     }

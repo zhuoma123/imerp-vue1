@@ -1,6 +1,6 @@
 <template>
     <el-dialog :visible.sync="visible" :title="isNew ? $t('views.public.add') : $t('views.public.update')"
-               :close-on-click-modal="false" :close-on-press-escape="false" width="850px">
+               :close-on-click-modal="false" :close-on-press-escape="false" width="800px">
         <el-form :model="dataForm" :rules="rules" ref="dataForm" label-width="120px" :inline="true" labelSuffix="："
                  size="mini">
             <el-form-item prop="id" v-show="false" />

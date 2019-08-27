@@ -1,24 +1,26 @@
 <template>
   <el-col :span="colSpan">
     <el-form-item
-      v-show="!descriptor.hidden"
+      v-show="!curDescriptor.hidden"
       class="dynamic-form-item"
       :ref="prop"
-      :label="labelWidth === '0px' ? '' : (label || prop)"
+      :label="(labelWidth === '0px' || typeDescriptor.type === 'slot') ? '' : (label || prop)"
       :prop="prop"
       :size="size"
       :language="language"
       :rules="tranDescriptor"
       :required="typeDescriptor.required"
       :label-width="labelWidth">
+      <slot :name="typeDescriptor.name" v-if="typeDescriptor.type === 'slot'"></slot>
       <dynamic-input
-        v-if="!isComplexType(typeDescriptor.type)"
+        v-else-if="!isComplexType(typeDescriptor.type)"
         v-model="_value"
         :map-model="mapModel"
         :size="size"
-        :disabled="typeDescriptor.disabled"
+        :disabled="curProps.disabled"
         :type="typeDescriptor.type"
-        :custDesc="typeDescriptor.desc"
+        :custName="typeDescriptor.name"
+        :custProps="curProps"
         :extend="{ options: typeDescriptor.options || typeDescriptor.enum }"
         :placeholder="typeDescriptor.placeholder">
       </dynamic-input>
@@ -78,6 +80,8 @@
               :size="size"
               :disabled="typeDescriptor.defaultField.disabled"
               :type="typeDescriptor.defaultField.type"
+              :custName="typeDescriptor.name"
+              :custProps="typeDescriptor.props"
               :extend="{ multiple: typeDescriptor.defaultField.multiple, options: typeDescriptor.defaultField.options || typeDescriptor.defaultField.enum }"
               :placeholder="typeDescriptor.defaultField.placeholder">
             </dynamic-input>
@@ -178,22 +182,26 @@ export default {
       }
     },
     typeDescriptor () {
-      return findTypeDescriptor(this.descriptor)
+      let typer = findTypeDescriptor(this.curDescriptor)
+      this.curProps = Object.assign({disabled: typer.disabled}, typer.props)
+      return typer
     },
     subFormBackgroundColor () {
       return this.bgColorOffset ? darkenColor(this.backgroundColor, this.bgColorOffset) : 'none'
     },
     tranDescriptor () {
-      let tem = Object.assign({}, this.descriptor)
+      let tem = Object.assign({}, this.curDescriptor)
       if(tem.type === 'cust') {
-        tem.type = 'string'
+        tem.type = tem.ruletype || 'string'
       }
       return tem
     }
   },
   data () {
     return {
-      hashMapKey: ''
+      hashMapKey: '',
+      curDescriptor: this.descriptor,
+      curProps: {}
     }
   },
   created () {
@@ -225,6 +233,10 @@ export default {
     },
     deleteItem (index) {
       this._value.splice(index, 1)
+    },
+    propsChange (descriptors) {
+      this.curDescriptor = descriptors[this.prop]
+      this.curProps = this.typeDescriptor.props
     }
   }
 }

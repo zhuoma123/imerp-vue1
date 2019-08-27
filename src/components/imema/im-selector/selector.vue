@@ -1,5 +1,6 @@
 <template>
   <el-select
+    v-if="!curprops.disabled"
     :value="selectVal"
     :filterable="selType == 'dyamic'"
     :remote="selType == 'dyamic'"
@@ -16,6 +17,7 @@
       :value="item">
     </el-option>
   </el-select>
+  <el-input v-else v-model="selectVal.key" readonly></el-input>
 </template>
 
 <script>
@@ -30,14 +32,6 @@ export default {
       type: String,
       required: true
     },
-    clearable: {
-      type: Boolean,
-      default: true
-    },
-    placeholder: {
-      type: String,
-      default: '请选择'
-    },
     selprops: Object
   },
   data () {
@@ -50,29 +44,28 @@ export default {
       dType: '',
       selType: 'static',
       lock: false,
-      curprops: {}
+      curprops: this.selprops
     }
   },
   created () {
-    if (this.dataType.includes('.')) {
-      this.dType = this.dataType.split('.')[0]
-      this.codeType = this.dataType.split('.')[1]
-    } else {
-      this.dType = this.dataType
-    }
-    this.selType = this.dType === 'biz' ? 'dyamic' : 'static'
-    if (this.selType === 'static') {
-      this._selLoadCode()
-    }
-    this.curprops = Object.assign({
-        clearable: this.clearable, 
-        placeholder: this.placeholder
-      }, this.selprops)
+    
   },
   mounted () {
-
+    this.init()
   },
   methods: {
+    init() {
+      if (this.dataType.includes('.')) {
+        this.dType = this.dataType.split('.')[0]
+        this.codeType = this.dataType.split('.')[1]
+      } else {
+        this.dType = this.dataType
+      }
+      this.selType = this.dType === 'biz' ? 'dyamic' : 'static'
+      if (this.selType === 'static') {
+        this._selLoadCode()
+      }
+    },
     _selLoadCode () {
       this.lock = true
       this._selDyamicList('').then(() => {
@@ -101,15 +94,19 @@ export default {
       }
       if (e.value && this.selType === 'static') {
         let timer = setInterval(() => {
-          if (this.lock) {
-            return
+          if (!this.lock) {
+            this.options.map(item => {
+              if (this._.toString(e.value) === this._.toString(item.value)) { this.selectVal = item }
+            })
+            clearInterval(timer)
           }
-          this.options.map(item => {
-            if (this._.toString(e.value) === this._.toString(item.value)) { this.selectVal = item }
-          })
-          clearInterval(timer)
         }, 500)
-      } else { this.selectVal = e }
+      } else { 
+        this.selectVal = e 
+      }
+    },
+    selpropsChange(props) {
+      this.curprops = Object.assign({}, this.curprops, props)
     }
   },
   watch: {

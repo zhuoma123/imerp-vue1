@@ -1,10 +1,9 @@
 <template>
 	<d2-container>
-		<el-collapse slot="header" @change="collapseChange">
+		<el-collapse slot="header">
 			<el-collapse-item>
 				<template slot="title">
-					查询条件
-					<i class="el-icon-d-arrow-right"/>
+					查询条件<i class="el-icon-d-arrow-right"/>
 				</template>
 				<dynamic-form
 					v-model="dataForm"
@@ -36,62 +35,36 @@
 			@cell-dblclick="cellDblClick"
 			@current-change='currentChange'>
 			<template v-slot:buttons>
-				<el-button
-					ref="btnStatusAdd"
-					size="mini"
-					icon="el-icon-circle-plus"
-					enablestatus='NEW,COMPLETED'
-					v-if="$hasPermission('inv:checkbill:save')"
-					@click="addHandle"
-				>新增
+				<el-button ref="btnStatusAdd" size="mini" icon="el-icon-circle-plus"
+				           v-if="$hasPermission('inv:transferbill:save')"
+				           @click="addHandle">新增
 				</el-button>
-				<el-button
-					ref="btnStatusEdit"
-					enablestatus='NEW'
-					row-dbclick
-					form-readonly
-					type="primary"
-					size="mini"
-					icon="el-icon-edit"
-					v-if="$hasPermission('inv:checkbill:save')"
-					@click="e => cellDblClick({row: $refs.pGrid.getCurrentRow()}, e)"
-				>修改
+				<el-button ref="btnStatusEdit"
+				           enablestatus='NEW'
+				           row-dbclick
+				           form-readonly type="primary" size="mini" icon="el-icon-edit"
+				           v-if="$hasPermission('inv:transferbill:save')"
+				           @click="e => cellDblClick({row: $refs.pGrid.getCurrentRow()}, e)">修改
 				</el-button>
-				<el-button
-					ref="btnStatusDelete"
-					enablestatus='NEW'
-					type="danger"
-					size="mini"
-					icon="el-icon-delete"
-					v-if="$hasPermission('inv:checkbill:delete')"
-					@click="deleteEntityHandle($refs.pGrid)"
-				>删除
+				<el-button ref="btnStatusDelete"
+				           enablestatus='NEW' type="danger" size="mini" icon="el-icon-delete"
+				           v-if="$hasPermission('inv:transferbill:delete')"
+				           @click="deleteEntityHandle($refs.pGrid)">删除
 				</el-button>
-				
-				<el-button
-					ref="btnStatusSubmit"
-					enablestatus='NEW'
-					type="success"
-					size="mini"
-					icon="el-icon-check"
-					v-if="$hasPermission('inv:checkbill:submit')"
-					@click="submitHandle($refs.pGrid,true)"
-				>提交
+				<el-button ref="btnStatusAutoPick"
+				           enablestatus='NEW' type="success" size="mini" icon="el-icon-check"
+				           v-if="$hasPermission('inv:transferbill:submit')"
+				           @click="submitHandle($refs.pGrid,true)">自动拣货
 				</el-button>
-				<el-button
-					type="info"
-					size="mini"
-					icon="el-icon-printer"
-					v-if="$hasPermission('inv:checkbill:print')"
-				>打印
+				<el-button ref="btnStatusPick"
+				           enablestatus='NEW' type="success" size="mini" icon="el-icon-check"
+				           v-if="$hasPermission('inv:transferbill:submit')"
+				           @click="submitHandle($refs.pGrid,false)">人工拣货
 				</el-button>
-				<el-button
-					type="info"
-					size="mini"
-					icon="fa fa-file-excel-o"
-					v-if="$hasPermission('inv:checkbill:export')"
-					@click="$refs.pGrid.exportCsv()"
-				>导出
+				<el-button type="info" size="mini" icon="el-icon-printer" v-if="$hasPermission('inv:transferbill:print')">打印
+				</el-button>
+				<el-button type="info" size="mini" icon="fa fa-file-excel-o" v-if="$hasPermission('inv:transferbill:export')"
+				           @click="$refs.pGrid.exportCsv()"> 导出
 				</el-button>
 			</template>
 		</vxe-grid>
@@ -114,44 +87,67 @@
 </template>
 
 <script>
-	import AddOrUpdate from './checkbill-add-or-update'
+	import AddOrUpdate from './transferbill-add-or-update'
 	import mixinViewModule from '@/mixins/view-module'
 
 	const separate = {type: 'separate'}
 	export default {
-		name: 'inv-checkbill',
+		name: 'inv-transferbill',
 		mixins: [mixinViewModule],
 		data() {
 			return {
 				mixinViewModuleOptions: {
-					getDataListURL: '/inv/checkbill/list',
+					getDataListURL: '/inv/transferbill/list',
 					getDataListIsPage: true,
-					updateURL: '/inv/checkbill/save',
-					submitURL: '/inv/checkbill/submit',
-					deleteIsBatch: true,
-					exportURL: '/inv/checkbill/export'
+					updateURL: '/inv/transferbill/save',
+					submitURL: '/inv/transferbill/submit',
+					exportURL: '/inv/transferbill/export'
 				},
 				order: 'desc',
 				orderField: 'id',
 				dataForm: {
 					orderNum: '',
-					warehouseId: '',
-					status: ''
+					fromWarehouseId: null,
+					toWarehouseId: null,
+					transferDate: null,
+					status: null
 				},
 				descriptors: {
 					orderNum: {
-						type: 'string', label: '盘点单号',
+						type: 'string', label: '调拨单号',
 						props: {
 							clearable: true
 						}
 					},
-					warehouseId: {
-						type: 'cust', label: '仓库', ruletype: 'integer',
+					fromWarehouseId: {
+						type: 'cust', label: '调出仓库', ruletype: 'integer',
 						name: 'im-selector',
 						props: {
-							mapKeyVal: "warehouseCode:warehouseId",
+							mapKeyVal: "fromWarehouseCode:fromWarehouseId",
 							dataType: "biz.warehouse",
 							clearable: true
+						}
+					},
+					toWarehouseId: {
+						type: 'cust', label: '调入仓库', ruletype: 'integer',
+						name: 'im-selector',
+						props: {
+							mapKeyVal: "toWarehouseCode:toWarehouseId",
+							dataType: "biz.warehouse",
+							clearable: true
+						}
+					},
+					separate1: separate,
+					transferDate: {
+						type: 'cust', label: '调拨日期', colspan: 2,
+						name: 'el-date-picker',
+						props: {
+							type: 'daterange',
+							rangeSeparator: "至",
+							startPlaceholder: "开始日期",
+							endPlaceholder: "结束日期",
+							valueFormat: "yyyy-MM-dd",
+							class: 'input-class'
 						}
 					},
 					status: {
@@ -164,42 +160,6 @@
 							clearable: true
 						}
 					},
-					separate1: separate,
-					pic: {
-						type: 'cust', label: '负责人', ruletype: 'integer',
-						name: 'im-selector',
-						props: {
-							mapKeyVal: "picName:pic",
-							dataType: "biz.employee",
-							clearable: true
-						}
-					},
-					checkDate: {
-						type: 'cust', label: '盘点日期', colspan: 2,
-						name: 'el-date-picker',
-						props: {
-							type: 'daterange',
-							rangeSeparator: "至",
-							startPlaceholder: "开始日期",
-							endPlaceholder: "结束日期",
-							valueFormat: "yyyy-MM-dd",
-							class: 'input-class'
-						}
-					},
-					/*begingCheckDate: {
-						name: 'el-date-picker',
-						type: 'cust', label: '盘点日期从',
-						props: {
-							type:'date',
-						}
-					},
-					endCheckDate: {
-						name: 'el-date-picker',
-						type: 'cust', label: '至',
-						props: {
-							type:'date'
-						}
-					},*/
 					btnSearch: {
 						type: 'slot',
 						name: 'btnsearch'
@@ -208,26 +168,26 @@
 				tableColumn: [
 					{type: 'index', width: 30, align: 'center'},
 					{
-						title: '盘点单号',
+						title: '调拨单号',
 						field: 'orderNum',
 						sortable: true,
 						align: 'center'
 					},
 					{
-						title: '公司',
-						field: 'companyName',
+						title: '调出仓',
+						field: 'fromWarehouseCode',
 						sortable: true,
 						align: 'center'
 					},
 					{
-						title: '仓库',
-						field: 'warehouseCode',
+						title: '调入仓',
+						field: 'toWarehouseCode',
 						sortable: true,
 						align: 'center'
 					},
 					{
-						title: '盘点日期',
-						field: 'checkDate',
+						title: '调拨日期',
+						field: 'transferDate',
 						sortable: true,
 						align: 'center',
 						formatter: ['toDateString', 'yyyy-MM-dd']
@@ -245,12 +205,6 @@
 						align: 'center'
 					},
 					{
-						title: '备注',
-						field: 'remark',
-						sortable: true,
-						align: 'center'
-					},
-					{
 						title: '修改人',
 						field: 'updateBy',
 						sortable: true,
@@ -262,7 +216,7 @@
 						sortable: true,
 						align: 'center',
 						formatter: ['toDateString', 'yyyy-MM-dd']
-					}
+					},
 				],
 				toolbar: {
 					id: 'full_edit_1',
@@ -280,7 +234,7 @@
 			AddOrUpdate
 		},
 		methods: {
-			reset() {
+			handleFormReset() {
 				this.$refs.dataForm.resetFields()
 			}
 		},

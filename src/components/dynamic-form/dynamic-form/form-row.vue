@@ -1,27 +1,31 @@
 <template>
   <el-row>
     <dynamic-form-item
+      ref="formItem"
       v-for="(descriptor, key, index) in descriptors"
-      v-model="value[key]"
+      v-model="_value[key]"
       :key="key"
       :lang="lang"
       :label="findTypeDescriptor(descriptor).label || key"
       :prop="key"
-      :map-model="value"
+      :map-model="_value"
       :label-width="labelWidth"
       :descriptor="descriptor"
       :language="language"
       :size="size"
-      :col-span="Number(colSpan.split(',')[index])"
+      :col-span="computedCol(descriptor, colSpan, index)"
       :background-color="backgroundColor"
       :bg-color-offset="bgColorOffset">
+      <template v-if="descriptor.type === 'slot'" :slot="descriptor.name">
+          <slot :name="descriptor.name">{{descriptor.name}}</slot>
+      </template>
     </dynamic-form-item>
   </el-row>
 </template>
 
 <script>
 import DynamicFormItem from '../dynamic-form-item/form-item'
-import { isComplexType, getLabelWidth, findTypeDescriptor } from '../utils'
+import { isComplexType, getLabelWidth, findTypeDescriptor, isNumber } from '../utils'
 import i18n from '../i18n'
 
 export default {
@@ -81,6 +85,15 @@ export default {
     DynamicFormItem
   },
   computed: {
+    _value: {
+      get () {
+        return this.value
+      },
+      set (value) {
+        console.log('------set row-----', value)
+        this.value = value
+      }
+    },
     style () {
       const style = {
         fontSize: `${this.fontSize}px`,
@@ -90,6 +103,19 @@ export default {
     },
     language () {
       return (this.languages || i18n)[this.lang]
+    },
+    computedCol () {
+      return function(descriptor, colSpan, index) {
+        const colspans = colSpan.split(',')
+        let colspan = Number(colSpan.split(',')[index])
+        if(descriptor.colspan && isNumber(descriptor.colspan)) {
+          for(let i = 1; i< descriptor.colspan; i++) {
+            if(index + i < colspans.length)
+              colspan += Number(colSpan.split(',')[index+i])
+          }
+        }
+        return colspan
+      }
     }
   },
   data () {
@@ -101,6 +127,7 @@ export default {
     this.init()
   },
   methods: {
+    isNumber,
     findTypeDescriptor,
     init () {
       this.initValue()
@@ -140,24 +167,14 @@ export default {
         }
       }
     },
-    validate (func) {
-      if (typeof func === 'function') {
-        this.$refs['dynamic-form'].validate(valid => {
-          func(valid)
-        })
-      } else {
-        return new Promise((resolve, reject) => {
-          this.$refs['dynamic-form'].validate(valid => {
-            resolve(valid)
-          })
-        })
+    propsChange (formRow) {
+      for(const key in this.descriptors) {
+        Object.assign(this.descriptors[key].props, formRow[key].props)
       }
-    },
-    resetFields () {
-      this.$refs['dynamic-form'].resetFields()
-    },
-    clearValidate () {
-      this.$refs['dynamic-form'].clearValidate()
+      
+      this.$refs.formItem.forEach(item =>{
+        item.propsChange(this.descriptors)
+      })
     }
   }
 }

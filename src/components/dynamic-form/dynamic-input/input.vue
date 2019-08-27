@@ -17,7 +17,7 @@
     <el-option v-for="option in _options" :key="option.label" :value="option.value" :label="option.label" :disabled="option.disabled"></el-option>
   </el-select>
   <!-- date type use el-date-picker -->
-  <el-date-picker v-bind="custProps" v-else-if="type === 'date'" class="dynamic-input" v-model="_value" :size="size" :disabled="disabled" type="datetime" :placeholder="placeholder"></el-date-picker>
+  <el-date-picker v-bind="custProps" v-else-if="type === 'date'" class="dynamic-input" v-model="_value" :size="size" :disabled="disabled" :type="custProps.type || datetime" :placeholder="placeholder"></el-date-picker>
 </template>
 
 <script>
@@ -53,7 +53,8 @@ export default {
       type: String,
       required: true
     },
-    custDesc: Object,
+    custName: String,
+    custProps: Object,
     /**
      * extend options of component
      * extends.options: [{ label: String, value: Any }] || [String] // select component's options
@@ -85,10 +86,14 @@ export default {
       }
     }
   },
+  watch: {
+    custProps: function(val, oldVal) {
+      console.log('----input---', val, oldVal)
+    }
+  },
   data () {
     return {
-      name: '',
-      custProps: {}
+      name: ''
     }
   },
   created () {
@@ -97,11 +102,9 @@ export default {
   methods: {
     init () {
       if(this.type === 'cust') {
-        this.name = (this.custDesc ? this.custDesc.name : null) || 'el-input'
+        this.name = (this.custName ? this.custName : null) || 'el-input'
       } else 
         this.name = TYPE_COMPONENT_MAP[this.type] || 'el-input'
-        
-      this.custProps = (this.custDesc ? this.custDesc.props : null) || {}
     },
     isSpecialType (type) {
       return ['integer', 'float', 'number', 'enum', 'date'].includes(type)

@@ -36,6 +36,9 @@ import 'vxe-table-plugin-element/dist/style.css'
 // [] 动态表单插件
 import DynamicForm from './components/dynamic-form'
 
+// 全局变量
+import Global from './libs/global_variable'
+
 import ElAutocompleteItem from './views/so/select-item'
 import ImSelector from './components/imema/im-selector'
 
@@ -65,6 +68,8 @@ Vue.component('d2-grid-layout', GridLayout)
 Vue.component('d2-grid-item', GridItem)
 Vue.component('SplitPane', SplitPane)
 Vue.component('VueUeditorWrap', VueUeditorWrap)
+
+Vue.prototype.$g = Global
 
 new Vue({
   router,

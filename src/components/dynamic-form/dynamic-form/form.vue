@@ -3,11 +3,12 @@
     <el-form
       v-if="_value"
       ref="dynamic-form"
-      v-model="_value"
+      :model.sync="_value"
       v-bind="formprops"
       :rules="descriptors"
     >
       <dynamic-form-row
+        ref="formRow"
         v-for="(row, key) in rowDescriptors"
         v-model="_value"
         :key="key"
@@ -15,7 +16,11 @@
         :col-span="curColSpan"
         v-bind="$props"
         :label-width="labelWidth"
-      ></dynamic-form-row>
+      >
+      <template v-for="(item, key) in $slots" :slot="key">
+        <slot :name="key"></slot>
+      </template>
+      </dynamic-form-row>
       <el-form-item :size="size"  v-if="$slots.operations" class="operations" :label-width="labelWidth">
         <slot name="operations"></slot>
       </el-form-item>
@@ -81,7 +86,8 @@ export default {
     colSpan: {
       type: String,
       default: '*'
-    }
+    },
+    readOnly: Boolean
   },
   components: {
     DynamicFormRow
@@ -89,6 +95,7 @@ export default {
   computed: {
     _value: {
       get () {
+        console.log('-----val----', this.value)
         return this.value
       },
       set (value) {
@@ -127,6 +134,20 @@ export default {
       return ret
     }
   },
+  watch: {
+    readOnly: function(val, oldVal) {
+      this.rowDescriptors.forEach((row, idx) =>{
+        Object.keys(row).forEach(key => {
+          if(row[key].name === 'im-selector') {
+            Object.assign(row[key].props, {disabled: val})
+          } else {
+            Object.assign(row[key].props, {readonly: val})
+          }
+        })
+        this.$refs.formRow[idx].propsChange(row)
+      })
+    }
+  },
   data () {
     return {
       descriptors:{},
@@ -154,12 +175,38 @@ export default {
         }
 
         row[key] = this.alldescriptors[key]
+        if(this.readOnly) {
+          if(row[key].name === 'im-selector') {
+            row[key].disabled = this.readOnly
+          } else {
+            row[key].props = Object.assign({}, {readonly: this.readOnly}, row[key].props || {})
+          }
+        }
         if(row[key] && row[key].type !== 'cust') {
           this.descriptors[key] = this.alldescriptors[key]
         }
       }
       if(row)
         this.rowDescriptors.push(row)
+    },
+    validate (func) {
+      if (typeof func === 'function') {
+        this.$refs['dynamic-form'].validate(valid => {
+          func(valid)
+        })
+      } else {
+        return new Promise((resolve, reject) => {
+          this.$refs['dynamic-form'].validate(valid => {
+            resolve(valid)
+          })
+        })
+      }
+    },
+    resetFields () {
+      this.$refs['dynamic-form'].resetFields()
+    },
+    clearValidate () {
+      this.$refs['dynamic-form'].clearValidate()
     }
   }
 }

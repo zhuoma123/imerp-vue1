@@ -2,6 +2,8 @@ import qs from 'qs'
 import XEUtils from 'xe-utils'
 import util from '@/libs/util.js'
 
+
+
 export default {
   data () {
     /* eslint-disable */
@@ -33,6 +35,10 @@ export default {
       formprops: {
         labelSuffix:'：'
       },
+      // 子页面表单是否只读
+      formReadOnly: false,
+      // 子页面表单是否提交
+      enableSubmit: true,
       // 表格属性
       selectionRow: false,
       sortConfig: {
@@ -43,6 +49,7 @@ export default {
         stripe: true,
         border: true
       },
+      curStatus: '',
       visible: false,
       btnDisable: false,
       pGrid: {},
@@ -112,10 +119,19 @@ export default {
      * 该方法只用于子页面
      * @param {*} item
      */
-    init (item) {
+    init (item, read=false, sub=true) {
       this.isNew = !item
-      if (item) { this.entityModel = Object.assign({}, item) }
+      if (item) {
+        this.entityModel = Object.assign({}, item)
+      }
+      this.formReadOnly = read
+      this.enableSubmit = sub
       this.visible = true
+      this.initCB()
+    },
+    // 初始化回调
+    initCB() {
+
     },
     initSelData () {
 
@@ -147,7 +163,7 @@ export default {
       })
       this.dataListLoading = false
     },
-    getDataListCB (self, res) {
+    getDataListCB(self, res) {
 
     },
     vxeTabQuery ({ page, sort, filters }, dataForm) {
@@ -194,7 +210,7 @@ export default {
     },
     // 表单提交
     dataFormSubmit () {
-      if (this.$refs.dataForm) {
+      if(this.$refs.dataForm) {
         this.$refs.dataForm.validate(valid => {
           if (valid) {
             this.doSubmit()
@@ -204,7 +220,7 @@ export default {
         this.doSubmit()
       }
     },
-    doSubmit () {
+    doSubmit() {
       this.btnDisable = true
       if (this.$refs.sGrid) {
         this.dataForm.lineList = this.getItemListDate(this.$refs.sGrid)
@@ -269,10 +285,30 @@ export default {
       }
     },
     // 双击
-    cellDblClick ({ row }) {
+    cellDblClick ({row}, event) {
+      if(typeof row === 'undefined' || row === null) {
+        return this.$message({
+          message: '请选择要修改的记录',
+          type: 'warning'
+        })
+      }
       this.addOrUpdateVisible = true
       this.$nextTick(() => {
-        this.$refs.addOrUpdate.init(row)
+        let read = null
+        for(let r in this.$refs) {
+          if(r.startsWith('btnStatus')) {
+            let dc = this.$refs[r].$attrs['row-dbclick']
+            read = this.$refs[r].$attrs['form-readonly']
+            read = (typeof read !== 'undefined' && read !== null)
+            if(typeof dc !== 'undefined' && dc !== null) {
+              if(this.$refs[r].$el.style.display === 'none') {
+                this.$refs.addOrUpdate.init(row, read, false)
+                return
+              }
+            }
+          }
+        }
+        this.$refs.addOrUpdate.init(row, read)
       })
     },
     // 新增
@@ -283,19 +319,8 @@ export default {
       })
     },
     // 修改
-    updateHandle (event) {
-      let row = this.pGrid.getCurrentRow()
-      this.addOrUpdateVisible = true
-      if (row) {
-        this.$nextTick(() => {
-          this.$refs.addOrUpdate.init(row)
-        })
-      } else {
-        return this.$message({
-          message: '请选择要修改的记录',
-          type: 'warning'
-        })
-      }
+    updateHandle () {
+
     },
     // 提交
     submitHandle (event, isAuto) {
@@ -306,10 +331,10 @@ export default {
           type: 'warning'
         })
       }
-      this.$confirm('确定要提交吗，提交后不能在修改！', { 'handle': '提交' }, '确认操作', {
+      this.$confirm('确定要提交吗，提交后不能在修改！', '操作操作', {
         confirmButtonText: this.$t('views.public.confirm'),
         cancelButtonText: this.$t('views.public.cancel'),
-        type: 'warning'
+        type: 'info'
       }).then(() => {
         this.$axios.post(
           this.mixinViewModuleOptions.submitURL, { 'id': row.id, 'isAuto': isAuto }
@@ -345,28 +370,22 @@ export default {
       this.addOrUpdateHandleSetter(map)
     },
     // 删除
-    deleteHandleSetter (grid) {
-      let ids = ''
-      this.dataListSelections = grid.getSelectRecords()
-      if (grid.getSelectRecords().length === 0) {
-        if (!grid.getCurrentRow()) {
-          return this.$message({
-            message: '请选择要删除的记录',
-            type: 'warning'
-          })
-        }
-        ids = [grid.getCurrentRow().id]
-      } else {
-        ids = this.dataListSelections.map(item => item.id).join()
+    deleteEntityHandle (grid) {
+      let row = this.pGrid.getCurrentRow()
+      if (!row) {
+        return this.$message({
+          message: '请选择要删除的记录',
+          type: 'error'
+        })
       }
-      this.$confirm('确定要删除选中的记录', { 'handle': '删除' }, '确认操作', {
+      this.$confirm('确定要删除选中的记录吗！', '操作提示', {
         confirmButtonText: this.$t('views.public.confirm'),
         cancelButtonText: this.$t('views.public.cancel'),
-        type: 'warning'
+        type: 'error'
       }).then(() => {
+        row.__state='DELETED'
         this.$axios.post(
-          this.mixinViewModuleOptions.deleteURL,
-          { 'ids': ids }
+          this.mixinViewModuleOptions.updateURL,row
         ).then(res => {
           this.$message({
             message: this.$t('views.public.success'),
@@ -394,10 +413,45 @@ export default {
       } else {
         ids = this.dataListSelections.map(item => item.id).join()
       }
-      this.$confirm('确定要删除选中的记录', { 'handle': '删除' }, '确认操作', {
+      this.$confirm('确定要删除选中的记录', '操作提示', {
         confirmButtonText: this.$t('views.public.confirm'),
         cancelButtonText: this.$t('views.public.cancel'),
-        type: 'warning'
+        type: 'error'
+      }).then(() => {
+        this.$axios.post(
+          this.mixinViewModuleOptions.deleteURL,
+          { 'ids': ids }
+        ).then(res => {
+          this.$message({
+            message: this.$t('views.public.success'),
+            type: 'success',
+            duration: 500,
+            onClose: () => {
+              this.search()
+            }
+          })
+        }).catch(() => {})
+      }).catch(() => {})
+    },
+    // 删除
+    deleteHandleSetter (grid) {
+      let ids = ''
+      this.dataListSelections = grid.getSelectRecords()
+      if (grid.getSelectRecords().length === 0) {
+        if (!grid.getCurrentRow()) {
+          return this.$message({
+            message: '请选择要删除的记录',
+            type: 'warning'
+          })
+        }
+        ids = [grid.getCurrentRow().id]
+      } else {
+        ids = this.dataListSelections.map(item => item.id).join()
+      }
+      this.$confirm('确定要删除选中的记录', '操作提示', {
+        confirmButtonText: this.$t('views.public.confirm'),
+        cancelButtonText: this.$t('views.public.cancel'),
+        type: 'error'
       }).then(() => {
         this.$axios.post(
           this.mixinViewModuleOptions.deleteURL,
@@ -497,56 +551,27 @@ export default {
         let bodyClientHeight = document.getElementsByClassName('d2-container-full__body')[0] ? `${document.getElementsByClassName('d2-container-full__body')[0].clientHeight}` : 0
         let tableBody = self.$refs.pGrid.$el.getElementsByClassName('vxe-table--body-wrapper')[0]
         let tableFoot = self.$refs.pGrid.showFooter ? 30 : 0
-        if (tableBody) { tableBody.style.height = Number(bodyClientHeight) - Number(toolbar) - Number(tableHeader) - tableFoot + 'px' }
+        if(tableBody)
+          tableBody.style.height = Number(bodyClientHeight) - Number(toolbar) - Number(tableHeader) - tableFoot + 'px'
       }
     },
     collapseChange () {
       setTimeout(this.computeHeight, 500)
     },
-    enableTlbBtn ({ columns, row }) {
-      if (row.status === 'NEW') {
-        if (this.$refs.btnAdd) this.$refs.btnAdd.disabled = false
-        if (this.$refs.btnEdit) this.$refs.btnEdit.disabled = false
-        if (this.$refs.btnDelete) this.$refs.btnDelete.disabled = false
-        if (this.$refs.btnSubmit) this.$refs.btnSubmit.disabled = false
-        if (this.$refs.btnAutoPick) this.$refs.btnAutoPick.disabled = false
-        if (this.$refs.btnPick) this.$refs.btnPick.disabled = false
-      } else if (row.status === 'SUBMIT') {
-        if (this.$refs.btnAdd) this.$refs.btnAdd.disabled = false
-        if (this.$refs.btnEdit) this.$refs.btnEdit.disabled = true
-        if (this.$refs.btnDelete) this.$refs.btnDelete.disabled = true
-        if (this.$refs.btnSubmit) this.$refs.btnSubmit.disabled = true
-        if (this.$refs.btnAutoPick) this.$refs.btnAutoPick.disabled = false
-        if (this.$refs.btnPick) this.$refs.btnPick.disabled = false
-      } else if (row.status === 'SENDED') {
-        if (this.$refs.btnAdd) this.$refs.btnAdd.disabled = false
-        if (this.$refs.btnEdit) this.$refs.btnEdit.disabled = true
-        if (this.$refs.btnDelete) this.$refs.btnDelete.disabled = true
-        if (this.$refs.btnSubmit) this.$refs.btnSubmit.disabled = true
-        if (this.$refs.btnAutoPick) this.$refs.btnAutoPick.disabled = true
-        if (this.$refs.btnPick) this.$refs.btnPick.disabled = true
-      } else if (row.status === 'PICKUP') {
-        if (this.$refs.btnAdd) this.$refs.btnAdd.disabled = false
-        if (this.$refs.btnEdit) this.$refs.btnEdit.disabled = true
-        if (this.$refs.btnDelete) this.$refs.btnDelete.disabled = true
-        if (this.$refs.btnSubmit) this.$refs.btnSubmit.disabled = true
-        if (this.$refs.btnAutoPick) this.$refs.btnAutoPick.disabled = true
-        if (this.$refs.btnPick) this.$refs.btnPick.disabled = true
-      } else if (row.status === 'CANCEL') {
-        if (this.$refs.btnAdd) this.$refs.btnAdd.disabled = false
-        if (this.$refs.btnEdit) this.$refs.btnEdit.disabled = true
-        if (this.$refs.btnDelete) this.$refs.btnDelete.disabled = true
-        if (this.$refs.btnSubmit) this.$refs.btnSubmit.disabled = true
-        if (this.$refs.btnAutoPick) this.$refs.btnAutoPick.disabled = true
-        if (this.$refs.btnPick) this.$refs.btnPick.disabled = true
-      } else if (row.status === 'COMPLETED') {
-        if (this.$refs.btnAdd) this.$refs.btnAdd.disabled = false
-        if (this.$refs.btnEdit) this.$refs.btnEdit.disabled = true
-        if (this.$refs.btnDelete) this.$refs.btnDelete.disabled = true
-        if (this.$refs.btnSubmit) this.$refs.btnSubmit.disabled = true
-        if (this.$refs.btnAutoPick) this.$refs.btnAutoPick.disabled = true
-        if (this.$refs.btnPick) this.$refs.btnPick.disabled = true
+    currentChange ({row}) {
+      this.curStatus = row.status
+    },
+    btnStatus (obj, val) {
+      let enablestatus = obj.$attrs.enablestatus
+      if(enablestatus && enablestatus.length > 0) {
+        enablestatus = enablestatus.split(',')
+        obj.$el.style = 'display:' + (enablestatus.includes(val) ? 'inline-block' : 'none')
       }
+    },
+    reset () {
+      this.$nextTick(() => {
+        this.$refs['dataForm'].resetFields()
+      })
     }
   },
   watch: {
@@ -557,21 +582,27 @@ export default {
             this.dataList = []
             this.$refs.sGrid.loadData(this.dataList)
             if (this.isNew) {
-              this.$refs.dataForm.resetFields()
+              this.reset()
               this.$refs.sGrid.updateFooter()
             } else {
               this.dataForm = this.entityModel
               this.initSelData()
               this.search(this.entityModel)
             }
-          } else {
+          }else{
             if (this.isNew) {
-              this.$refs.dataForm.resetFields()
+              this.reset()
             } else {
               this.dataForm = this.entityModel
             }
           }
         })
+      }
+    },
+    curStatus: function(val, oldVal) {
+      for(let item in this.$refs) {
+        if(item.startsWith('btnStatus'))
+          this.btnStatus(this.$refs[item], val)
       }
     }
   },

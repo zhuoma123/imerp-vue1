@@ -7,7 +7,8 @@ export default {
   data () {
     return {
       mapKey: 'key',
-      mapVal: 'value'
+      mapVal: 'value',
+      curProps: Object.assign({}, this.$props)
     }
   },
   props: {
@@ -38,7 +39,12 @@ export default {
       default: true
     },
     placeholder: String,
-    selprops: Object
+    selprops: Object,
+    size: String,
+    disabled: {
+      type: Boolean,
+      default: false
+    }
   },
   computed: {
     // 始终返回渲染组件
@@ -58,9 +64,7 @@ export default {
         ref: 'component',
         props: {
           dataType: this.dataType,
-          placeholder: this.placeholder,
-          clearable: this.clearable,
-          selprops: this.selprops
+          selprops: this.curProps
         },
         on: {
           change: e => this.$emit('change', e),
@@ -76,9 +80,6 @@ export default {
       })
     ])
   },
-  methods: {
-
-  },
   watch: {
     value: function (val, oldVal) {
       let obj = {
@@ -86,17 +87,26 @@ export default {
         value: this.mapModel[this.mapVal]
       }
       this.$refs.component._setVal(obj)
+    },
+    disabled: function(val, oldVal) {
+      this.$refs.component.selpropsChange({disabled: val})
     }
   },
   created () {
-    if (this.mapKeyVal) {
-      let kv = this.mapKeyVal.split(':')
-      if (kv.length === 2) {
-        this.mapKey = kv[0]
-        this.mapVal = kv[1]
-      } else {
-        this.mapKey = this.mapVal = this.mapKeyVal
+    this.init()
+  },
+  methods: {
+    init(){
+      if (this.mapKeyVal) {
+        let kv = this.mapKeyVal.split(':')
+        if (kv.length === 2) {
+          this.mapKey = kv[0]
+          this.mapVal = kv[1]
+        } else {
+          this.mapKey = this.mapVal = this.mapKeyVal
+        }
       }
+      delete this.curProps.value
     }
   },
   mounted () {

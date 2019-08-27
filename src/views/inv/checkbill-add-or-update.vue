@@ -8,46 +8,14 @@
     width="80%"
   >
     <div>
-      <el-form
-        :model="dataForm"
-        labelSuffix="："
-        size="mini"
-        :rules="dataRule"
+      <dynamic-form
+        v-model="dataForm"
+        :formprops="formprops"
         ref="dataForm"
-        label-width="120px"
-        style="padding-right: 40px"
-      >
-        <el-row inline>
-          <el-col :span="8">
-            <el-form-item label="盘点单号" prop="orderNum">
-              <el-input disabled="disabled" v-model="dataForm.orderNum" clearable></el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="仓库" prop="warehouseId">
-              <im-selector
-                v-model="dataForm.warehouseId"
-                :mapModel.sync="dataForm"
-                mapKeyVal="warehouseCode:warehouseId"
-                dataType="biz.warehouse">
-              </im-selector>
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="负责人" prop="pic">
-              <im-selector
-                v-model="dataForm.pic"
-                :mapModel.sync="dataForm"
-                mapKeyVal="picName:pic"
-                dataType="biz.employee">
-              </im-selector>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-form-item label="备注" prop="remark">
-          <el-input v-model="dataForm.remark" clearable></el-input>
-        </el-form-item>
-      </el-form>
+        col-span='8,8,8'
+        :read-only='formReadOnly'
+        :alldescriptors="descriptors">
+      </dynamic-form>
     </div>
     <vxe-grid
       border
@@ -70,13 +38,11 @@
     >
       <template v-slot:buttons>
         <el-button
-          ref="btnLineAdd"
           size="mini"
           icon="el-icon-circle-plus"
           @click="$refs.sGrid.commitProxy('insert_actived')"
         >新增</el-button>
         <el-button
-          ref="btnLineDelete"
           type="danger"
           size="mini"
           icon="el-icon-delete"
@@ -85,8 +51,8 @@
       </template>
     </vxe-grid>
     <span slot="footer" class="dialog-footer">
-      <el-button type="danger" ref="btnLineCancel" @click="visible = false">取消</el-button>
-      <el-button type="primary" ref="btnLineSave" :disabled="btnDisable" @click="dataFormSubmit">确定</el-button>
+      <el-button type="danger"  @click="visible = false">取消</el-button>
+      <el-button type="primary" v-show="enableSubmit" :disabled="btnDisable" @click="dataFormSubmit">确定</el-button>
     </span>
   </el-dialog>
 </template>
@@ -94,6 +60,7 @@
 <script>
 import mixinViewModule from '@/mixins/view-module'
 import XEUtils from 'xe-utils'
+const separate = {type: 'separate'}
 export default {
   mixins: [mixinViewModule],
   data () {
@@ -113,6 +80,32 @@ export default {
         remark: '',
         warehouseCode:'',
         picName:''
+      },
+      descriptors: {
+        orderNum: { type: 'string', label: '盘点单号',disabled:"disabled",
+          props: {
+            clearable: true
+          }
+        },
+        warehouseId: { type: 'cust', label: '仓库',ruletype:'integer',
+          ruletype: 'integer',
+          name:'im-selector',
+          props: {
+            mapKeyVal: "warehouseCode:warehouseId",
+            dataType: "biz.warehouse",
+            clearable: true
+          }
+        },
+        pic: { type: 'cust', label: '负责人',ruletype:'integer',
+          name:'im-selector',
+          props: {
+            mapKeyVal: "picName:pic",
+            dataType: "biz.employee",
+            clearable: true
+          }
+        },
+        separate1: separate,
+        remark: { type: 'string', label: '备注',colspan: 3},
       },
       dataRule: {
         warehouseId: [

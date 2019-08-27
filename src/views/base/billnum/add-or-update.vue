@@ -169,7 +169,6 @@ export default {
     }
   },
   methods: {
-    // TODO
     showPid () {
       this.menuFormVisible = true
       this.$nextTick(() => {

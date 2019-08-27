@@ -10,24 +10,6 @@
                 <el-form-item prop="name" :label="data.form.invoice.name" class="ddl-matthew-child">
                     <el-input v-model="dataForm.name" :placeholder="data.form.invoice.name"/>
                 </el-form-item>
-                <el-form-item prop="customerId" :label="data.form.invoice.customerId" class="ddl-matthew-child">
-                    <el-select
-                            v-model="dataForm.customerId"
-                            multiple
-                            filterable
-                            remote
-                            reserve-keyword
-                            placeholder="请输入公司名称"
-                            :remote-method="selectCustomer"
-                            :loading="loading" style="width: 300px">
-                        <el-option
-                                v-for="item in options"
-                                :key="item.value"
-                                :label="item.label"
-                                :value="item.value">
-                        </el-option>
-                    </el-select>
-                </el-form-item>
                 <el-form-item prop="ivDate" :label="data.form.invoice.ivDate" class="ddl-matthew-child">
                     <el-date-picker
                             v-model="data.ivDate"
@@ -38,11 +20,14 @@
                 <el-form-item prop="amount" :label="data.form.invoice.amount" class="ddl-matthew-child">
                     <el-input v-model="dataForm.amount" :placeholder="data.form.invoice.amount"/>
                 </el-form-item>
+                <el-form-item prop="ivType" :label="data.form.invoice.ivType" class="ddl-matthew-child">
+                    <el-input v-model="dataForm.ivType" :placeholder="data.form.invoice.ivType"/>
+                </el-form-item>
                 <el-form-item prop="summary" :label="data.form.invoice.summary" class="ddl-matthew-child">
                     <el-input v-model="dataForm.summary" :placeholder="data.form.invoice.summary"/>
                 </el-form-item>
-                <el-form-item prop="ivType" :label="data.form.invoice.ivType" class="ddl-matthew-child">
-                    <el-input v-model="dataForm.ivType" :placeholder="data.form.invoice.ivType"/>
+                <el-form-item prop="customerId" :label="data.form.invoice.customerId" @click.native="showCust" class="ddl-matthew-child">
+                    <el-input v-model="dataForm.customerId" :placeholder="data.form.invoice.customerId"/>
                 </el-form-item>
                 <el-form-item prop="taxNum" :label="data.form.invoice.taxNum" class="ddl-matthew-child">
                     <el-input v-model="dataForm.taxNum" :placeholder="data.form.invoice.taxNum"/>
@@ -74,6 +59,29 @@
                 <el-button type="primary" @click="dataFormSubmit">{{ $t('views.public.confirm') }}</el-button>
             </template>
         </el-dialog>
+
+        <el-dialog title="选择公司" :visible.sync="custVisible" width="388px">
+            <div>
+                <el-input placeholder="输入关键字进行过滤" v-model="filterText"></el-input>
+                <el-tree
+                        :data="options"
+                        :props="defaultProps"
+                        style="height: 300px;"
+                        node-key="id"
+                        ref="tree"
+                        class="filter-tree"
+                        default-expand-all
+                        :filter-node-method="filterNode"
+                        @node-click="getSelectedMenu"
+                ></el-tree>
+                <div slot="footer" class="dialog-footer">
+                    <div class="menuDia">
+                        <el-button @click="menuFormVisible = false">取消</el-button>
+                        <el-button type="primary" @click="getSelectedMenu">确定</el-button>
+                    </div>
+                </div>id
+            </div>
+        </el-dialog>
     </div>
 </template>
 
@@ -85,6 +93,7 @@ export default {
   mixins: [mixinViewModule],
   data () {
     return {
+      custVisible:false,
       mixinViewModuleOptions: {
         getDataListURL: '/fin/invoice/list',
         updateURL: '/fin/invoice/save',
@@ -94,12 +103,17 @@ export default {
       data: data,
       visible: false,
       options: [],
+      defaultProps: {
+        label: 'name',
+        id: 'id'
+      },
+      loading: false,
       dataForm: {
         code: undefined,
         name: undefined,
         customerName: undefined,
         customerId: undefined,
-        ivDate: new Date(),
+        ivDate: undefined,
         amount: undefined,
         summary: undefined,
         ivType: undefined,
@@ -120,14 +134,38 @@ export default {
     }
   },
   methods: {
+    showCust () {
+      this.custVisible = true
+      this.$nextTick(() => {
+        // this.menuList
+      })
+    },
     selectCustomer (query) {
       this.$axios.post('/base/cust/search', { data: query }).then(res => {
-        debugger
         this.options = res
       })
+    },
+    getSelectedMenu () {
+      let data = this.$refs.tree.getCurrentNode()
+      this.dataForm.customerId=data.id
+      this.dataForm.customerName=data.name
+      this.dataForm.ivDate=new Date()
+      this.dataForm.taxNum=data.taxNum
+      this.dataForm.cpAddress=data.companyAddress
+      this.dataForm.cpPhone=data.tel
+      this.dataForm.cpBankNum=data.bankAccount
+      this.dataForm.cpBank=data.bank
+
+      this.custVisible=false
+    },
+    filterNode (value, data) {
+      if (!value) return true
+      return data.name.indexOf(value) !== -1
     }
   },
-  created () {}
+  created () {
+    this.selectCustomer()
+  }
 }
 </script>
 

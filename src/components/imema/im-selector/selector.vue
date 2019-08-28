@@ -27,11 +27,6 @@ export default {
       type: String,
       default: ''
     },
-    // 组件业务类型
-    dataType: {
-      type: String,
-      required: true
-    },
     selprops: Object
   },
   data () {
@@ -55,11 +50,11 @@ export default {
   },
   methods: {
     init() {
-      if (this.dataType.includes('.')) {
-        this.dType = this.dataType.split('.')[0]
-        this.codeType = this.dataType.split('.')[1]
+      if (this.curprops.dataType.includes('.')) {
+        this.dType = this.curprops.dataType.split('.')[0]
+        this.codeType = this.curprops.dataType.split('.')[1]
       } else {
-        this.dType = this.dataType
+        this.dType = this.curprops.dataType
       }
       this.selType = this.dType === 'biz' ? 'dyamic' : 'static'
       if (this.selType === 'static') {
@@ -74,9 +69,14 @@ export default {
     },
     async _selDyamicList (query) {
       this.loading = true
+      if(!this.curprops.dataParam) {
+        this.curprops.dataParam = {}
+      }
+      
+      this.curprops.dataParam.query = query
       await this.$axios.post(
         '/common/' + this.dType.replace(/^\//, '') + '/' + this.codeType,
-        { query: query }
+        this.curprops.dataParam
       ).then(res => {
         this.loading = false
         if (res && res.length > 0) {

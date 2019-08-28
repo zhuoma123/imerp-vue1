@@ -67,7 +67,6 @@
 					@click="deleteEntityHandle($refs.pGrid)"
 				>删除
 				</el-button>
-				
 				<el-button
 					ref="btnStatusSubmit"
 					enablestatus='NEW'

@@ -24,6 +24,8 @@ export default {
       type: String,
       required: true
     },
+    // 参数
+    dataParam: Object,
     // 对应绑定的form表单
     mapModel: {
       type: [Object, Function],

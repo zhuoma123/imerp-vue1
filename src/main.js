@@ -35,6 +35,8 @@ import VXETablePluginElement from 'vxe-table-plugin-element'
 import 'vxe-table-plugin-element/dist/style.css'
 // [] 动态表单插件
 import DynamicForm from './components/dynamic-form'
+// 数字输入指令
+import OnlyNumber from './directive/el-input'
 
 // 全局变量
 import Global from './libs/global_variable'
@@ -62,6 +64,7 @@ Vue.use(d2VueFiltersDayjs)
 VXETable.use(VXETablePluginElement)
 Vue.use(VXETable)
 Vue.use(DynamicForm)
+Vue.use(OnlyNumber)
 Vue.component('ElAutocompleteItem', ElAutocompleteItem)
 Vue.component('ImSelector', ImSelector)
 Vue.component('d2-grid-layout', GridLayout)

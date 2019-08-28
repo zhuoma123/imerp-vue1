@@ -10,8 +10,13 @@
     :disabled="disabled"
     :placeholder="placeholder">
   </component>
-  <!-- integer, number, float type use el-input with v-model.number -->
-  <el-input v-bind="custProps" v-else-if="['integer', 'number', 'float'].includes(type)" v-model.number="_value" :size="size" :disabled="disabled" :placeholder="placeholder"></el-input>
+  
+  <!-- integer, number type use el-input with v-model.number -->
+  <el-input-number v-bind="custProps" v-else-if="['integer'].includes(type)" 
+  v-model.number="_value" :size="size" :disabled="disabled" :placeholder="placeholder"></el-input-number>
+  <!-- float type use el-input with v-only-number -->
+  <el-input v-bind="custProps" v-else-if="['number', 'float'].includes(type)" v-only-number=2
+  v-model="_value" :size="size" :disabled="disabled" :placeholder="placeholder"></el-input>
   <!-- enum type use el-select -->
   <el-select v-bind="custProps" v-else-if="type === 'enum'" class="dynamic-input" v-model="_value" :size="size" :disabled="disabled" :placeholder="placeholder" :multiple="extend && extend.multiple">
     <el-option v-for="option in _options" :key="option.label" :value="option.value" :label="option.label" :disabled="option.disabled"></el-option>

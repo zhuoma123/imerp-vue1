@@ -4,7 +4,7 @@
       v-show="!curDescriptor.hidden"
       class="dynamic-form-item"
       :ref="prop"
-      :label="(labelWidth === '0px' || typeDescriptor.type === 'slot') ? '' : (label || prop)"
+      :label="(labelWidth === '0px') ? '' : (label || prop)"
       :prop="prop"
       :size="size"
       :language="language"

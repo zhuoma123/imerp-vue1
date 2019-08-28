@@ -121,6 +121,7 @@ export default {
         separate1: this.$g.separate, 
         sourceOrderNum: { type: 'string', label: '单据单号'},
         warehouseId: { type: 'cust', label: '仓库', 
+          ruletype: 'integer',
           name:'im-selector',
           props: {
             mapKeyVal: "warehouseCode:warehouseId",
@@ -234,8 +235,7 @@ export default {
         setting: {
           storage: true
         }
-      },
-      curStatus:''
+      }
     }
   },
   components: {
@@ -244,17 +244,15 @@ export default {
   methods: {
     initSelData() {
       for(const key in this.descriptors) {
-        if(XEUtils.get(this.descriptors[key], "desc.name") === 'el-date-picker') {
-          this.descriptors[key].desc.props.pickerOptions = this.pickerOptions
+        if(XEUtils.get(this.descriptors[key], "name") === 'el-date-picker' || 
+        XEUtils.get(this.descriptors[key], "type") === 'date') {
+          this.descriptors[key].props.pickerOptions = this.pickerOptions
         }
       }
     },
     handleFormReset () {
       this.$refs.dataForm.resetFields()
     }
-  },
-  mounted () {
-    this.initSelData()
   }
 }
 </script>

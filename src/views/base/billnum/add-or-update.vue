@@ -6,9 +6,10 @@
                      label-width="110px" :inline="true" labelSuffix="："
                      size="mini" class="ddl-matthew">
                 <!--dataForm must be showed all-->
-                <el-form-item prop="id" v-show="false" />
-                <el-form-item prop="code" v-show="false" />
-                <el-form-item prop="name" :label="data.form.input.name" @click.native="showPid" class="ddl-matthew-child">
+                <el-form-item prop="id" v-show="false"/>
+                <el-form-item prop="code" v-show="false"/>
+                <el-form-item prop="name" :label="data.form.input.name" @click.native="showPid"
+                              class="ddl-matthew-child">
                     <el-input v-model="dataForm.name" :placeholder="data.form.input.name"/>
                 </el-form-item>
                 <el-form-item prop="prefix" :label="data.form.input.prefix" class="ddl-matthew-child">
@@ -23,7 +24,8 @@
                 <el-form-item prop="sequenceLength" :label="data.form.input.sequenceLength" class="ddl-matthew-child">
                     <el-input v-model="dataForm.sequenceLength" :placeholder="data.form.input.sequenceLength"/>
                 </el-form-item>
-                <el-form-item prop="loopType" :label="data.form.input.loopType" v-show="false" class="ddl-matthew-child">
+                <el-form-item prop="loopType" :label="data.form.input.loopType" v-show="false"
+                              class="ddl-matthew-child">
                     <el-input v-model="dataForm.loopType" :placeholder="data.form.input.loopType"/>
                 </el-form-item>
                 <el-form-item prop="suffixSeprator" :label="data.form.input.suffixSeprator" class="ddl-matthew-child">
@@ -89,26 +91,22 @@
             </template>
         </el-dialog>
         <el-dialog title="菜单选择" :visible.sync="menuFormVisible" width="388px">
-            <div>
-                <el-input placeholder="输入关键字进行过滤" v-model="filterText"></el-input>
-                <el-tree
-                        :data="menuList"
-                        :props="defaultProps"
-                        style="height: 300px;"
-                        node-key="code"
-                        ref="tree"
-                        class="filter-tree"
-                        default-expand-all
-                        :filter-node-method="filterNode"
-                        @node-click="getSelectedMenu"
-                ></el-tree>
-                <div slot="footer" class="dialog-footer">
-                    <div class="menuDia">
-                        <el-button @click="menuFormVisible = false">取消</el-button>
-                        <el-button type="primary" @click="getSelectedMenu">确定</el-button>
-                    </div>
-                </div>id
-            </div>
+            <el-input placeholder="输入关键字进行过滤" v-model="filterText"></el-input>
+            <el-tree
+                    :data="menuList"
+                    :props="defaultProps"
+                    style="height: 300px;"
+                    node-key="code"
+                    ref="tree"
+                    class="filter-tree"
+                    default-expand-all
+                    :filter-node-method="filterNode"
+                    @node-click="getSelectedMenu"
+            ></el-tree>
+            <template slot="footer">
+                <el-button @click="menuFormVisible = false">取消</el-button>
+                <el-button type="primary" @click="getSelectedMenu">确定</el-button>
+            </template>
         </el-dialog>
     </div>
 </template>
@@ -235,8 +233,8 @@ export default {
 </script>
 
 <style>
-    .ddl-matthew >.ddl-matthew-child{
-            margin-bottom: 8px;
-        }
+    .ddl-matthew > .ddl-matthew-child {
+        margin-bottom: 8px;
+    }
 
 </style>

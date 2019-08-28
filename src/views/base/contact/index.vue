@@ -260,11 +260,6 @@ export default {
     AddOrUpdate
   },
   methods: {
-    add (row) {
-      let map = {}
-      map.row = row
-      this.addOrUpdateHandleSetter(map)
-    },
     handleFormReset () {
       this.$refs['dataForm'].resetFields()
     }

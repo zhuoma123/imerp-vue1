@@ -116,6 +116,7 @@ export default {
         deleteIsBatch: true,
         deleteIsBatchKey: 'code'
       },
+      descriptors: {},
       dataForm: {
         code: undefined,
         name: undefined
@@ -165,7 +166,8 @@ export default {
           field: 'yearFlag',
           sortable: true,
           align: 'center',
-          width: '110px'
+          width: '110px',
+          formatter: this.flagSelector
         }, {
           title: '年份位数',
           field: 'yLength',
@@ -177,13 +179,15 @@ export default {
           field: 'monthFlag',
           sortable: true,
           align: 'center',
-          width: '110px'
+          width: '110px',
+          formatter: this.flagSelector
         }, {
           title: '日份包含',
           field: 'dayFlag',
           sortable: true,
           align: 'center',
-          width: '110px'
+          width: '110px',
+          formatter: this.flagSelector
         }, {
           title: '流水号长度',
           field: 'sequenceLength',
@@ -283,6 +287,13 @@ export default {
   methods: {
     handleFormReset () {
       this.$refs['dataForm'].resetFields()
+    },
+    flagSelector ({ cellValue }) {
+      if (cellValue) {
+        return '是'
+      } else {
+        return '否'
+      }
     }
   }
 }

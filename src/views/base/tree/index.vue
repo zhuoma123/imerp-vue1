@@ -161,7 +161,8 @@ export default {
           title: '是否系统数据',
           field: 'sys',
           align: 'center',
-          width: '100px'
+          width: '100px',
+          formatter: this.flagSelector
         },
         {
           title: '备注',
@@ -192,6 +193,13 @@ export default {
   methods: {
     handleFormReset () {
       this.$refs['dataForm'].resetFields()
+    },
+    flagSelector ({ cellValue }) {
+      if (cellValue) {
+        return '是'
+      } else {
+        return '否'
+      }
     }
   },
   created () {

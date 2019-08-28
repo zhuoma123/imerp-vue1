@@ -26,13 +26,21 @@
                 <el-form-item prop="summary" :label="data.form.invoice.summary" class="ddl-matthew-child">
                     <el-input v-model="dataForm.summary" :placeholder="data.form.invoice.summary"/>
                 </el-form-item>
-                <el-form-item prop="customerId" :label="data.form.invoice.customerId" @click.native="showCust" class="ddl-matthew-child">
-                    <el-input v-model="dataForm.customerId" :placeholder="data.form.invoice.customerId"/>
+                <el-form-item prop="customerName" :label="data.form.invoice.customerName" class="ddl-matthew-child">
+                    <im-selector
+                            placeholder="请选择单位"
+                            v-model="dataForm.customerName"
+                            :mapModel.sync="dataForm"
+                            mapKeyVal="customerName:customerId"
+                            dataType="biz.customersearch"
+                            style="width: 178px"
+                            @change="changeCust">
+                    </im-selector>
                 </el-form-item>
                 <el-form-item prop="taxNum" :label="data.form.invoice.taxNum" class="ddl-matthew-child">
                     <el-input v-model="dataForm.taxNum" :placeholder="data.form.invoice.taxNum"/>
                 </el-form-item>
-                <el-form-item prop="apAddress" :label="data.form.invoice.cpAddress" class="ddl-matthew-child">
+                <el-form-item prop="cpAddress" :label="data.form.invoice.cpAddress" class="ddl-matthew-child">
                     <el-input v-model="dataForm.cpAddress" :placeholder="data.form.invoice.cpAddress"/>
                 </el-form-item>
                 <el-form-item prop="cpPhone" :label="data.form.invoice.cpPhone" class="ddl-matthew-child">
@@ -59,29 +67,6 @@
                 <el-button type="primary" @click="dataFormSubmit">{{ $t('views.public.confirm') }}</el-button>
             </template>
         </el-dialog>
-
-        <el-dialog title="选择公司" :visible.sync="custVisible" width="388px">
-            <div>
-                <el-input placeholder="输入关键字进行过滤" v-model="filterText"></el-input>
-                <el-tree
-                        :data="options"
-                        :props="defaultProps"
-                        style="height: 300px;"
-                        node-key="id"
-                        ref="tree"
-                        class="filter-tree"
-                        default-expand-all
-                        :filter-node-method="filterNode"
-                        @node-click="getSelectedMenu"
-                ></el-tree>
-                <div slot="footer" class="dialog-footer">
-                    <div class="menuDia">
-                        <el-button @click="menuFormVisible = false">取消</el-button>
-                        <el-button type="primary" @click="getSelectedMenu">确定</el-button>
-                    </div>
-                </div>id
-            </div>
-        </el-dialog>
     </div>
 </template>
 
@@ -93,7 +78,7 @@ export default {
   mixins: [mixinViewModule],
   data () {
     return {
-      custVisible:false,
+      custVisible: false,
       mixinViewModuleOptions: {
         getDataListURL: '/fin/invoice/list',
         updateURL: '/fin/invoice/save',
@@ -102,12 +87,6 @@ export default {
       },
       data: data,
       visible: false,
-      options: [],
-      defaultProps: {
-        label: 'name',
-        id: 'id'
-      },
-      loading: false,
       dataForm: {
         code: undefined,
         name: undefined,
@@ -134,37 +113,24 @@ export default {
     }
   },
   methods: {
-    showCust () {
-      this.custVisible = true
-      this.$nextTick(() => {
-        // this.menuList
-      })
-    },
-    selectCustomer (query) {
-      this.$axios.post('/base/cust/search', { data: query }).then(res => {
-        this.options = res
-      })
-    },
-    getSelectedMenu () {
-      let data = this.$refs.tree.getCurrentNode()
-      this.dataForm.customerId=data.id
-      this.dataForm.customerName=data.name
-      this.dataForm.ivDate=new Date()
-      this.dataForm.taxNum=data.taxNum
-      this.dataForm.cpAddress=data.companyAddress
-      this.dataForm.cpPhone=data.tel
-      this.dataForm.cpBankNum=data.bankAccount
-      this.dataForm.cpBank=data.bank
-
-      this.custVisible=false
-    },
-    filterNode (value, data) {
-      if (!value) return true
-      return data.name.indexOf(value) !== -1
+    changeCust (data) {
+      if (data) {
+        this.dataForm.customerId = data.ID
+        this.dataForm.taxNum = data.TAX_NUM
+        this.dataForm.cpAddress = data.COMPANY_ADDRESS
+        this.dataForm.cpPhone = data.TEL
+        this.dataForm.cpBankNum = data.BANK_ACCOUNT
+        this.dataForm.cpBank = data.BANK
+      }
     }
   },
-  created () {
-    this.selectCustomer()
+  watch: {
+    visible: function (newName, oldName) {
+      if (newName) {
+        let date = new Date()
+        this.dataForm.ivDate = date
+      }
+    }
   }
 }
 </script>

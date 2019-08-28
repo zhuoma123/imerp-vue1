@@ -29,7 +29,7 @@
                         />
                     </el-form-item>
                     <el-form-item>
-                        <el-button @click="getDataList()" icon="el-icon-search" type="primary">{{
+                        <el-button @click="search" icon="el-icon-search" type="primary">{{
                             $t('views.public.query') }}
                         </el-button>
                     </el-form-item>

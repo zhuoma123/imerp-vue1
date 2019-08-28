@@ -34,7 +34,7 @@
             </el-form>
             <template slot="footer">
                 <el-button @click="visible = false">{{ $t('views.public.cancel') }}</el-button>
-                <el-button type="primary" @click="dataFormSubmit">{{ $t('views.public.confirm') }}</el-button>
+                <el-button type="primary" @click="dataFormSubmit" :disabled="btnDisable">{{ $t('views.public.confirm') }}</el-button>
             </template>
         </el-dialog>
     </div>
@@ -48,6 +48,7 @@ export default {
   mixins: [mixinViewModule],
   data () {
     return {
+      btnDisable: false,
       mixinViewModuleOptions: {
         getDataListURL: '/fin/account/list',
         updateURL: '/fin/account/save',
@@ -85,6 +86,7 @@ export default {
     }
   },
   methods: {
+    toggleBtn () {}
   }
 }
 </script>

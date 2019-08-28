@@ -21,15 +21,22 @@
                                 clearable
                         />
                     </el-form-item>
-                    <el-form-item prop="ivDate">
-                        <el-input
-                                v-model="dataForm.ivDate"
-                                :placeholder="data.form.invoice.ivDate"
-                                clearable
-                        />
+                    <el-form-item prop="from">
+                        <el-date-picker
+                                v-model="dataForm.from"
+                                type="date"
+                                placeholder="票据日期起">
+                        </el-date-picker>
+                    </el-form-item>
+                    <el-form-item prop="to">
+                        <el-date-picker
+                                v-model="dataForm.to"
+                                type="date"
+                                placeholder="止">
+                        </el-date-picker>
                     </el-form-item>
                     <el-form-item>
-                        <el-button @click="getDataList()" icon="el-icon-search" type="primary">{{
+                        <el-button @click="search" icon="el-icon-search" type="primary">{{
                             $t('views.public.query') }}
                         </el-button>
                     </el-form-item>
@@ -124,7 +131,8 @@ export default {
       dataForm: {
         code: undefined,
         customerName: undefined,
-        ivDate: undefined
+        from: undefined,
+        to: undefined
       },
       toolbar: {
         id: 'full_edit_1',
@@ -162,7 +170,8 @@ export default {
           field: 'invDate',
           sortable: true,
           align: 'center',
-          width: '110px'
+          width: '110px',
+          formatter: ['toDateString', 'yyyy-MM-dd']
         }, {
           title: '票据金额',
           field: 'amount',
@@ -249,7 +258,8 @@ export default {
           field: 'updateDate',
           sortable: true,
           align: 'center',
-          width: '110px'
+          width: '110px',
+          formatter: ['toDateString', 'yyyy-MM-dd']
         }
       ]
     }

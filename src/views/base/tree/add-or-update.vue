@@ -11,9 +11,6 @@
         <el-form-item prop="type" :label="data.data.input.type">
           <el-input v-model="dataForm.type" :placeholder="data.data.input.type"/>
         </el-form-item>
-        <el-form-item prop="code" :label="data.data.input.code">
-          <el-input v-model="dataForm.code" :placeholder="data.data.input.code"/>
-        </el-form-item>
         <el-form-item prop="name" :label="data.data.input.name">
           <el-input v-model="dataForm.name" :placeholder="data.data.input.name"/>
         </el-form-item>
@@ -21,7 +18,7 @@
           <el-input v-model="dataForm.orderNum" :placeholder="data.data.input.orderNum"/>
         </el-form-item>
         <el-form-item prop="sys" :label="data.data.input.sys">
-          <el-radio-group v-model="dataForm.sys">
+          <el-radio-group v-model="dataForm.sys" style="width: 178px">
             <el-radio :label=1>是</el-radio>
             <el-radio :label=0>否</el-radio>
           </el-radio-group>
@@ -51,7 +48,6 @@
       </template>
     </el-dialog>
     <el-dialog title="菜单选择" :visible.sync="menuFormVisible" width="388px">
-      <div>
         <el-input placeholder="输入关键字进行过滤" v-model="filterText"></el-input>
         <el-tree
                 :data="menuList"
@@ -59,18 +55,16 @@
                 style="height: 300px;"
                 node-key="id"
                 ref="tree"
-                class="filter-tree"
+                class="tree-container"
                 default-expand-all
                 :filter-node-method="filterNode"
-                @node-click="getSelectedMenu"
-        ></el-tree>
+                @node-click="getSelectedMenu"/>
         <div slot="footer" class="dialog-footer">
           <div class="menuDia">
             <el-button @click="menuFormVisible = false">取消</el-button>
             <el-button type="primary" @click="getSelectedMenu">确定</el-button>
           </div>
         </div>
-      </div>
     </el-dialog>
   </div>
 </template>
@@ -118,15 +112,12 @@ export default {
         name: [{
           required: true, message: '名称不可缺少', trigger: 'blur'
         }],
-        parentId: [{
+        pname: [{
           required: true, message: '父级菜单不可缺少', trigger: 'blur'
         }],
         type: [
           { required: true, message: '类型不可缺少', trigger: 'blur' },
-          { max: 6, message: '此处最多6个字符', trigger: 'blur' }],
-        code: [{
-          required: true, message: '编码不可缺少', trigger: 'blur'
-        }]
+          { max: 6, message: '此处最多6个字符', trigger: 'blur' }]
       },
       menuFormVisible: false
     }

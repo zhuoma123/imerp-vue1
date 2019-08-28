@@ -24,10 +24,10 @@
                 <el-input v-model="dataForm.linkman" :placeholder="data.form.input.linkman"/>
             </el-form-item>
             <el-form-item prop="mobileNo" :label="data.form.input.mobileNo">
-                <el-input v-model="dataForm.mobileNo" :placeholder="data.form.input.mobileNo"/>
+                <el-input v-model.number="dataForm.mobileNo" :placeholder="data.form.input.mobileNo"/>
             </el-form-item>
             <el-form-item prop="tel" :label="data.form.input.tel">
-                <el-input v-model="dataForm.tel" :placeholder="data.form.input.tel"/>
+                <el-input v-model.number="dataForm.tel" :placeholder="data.form.input.tel"/>
             </el-form-item>
             <el-form-item prop="weixinNo" :label="data.form.input.weixinNo">
                 <el-input v-model="dataForm.weixinNo" :placeholder="data.form.input.weixinNo"/>
@@ -41,7 +41,7 @@
         </el-form>
         <template slot="footer">
             <el-button @click="visible = false">{{ $t('views.public.cancel') }}</el-button>
-            <el-button type="primary" @click="dataFormSubmitHandle()">{{ $t('views.public.confirm') }}</el-button>
+            <el-button type="primary" @click="dataFormSubmit">{{ $t('views.public.confirm') }}</el-button>
         </template>
     </el-dialog>
 </template>

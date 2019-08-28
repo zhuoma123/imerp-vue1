@@ -210,17 +210,32 @@ export default {
     },
     // 表单提交
     dataFormSubmit () {
-      if(this.$refs.dataForm) {
-        this.$refs.dataForm.validate(valid => {
-          if (valid) {
-            this.doSubmit()
+      Promise.all([
+        this.checkForm(),
+        this.checkGrid(this.$refs.sGrid)
+      ]).then(() => {
+        this.doSubmit();
+      }).catch(err => {})
+
+      /*
+      this.checkForm().then(function(data){
+        if (data) {
+          if (this.$refs.sGrid) {
+            return this.checkGrid(this.$refs.sGrid)
+          }else{
+            suss =true;
           }
-        })
-      } else {
-        this.doSubmit()
-      }
+        }
+      }).then(function(data){
+        suss = data
+      })
+      */
+
+      // this.$refs.dataForm.validate(valid => {
+      // })
     },
-    doSubmit() {
+
+    doSubmit(){
       this.btnDisable = true
       if (this.$refs.sGrid) {
         this.dataForm.lineList = this.getItemListDate(this.$refs.sGrid)
@@ -521,7 +536,7 @@ export default {
           let cellValue = footerRender(column, data)
           let cellLabel = cellValue
           let { formatter } = column
-          if (formatter) {
+          if (formatter && cellValue !='汇总') {
             if (XEUtils.isString(formatter)) {
               cellLabel = XEUtils[formatter](cellValue)
             } else if (XEUtils.isArray(formatter)) {
@@ -571,6 +586,61 @@ export default {
     reset () {
       this.$nextTick(() => {
         this.$refs['dataForm'].resetFields()
+      })
+    },
+
+
+    //表单校验
+    checkForm(){
+      return new Promise((resolve, reject) => {
+        //模拟接口调用
+        this.$refs.dataForm.validate(valid => {
+          if (valid) {
+            resolve(true);
+          }else{
+            reject(false);
+          }
+        })
+      })
+    },
+    //列表校验
+    checkGrid(grid){
+      return new Promise((resolve, reject) => {
+        if(!grid)
+          resolve(true)
+        else {
+          grid.fullValidate((valid, errMap) => {
+            if (valid) {
+              resolve(true);
+              //this.$XMsg.message({ status: 'success', message: '校验成功！' })
+            } else {
+              let msgList = []
+              Object.values(errMap).forEach(errList => {
+                errList.forEach(params => {
+                  let { rowIndex, column, rules } = params
+                  rules.forEach(rule => {
+                    msgList.push(`第 ${rowIndex} 行 ${column.title} 校验错误：${rule.message}`)
+                  })
+                })
+              })
+              this.$XMsg.message({
+                status: 'error',
+                message: () => {
+                  return [
+                    <div class="red" style="max-height: 400px;overflow: auto;">
+                      {
+                        msgList.map(msg => {
+                          return <div>{ msg }</div>
+                        })
+                      }
+                    </div>
+                  ]
+                }
+              })
+              reject(false);
+            }
+          })
+        }
       })
     }
   },

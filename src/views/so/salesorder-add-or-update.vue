@@ -3,6 +3,7 @@
     :close-on-click-modal="false"
     :visible.sync="visible"
     v-loading.fullscreen.lock="fullscreenLoading"
+    
     width="80%"
   >
     <div>
@@ -14,14 +15,15 @@
         ref="dataForm"
         label-width="120px"
       >
-        <el-row inline>
+        <el-row >
           <el-col :span="8">
             <el-form-item label="客户" prop="customerId">
               <im-selector
               v-model="dataForm.customerId"
               :mapModel.sync="dataForm"
               mapKeyVal="customerName:customerId"
-              dataType="customer"
+              dataType="biz.customer"
+              placeholder="请选择客户"
               @change="changeCust">
               </im-selector>
             </el-form-item>
@@ -31,7 +33,6 @@
               <el-date-picker
                 v-model="dataForm.orderDate"
                 placeholder="销售日期"
-                style="width:160px"
                 value-format="yyyy-MM-dd"
               ></el-date-picker>
             </el-form-item>
@@ -42,13 +43,12 @@
                 v-model="dataForm.planDeliveryDate"
                 placeholder="要求交货期"
                 value-format="yyyy-MM-dd"
-                style="width:160px"
               ></el-date-picker>
             </el-form-item>
           </el-col>
         </el-row>
 
-        <el-row inline>
+        <el-row >
           <el-col :span="8">
             <el-form-item label="发运方式" prop="shipType">
               <im-selector
@@ -61,34 +61,43 @@
             </el-form-item>
           </el-col>
           <el-col :span="8">
+            <el-form-item label="仓库" prop="autoPeaking">
+              <el-checkbox v-model="dataForm.autoPeaking">是否自动拣货</el-checkbox>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
             <el-form-item label="订单金额" prop="orderAmount">
-              <el-input v-model="dataForm.orderAmount" placeholder="订单金额"></el-input>
+              <el-input v-model="dataForm.orderAmount" disabled placeholder="订单金额" clearable></el-input>
             </el-form-item>
           </el-col>
         </el-row>
 
-        <el-row inline>
+        <el-row >
           <el-col :span="8">
             <el-form-item label="收货人" prop="receiveName">
-              <el-input v-model="dataForm.receiveName" placeholder="收货人"></el-input>
+              <el-input v-model="dataForm.receiveName" placeholder="收货人" clearable></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="8">
             <el-form-item label="收货人电话" prop="receivePhone">
-              <el-input v-model="dataForm.receivePhone" placeholder="收货人电话"></el-input>
+              <el-input v-model="dataForm.receivePhone" placeholder="收货人电话" clearable></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="8">
             <el-form-item label="收货地址" prop="receiveAddress">
-              <el-input v-model="dataForm.receiveAddress" placeholder="收货地址"></el-input>
+              <el-input v-model="dataForm.receiveAddress" placeholder="收货地址" clearable></el-input>
             </el-form-item>
           </el-col>
         </el-row>
-
+        <el-row >
+          <el-col >
         <el-form-item label="备注" prop="remark">
-          <el-input v-model="dataForm.remark" placeholder="备注"></el-input>
+          <el-input style="width:100%" v-model="dataForm.remark" placeholder="备注"></el-input>
         </el-form-item>
+          </el-col>
+        </el-row>
       </el-form>
+      
     </div>
     <vxe-grid
       border
@@ -100,6 +109,7 @@
       ref="sGrid"
       :toolbar="toolbar"
       :proxy-config="tableProxy"
+      :edit-rules="validRules"
       :columns="itableColumn"
       :select-config="{reserve: true}"
       :mouse-config="{selected: true}"
@@ -140,7 +150,8 @@ export default {
       visible: false,
       btnDisable: false,
       dataForm: {
-        id: 0,
+        id: undefined,
+        orderNum: "",
         orderType: "",
         customerId: "",
         orderDate: new Date(),
@@ -148,6 +159,7 @@ export default {
         orderAmount: "0",
         shipType: "",
         remark: "",
+        autoPeaking: true,
         deletedFlag: "N"
       },
       dataRule: {
@@ -158,51 +170,81 @@ export default {
           { required: true, message: "销售日期不能为空", trigger: "blur" }
         ]
       },
-
+      tableProxy: {
+        autoLoad: false
+      },
+      validRules: {
+        productName: [
+          { required: true, message: '物料必填' }
+        ],
+        productCode: [
+          { required: true, message: '物料必填' }
+        ],
+        orderQty: [
+          { required: true, message: '销售数量必填'},
+          { type:"number",message: '请输入数字'}
+        ],
+        price: [
+          { required: true, message: '销售价格必填' },
+          { type:"number",message: '请输入数字'}
+        ]
+      },
       itableColumn: [
         { type: "selection", width: 50, align: "center" },
         { type: "index", width: 50, align: "center" },
         {
           title: '物料名称',
           field: 'productName',
-          width: '200px',
+          width: '150px',
           align: 'center',
           editRender: {
             name: 'ElAutocomplete',
             props: { fetchSuggestions: this.prodSeach, triggerOnFocus: false },
-            events: { select: this.handleProcSelect }
+            events: { select: this.handleProcSelect },
+            autoselect: true
           },
           footerRender: function (column, data) {
             return '汇总'
           }
         },
         {
-          title: '当前库存',
+          title: '物料编码',
+          field: 'productCode',
+          width: '110px',
+          align: 'left'
+        },
+        {
+          title: '库存',
           field: 'stock',
+          width: '40px',
           align: 'left'
         },
         {
           title: '指导售价',
           field: 'bPrice',
+          width: '60px',
           align: 'left'
         },
         {
-          title: '下单数量',
+          title: '数量',
           field: 'orderQty',
           align: 'left',
-          editRender: { name: 'input' }
+          width: '40px',
+          editRender: { name: 'input' ,autoselect: true}
         },
         {
           title: '销售价',
           field: 'price',
           sortable: true,
           align: 'center',
-          editRender: { name: 'input' }
+          width: '50px',
+          editRender: { name: 'input',autoselect: true}
         },
         {
           title: '总金额',
-          field: 'totalPrice',
+          field: 'amount',
           align: 'left',
+          width: '70px',
           formatter: ['toFixedString', 2],
           editPost: function (column, row) {
             var qty = row.orderQty
@@ -216,29 +258,45 @@ export default {
           }
         },
         {
+          title: '单位',
+          field: 'unit',
+          width: '40px'
+        },
+        {
           title: '条码',
           field: 'barCode',
-          align: 'center'
+          width: '110px',
+          align: 'left'
         },
         {
           title: '品牌',
           field: 'brand',
-          align: 'center'
+          width: '80px',
+          align: 'left'
         },
         {
           title: '车型',
           field: 'vehicle',
-          align: 'center'
+          width: '80px',
+          align: 'left'
         },
         {
           title: '产地',
           field: 'madein',
-          align: 'center'
+          width: '80px',
+          align: 'left'
         },
         {
           title: '规格属性',
           field: 'specialParam',
-          align: 'center'
+          width: '250px',
+          align: 'left'
+        },
+        {
+          title: '描述',
+          field: 'description',
+          width: '250px',
+          align: 'left'
         }
       ],
       toolbar: {
@@ -274,18 +332,15 @@ export default {
       if (item) {
         Object.assign(row, item);
         row.productId = item.id;
+        row.productName = item.name;
+        row.stock = item.stock;
         row.bPrice = item.salePrice;
+        row.productCode = item.code;
+        row.price = item.salePrice;
+        this.$refs.sGrid.updateFooter()
       } else {
       }
-    },
-    search () {
-      this.dataListLoading = true
-      let vxeParams = { page: null, sort: null, filters: [] }
-      this.vxeTabQuery(vxeParams).then((resolve, rejects) => {
-        this.$refs.sGrid.loadData(this.dataList)
-        this.dataListLoading = false
-      })
-    },
+    }, 
     changeCust (e) {
       console.log('------', e, this.dataForm)
     }

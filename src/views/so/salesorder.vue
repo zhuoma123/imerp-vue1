@@ -11,17 +11,18 @@
         <!--<el-row >-->
           <!--<el-col :span="6">-->
             <el-form-item label="客户名称" prop="custName">
-              <el-input style="display: none" v-model="dataForm.custId" ></el-input>
               <el-input v-model="dataForm.custName" clearable />
             </el-form-item>
           <!--</el-col>-->
 
           <!--<el-col :span="6">-->
             <el-form-item label="单据状态" prop="status">
-              <el-select v-model="dataForm.status" placeholder="请选择单据状态">
-                <el-option label="新建" value="NEW"></el-option>
-                <el-option label="已提交" value="SUBMIT"></el-option>
-              </el-select>
+              <im-selector
+              v-model="dataForm.status"
+              :mapModel.sync="dataForm"
+              mapKeyVal="status"
+              dataType="code.ORDER_STATUS">
+              </im-selector>
             </el-form-item>
           <!--</el-col>-->
           <!--<el-col :span="12">-->
@@ -53,7 +54,12 @@
         <!--<el-row >-->
           <!--<el-col :span="6">-->
           <el-form-item label="配送方式" prop="shipType">
-            <el-input v-model="dataForm.shipType" clearable></el-input>
+            <im-selector
+              v-model="dataForm.shipType"
+              :mapModel.sync="dataForm"
+              mapKeyVal="shipType"
+              dataType="dict.SHIP_TYPE">
+              </im-selector>
           </el-form-item>
           <!--</el-col>-->
           <!--<el-col :span="6">-->
@@ -76,7 +82,6 @@
           <!--</el-col>-->
           <!--<el-col :span="6">-->
           <el-form-item label="配件信息" prop="productName">
-            <el-input v-model="dataForm.productId" style="display:none"/>
             <el-input v-model="dataForm.productName" placeholder="名称/品牌/产地/车型/图号" clearable />
           </el-form-item>
           <!--</el-col>-->
@@ -113,15 +118,20 @@
         :columns="tableColumn"
         :select-config="{reserve: true}"
         :edit-config="{trigger: 'click', mode: 'row', showStatus: true}"
+        :footer-method="footerMethod"
+        :footer-cell-class-name="footerCellClassName"
+        show-footer
         @cell-dblclick="cellDblClick">
       <template v-slot:buttons>
-        <vxe-button @click="search">刷新</vxe-button>
-        <vxe-button @click="addHandle">新增</vxe-button>
-        <vxe-button @click="updateHandle($refs.pGrid)">修改</vxe-button>
-        <vxe-button @click="deleteHandle($refs.pGrid)">删除</vxe-button>
-        <vxe-button @click="deleteHandle()">提交</vxe-button>
-        <vxe-button @click="deleteHandle()">打印</vxe-button>
-        <vxe-button @click="$refs.pGrid.exportCsv()">导出.csv</vxe-button>
+        <el-button size="mini" icon="el-icon-circle-plus" 
+          v-if="$hasPermission('so:salesorder:save')" @click="addHandle">新增</el-button>
+        <el-button size="mini" type="primary" icon="el-icon-edit" 
+          v-if="$hasPermission('so:salesorder:update')" @click="updateHandle($refs.pGrid)">修改</el-button>
+        <el-button size="mini" type="danger" icon="el-icon-delete" 
+          v-if="$hasPermission('so:salesorder:delete')" @click="deleteHandle($refs.pGrid)">删除</el-button>
+        <el-button size="mini" type="success" icon="el-icon-check" @click="submitHandle()">提交</el-button>
+        <el-button size="mini" type="info" icon="el-icon-printer" @click="deleteHandle()">打印</el-button>
+        <el-button size="mini" type="info" icon="fa fa-file-excel-o" @click="$refs.pGrid.exportCsv()">导出</el-button>
       </template>
     </vxe-grid>
 
@@ -143,6 +153,7 @@
 
 <script>
 import mixinViewModule from '@/mixins/view-module'
+import XEUtils from 'xe-utils'
 import AddOrUpdate from './salesorder-add-or-update'
 export default {
   mixins: [mixinViewModule],
@@ -153,68 +164,92 @@ export default {
         updateURL: '/so/salesorder/update',
         deleteURL: '/so/salesorder/delete',
         exportURL: '/so/salesorder/export',
+        submitURL: '/so/salesorder/submit',
         getDataListIsPage: true
       },
       dataForm: {
-        custName: ''
+        custName: '',
+        status: '',
+        bDate: null,
+        shipType: '',
+        receiveAddress: '',
+        receiveName: '',
+        pic: '',
+        productName: '',
+        orderNum: ''
       },
       dataFormOp: {
       },
       tableColumn: [
         { type: 'selection', width: 30, align: 'center' },
-        { type: 'index', width: 50, align: 'center' },
+        { type: 'index', width: 40, align: 'center' },
         {
           title: '下单日期',
           field: 'orderDate',
           sortable: true,
-          width: '100px',
+          width: '110px',
           align: 'center',
           formatter: ['toDateString', 'yyyy-MM-dd']
         },
         {
           title: '销售单号',
           field: 'orderNum',
+          width: '120px',
           sortable: true,
           align: 'center'
         },
         {
           title: '客户名称',
           field: 'customerName',
+          width: '180px',
           sortable: true,
           align: 'left'
         },
         {
           title: '状态',
-          field: 'status',
-          sortable: true,
+          field: 'statusMean',
+          width: '80px',
           align: 'left'
         },
         {
           title: '订单金额',
           field: 'orderAmount',
           sortable: true,
-          align: 'left'
+          width: '100px',
+          align: 'left',
+          formatter: ['toFixedString', 2],
+          footerRender: function (column, data) {
+            return XEUtils.sum(data, column.property)
+          }
         },
         {
           title: '发运方式',
-          field: 'shipType',
+          field: 'shipTypeMean',
+          width: '80px',
           align: 'center'
         },
         {
           title: '销售员',
           field: 'pic',
-          sortable: true,
+          width: '100px',
           align: 'center'
+        },
+        {
+          title: '备注',
+          field: 'remark',
+          sortable: true
         },
         {
           title: this.$t('views.public.createDate'),
           field: 'createDate',
           sortable: true,
+          width: '120px',
           align: 'center'
         }
       ],
       toolbar: {
         id: 'full_edit_1',
+        refresh: true,
         resizable: {
           storage: true
         },
@@ -231,6 +266,9 @@ export default {
     handleFormReset () {
       this.$refs.dataForm.resetFields()
     }
+
+    //提交
+
   }
 }
 </script>

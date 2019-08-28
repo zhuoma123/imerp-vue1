@@ -2,6 +2,8 @@ import qs from 'qs'
 import XEUtils from 'xe-utils'
 import util from '@/libs/util.js'
 
+
+
 export default {
   data () {
     /* eslint-disable */
@@ -29,6 +31,14 @@ export default {
       fullscreenLoading: false,   // 全页面遮罩
       dataListSelections: [],     // 数据列表，多选项
       addOrUpdateVisible: false,   // 新增／更新，弹窗visible状态
+      // 表单属性
+      formprops: {
+        labelSuffix:'：'
+      },
+      // 子页面表单是否只读
+      formReadOnly: false,
+      // 子页面表单是否提交
+      enableSubmit: true,
       // 表格属性
       selectionRow: false,
       sortConfig: {
@@ -39,6 +49,7 @@ export default {
         stripe: true,
         border: true
       },
+      curStatus: '',
       visible: false,
       btnDisable: false,
       pGrid: {},
@@ -60,6 +71,16 @@ export default {
           list: 'list',
           result: 'list',
           total: 'totalCount'
+        }
+      },
+      toolbar: {
+        id: 'vxe_toolbar_1',
+        refresh: true,
+        resizable: {
+          storage: true
+        },
+        setting: {
+          storage: true
         }
       },
       //时间联动框
@@ -98,11 +119,22 @@ export default {
      * 该方法只用于子页面
      * @param {*} item
      */
-    init (item) {
+    init (item, read=false, sub=true) {
       this.isNew = !item
-      if (item) { this.entityModel = Object.assign({}, item) }
-
+      if (item) {
+        this.entityModel = Object.assign({}, item)
+      }
+      this.formReadOnly = read
+      this.enableSubmit = sub
       this.visible = true
+      this.initCB()
+    },
+    // 初始化回调
+    initCB() {
+
+    },
+    initSelData () {
+
     },
     // 获取数据列表
     async getDataList (vxeDataForm) {
@@ -124,11 +156,15 @@ export default {
       ).then(res => {
         this.dataList = this.mixinViewModuleOptions.getDataListIsPage ? res.list : res
         this.total = this.mixinViewModuleOptions.getDataListIsPage ? res.totalCount : 0
+        this.getDataListCB(this, res)
       }).catch(() => {
         this.dataList = []
         this.total = 0
       })
       this.dataListLoading = false
+    },
+    getDataListCB(self, res) {
+
     },
     vxeTabQuery ({ page, sort, filters }, dataForm) {
       // 处理排序条件
@@ -166,7 +202,11 @@ export default {
         } else if (this.$refs.pGrid) {
           this.$refs.pGrid.updateFooter()
         }
+        this.vxeQueryCB(this)
       })
+    },
+    vxeQueryCB (self) {
+
     },
     // 表单提交
     dataFormSubmit () {
@@ -260,10 +300,30 @@ export default {
       }
     },
     // 双击
-    cellDblClick ({ row }) {
+    cellDblClick ({row}, event) {
+      if(typeof row === 'undefined' || row === null) {
+        return this.$message({
+          message: '请选择要修改的记录',
+          type: 'warning'
+        })
+      }
       this.addOrUpdateVisible = true
       this.$nextTick(() => {
-        this.$refs.addOrUpdate.init(row)
+        let read = null
+        for(let r in this.$refs) {
+          if(r.startsWith('btnStatus')) {
+            let dc = this.$refs[r].$attrs['row-dbclick']
+            read = this.$refs[r].$attrs['form-readonly']
+            read = (typeof read !== 'undefined' && read !== null)
+            if(typeof dc !== 'undefined' && dc !== null) {
+              if(this.$refs[r].$el.style.display === 'none') {
+                this.$refs.addOrUpdate.init(row, read, false)
+                return
+              }
+            }
+          }
+        }
+        this.$refs.addOrUpdate.init(row, read)
       })
     },
     // 新增
@@ -274,19 +334,8 @@ export default {
       })
     },
     // 修改
-    updateHandle (event) {
-      let row = this.pGrid.getCurrentRow()
-      this.addOrUpdateVisible = true
-      if (row) {
-        this.$nextTick(() => {
-          this.$refs.addOrUpdate.init(row)
-        })
-      } else {
-        return this.$message({
-          message: '请选择要修改的记录',
-          type: 'warning'
-        })
-      }
+    updateHandle () {
+
     },
     // 提交
     submitHandle (event, isAuto) {
@@ -297,10 +346,10 @@ export default {
           type: 'warning'
         })
       }
-      this.$confirm('确定要提交吗，提交后不能在修改！', { 'handle': '提交' }, '确认操作', {
+      this.$confirm('确定要提交吗，提交后不能在修改！', '操作操作', {
         confirmButtonText: this.$t('views.public.confirm'),
         cancelButtonText: this.$t('views.public.cancel'),
-        type: 'warning'
+        type: 'info'
       }).then(() => {
         this.$axios.post(
           this.mixinViewModuleOptions.submitURL, { 'id': row.id, 'isAuto': isAuto }
@@ -330,6 +379,40 @@ export default {
         })
       }
     },
+    add (row) {
+      let map = {}
+      map.row = row
+      this.addOrUpdateHandleSetter(map)
+    },
+    // 删除
+    deleteEntityHandle (grid) {
+      let row = this.pGrid.getCurrentRow()
+      if (!row) {
+        return this.$message({
+          message: '请选择要删除的记录',
+          type: 'error'
+        })
+      }
+      this.$confirm('确定要删除选中的记录吗！', '操作提示', {
+        confirmButtonText: this.$t('views.public.confirm'),
+        cancelButtonText: this.$t('views.public.cancel'),
+        type: 'error'
+      }).then(() => {
+        row.__state='DELETED'
+        this.$axios.post(
+          this.mixinViewModuleOptions.updateURL,row
+        ).then(res => {
+          this.$message({
+            message: this.$t('views.public.success'),
+            type: 'success',
+            duration: 500,
+            onClose: () => {
+              this.search()
+            }
+          })
+        }).catch(() => {})
+      }).catch(() => {})
+    },
     // 删除
     deleteHandle (grid) {
       let ids = ''
@@ -345,10 +428,10 @@ export default {
       } else {
         ids = this.dataListSelections.map(item => item.id).join()
       }
-      this.$confirm('确定要删除选中的记录', { 'handle': '删除' }, '确认操作', {
+      this.$confirm('确定要删除选中的记录', '操作提示', {
         confirmButtonText: this.$t('views.public.confirm'),
         cancelButtonText: this.$t('views.public.cancel'),
-        type: 'warning'
+        type: 'error'
       }).then(() => {
         this.$axios.post(
           this.mixinViewModuleOptions.deleteURL,
@@ -366,57 +449,35 @@ export default {
       }).catch(() => {})
     },
     // 删除
-    deleteHandleSetter (index) {
-      let data
-      if (this.mixinViewModuleOptions.deleteIsBatch && this.dataListSelections.length > 0) {
-        data = this.dataListSelections.map(item => item[this.mixinViewModuleOptions.deleteIsBatchKey])
-      }
-      let row
-      if (!index) {
-        row = undefined
+    deleteHandleSetter (grid) {
+      let ids = ''
+      this.dataListSelections = grid.getSelectRecords()
+      if (grid.getSelectRecords().length === 0) {
+        if (!grid.getCurrentRow()) {
+          return this.$message({
+            message: '请选择要删除的记录',
+            type: 'warning'
+          })
+        }
+        ids = [grid.getCurrentRow().id]
       } else {
-        row = index.row
+        ids = this.dataListSelections.map(item => item.id).join()
       }
-      if (row) {
-        const id = row.id
-        if (id) {
-          data = [id]
-        }
-      }
-      if (data===undefined){
-        return
-      }
-      for (let i = 0; i < this.dataListSelections.length; i++) {
-        const id=this.mixinViewModuleOptions.deleteIsBatchKey
-        let e=this.dataListSelections[i]
-        let childs=e.children
-        if (childs){
-          for(let i in childs){
-            let child=childs[i]
-            if (!data.includes(child[id])){
-              this.$message.error('被包含的子项必须被全部删除')
-              return
-            }
-          }
-        }
-      }
-      this.$confirm(this.$t('public.prompt.info', { 'handle': this.$t('views.public.delete') }), this.$t('public.prompt.title'), {
+      this.$confirm('确定要删除选中的记录', '操作提示', {
         confirmButtonText: this.$t('views.public.confirm'),
         cancelButtonText: this.$t('views.public.cancel'),
-        type: 'warning'
+        type: 'error'
       }).then(() => {
         this.$axios.post(
           this.mixinViewModuleOptions.deleteURL,
-          {
-            'data': data
-          }
+          { 'ids': ids }
         ).then(res => {
           this.$message({
             message: this.$t('views.public.success'),
             type: 'success',
             duration: 500,
             onClose: () => {
-              this.getDataList()
+              this.search()
             }
           })
         }).catch(() => {})
@@ -500,60 +561,32 @@ export default {
     computeHeight () {
       let self = this
       if (self.$refs.pGrid) {
-        let toolbar = `${document.getElementsByClassName('vxe-toolbar')[0].clientHeight}`
-        let tableHeader = `${document.getElementsByClassName('vxe-table--header-wrapper')[0].clientHeight}`
-        let bodyClientHeight = `${document.getElementsByClassName('d2-container-full__body')[0].clientHeight}`
+        let toolbar = document.getElementsByClassName('vxe-toolbar')[0] ? `${document.getElementsByClassName('vxe-toolbar')[0].clientHeight}` : 0
+        let tableHeader = document.getElementsByClassName('vxe-table--header-wrapper')[0] ? `${document.getElementsByClassName('vxe-table--header-wrapper')[0].clientHeight}` : 0
+        let bodyClientHeight = document.getElementsByClassName('d2-container-full__body')[0] ? `${document.getElementsByClassName('d2-container-full__body')[0].clientHeight}` : 0
         let tableBody = self.$refs.pGrid.$el.getElementsByClassName('vxe-table--body-wrapper')[0]
-        tableBody.style.height = bodyClientHeight - toolbar - tableHeader + 'px'
+        let tableFoot = self.$refs.pGrid.showFooter ? 30 : 0
+        if(tableBody)
+          tableBody.style.height = Number(bodyClientHeight) - Number(toolbar) - Number(tableHeader) - tableFoot + 'px'
       }
     },
     collapseChange () {
       setTimeout(this.computeHeight, 500)
     },
-    enableTlbBtn({columns,row}) {
-      if(row.status==='NEW'){
-        if(this.$refs.btnAdd)this.$refs.btnAdd.disabled=false;
-        if(this.$refs.btnEdit)this.$refs.btnEdit.disabled=false;
-        if(this.$refs.btnDelete)this.$refs.btnDelete.disabled=false;
-        if(this.$refs.btnSubmit)this.$refs.btnSubmit.disabled=false;
-        if(this.$refs.btnAutoPick)this.$refs.btnAutoPick.disabled=false;
-        if(this.$refs.btnPick)this.$refs.btnPick.disabled=false;
-      }else if (row.status==='SUBMIT'){
-        if(this.$refs.btnAdd)this.$refs.btnAdd.disabled=false;
-        if(this.$refs.btnEdit)this.$refs.btnEdit.disabled=true;
-        if(this.$refs.btnDelete)this.$refs.btnDelete.disabled=true;
-        if(this.$refs.btnSubmit)this.$refs.btnSubmit.disabled=true;
-        if(this.$refs.btnAutoPick)this.$refs.btnAutoPick.disabled=false;
-        if(this.$refs.btnPick)this.$refs.btnPick.disabled=false;
-      }else if (row.status==='SENDED'){
-        if(this.$refs.btnAdd)this.$refs.btnAdd.disabled=false;
-        if(this.$refs.btnEdit)this.$refs.btnEdit.disabled=true;
-        if(this.$refs.btnDelete)this.$refs.btnDelete.disabled=true;
-        if(this.$refs.btnSubmit)this.$refs.btnSubmit.disabled=true;
-        if(this.$refs.btnAutoPick)this.$refs.btnAutoPick.disabled=true;
-        if(this.$refs.btnPick)this.$refs.btnPick.disabled=true;
-      }else if (row.status==='PICKUP'){
-        if(this.$refs.btnAdd)this.$refs.btnAdd.disabled=false;
-        if(this.$refs.btnEdit)this.$refs.btnEdit.disabled=true;
-        if(this.$refs.btnDelete)this.$refs.btnDelete.disabled=true;
-        if(this.$refs.btnSubmit)this.$refs.btnSubmit.disabled=true;
-        if(this.$refs.btnAutoPick)this.$refs.btnAutoPick.disabled=true;
-        if(this.$refs.btnPick)this.$refs.btnPick.disabled=true;
-      }else if (row.status==='CANCEL'){
-        if(this.$refs.btnAdd)this.$refs.btnAdd.disabled=false;
-        if(this.$refs.btnEdit)this.$refs.btnEdit.disabled=true;
-        if(this.$refs.btnDelete)this.$refs.btnDelete.disabled=true;
-        if(this.$refs.btnSubmit)this.$refs.btnSubmit.disabled=true;
-        if(this.$refs.btnAutoPick)this.$refs.btnAutoPick.disabled=true;
-        if(this.$refs.btnPick)this.$refs.btnPick.disabled=true;
-      }else if (row.status==='COMPLETED'){
-        if(this.$refs.btnAdd)this.$refs.btnAdd.disabled=false;
-        if(this.$refs.btnEdit)this.$refs.btnEdit.disabled=true;
-        if(this.$refs.btnDelete)this.$refs.btnDelete.disabled=true;
-        if(this.$refs.btnSubmit)this.$refs.btnSubmit.disabled=true;
-        if(this.$refs.btnAutoPick)this.$refs.btnAutoPick.disabled=true;
-        if(this.$refs.btnPick)this.$refs.btnPick.disabled=true;
+    currentChange ({row}) {
+      this.curStatus = row.status
+    },
+    btnStatus (obj, val) {
+      let enablestatus = obj.$attrs.enablestatus
+      if(enablestatus && enablestatus.length > 0) {
+        enablestatus = enablestatus.split(',')
+        obj.$el.style = 'display:' + (enablestatus.includes(val) ? 'inline-block' : 'none')
       }
+    },
+    reset () {
+      this.$nextTick(() => {
+        this.$refs['dataForm'].resetFields()
+      })
     },
 
 
@@ -610,22 +643,36 @@ export default {
         }
       })
     }
-    
   },
   watch: {
     visible: function (newName, oldName) {
       if (newName) {
         this.$nextTick(() => {
-          this.dataList = []
-          this.$refs.sGrid.loadData(this.dataList)
-          if (this.isNew) {
-            this.$refs.dataForm.resetFields()
-            this.$refs.sGrid.updateFooter()
-          } else {
-            this.dataForm = this.entityModel
-            this.search(this.entityModel)
+          if (this.$refs.sGrid) {
+            this.dataList = []
+            this.$refs.sGrid.loadData(this.dataList)
+            if (this.isNew) {
+              this.reset()
+              this.$refs.sGrid.updateFooter()
+            } else {
+              this.dataForm = this.entityModel
+              this.initSelData()
+              this.search(this.entityModel)
+            }
+          }else{
+            if (this.isNew) {
+              this.reset()
+            } else {
+              this.dataForm = this.entityModel
+            }
           }
         })
+      }
+    },
+    curStatus: function(val, oldVal) {
+      for(let item in this.$refs) {
+        if(item.startsWith('btnStatus'))
+          this.btnStatus(this.$refs[item], val)
       }
     }
   },
@@ -639,7 +686,7 @@ export default {
       if (this.$refs.pGrid) {
         // 窗口变化事件
         window.onresize = () => {
-          //this.computeHeight()
+          this.computeHeight()
         }
         // 初始化
         this.computeHeight()

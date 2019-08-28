@@ -1,27 +1,32 @@
 <template>
-    <el-dialog :visible.sync="visible" :title="!dataForm.id ? $t('views.public.add') : $t('views.public.update')"
-               :close-on-click-modal="false" :close-on-press-escape="false" width="850px">
-        <el-form :model="dataForm" :rules="rules" ref="dataForm" @keyup.enter.native="dataFormSubmitHandle()"
-                 label-width="120px" :inline="true">
+    <el-dialog :visible.sync="visible" :title="isNew ? $t('views.public.add') : $t('views.public.update')"
+               :close-on-click-modal="false" :close-on-press-escape="false" width="700px">
+        <el-form :inline="true" :model="dataForm" :rules="rules"
+                 class="ddl-form" label-width="120px" labelSuffix="："
+                 ref="dataForm" size="mini">
+            <el-form-item prop="id" v-show="false" class="ddl-form-item" />
             <el-form-item prop="name" :label="data.form.input.name">
                 <el-input v-model="dataForm.name" :placeholder="data.form.input.name"/>
             </el-form-item>
-            <el-form-item prop="virtualFlag" :label="data.form.input.virtualFlag">
+            <el-form-item prop="code" :label="data.form.input.code" class="ddl-form-item" >
+                <el-input v-model="dataForm.code" :placeholder="data.form.input.code"/>
+            </el-form-item>
+            <el-form-item prop="virtualFlag" :label="data.form.input.virtualFlag" class="ddl-form-item">
                 <el-input v-model="dataForm.virtualFlag" :placeholder="data.form.input.virtualFlag"/>
             </el-form-item>
-            <el-form-item prop="address" :label="data.form.input.address">
+            <el-form-item prop="address" :label="data.form.input.address" class="ddl-form-item">
                 <el-input v-model="dataForm.address" :placeholder="data.form.input.address"/>
             </el-form-item>
-            <el-form-item prop="pic" :label="data.form.input.pic">
+            <el-form-item prop="pic" :label="data.form.input.pic" class="ddl-form-item">
                 <el-input v-model="dataForm.pic" :placeholder="data.form.input.pic"/>
             </el-form-item>
-            <el-form-item prop="mobileNo" :label="data.form.input.mobileNo">
+            <el-form-item prop="mobileNo" :label="data.form.input.mobileNo" class="ddl-form-item">
                 <el-input v-model="dataForm.mobileNo" :placeholder="data.form.input.mobileNo"/>
             </el-form-item>
-            <el-form-item prop="tel" :label="data.form.input.tel">
+            <el-form-item prop="tel" :label="data.form.input.tel" class="ddl-form-item">
                 <el-input v-model="dataForm.tel" :placeholder="data.form.input.tel"/>
             </el-form-item>
-            <el-form-item prop="remark" :label="data.form.input.remark">
+            <el-form-item prop="remark" :label="data.form.input.remark" class="ddl-form-item">
                 <el-input v-model="dataForm.remark" :placeholder="data.form.input.remark"/>
             </el-form-item>
         </el-form>
@@ -34,13 +39,21 @@
 
 <script>
 import data from './data'
-
+import mixinViewModule from '@/mixins/view-module'
 export default {
+  mixins: [mixinViewModule],
   data () {
     return {
+      mixinViewModuleOptions: {
+        getDataListURL: '/base/warehouse/list',
+        updateURL: '/base/warehouse/save',
+        getDataListIsPage: false,
+        activatedIsNeed: false
+      },
       data: data,
       visible: false,
       dataForm: {
+        id: undefined,
         code: undefined,
         name: undefined,
         address: undefined,
@@ -59,20 +72,6 @@ export default {
     }
   },
   methods: {
-    init () {
-      this.visible = true
-      this.$nextTick(() => {
-        this.$refs['dataForm'].resetFields()
-        this.$refs['dataForm'].clearValidate()
-      })
-    },
-    update (row) {
-      this.dataForm = Object.assign({}, row)
-      this.visible = true
-      this.$nextTick(() => {
-        this.$refs['dataForm'].clearValidate()
-      })
-    },
     // 表单提交
     dataFormSubmitHandle () {
       let th = this
@@ -103,18 +102,11 @@ export default {
 </script>
 
 <style lang="scss">
-    .mod-sys__user {
-        .dept-list {
-            .el-input__inner,
-            .el-input__suffix {
-                cursor: pointer;
-            }
-        }
 
-        .role-list {
-            .el-select {
-                width: 100%;
-            }
+    .ddl-form {
+        .ddl-form-item {
+            margin-bottom: 10px;
         }
     }
+
 </style>

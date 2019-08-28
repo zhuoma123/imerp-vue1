@@ -1,4 +1,4 @@
-import imSelector from './components/im-selector.vue'
+import imSelector from './selector.vue'
 export default {
   name: 'im-selector',
   components: {
@@ -6,16 +6,13 @@ export default {
   },
   data () {
     return {
-      id: this.value,
-      mapObj: this.mapModel,
       mapKey: 'key',
-      mapVal: 'value'
+      mapVal: 'value',
+      curProps: Object.assign({}, this.$props)
     }
   },
   props: {
-    value: {
-      default: ''
-    },
+    value: [String, Number],
     // 容器样式
     type: {
       type: String,
@@ -29,7 +26,7 @@ export default {
     },
     // 对应绑定的form表单
     mapModel: {
-      type: Object,
+      type: [Object, Function],
       default: () => ({})
     },
     // 下拉框对象的下拉显示属性-对应的值
@@ -37,11 +34,16 @@ export default {
       type: String,
       required: false
     },
-    //
-    placeholder: {
-      type: String,
-      required: false,
-      default: '请选择'
+    clearable: {
+      type: Boolean,
+      default: true
+    },
+    placeholder: String,
+    selprops: Object,
+    size: String,
+    disabled: {
+      type: Boolean,
+      default: false
     }
   },
   computed: {
@@ -62,7 +64,7 @@ export default {
         ref: 'component',
         props: {
           dataType: this.dataType,
-          placeholder: this.placeholder
+          selprops: this.curProps
         },
         on: {
           change: e => this.$emit('change', e),
@@ -78,9 +80,6 @@ export default {
       })
     ])
   },
-  methods: {
-
-  },
   watch: {
     value: function (val, oldVal) {
       let obj = {
@@ -88,17 +87,26 @@ export default {
         value: this.mapModel[this.mapVal]
       }
       this.$refs.component._setVal(obj)
+    },
+    disabled: function(val, oldVal) {
+      this.$refs.component.selpropsChange({disabled: val})
     }
   },
   created () {
-    if (this.mapKeyVal) {
-      let kv = this.mapKeyVal.split(':')
-      if (kv.length === 2) {
-        this.mapKey = kv[0]
-        this.mapVal = kv[1]
-      } else {
-        this.mapKey = this.mapVal = this.mapKeyVal
+    this.init()
+  },
+  methods: {
+    init(){
+      if (this.mapKeyVal) {
+        let kv = this.mapKeyVal.split(':')
+        if (kv.length === 2) {
+          this.mapKey = kv[0]
+          this.mapVal = kv[1]
+        } else {
+          this.mapKey = this.mapVal = this.mapKeyVal
+        }
       }
+      delete this.curProps.value
     }
   },
   mounted () {

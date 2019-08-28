@@ -1,10 +1,12 @@
 <template>
-    <el-dialog :visible.sync="visible" :title="!dataForm.id ? $t('views.public.add') : $t('views.public.update')"
+    <el-dialog :visible.sync="visible" :title="isNew ? $t('views.public.add') : $t('views.public.update')"
                :close-on-click-modal="false" :close-on-press-escape="false" width="800px">
-        <el-form :model="dataForm" :rules="rules" ref="dataForm" @keyup.enter.native="dataFormSubmitHandle()"
-                 label-width="120px" :inline="true">
+        <el-form :model="dataForm" :rules="rules" ref="dataForm"
+                 label-width="120px" :inline="true" labelSuffix="："
+                 size="mini">
+            <el-form-item prop="id" v-show="false" />
             <el-form-item prop="custVendor" :label="data.form.input.custVendor">
-                <el-radio-group v-model="dataForm.custVendor" style="width: 220px">
+                <el-radio-group v-model="dataForm.custVendor" style="width: 178px">
                     <el-radio label='CUST'>顾客</el-radio>
                     <el-radio label='VENDOR'>供应商</el-radio>
                 </el-radio-group>
@@ -73,10 +75,17 @@
 
 <script>
 import data from './data'
-
+import mixinViewModule from '@/mixins/view-module'
 export default {
+  mixins: [mixinViewModule],
   data () {
     return {
+      mixinViewModuleOptions: {
+        getDataListURL: '/base/cust/list',
+        updateURL: '/base/cust/save',
+        getDataListIsPage: false,
+        activatedIsNeed: false
+      },
       data: data,
       visible: false,
       dataForm: {
@@ -110,20 +119,6 @@ export default {
     }
   },
   methods: {
-    init () {
-      this.visible = true
-      this.$nextTick(() => {
-        this.$refs['dataForm'].resetFields()
-        this.$refs['dataForm'].clearValidate()
-      })
-    },
-    update (row) {
-      this.dataForm = Object.assign({}, row)
-      this.visible = true
-      this.$nextTick(() => {
-        this.$refs['dataForm'].clearValidate()
-      })
-    },
     // 表单提交
     dataFormSubmitHandle () {
       let th = this

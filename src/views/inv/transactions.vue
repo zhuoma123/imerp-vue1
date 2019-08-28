@@ -76,6 +76,7 @@
 import mixinViewModule from '@/mixins/view-module'
 
 export default {
+  name: 'inv-transactions',
   mixins: [mixinViewModule],
   data () {
     return {

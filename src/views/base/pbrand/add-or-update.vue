@@ -1,8 +1,10 @@
 <template>
-    <el-dialog :visible.sync="visible" :title="!dataForm.id ? $t('views.public.add') : $t('views.public.update')"
-               :close-on-click-modal="false" :close-on-press-escape="false" width="850px">
-        <el-form :model="dataForm" :rules="rules" ref="dataForm" @keyup.enter.native="dataFormSubmitHandle()"
-                 label-width="120px" :inline="true">
+    <el-dialog :visible.sync="visible" :title="isNew ? $t('views.public.add') : $t('views.public.update')"
+               :close-on-click-modal="false" :close-on-press-escape="false" width="700px">
+        <el-form :model="dataForm" :rules="rules" ref="dataForm"
+                 label-width="120px" :inline="true" labelSuffix="："
+                 size="mini">
+            <el-form-item prop="id" v-show="false" />
             <el-form-item prop="code" :label="data.form.input.code">
                 <el-input v-model="dataForm.code" :placeholder="data.form.input.code"/>
             </el-form-item>
@@ -28,10 +30,17 @@
 
 <script>
 import data from './data'
-
+import mixinViewModule from '@/mixins/view-module'
 export default {
+  mixins: [mixinViewModule],
   data () {
     return {
+      mixinViewModuleOptions: {
+        getDataListURL: '/base/productbrand/list',
+        updateURL: '/base/productbrand/save',
+        getDataListIsPage: false,
+        activatedIsNeed: false
+      },
       data: data,
       visible: false,
       dataForm: {
@@ -61,20 +70,6 @@ export default {
     }
   },
   methods: {
-    init () {
-      this.visible = true
-      this.$nextTick(() => {
-        this.$refs['dataForm'].resetFields()
-        this.$refs['dataForm'].clearValidate()
-      })
-    },
-    update (row) {
-      this.dataForm = Object.assign({}, row)
-      this.visible = true
-      this.$nextTick(() => {
-        this.$refs['dataForm'].clearValidate()
-      })
-    },
     // 表单提交
     dataFormSubmitHandle () {
       let th = this

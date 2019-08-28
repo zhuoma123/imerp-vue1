@@ -30,12 +30,19 @@ import d2VueFiltersDayjs from '@d2-admin/filters-dayjs'
 // [ 可选数据表 ] 数据表插件
 import VXETable from 'vxe-table'
 import 'vxe-table/lib/index.css'
-
+// [vxe表格] 表格插件
 import VXETablePluginElement from 'vxe-table-plugin-element'
 import 'vxe-table-plugin-element/dist/style.css'
+// [] 动态表单插件
+import DynamicForm from './components/dynamic-form'
+// 数字输入指令
+import OnlyNumber from './directive/el-input'
+
+// 全局变量
+import Global from './libs/global_variable'
 
 import ElAutocompleteItem from './views/so/select-item'
-import ImSelector from './components/imema'
+import ImSelector from './components/imema/im-selector'
 
 // 菜单和路由设置
 import router from './router'
@@ -56,12 +63,16 @@ Vue.use(pluginImport)
 Vue.use(d2VueFiltersDayjs)
 VXETable.use(VXETablePluginElement)
 Vue.use(VXETable)
+Vue.use(DynamicForm)
+Vue.use(OnlyNumber)
 Vue.component('ElAutocompleteItem', ElAutocompleteItem)
 Vue.component('ImSelector', ImSelector)
 Vue.component('d2-grid-layout', GridLayout)
 Vue.component('d2-grid-item', GridItem)
 Vue.component('SplitPane', SplitPane)
 Vue.component('VueUeditorWrap', VueUeditorWrap)
+
+Vue.prototype.$g = Global
 
 new Vue({
   router,

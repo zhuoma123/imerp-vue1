@@ -1,28 +1,56 @@
 <template>
-    <el-dialog :visible.sync="visible" :title="!dataForm.id ? $t('views.public.add') : $t('views.public.update')"
-               :close-on-click-modal="false" :close-on-press-escape="false" width="850px">
-        <el-form :model="dataForm" :rules="rules" ref="dataForm" @keyup.enter.native="dataFormSubmitHandle()"
-                 label-width="120px" :inline="true">
-            <el-form-item prop="code" :label="data.form.input.code">
-                <el-input v-model="dataForm.code" :placeholder="data.form.input.code"/>
-            </el-form-item>
+    <el-dialog :visible.sync="visible" :title="isNew ? $t('views.public.add') : $t('views.public.update')"
+               :close-on-click-modal="false" :close-on-press-escape="false" width="800px">
+        <el-form :model="dataForm" :rules="rules" ref="dataForm" label-width="120px" :inline="true" labelSuffix="："
+                 size="mini">
+            <el-form-item prop="id" v-show="false" />
             <el-form-item prop="name" :label="data.form.input.name">
                 <el-input v-model="dataForm.name" :placeholder="data.form.input.name"/>
+            </el-form-item>
+            <el-form-item prop="code" :label="data.form.input.code">
+                <el-input v-model="dataForm.code" :placeholder="data.form.input.code"/>
             </el-form-item>
             <el-form-item prop="alisaName" :label="data.form.input.alisaName">
                 <el-input v-model="dataForm.alisaName" :placeholder="data.form.input.alisaName"/>
             </el-form-item>
             <el-form-item prop="categoryId" :label="data.form.input.categoryId">
-                <el-input v-model="dataForm.categoryId" :placeholder="data.form.input.categoryId"/>
+                <im-selector
+                        placeholder="请选择物料分类"
+                        v-model="dataForm.categoryId"
+                        :mapModel.sync="dataForm"
+                        mapKeyVal="cName:categoryId"
+                        dataType="biz.pcategory"
+                        style="width: 178px">
+                </im-selector>
             </el-form-item>
             <el-form-item prop="vehicleId" :label="data.form.input.vehicleId">
-                <el-input v-model="dataForm.vehicleId" :placeholder="data.form.input.vehicleId"/>
+                <im-selector
+                        placeholder="请选择物料车型"
+                        v-model="dataForm.vehicleId"
+                        :mapModel.sync="dataForm"
+                        mapKeyVal="vName:vehicleId"
+                        dataType="biz.pvehicle"
+                        style="width: 178px">
+                </im-selector>
             </el-form-item>
             <el-form-item prop="brandId" :label="data.form.input.brandId">
-                <el-input v-model="dataForm.brandId" :placeholder="data.form.input.brandId"/>
+                <im-selector
+                        placeholder="请选择物料品牌"
+                        v-model="dataForm.brandId"
+                        :mapModel.sync="dataForm"
+                        mapKeyVal="bName:brandId"
+                        dataType="biz.pbrand" style="width: 178px">
+                </im-selector>
             </el-form-item>
             <el-form-item prop="madeinId" :label="data.form.input.madeinId">
-                <el-input v-model="dataForm.madeinId" :placeholder="data.form.input.madeinId"/>
+                <im-selector
+                        placeholder="请选择物料产地"
+                        v-model="dataForm.madeinId"
+                        :mapModel.sync="dataForm"
+                        mapKeyVal="mName:madeinId"
+                        dataType="biz.pmadein"
+                        style="width: 178px">
+                </im-selector>
             </el-form-item>
             <el-form-item prop="barCode" :label="data.form.input.barCode">
                 <el-input v-model="dataForm.barCode" :placeholder="data.form.input.barCode"/>
@@ -43,10 +71,17 @@
                 <el-input v-model="dataForm.volume" :placeholder="data.form.input.volume"/>
             </el-form-item>
             <el-form-item prop="defaultVendorId" :label="data.form.input.weight">
-                <el-input v-model="dataForm.defaultVendorId" :placeholder="data.form.input.weight"/>
+                <el-input v-model="dataForm.weight" :placeholder="data.form.input.weight"/>
             </el-form-item>
             <el-form-item prop="defaultVendorId" :label="data.form.input.defaultVendorId">
-                <el-input v-model="dataForm.defaultVendorId" :placeholder="data.form.input.defaultVendorId"/>
+                <im-selector
+                        placeholder="请选择供应商"
+                        v-model="dataForm.defaultVendorId"
+                        :mapModel.sync="dataForm"
+                        mapKeyVal="dName:defaultVendorId"
+                        dataType="biz.customer"
+                        style="width: 178px">
+                </im-selector>
             </el-form-item>
             <el-form-item prop="pinyinCode" :label="data.form.input.status">
                 <el-input v-model="dataForm.pinyinCode" :placeholder="data.form.input.pinyinCode"/>
@@ -76,10 +111,18 @@
 
 <script>
 import data from './data'
+import mixinViewModule from '@/mixins/view-module'
 
 export default {
+  mixins: [mixinViewModule],
   data () {
     return {
+      mixinViewModuleOptions: {
+        getDataListURL: '/base/product/list',
+        updateURL: '/base/product/save',
+        getDataListIsPage: false,
+        activatedIsNeed: false
+      },
       data: data,
       visible: false,
       dataForm: {
@@ -109,28 +152,11 @@ export default {
       rules: {
         name: [{
           required: true, message: '名称不可缺少'
-        }],
-        code: [{
-          required: true, message: '编码不可缺少'
         }]
       }
     }
   },
   methods: {
-    init () {
-      this.visible = true
-      this.$nextTick(() => {
-        this.$refs['dataForm'].resetFields()
-        this.$refs['dataForm'].clearValidate()
-      })
-    },
-    update (row) {
-      this.dataForm = Object.assign({}, row)
-      this.visible = true
-      this.$nextTick(() => {
-        this.$refs['dataForm'].clearValidate()
-      })
-    },
     // 表单提交
     dataFormSubmitHandle () {
       let th = this

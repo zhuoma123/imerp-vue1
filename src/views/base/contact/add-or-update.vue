@@ -1,16 +1,17 @@
 <template>
-    <el-dialog :visible.sync="visible" :title="!dataForm.id ? $t('views.public.add') : $t('views.public.update')"
-               :close-on-click-modal="false" :close-on-press-escape="false" width="850px">
-        <el-form :model="dataForm" :rules="rules" ref="dataForm" @keyup.enter.native="dataFormSubmitHandle()"
-                 label-width="120px" :inline="true">
+    <el-dialog :visible.sync="visible" :title="isNew ? $t('views.public.add') : $t('views.public.update')"
+               :close-on-click-modal="false" :close-on-press-escape="false" width="700px">
+        <el-form :model="dataForm" :rules="rules" ref="dataForm" label-width="120px" :inline="true" labelSuffix="："
+                 size="mini">
+            <el-form-item prop="id" v-show="false" />
             <el-form-item label="顾客" prop="custId">
                 <im-selector
                     placeholder="请选择客户"
                     v-model="dataForm.custId"
                     :mapModel.sync="dataForm"
-                    mapKeyVal="name:custId"
+                    mapKeyVal="custName:custId"
                     dataType="biz.customer"
-                    @change="changeCust">
+                    style="width: 178px">
                 </im-selector>
             </el-form-item>
             <el-form-item prop="name" :label="data.form.input.name">
@@ -47,10 +48,17 @@
 
 <script>
 import data from './data'
-
+import mixinViewModule from '@/mixins/view-module'
 export default {
+  mixins: [mixinViewModule],
   data () {
     return {
+      mixinViewModuleOptions: {
+        getDataListURL: '/base/custcontact/list',
+        updateURL: '/base/custcontact/save',
+        getDataListIsPage: false,
+        activatedIsNeed: false
+      },
       data: data,
       visible: false,
       dataForm: {
@@ -81,60 +89,7 @@ export default {
       }
     }
   },
-  methods: {
-    init () {
-      this.visible = true
-      this.$nextTick(() => {
-        this.$refs['dataForm'].resetFields()
-        if (this.dataForm.id) {
-          this.dataForm.id = undefined
-        }
-        this.$refs['dataForm'].clearValidate()
-      })
-    },
-    update (row) {
-      this.visible = true
-      this.$nextTick(() => {
-        this.dataForm = Object.assign({}, row)
-        this.$refs['dataForm'].clearValidate()
-      })
-    },
-    // 表单提交
-    dataFormSubmitHandle () {
-      let th = this
-      this.$refs['dataForm'].validate(valid => {
-        if (!valid) {
-          return false
-        }
-        th.$axios({
-          url: '/base/custcontact/save',
-          method: 'post',
-          data: th.dataForm
-        }).then(res => {
-          this.$message({
-            message: this.$t('views.public.success'),
-            type: 'success',
-            duration: 500,
-            onClose: () => {
-              this.visible = false
-              this.$emit('refreshDataList')
-            }
-          })
-        }).catch(() => {
-        })
-      })
-    },
-    vendorInfo: function (query) {
-      this.vendor.loading = true
-      this.$axios
-        .post(this.vendor.remoteURL, { query: query })
-        .then(res => {
-          this.vendor.loading = false
-          debugger
-          this.vendor.dataList = res
-        })
-    }
-  }
+  methods: {}
 }
 </script>
 

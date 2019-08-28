@@ -20,6 +20,7 @@ const router = new VueRouter({
 
 const whiteList = ['/sys/login']
 let count = 0
+
 /**
  * 路由拦截
  * 权限验证
@@ -62,8 +63,7 @@ router.beforeEach(async (to, from, next) => {
             count = 0
             return
           } else if (menuList.length === 0) {
-            this.$message.error('该用户无可用菜单，请刷新页面或联系系统管理员')
-            next({ path: '/sys/login', query: { redirect: to.fullPath } })
+            store.dispatch('d2admin/account/logout', {msg:'无任何菜单权限，请刷新页面或联系系统管理员'})
             NProgress.done()
             count = 0
             return
@@ -82,7 +82,7 @@ router.beforeEach(async (to, from, next) => {
             next({ path: redirect })
             NProgress.done()
           }
-        })
+        }).catch(err => console.log(err))
       } catch (err) {
         next({ path: '/sys/login', query: { redirect: to.fullPath } })
         NProgress.done()

@@ -8,67 +8,14 @@
     width="80%"
   >
     <div>
-      <el-form
-        :model="dataForm"
-        labelSuffix="："
-        size="mini"
-        :rules="dataRule"
+      <dynamic-form
+        v-model="dataForm"
+        :formprops="formprops"
         ref="dataForm"
-        label-width="120px"
-        style="padding-right: 40px"
-      >
-        <el-row inline>
-          <el-col :span="8">
-            <el-form-item label="盘点单号" prop="orderNum">
-              <el-input disabled="disabled" v-model="dataForm.orderNum" clearable></el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="仓库" prop="warehouseId">
-              <el-select
-                v-model="dataForm.warehouseId"
-                :loading="warehouseSel.loading"
-                :remote-method="selWarehouse"
-                filterable
-                remote
-                default-first-option
-                placeholder="请选择"
-              >
-                <el-option
-                  v-for="item in warehouseSel.dataList"
-                  :key="item.key"
-                  :label="item.key"
-                  :value="item.value"
-                ></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="负责人" prop="pic">
-              <el-select
-                v-model="dataForm.pic"
-                :loading="picSel.loading"
-                :remote-method="selPic"
-                filterable
-                remote
-                default-first-option
-                style="width:270px"
-                placeholder="请选择"
-              >
-                <el-option
-                  v-for="item in picSel.dataList"
-                  :key="item.key"
-                  :label="item.key"
-                  :value="item.value"
-                ></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-form-item label="备注" prop="remark">
-          <el-input v-model="dataForm.remark" clearable></el-input>
-        </el-form-item>
-      </el-form>
+        col-span='8,8,8'
+        :read-only='formReadOnly'
+        :alldescriptors="descriptors">
+      </dynamic-form>
     </div>
     <vxe-grid
       border
@@ -104,8 +51,8 @@
       </template>
     </vxe-grid>
     <span slot="footer" class="dialog-footer">
-      <el-button type="danger" @click="visible = false">取消</el-button>
-      <el-button type="primary" :disabled="btnDisable" @click="dataFormSubmit">确定</el-button>
+      <el-button type="danger"  @click="visible = false">取消</el-button>
+      <el-button type="primary" v-show="enableSubmit" :disabled="btnDisable" @click="dataFormSubmit">确定</el-button>
     </span>
   </el-dialog>
 </template>
@@ -113,6 +60,7 @@
 <script>
 import mixinViewModule from '@/mixins/view-module'
 import XEUtils from 'xe-utils'
+const separate = {type: 'separate'}
 export default {
   mixins: [mixinViewModule],
   data () {
@@ -129,7 +77,35 @@ export default {
       dataForm: {
         warehouseId: '',
         pic: '',
-        remark: '111'
+        remark: '',
+        warehouseCode:'',
+        picName:''
+      },
+      descriptors: {
+        orderNum: { type: 'string', label: '盘点单号',disabled:"disabled",
+          props: {
+            clearable: true
+          }
+        },
+        warehouseId: { type: 'cust', label: '仓库',ruletype:'integer',
+          ruletype: 'integer',
+          name:'im-selector',
+          props: {
+            mapKeyVal: "warehouseCode:warehouseId",
+            dataType: "biz.warehouse",
+            clearable: true
+          }
+        },
+        pic: { type: 'cust', label: '负责人',ruletype:'integer',
+          name:'im-selector',
+          props: {
+            mapKeyVal: "picName:pic",
+            dataType: "biz.employee",
+            clearable: true
+          }
+        },
+        separate1: separate,
+        remark: { type: 'string', label: '备注',colspan: 3},
       },
       dataRule: {
         warehouseId: [
@@ -194,18 +170,6 @@ export default {
           editRender: { name: 'input', autoselect: true }
         }
       ],
-      picSel: {
-        remoteURL: '/common/biz/employee',
-        loading: false,
-        dataList: [],
-        timeout: null
-      },
-      warehouseSel: {
-        remoteURL: '/common/biz/warehouse',
-        loading: false,
-        dataList: [],
-        timeout: null
-      },
       toolbar: {
         id: 'full_edit_1',
         resizable: {
@@ -218,32 +182,6 @@ export default {
     }
   },
   methods: {
-    selPic: function (query) {
-      this.picSel.loading = true
-      this.$axios.post(this.picSel.remoteURL, { query: query }).then(res => {
-        this.picSel.loading = false
-        if (res && res.length > 0) {
-          this.picSel.dataList = []
-          for (var i = 0; i < res.length; i++) {
-            this.picSel.dataList.push(res[i])
-          }
-        } else this.picSel.dataList = []
-      })
-    },
-    selWarehouse: function (query) {
-      this.warehouseSel.loading = true
-      this.$axios
-        .post(this.warehouseSel.remoteURL, { query: query })
-        .then(res => {
-          this.warehouseSel.loading = false
-          if (res && res.length > 0) {
-            this.warehouseSel.dataList = []
-            for (var i = 0; i < res.length; i++) {
-              this.warehouseSel.dataList.push(res[i])
-            }
-          } else this.warehouseSel.dataList = []
-        })
-    },
     jsCy: function ({ column, row }) {
       if (column.property === 'quantityNew') {
         var quantityNew = row.quantityNew
@@ -290,12 +228,13 @@ export default {
     },
     handleProcSelect (t, item) {
       var row = t.row
+      debugger;
       if (item) {
         Object.assign(row, item)
         row.quantityOld = item.stock
-        row.uom = item.UNIT
-        row.productId = item.ID
-        row.productCode = item.CODE
+        row.uom = item.unit
+        row.productId = item.id
+        row.productCode = item.code
       } else {
       }
     }

@@ -121,8 +121,8 @@ export default {
      */
     init (item, read=false, sub=true) {
       this.isNew = !item
-      if (item) { 
-        this.entityModel = Object.assign({}, item) 
+      if (item) {
+        this.entityModel = Object.assign({}, item)
       }
       this.formReadOnly = read
       this.enableSubmit = sub
@@ -320,7 +320,7 @@ export default {
     },
     // 修改
     updateHandle () {
-      
+
     },
     // 提交
     submitHandle (event, isAuto) {
@@ -331,10 +331,10 @@ export default {
           type: 'warning'
         })
       }
-      this.$confirm('确定要提交吗，提交后不能在修改！', { 'handle': '提交' }, '确认操作', {
+      this.$confirm('确定要提交吗，提交后不能在修改！', '操作操作', {
         confirmButtonText: this.$t('views.public.confirm'),
         cancelButtonText: this.$t('views.public.cancel'),
-        type: 'warning'
+        type: 'info'
       }).then(() => {
         this.$axios.post(
           this.mixinViewModuleOptions.submitURL, { 'id': row.id, 'isAuto': isAuto }
@@ -370,6 +370,35 @@ export default {
       this.addOrUpdateHandleSetter(map)
     },
     // 删除
+    deleteEntityHandle (grid) {
+      let row = this.pGrid.getCurrentRow()
+      if (!row) {
+        return this.$message({
+          message: '请选择要删除的记录',
+          type: 'error'
+        })
+      }
+      this.$confirm('确定要删除选中的记录吗！', '操作提示', {
+        confirmButtonText: this.$t('views.public.confirm'),
+        cancelButtonText: this.$t('views.public.cancel'),
+        type: 'error'
+      }).then(() => {
+        row.__state='DELETED'
+        this.$axios.post(
+          this.mixinViewModuleOptions.updateURL,row
+        ).then(res => {
+          this.$message({
+            message: this.$t('views.public.success'),
+            type: 'success',
+            duration: 500,
+            onClose: () => {
+              this.search()
+            }
+          })
+        }).catch(() => {})
+      }).catch(() => {})
+    },
+    // 删除
     deleteHandle (grid) {
       let ids = ''
       this.dataListSelections = grid.getSelectRecords()
@@ -384,10 +413,10 @@ export default {
       } else {
         ids = this.dataListSelections.map(item => item.id).join()
       }
-      this.$confirm('确定要删除选中的记录', { 'handle': '删除' }, '确认操作', {
+      this.$confirm('确定要删除选中的记录', '操作提示', {
         confirmButtonText: this.$t('views.public.confirm'),
         cancelButtonText: this.$t('views.public.cancel'),
-        type: 'warning'
+        type: 'error'
       }).then(() => {
         this.$axios.post(
           this.mixinViewModuleOptions.deleteURL,
@@ -405,50 +434,28 @@ export default {
       }).catch(() => {})
     },
     // 删除
-    deleteHandleSetter (index) {
-      let data
-      if (this.mixinViewModuleOptions.deleteIsBatch && this.dataListSelections.length > 0) {
-        data = this.dataListSelections.map(item => item[this.mixinViewModuleOptions.deleteIsBatchKey])
-      }
-      let row
-      if (!index) {
-        row = undefined
+    deleteHandleSetter (grid) {
+      let ids = ''
+      this.dataListSelections = grid.getSelectRecords()
+      if (grid.getSelectRecords().length === 0) {
+        if (!grid.getCurrentRow()) {
+          return this.$message({
+            message: '请选择要删除的记录',
+            type: 'warning'
+          })
+        }
+        ids = [grid.getCurrentRow().id]
       } else {
-        row = index.row
+        ids = this.dataListSelections.map(item => item.id).join()
       }
-      if (row) {
-        const id = row.id
-        if (id) {
-          data = [id]
-        }
-      }
-      if (data === undefined) {
-        return
-      }
-      for (let i = 0; i < this.dataListSelections.length; i++) {
-        const id = this.mixinViewModuleOptions.deleteIsBatchKey
-        let e = this.dataListSelections[i]
-        let childs = e.children
-        if (childs) {
-          for (let i in childs) {
-            let child = childs[i]
-            if (!data.includes(child[id])) {
-              this.$message.error('被包含的子项必须被全部删除')
-              return
-            }
-          }
-        }
-      }
-      this.$confirm(this.$t('public.prompt.info', { 'handle': this.$t('views.public.delete') }), this.$t('public.prompt.title'), {
+      this.$confirm('确定要删除选中的记录', '操作提示', {
         confirmButtonText: this.$t('views.public.confirm'),
         cancelButtonText: this.$t('views.public.cancel'),
-        type: 'warning'
+        type: 'error'
       }).then(() => {
         this.$axios.post(
           this.mixinViewModuleOptions.deleteURL,
-          {
-            'data': data
-          }
+          { 'ids': ids }
         ).then(res => {
           this.$message({
             message: this.$t('views.public.success'),

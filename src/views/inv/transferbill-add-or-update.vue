@@ -8,57 +8,14 @@
 		width="80%"
 	>
 		<div>
-			<el-form
-				:model="dataForm"
-				labelSuffix="："
-				size="mini"
-				:rules="dataRule"
+			<dynamic-form
+				v-model="dataForm"
+				:formprops="formprops"
 				ref="dataForm"
-				label-width="120px"
-			>
-				<el-row>
-					<el-col :span="8">
-						<el-form-item label="调拨单号" prop="orderNum">
-							<el-input disabled="disabled" v-model="dataForm.orderNum" clearable></el-input>
-						</el-form-item>
-					</el-col>
-					<el-col :span="8">
-						<el-form-item label="调出仓" prop="fromWarehouseId">
-              <im-selector
-                v-model="dataForm.fromWarehouseId"
-                :mapModel.sync="dataForm"
-                mapKeyVal="fromWarehouseCode:fromWarehouseId"
-                dataType="biz.warehouse">
-              </im-selector>
-						</el-form-item>
-					</el-col>
-					<el-col :span="8">
-						<el-form-item label="调入仓" prop="toWarehouseId">
-              <im-selector
-                v-model="dataForm.toWarehouseId"
-                :mapModel.sync="dataForm"
-                mapKeyVal="toWarehouseCode:toWarehouseId"
-                dataType="biz.warehouse">
-              </im-selector>
-						</el-form-item>
-					</el-col>
-					<el-col :span="8">
-						<el-form-item label="负责人" prop="pic">
-              <im-selector
-                v-model="dataForm.pic"
-                :mapModel.sync="dataForm"
-                mapKeyVal="picName:pic"
-                dataType="biz.employee">
-              </im-selector>
-						</el-form-item>
-					</el-col>
-					<el-col :span="8">
-						<el-form-item label="备注" prop="remark">
-							<el-input v-model="dataForm.remark" clearable></el-input>
-						</el-form-item>
-					</el-col>
-				</el-row>
-			</el-form>
+				col-span='6,6,6,6'
+				:read-only='formReadOnly'
+				:alldescriptors="descriptors">
+			</dynamic-form>
 		</div>
 		<vxe-grid
 			border
@@ -94,7 +51,7 @@
 <script>
 	import mixinViewModule from "@/mixins/view-module"
 	import XEUtils from 'xe-utils'
-
+	const separate = {type: 'separate'}
 	export default {
 		mixins: [mixinViewModule],
 		data() {
@@ -112,6 +69,41 @@
 					toWarehouseId: '',
 					pic: '',
 					remark: ''
+				},
+				descriptors: {
+					orderNum: { type: 'string', label: '调拨单号',disabled:"disabled",
+						props: {
+							clearable: true
+						}
+					},
+					fromWarehouseId: { type: 'cust', label: '调出仓',ruletype:'integer',
+						ruletype: 'integer',
+						name:'im-selector',
+						props: {
+							mapKeyVal: "fromWarehouseCode:fromWarehouseId",
+							dataType: "biz.warehouse",
+							clearable: true
+						}
+					},
+					toWarehouseId: { type: 'cust', label: '调入仓',ruletype:'integer',
+						ruletype: 'integer',
+						name:'im-selector',
+						props: {
+							mapKeyVal: "toWarehouseCode:toWarehouseId",
+							dataType: "biz.warehouse",
+							clearable: true
+						}
+					},
+					pic: { type: 'cust', label: '负责人',ruletype:'integer',
+						name:'im-selector',
+						props: {
+							mapKeyVal: "picName:pic",
+							dataType: "biz.employee",
+							clearable: true
+						}
+					},
+					separate1: separate,
+					remark: { type: 'string', label: '备注',colspan:4},
 				},
 				dataRule: {
 					fromWarehouseId: [

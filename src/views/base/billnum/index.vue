@@ -42,7 +42,7 @@
                 border
                 resizable
                 highlight-current-row
-                height="420px"
+                height="390px"
                 remote-filter
                 size="mini"
                 ref="pGrid"
@@ -77,7 +77,7 @@
                         type="danger"
                         size="mini"
                         icon="el-icon-delete"
-                        @click="deleteHandle($refs.pGrid)"
+                        @click="deleteHandleSetter($refs.pGrid)"
                 >删除
                 </el-button>
             </template>

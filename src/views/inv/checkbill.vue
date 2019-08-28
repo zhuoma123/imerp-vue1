@@ -64,7 +64,7 @@
 					size="mini"
 					icon="el-icon-delete"
 					v-if="$hasPermission('inv:checkbill:delete')"
-					@click="deleteHandle($refs.pGrid)"
+					@click="deleteEntityHandle($refs.pGrid)"
 				>删除
 				</el-button>
 				<el-button
@@ -125,8 +125,7 @@
 				mixinViewModuleOptions: {
 					getDataListURL: '/inv/checkbill/list',
 					getDataListIsPage: true,
-					updateURL: '/inv/checkbill/update',
-					deleteURL: '/inv/checkbill/delete',
+					updateURL: '/inv/checkbill/save',
 					submitURL: '/inv/checkbill/submit',
 					deleteIsBatch: true,
 					exportURL: '/inv/checkbill/export'
@@ -146,8 +145,7 @@
 						}
 					},
 					warehouseId: {
-						type: 'cust', label: '仓库',
-						ruletype: 'integer',
+						type: 'cust', label: '仓库', ruletype: 'integer',
 						name: 'im-selector',
 						props: {
 							mapKeyVal: "warehouseCode:warehouseId",
@@ -166,6 +164,15 @@
 						}
 					},
 					separate1: separate,
+					pic: {
+						type: 'cust', label: '负责人', ruletype: 'integer',
+						name: 'im-selector',
+						props: {
+							mapKeyVal: "picName:pic",
+							dataType: "biz.employee",
+							clearable: true
+						}
+					},
 					checkDate: {
 						type: 'cust', label: '盘点日期', colspan: 2,
 						name: 'el-date-picker',
@@ -256,18 +263,6 @@
 						formatter: ['toDateString', 'yyyy-MM-dd']
 					}
 				],
-				warehouseSel: {
-					remoteURL: '/common/biz/warehouse',
-					loading: false,
-					dataList: [],
-					timeout: null
-				},
-				statusSel: {
-					remoteURL: '/common/code/status',
-					loading: false,
-					dataList: [],
-					timeout: null
-				},
 				toolbar: {
 					id: 'full_edit_1',
 					refresh: true,

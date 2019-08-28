@@ -8,46 +8,6 @@
     width="80%"
   >
     <div>
-      <!--<el-form
-        :model="dataForm"
-        labelSuffix="："
-        size="mini"
-        :rules="dataRule"
-        ref="dataForm"
-        label-width="120px"
-        style="padding-right: 40px"
-      >
-        <el-row inline>
-          <el-col :span="8">
-            <el-form-item label="盘点单号" prop="orderNum">
-              <el-input disabled="disabled" v-model="dataForm.orderNum" clearable></el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="仓库" prop="warehouseId">
-              <im-selector
-                v-model="dataForm.warehouseId"
-                :mapModel.sync="dataForm"
-                mapKeyVal="warehouseCode:warehouseId"
-                dataType="biz.warehouse">
-              </im-selector>
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="负责人" prop="pic">
-              <im-selector
-                v-model="dataForm.pic"
-                :mapModel.sync="dataForm"
-                mapKeyVal="picName:pic"
-                dataType="biz.employee">
-              </im-selector>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-form-item label="备注" prop="remark">
-          <el-input v-model="dataForm.remark" clearable></el-input>
-        </el-form-item>
-      </el-form>-->
       <dynamic-form
         v-model="dataForm"
         :formprops="formprops"
@@ -127,7 +87,7 @@ export default {
             clearable: true
           }
         },
-        warehouseId: { type: 'cust', label: '仓库',
+        warehouseId: { type: 'cust', label: '仓库',ruletype:'integer',
           ruletype: 'integer',
           name:'im-selector',
           props: {
@@ -136,7 +96,7 @@ export default {
             clearable: true
           }
         },
-        pic: { type: 'cust', label: '负责人',
+        pic: { type: 'cust', label: '负责人',ruletype:'integer',
           name:'im-selector',
           props: {
             mapKeyVal: "picName:pic",

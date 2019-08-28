@@ -76,7 +76,7 @@
                         type="danger"
                         size="mini"
                         icon="el-icon-delete"
-                        @click="deleteHandle($refs.pGrid)"
+                        @click="deleteHandleSetter($refs.pGrid)"
                 >删除
                 </el-button>
             </template>

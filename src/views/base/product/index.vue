@@ -71,6 +71,7 @@
 
         </el-collapse>
         <vxe-grid
+                height="350px"
                 border
                 resizable
                 highlight-current-row
@@ -108,7 +109,7 @@
                         type="danger"
                         size="mini"
                         icon="el-icon-delete"
-                        @click="deleteHandle($refs.pGrid)"
+                        @click="deleteHandleSetter($refs.pGrid)"
                 >删除
                 </el-button>
             </template>
@@ -143,7 +144,7 @@ export default {
       mixinViewModuleOptions: {
         getDataListURL: '/base/product/list',
         getDataListIsPage: true,
-        deleteURL: '/base/product',
+        deleteURL: '/base/product/delete',
         deleteIsBatch: true
       },
       dataForm: {
@@ -195,19 +196,22 @@ export default {
           title: '编号',
           field: 'code',
           sortable: true,
-          align: 'center'
+          align: 'center',
+          width: '110px'
         },
         {
           title: '名称',
           field: 'name',
           sortable: true,
-          align: 'center'
+          align: 'center',
+          width: '110px'
         },
         {
           title: '别名',
           field: 'alisaName',
           sortable: true,
-          align: 'center'
+          align: 'center',
+          width: '110px'
         },
         {
           title: '配件分类',
@@ -238,12 +242,14 @@ export default {
           title: '条码',
           field: 'barCode',
           sortable: true,
-          align: 'center'
+          align: 'center',
+          width: '110px'
         }, {
           title: '图号',
           field: 'picCode',
           sortable: true,
-          align: 'center'
+          align: 'center',
+          width: '110px'
         }, {
           title: '规格属性',
           field: 'specialParam',
@@ -255,25 +261,29 @@ export default {
           title: '描述',
           field: 'desc',
           sortable: true,
-          align: 'center'
+          align: 'center',
+          width: '110px'
         },
         {
           title: '单位',
           field: 'unit',
           sortable: true,
-          align: 'center'
+          align: 'center',
+          width: '110px'
         },
         {
           title: '体积',
           field: 'volume',
           sortable: true,
-          align: 'center'
+          align: 'center',
+          width: '110px'
         },
         {
           title: '重量',
           field: 'weight',
           sortable: true,
-          align: 'center'
+          align: 'center',
+          width: '110px'
         },
         {
           title: '默认供应商',

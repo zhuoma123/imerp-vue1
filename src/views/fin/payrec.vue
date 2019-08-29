@@ -10,6 +10,7 @@
           :formprops="formprops"
           ref="dataForm"
           col-span='6,6,6,6'
+          label-width="120px"
           :alldescriptors="descriptors">
           <template slot="btnsearch">
             <el-button type="primary" icon="el-icon-search" @click="search" >查询</el-button>
@@ -124,6 +125,7 @@ export default {
           label: '业务类型',
           placeholder: '请选择业务类型',
           name: 'im-selector',
+          required: true,
           props: {
             mapKeyVal: "sourceOrderType",
             dataType: "code.tran_type",
@@ -134,6 +136,7 @@ export default {
         sourceOrderNum: {
           type: 'string',
           label: '来源订单号',
+          required: true,
           props: {
             clearable: true
           }

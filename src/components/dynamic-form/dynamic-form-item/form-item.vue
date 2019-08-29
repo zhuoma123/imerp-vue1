@@ -8,7 +8,7 @@
       :prop="prop"
       :size="size"
       :language="language"
-      :rules="tranDescriptor"
+      :rules="ruleDescriptor"
       :required="typeDescriptor.required"
       :label-width="labelWidth">
       <slot :name="typeDescriptor.name" v-if="typeDescriptor.type === 'slot'"></slot>
@@ -17,7 +17,6 @@
         v-model="_value"
         :map-model="mapModel"
         :size="size"
-        :disabled="curProps.disabled"
         :type="typeDescriptor.type"
         :custName="typeDescriptor.name"
         :custProps="curProps"
@@ -112,7 +111,7 @@
 
 <script>
 import { isComplexType, isSeparateType, getLabelWidth, darkenColor, parseDescriptor, findTypeDescriptor } from '../utils'
-import DynamicInput from '../dynamic-input/input'
+import DynamicInput from '../dynamic-input/dy-input'
 
 export default {
   name: 'dynamic-form-item',
@@ -188,29 +187,32 @@ export default {
     },
     subFormBackgroundColor () {
       return this.bgColorOffset ? darkenColor(this.backgroundColor, this.bgColorOffset) : 'none'
-    },
-    tranDescriptor () {
-      let tem = Object.assign({}, this.curDescriptor)
-      if(tem.type === 'cust') {
-        tem.type = tem.ruletype || 'string'
-      }
-      return tem
     }
   },
   data () {
     return {
       hashMapKey: '',
       curDescriptor: this.descriptor,
+      ruleDescriptor: {},
       curProps: {}
     }
   },
   created () {
+    this.initRules()
   },
   methods: {
     isComplexType,
     isSeparateType,
     getLabelWidth,
     findTypeDescriptor,
+    initRules () {
+      let tem = Object.assign({}, this.curDescriptor)
+      tem.type = tem.ruletype || (tem.type === 'cust'?'string':tem.type)
+      if(tem.required) {
+        tem.message = tem.message || ((tem.label || tem.prop) + '为必填项')
+      }
+      this.ruleDescriptor = tem
+    },
     clearValidate () {
       this.$refs[this.prop].clearValidate()
     },

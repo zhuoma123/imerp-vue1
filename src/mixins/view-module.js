@@ -2,6 +2,8 @@ import qs from 'qs'
 import XEUtils from 'xe-utils'
 import util from '@/libs/util.js'
 
+
+
 export default {
   data () {
     /* eslint-disable */
@@ -117,17 +119,17 @@ export default {
      * 该方法只用于子页面
      * @param {*} item
      */
-    init (item, read = false, sub = true) {
+    init (item, read=false, submit=true) {
       this.isNew = !item
       if (item) {
         this.entityModel = Object.assign({}, item)
       }
-      this.enableSubmit = sub
+      this.enableSubmit = submit
       this.visible = true
       this.initCB()
     },
     // 初始化回调
-    initCB () {
+    initCB() {
 
     },
     initSelData () {
@@ -160,7 +162,7 @@ export default {
       })
       this.dataListLoading = false
     },
-    getDataListCB (self, res) {
+    getDataListCB(self, res) {
 
     },
     vxeTabQuery ({ page, sort, filters }, dataForm) {
@@ -189,15 +191,15 @@ export default {
       this.dataListLoading = true
       let vxeParams = { page: null, sort: null, filters: [] }
       this.vxeTabQuery(vxeParams, dataForm).then((resolve, rejects) => {
-        if (this.$refs.sGrid) {
-          this.$refs.sGrid.loadData(this.dataList)
-        } else { this.pGrid.loadData(this.dataList) }
-
         this.dataListLoading = false
         if (this.$refs.sGrid) {
+          this.$refs.sGrid.loadData(this.dataList)
           this.$refs.sGrid.updateFooter()
+          this.$refs.sGrid.clearCurrentRow()
         } else if (this.$refs.pGrid) {
+          this.$refs.pGrid.loadData(this.dataList)
           this.$refs.pGrid.updateFooter()
+          this.$refs.pGrid.clearCurrentRow()
         }
         this.vxeQueryCB(this)
       })
@@ -303,8 +305,8 @@ export default {
       }
     },
     // 双击
-    cellDblClick ({ row }, event) {
-      if (typeof row === 'undefined' || row === null) {
+    cellDblClick ({row}, event) {
+      if(typeof row === 'undefined' || row === null) {
         return this.$message({
           message: '请选择要修改的记录',
           type: 'warning'
@@ -313,13 +315,13 @@ export default {
       this.addOrUpdateVisible = true
       this.$nextTick(() => {
         let read = null
-        for (let r in this.$refs) {
-          if (r.startsWith('btnStatus')) {
+        for(let r in this.$refs) {
+          if(r.startsWith('btnStatus')) {
             let dc = this.$refs[r].$attrs['row-dbclick']
             read = this.$refs[r].$attrs['form-readonly']
             read = (typeof read !== 'undefined' && read !== null)
-            if (typeof dc !== 'undefined' && dc !== null) {
-              if (this.$refs[r].$el.style.display === 'none') {
+            if(typeof dc !== 'undefined' && dc !== null) {
+              if(this.$refs[r].$el.style.display === 'none') {
                 this.$refs.addOrUpdate.init(row, read, false)
                 return
               }
@@ -420,9 +422,9 @@ export default {
         cancelButtonText: this.$t('views.public.cancel'),
         type: 'error'
       }).then(() => {
-        row.__state = 'DELETED'
+        row.__state='DELETED'
         this.$axios.post(
-          this.mixinViewModuleOptions.updateURL, row
+          this.mixinViewModuleOptions.updateURL,row
         ).then(res => {
           this.$message({
             message: this.$t('views.public.success'),
@@ -558,7 +560,7 @@ export default {
           let cellValue = footerRender(column, data)
           let cellLabel = cellValue
           let { formatter } = column
-          if (formatter && cellValue != '汇总') {
+          if (formatter && cellValue !='汇总') {
             if (XEUtils.isString(formatter)) {
               cellLabel = XEUtils[formatter](cellValue)
             } else if (XEUtils.isArray(formatter)) {
@@ -588,18 +590,19 @@ export default {
         let bodyClientHeight = document.getElementsByClassName('d2-container-full__body')[0] ? `${document.getElementsByClassName('d2-container-full__body')[0].clientHeight}` : 0
         let tableBody = self.$refs.pGrid.$el.getElementsByClassName('vxe-table--body-wrapper')[0]
         let tableFoot = self.$refs.pGrid.showFooter ? 30 : 0
-        if (tableBody) { tableBody.style.height = Number(bodyClientHeight) - Number(toolbar) - Number(tableHeader) - tableFoot + 'px' }
+        if(tableBody)
+          tableBody.style.height = Number(bodyClientHeight) - Number(toolbar) - Number(tableHeader) - tableFoot + 'px'
       }
     },
     collapseChange () {
       setTimeout(this.computeHeight, 500)
     },
-    currentChange ({ row }) {
+    currentChange ({row}) {
       this.curStatus = row.status
     },
     btnStatus (obj, val) {
       let enablestatus = obj.$attrs.enablestatus
-      if (enablestatus && enablestatus.length > 0) {
+      if(enablestatus && enablestatus.length > 0) {
         enablestatus = enablestatus.split(',')
         obj.$el.style = 'display:' + (enablestatus.includes(val) ? 'inline-block' : 'none')
       }
@@ -610,27 +613,30 @@ export default {
       })
     },
 
-    // 表单校验
-    checkForm () {
+
+    //表单校验
+    checkForm(){
       return new Promise((resolve, reject) => {
-        // 模拟接口调用
+        //模拟接口调用
         this.$refs.dataForm.validate(valid => {
           if (valid) {
-            resolve(true)
-          } else {
-            reject(false)
+            resolve(true);
+          }else{
+            reject(false);
           }
         })
       })
     },
-    // 列表校验
-    checkGrid (grid) {
+    //列表校验
+    checkGrid(grid){
       return new Promise((resolve, reject) => {
-        if (!grid) { resolve(true) } else {
+        if(!grid)
+          resolve(true)
+        else {
           grid.fullValidate((valid, errMap) => {
             if (valid) {
-              resolve(true)
-              // this.$XMsg.message({ status: 'success', message: '校验成功！' })
+              resolve(true);
+              //this.$XMsg.message({ status: 'success', message: '校验成功！' })
             } else {
               let msgList = []
               Object.values(errMap).forEach(errList => {
@@ -655,7 +661,7 @@ export default {
                   ]
                 }
               })
-              reject(false)
+              reject(false);
             }
           })
         }
@@ -677,7 +683,7 @@ export default {
               this.initSelData()
               this.search(this.entityModel)
             }
-          } else {
+          }else{
             if (this.isNew) {
               this.reset()
             } else {
@@ -687,9 +693,10 @@ export default {
         })
       }
     },
-    curStatus: function (val, oldVal) {
-      for (let item in this.$refs) {
-        if (item.startsWith('btnStatus')) { this.btnStatus(this.$refs[item], val) }
+    curStatus: function(val, oldVal) {
+      for(let item in this.$refs) {
+        if(item.startsWith('btnStatus'))
+          this.btnStatus(this.$refs[item], val)
       }
     }
   },

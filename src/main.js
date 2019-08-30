@@ -36,7 +36,7 @@ import 'vxe-table-plugin-element/dist/style.css'
 // [] 动态表单插件
 import DynamicForm from './components/dynamic-form'
 // 数字输入指令
-import OnlyNumber from './directive/el-input'
+import OnlyNumber from './directive/only-number'
 
 // 全局变量
 import Global from './libs/global_variable'

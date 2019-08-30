@@ -12,8 +12,8 @@
   </component>
   
   <!-- integer, number type use el-input with v-model.number -->
-  <el-input-number v-bind="custProps" v-else-if="['integer'].includes(type)" 
-  v-model.number="_value" :size="size" :disabled="disabled" :placeholder="placeholder"></el-input-number>
+  <el-input v-bind="custProps" v-else-if="['integer'].includes(type)" v-only-number=0
+  v-model.number="_value" :size="size" :disabled="disabled" :placeholder="placeholder"></el-input>
   <!-- float type use el-input with v-only-number -->
   <el-input v-bind="custProps" v-else-if="['number', 'float'].includes(type)" v-only-number=2
   v-model="_value" :size="size" :disabled="disabled" :placeholder="placeholder"></el-input>
@@ -44,7 +44,6 @@ export default {
     value: {
       required: true
     },
-    disabled: Boolean,
     placeholder: String,
     size: {
       type: String,
@@ -92,13 +91,14 @@ export default {
     }
   },
   watch: {
-    custProps: function(val, oldVal) {
-      console.log('----input---', val, oldVal)
+    _value: function(val, oldVal) {
+      // console.log('----input---', val, oldVal)
     }
   },
   data () {
     return {
-      name: ''
+      name: '',
+      disabled: this.custProps.disabled
     }
   },
   created () {

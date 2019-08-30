@@ -15,13 +15,13 @@
         :descriptors="row"
         :col-span="curColSpan"
         v-bind="$props"
-        :label-width="labelWidth"
+        :label-width="computedlabelWidth"
       >
       <template v-for="(item, key) in $slots" :slot="key">
         <slot :name="key"></slot>
       </template>
       </dynamic-form-row>
-      <el-form-item :size="size"  v-if="$slots.operations" class="operations" :label-width="labelWidth">
+      <el-form-item :size="size"  v-if="$slots.operations" class="operations" :label-width="computedlabelWidth">
         <slot name="operations"></slot>
       </el-form-item>
     </el-form>
@@ -87,7 +87,11 @@ export default {
       type: String,
       default: '*'
     },
-    readOnly: Boolean
+    readOnly: Boolean,
+    labelWidth: {
+      type: String,
+      default: '0px'
+    }
   },
   components: {
     DynamicFormRow
@@ -109,8 +113,8 @@ export default {
       }
       return style
     },
-    labelWidth () {
-      return getLabelWidth(this.alldescriptors, this.fontSize)
+    computedlabelWidth () {
+      return this.labelWidth === '0px' ? getLabelWidth(this.alldescriptors, this.fontSize) : this.labelWidth
     },
     curColSpan () {
       const span = this.colSpan.split(",")

@@ -41,7 +41,7 @@ export default {
       visible: false,
       btnDisable: false,
       dataForm: {
-        type:'PAYABLE',
+        type:null,
         sourceOrderType:null,
         sourceOrderId:null,
         sourceOrderNum:null,
@@ -73,6 +73,7 @@ export default {
           label: '业务类型',
           placeholder: '请选择业务类型',
           name: 'im-selector',
+          required: true,
           props: {
             mapKeyVal: "sourceOrderType",
             dataType: "code.tran_type",
@@ -82,11 +83,15 @@ export default {
         sourceOrder: {
           type: 'slot',
           name: 'sourceOrder',
+          required: true,
           label: '来源订单号'
         },
         separate2:this.$g.separate,
         custId: {
-          type: 'string',
+          type: 'integer',
+          ruletype: 'integer',
+          requeirt: true,
+          message: '请必填',
           label: '往来单位'
         },
         amount: {

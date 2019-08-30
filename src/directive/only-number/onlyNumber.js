@@ -72,7 +72,7 @@ export default {
       } else if (vDir.value.precision) {
         arg_fix = parseFloat(vDir.value.fix);
       }
-      e.target.value = parseFloat(content.toFixed(arg_fix));
+      e.target.value = Number(content.toFixed(arg_fix));
       // -- callback写法1
       // vNode.data.model.callback = ()=>{
       //     e.target.value = content.toFixed(arg_precision)

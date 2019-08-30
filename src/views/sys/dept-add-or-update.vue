@@ -31,11 +31,11 @@
       <el-form-item prop="orderNum" :label="$t('views.public.dept.orderNum')">
         <el-input v-model="dataForm.orderNum" :placeholder="$t('views.public.dept.orderNum')"/>
       </el-form-item>
-      <el-form-item :label="$t('views.public.dept.delFlag')">
+      <el-form-item label="类型">
        <template>
-      <el-radio-group v-model="dataForm.delFlag">
-        <el-radio :label="0">不删除</el-radio>
-        <el-radio :label="-1">删除</el-radio>
+      <el-radio-group v-model="dataForm.type">
+        <el-radio :label="0">公司</el-radio>
+        <el-radio :label="1">部门</el-radio>
       </el-radio-group>
       </template>
       </el-form-item>
@@ -61,7 +61,8 @@ export default {
         parentId: '',
         parentName: '',
         orderNum: 0,
-        delFlag: 0
+        type: 1,
+        delFlat:0
       }
      
     }
@@ -128,7 +129,11 @@ export default {
             duration: 500,
             onClose: () => {
               this.visible = false
+<<<<<<< HEAD
+              this.$emit('refreshDataList')
+=======
               this.search()
+>>>>>>> 46064c1bbc014adcc32e2cd9b937bf8a50376015
               //this.$emit('refreshDataList')
             }
           })

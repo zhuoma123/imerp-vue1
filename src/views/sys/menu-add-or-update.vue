@@ -26,7 +26,7 @@
         <el-input v-model="dataForm.url" placeholder="菜单URL"/>
       </el-form-item>
       <el-form-item prop="perms" label="授权">
-        <el-input v-model="dataForm.perms" placeholder="多个用逗号分隔：如：sys.menu.save,sys.menu.update"/>
+        <el-input v-model="dataForm.perms" placeholder="多个用逗号分隔：如：sys:menu:save,sys:menu:update"/>
       </el-form-item>
      <el-form-item prop="icon" label="菜单图标">
        <template v-if="icon">
@@ -113,7 +113,7 @@ export default {
         if (!valid) {
           return false
         }
-        this.$axios[!this.dataForm.menuId ? 'post' : 'put']('/sys/menu/save', {
+        this.$axios['post']('/sys/menu/save', {
           ...this.dataForm
         }).then(res => {
           this.$message({

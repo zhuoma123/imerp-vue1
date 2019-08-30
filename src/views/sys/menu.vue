@@ -1,74 +1,66 @@
 <template scope="scope">
   <d2-container class="mod-sys__user">
-    <el-form :inline="true" size="mini" :model="dataForm" @keyup.enter.native="getDataList()">
-      <el-form-item>
+    <vxe-toolbar slot="header"  size="mini">
+      <template v-slot:buttons>
+        <vxe-input v-model="filterName2" type="search" placeholder="根据名称查询"></vxe-input>
         <el-button
           v-if="$hasPermission('sys:menu:save')"
           type="primary"
-           icon="el-icon-edit"
+          icon="el-icon-edit"
+          size="mini"
           @click="addOrUpdateData()"
         >{{ $t('views.public.add') }}</el-button>
-      </el-form-item>
-      <el-form-item>
-        <el-button
-          v-if="$hasPermission('sys:menu:export')"
-          type="info"
-          @click="exportHandle()"
-        >{{ $t('views.public.export') }}</el-button>
-      </el-form-item>
-    </el-form>
-    <el-table
-    :data="dataList.filter(row => !searchname || row.name.toLowerCase().includes(searchname.toLowerCase()))"
-    style="width: 100%;margin-bottom: 20px;"
-    row-key="menuId"
-    height="500"
-    border
-    :tree-props="{children: 'children'}">
-      <el-table-column prop="name" label="菜单名称" width="200" align="left" ></el-table-column>
-      <el-table-column prop="parentName" label="上级菜单" width="100" align="center"></el-table-column>
-      <el-table-column prop="url" label="菜单URL" align="center"></el-table-column>
-      <el-table-column prop="perms" label="授权" width="200" align="center"></el-table-column>
-      <el-table-column prop="type" label="类型" align="center">
-        <template slot-scope="scope">
+      </template>
+    </vxe-toolbar>
+    <vxe-table
+      :data="list2"
+      border
+      size="mini"
+      ref="pGrid"
+      highlight-hover-row
+      :tree-config="{children: 'children', expandAll: !!filterName2,accordion:true}">
+      <vxe-table-column field="name" title="菜单名称" align="left" tree-node>
+        <template v-slot="{ row }">
+          <span v-html="row.name"></span>
+        </template>
+      </vxe-table-column>
+      <vxe-table-column field="parentName" title="上级菜单" align="center">
+        <template v-slot="{ row }">
+          <span v-html="row.parentName"></span>
+        </template>
+      </vxe-table-column>
+      <vxe-table-column field="url" title="菜单URL" align="center">
+        <template v-slot="{ row }">
+          <span v-html="row.url"></span>
+        </template>
+      </vxe-table-column>
+      <vxe-table-column field="perms" title="授权" align="center">
+        <template v-slot="{ row }">
+          <span v-html="row.perms"></span>
+        </template>
+      </vxe-table-column>
+      <vxe-table-column field="type" title="类型" align="center">
+        <template v-slot="{ row }">
           <el-tag
-          :type="scope.row.type === 2 ? 'primary' : 'success'"
-          disable-transitions>
-          <template v-if="scope.row.type === 0">
-            导航栏
-          </template>
-          <template v-else-if="scope.row.type === 1">
-            菜单
-          </template>
-          <template v-else>
-            按键
-          </template>
+          :type="row.type === 2 ? 'primary' : (row.type === 0 ? 'success' : 'danger')">
+          {{tags[row.type].name}}
           </el-tag>
       </template>
-      </el-table-column>
-      <el-table-column prop="icon" label="菜单图标" align="center" icon="icon">
-        <template slot-scope="scope">
-          <i :class="'fa fa-' + scope.row.icon"/>
+      </vxe-table-column>
+      <vxe-table-column field="icon" title="图标" align="center">
+        <template v-slot="{ row }">
+          <i :class="'fa fa-' + row.icon"/>
         </template>
-      </el-table-column>
-      <el-table-column prop="orderNum" label="排序" align="center"></el-table-column>
-      <el-table-column align="left" width="150">
-      <template slot="header" slot-scope="scope">
-        <el-input
-          v-model="searchname"
-          size="mini"
-          placeholder="输入关键字搜索"/>
-      </template>
-      <template slot-scope="scope">
-        <el-button
-          size="mini"
-          @click="addOrUpdateData(scope.row)">编辑</el-button>
-        <el-button
-          size="mini"
-          type="danger"
-          @click="deleteHandleSetter(scope.row)">删除</el-button>
-      </template>
-    </el-table-column>
-    </el-table>
+      </vxe-table-column>
+      <vxe-table-column title="操作" align="center">
+        <template v-slot="{ row }">
+          <el-button size="mini" @click="addOrUpdateData(row)" type="primary">修改</el-button>
+          <el-button size="mini" type="danger"
+          @click="deleteHandleSetter(row)">删除</el-button>
+        </template>
+      </vxe-table-column>
+    </vxe-table>
+
     <!-- 弹窗, 新增 / 修改 -->
     <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList" />
   </d2-container>
@@ -77,7 +69,7 @@
 <script>
 import mixinViewModule from "@/mixins/view-module";
 import AddOrUpdate from "./menu-add-or-update";
-
+import XEUtils from 'xe-utils'
 export default {
   mixins: [mixinViewModule],
   data() {
@@ -89,38 +81,35 @@ export default {
         deleteIsBatch: true,
         exportURL: "/sys/menu/export"
       },
-      searchname: '',
-      dataForm: {
-        name: ""
-      },
-      dataFormOp: {
-        name: "like"
-      },
-      rowHandler: {
-        custom: [
-          {
-            text: this.$t("views.public.update"),
-            type: 'primary',
-            size: 'mini',
-            emit: 'user-update',
-            show: (index, row) => {
-              return this.$hasPermission("sys:menu:update");
-            }
-          },
-          {
-            text: this.$t("views.public.delete"),
-            type: 'danger',
-            size: 'mini',
-            emit: 'user-delete',
-            show: (index, row) => {
-              return this.$hasPermission("sys:menu:delete");
-            }
-          }
+      filterName2: '',
+      dataList: [],
+      tags: [
+          { name: '导航栏', type: 'primary' },
+          { name: '菜单', type: 'success' },
+          { name: '按键', type: 'warning' }
         ]
-      },
       
     };
   },
+  computed:{
+    list2 () {
+      let filterName = XEUtils.toString(this.filterName2).trim().toLowerCase()
+      if (filterName) {
+        let filterRE = new RegExp(filterName, 'gi')
+        let options = { children: 'children' }
+        let searchProps = ['name', 'parentName']
+        let rest = XEUtils.searchTree(this.dataList, item => searchProps.some(key => XEUtils.toString(item[key]).toLowerCase().indexOf(filterName) > -1), options)
+        XEUtils.eachTree(rest, item => {
+          searchProps.forEach(key => {
+            //item[key] = XEUtils.toString(item[key]).replace(filterRE, match => `<span class="keyword-lighten">${match}</span>`)
+          })
+        }, options)
+        return rest
+      }
+      return this.dataList
+    }
+  },
+  
   components: {
     AddOrUpdate
   },

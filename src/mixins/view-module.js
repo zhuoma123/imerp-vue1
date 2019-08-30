@@ -119,12 +119,12 @@ export default {
      * 该方法只用于子页面
      * @param {*} item
      */
-    init (item, read=false, sub=true) {
+    init (item, read=false, submit=true) {
       this.isNew = !item
       if (item) {
         this.entityModel = Object.assign({}, item)
       }
-      this.enableSubmit = sub
+      this.enableSubmit = submit
       this.visible = true
       this.initCB()
     },
@@ -191,15 +191,15 @@ export default {
       this.dataListLoading = true
       let vxeParams = { page: null, sort: null, filters: [] }
       this.vxeTabQuery(vxeParams, dataForm).then((resolve, rejects) => {
-        if (this.$refs.sGrid) {
-          this.$refs.sGrid.loadData(this.dataList)
-        } else { this.pGrid.loadData(this.dataList) }
-
         this.dataListLoading = false
         if (this.$refs.sGrid) {
+          this.$refs.sGrid.loadData(this.dataList)
           this.$refs.sGrid.updateFooter()
+          this.$refs.sGrid.clearCurrentRow()
         } else if (this.$refs.pGrid) {
+          this.$refs.pGrid.loadData(this.dataList) 
           this.$refs.pGrid.updateFooter()
+          this.$refs.pGrid.clearCurrentRow()
         }
         this.vxeQueryCB(this)
       })

@@ -44,7 +44,7 @@
                             :placeholder="data.form.input.startDateActive" style="width: 178px">
                     </el-date-picker>
                 </el-form-item>
-                <el-form-item prop="endDateActive" :label="data.form.input.endDateActive" class="ddl-matthew-child">
+                <el-form-item prop="endDateActive" :label="data.form.input.endDateActive" class="ddl-matthew-child" style="margin-left: 20px">
                     <el-date-picker
                             v-model="dataForm.endDateActive"
                             type="date"
@@ -61,25 +61,25 @@
                     <el-input v-model="dataForm.day" :placeholder="data.form.input.day"/>
                 </el-form-item>
                 <el-form-item prop="yearFlag" :label="data.form.input.yearFlag" class="ddl-matthew-child">
-                    <el-radio-group v-model="dataForm.yearFlag" style="width: 178px">
+                    <el-radio-group v-model="dataForm.yearFlag">
                         <el-radio :label='1'>是</el-radio>
                         <el-radio :label='0'>否</el-radio>
                     </el-radio-group>
                 </el-form-item>
                 <el-form-item prop="monthFlag" :label="data.form.input.monthFlag" class="ddl-matthew-child">
-                    <el-radio-group v-model="dataForm.monthFlag" style="width: 178px">
+                    <el-radio-group v-model="dataForm.monthFlag">
                         <el-radio :label='1'>是</el-radio>
                         <el-radio :label='0'>否</el-radio>
                     </el-radio-group>
                 </el-form-item>
                 <el-form-item prop="dayFlag" :label="data.form.input.dayFlag" class="ddl-matthew-child">
-                    <el-radio-group v-model="dataForm.dayFlag" style="width: 220px">
+                    <el-radio-group v-model="dataForm.dayFlag">
                         <el-radio :label='1'>是</el-radio>
                         <el-radio :label='0'>否</el-radio>
                     </el-radio-group>
                 </el-form-item>
                 <el-form-item prop="enabledFlag" :label="data.form.input.enabledFlag" class="ddl-matthew-child">
-                    <el-radio-group v-model="dataForm.enabledFlag" style="width: 220px">
+                    <el-radio-group v-model="dataForm.enabledFlag">
                         <el-radio :label='1'>是</el-radio>
                         <el-radio :label='0'>否</el-radio>
                     </el-radio-group>
@@ -118,6 +118,29 @@ import mixinViewModule from '@/mixins/view-module'
 export default {
   mixins: [mixinViewModule],
   data () {
+    let checkType = (rule, value, callback) => {
+      if (value) {
+        let form = new Map()
+        form.typeId = this.dataForm.typeId
+        let id = this.dataForm.id
+        if (id) {
+          form.id = id
+        }
+        this.$axios({
+          url: '/base/billnum/checkType',
+          method: 'post',
+          data: form
+        }).then(res => {
+          if (res) {
+            callback(new Error(res))
+          } else {
+            callback()
+          }
+        })
+      }else {
+        callback()
+      }
+    }
     return {
       mixinViewModuleOptions: {
         getDataListURL: '/base/billnum/list',
@@ -131,6 +154,7 @@ export default {
       data: data,
       visible: false,
       dataForm: {
+        id: undefined,
         typeId: undefined,
         code: undefined,
         name: undefined,
@@ -157,8 +181,23 @@ export default {
       typeData: [],
       rules: {
         name: [
-          { required: true, message: '名称不可缺少' }
-        ]
+          { validator: checkType }
+        ],
+        yLength: [
+          { type: 'number', message: '必须为数字类型' }
+        ],
+        sequenceLength: [{
+          type: 'number', message: '必须为数字类型', trigger: 'blur'
+        }],
+        year: [{
+          type: 'number', message: '必须为数字类型 w', trigger: 'blur'
+        }],
+        month: [{
+          type: 'number', message: '必须为数字类型', trigger: 'blur'
+        }],
+        day: [{
+          type: 'number', message: '必须为数字类型', trigger: 'blur'
+        }]
       },
       defaultProps: {
         label: 'name',
@@ -175,6 +214,7 @@ export default {
     },
     getSelectedMenu () {
       let data = this.$refs.tree.getCurrentNode()
+      data.id = undefined
       this.dataForm = Object.assign({}, data)
 
       let date = new Date()
@@ -235,6 +275,9 @@ export default {
 <style>
     .ddl-matthew > .ddl-matthew-child {
         margin-bottom: 8px;
+    }
+    div.el-radio-group{
+        width: 200px;
     }
 
 </style>

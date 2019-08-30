@@ -65,7 +65,6 @@
                 :select-config="{reserve: true}"
                 :edit-config="{trigger: 'click', mode: 'row', showStatus: true}"
                 @cell-dblclick="cellDblClick"
-                @cell-click="enableTlbBtn"
                 :tree-config="{children: 'children'}"
         >
             <template v-slot:buttons>
@@ -106,7 +105,7 @@
                 @current-change="pageCurrentChangeHandle"
         ></el-pagination>
         <!-- 弹窗, 新增 / 修改 -->
-        <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList"/>
+        <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="search"/>
     </d2-container>
 </template>
 
@@ -116,7 +115,7 @@ import AddOrUpdate from './add-or-update'
 import data from '../data'
 
 export default {
-  name: 'invoice',
+  name: 'fin-invoice',
   mixins: [mixinViewModule],
   data () {
     return {
@@ -167,7 +166,7 @@ export default {
           width: '110px'
         }, {
           title: '票据日期',
-          field: 'invDate',
+          field: 'ivDate',
           sortable: true,
           align: 'center',
           width: '110px',

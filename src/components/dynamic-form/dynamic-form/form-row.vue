@@ -90,7 +90,6 @@ export default {
         return this.value
       },
       set (value) {
-        console.log('------set row-----', value)
         this.value = value
       }
     },
@@ -173,7 +172,7 @@ export default {
       }
       
       this.$refs.formItem.forEach(item =>{
-        item.propsChange(this.descriptors)
+        item.propsChange(this.descriptors)  
       })
     }
   }

@@ -181,20 +181,23 @@ export default {
       }
     },
     typeDescriptor () {
-      let typer = findTypeDescriptor(this.curDescriptor)
-      this.curProps = Object.assign({disabled: typer.disabled}, typer.props)
-      return typer
+      return findTypeDescriptor(this.curDescriptor)
     },
     subFormBackgroundColor () {
       return this.bgColorOffset ? darkenColor(this.backgroundColor, this.bgColorOffset) : 'none'
+    },
+    curProps () {
+      return Object.assign({
+        readonly: this.typeDescriptor.readonly,
+        disabled: this.typeDescriptor.disabled,
+      },this.typeDescriptor.props)
     }
   },
   data () {
     return {
       hashMapKey: '',
       curDescriptor: this.descriptor,
-      ruleDescriptor: {},
-      curProps: {}
+      ruleDescriptor: {}
     }
   },
   created () {
@@ -238,7 +241,6 @@ export default {
     },
     propsChange (descriptors) {
       this.curDescriptor = descriptors[this.prop]
-      this.curProps = this.typeDescriptor.props
     }
   }
 }

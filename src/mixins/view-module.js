@@ -124,7 +124,6 @@ export default {
       if (item) {
         this.entityModel = Object.assign({}, item)
       }
-      this.formReadOnly = read
       this.enableSubmit = sub
       this.visible = true
       this.initCB()

@@ -5,7 +5,6 @@
       ref="dynamic-form"
       :model.sync="_value"
       v-bind="formprops"
-      :rules="descriptors"
     >
       <dynamic-form-row
         ref="formRow"
@@ -87,7 +86,6 @@ export default {
       type: String,
       default: '*'
     },
-    readOnly: Boolean,
     labelWidth: {
       type: String,
       default: '0px'
@@ -99,7 +97,6 @@ export default {
   computed: {
     _value: {
       get () {
-        console.log('-----val----', this.value)
         return this.value
       },
       set (value) {
@@ -136,26 +133,50 @@ export default {
         ret = this.colSpan.replace(/(.*)\*/ig, '$1' + (all+every)).replace(/\*/ig, every)
       }
       return ret
+    },
+    rowDescriptors() {
+      let row = null
+      let rowDescriptors = []
+      for (let key in this.alldescriptors) {
+        if(!row)
+          row = {}
+        if(this.alldescriptors[key] && this.alldescriptors[key].type === 'separate') {
+          rowDescriptors.push(row)
+          row = {}
+          continue;
+        }
+
+        row[key] = Object.assign({}, this.alldescriptors[key])
+        row[key].props = Object.assign({}, {readonly: this.readonly}, row[key].props)
+
+        // 构造validator
+        if(row[key] && row[key].type !== 'slot') {
+          this.descriptors[key] = Object.assign({},this.alldescriptors[key])
+          delete this.descriptors[key].props
+          if(this.descriptors[key].type === 'cust')
+            this.descriptors[key].type = this.descriptors[key].ruletype || 'string'
+        }
+      }
+      if(row)
+        rowDescriptors.push(row)
+
+      return rowDescriptors
     }
   },
   watch: {
-    readOnly: function(val, oldVal) {
-      this.rowDescriptors.forEach((row, idx) =>{
-        Object.keys(row).forEach(key => {
-          if(row[key].name === 'im-selector') {
-            Object.assign(row[key].props, {disabled: val})
-          } else {
-            Object.assign(row[key].props, {readonly: val})
-          }
+    alldescriptors: {
+      handler: function(val, oldVal) {
+        this.rowDescriptors.forEach((row, idx) =>{
+          this.$refs.formRow[idx].propsChange(row)
         })
-        this.$refs.formRow[idx].propsChange(row)
-      })
+      },
+      deep: true
     }
   },
   data () {
     return {
       descriptors:{},
-      rowDescriptors: []
+      readonly: false
     }
   },
   created () {
@@ -165,33 +186,7 @@ export default {
     isNumber,
     getLabelWidth,
     init () {
-      this.initValue()
-    },
-    initValue () {
-      let row = null
-      for (let key in this.alldescriptors) {
-        if(!row)
-          row = {}
-        if(this.alldescriptors[key] && this.alldescriptors[key].type === 'separate') {
-          this.rowDescriptors.push(row)
-          row = {}
-          continue;
-        }
 
-        row[key] = this.alldescriptors[key]
-        if(this.readOnly) {
-          if(row[key].name === 'im-selector') {
-            row[key].disabled = this.readOnly
-          } else {
-            row[key].props = Object.assign({}, {readonly: this.readOnly}, row[key].props || {})
-          }
-        }
-        if(row[key] && row[key].type !== 'cust') {
-          this.descriptors[key] = this.alldescriptors[key]
-        }
-      }
-      if(row)
-        this.rowDescriptors.push(row)
     },
     validate (func) {
       if (typeof func === 'function') {
@@ -211,6 +206,26 @@ export default {
     },
     clearValidate () {
       this.$refs['dynamic-form'].clearValidate()
+    },
+    readOnly (val, fields) {
+      let f = []
+      if(typeof fields === 'function') {
+        f = fields()
+      } else if(typeof fields === 'string') {
+        f.push(fields)
+      } else if(Array.isArray(fields)) {
+        f = fields
+      }
+        
+      this.rowDescriptors.forEach((row, idx) =>{
+        Object.keys(row).forEach(key => {
+          if(f.includes(key)) {
+            row[key].props = Object.assign({}, row[key].props, {readonly: !val})
+          } else {
+            row[key].props = Object.assign({}, row[key].props, {readonly: val})
+          }
+        })
+      })
     }
   }
 }

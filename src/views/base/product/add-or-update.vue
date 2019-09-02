@@ -1,6 +1,6 @@
 <template>
     <el-dialog :visible.sync="visible" :title="isNew ? $t('views.public.add') : $t('views.public.update')"
-               :close-on-click-modal="false" :close-on-press-escape="false" width="800px">
+               :close-on-click-modal="false" :close-on-press-escape="false" width="750px">
         <el-form :model="dataForm" :rules="rules" ref="dataForm" label-width="120px" :inline="true" labelSuffix="："
                  size="mini">
             <el-form-item prop="id" v-show="false" />
@@ -20,7 +20,7 @@
                         :mapModel.sync="dataForm"
                         mapKeyVal="cName:categoryId"
                         dataType="biz.pcategory"
-                        style="width: 178px">
+                        style="width: 200px">
                 </im-selector>
             </el-form-item>
             <el-form-item prop="vehicleId" :label="data.form.input.vehicleId">
@@ -30,7 +30,7 @@
                         :mapModel.sync="dataForm"
                         mapKeyVal="vName:vehicleId"
                         dataType="biz.pvehicle"
-                        style="width: 178px">
+                        style="width: 200px">
                 </im-selector>
             </el-form-item>
             <el-form-item prop="brandId" :label="data.form.input.brandId">
@@ -39,7 +39,7 @@
                         v-model="dataForm.brandId"
                         :mapModel.sync="dataForm"
                         mapKeyVal="bName:brandId"
-                        dataType="biz.pbrand" style="width: 178px">
+                        dataType="biz.pbrand" style="width: 200px">
                 </im-selector>
             </el-form-item>
             <el-form-item prop="madeinId" :label="data.form.input.madeinId">
@@ -49,7 +49,7 @@
                         :mapModel.sync="dataForm"
                         mapKeyVal="mName:madeinId"
                         dataType="biz.pmadein"
-                        style="width: 178px">
+                        style="width: 200px">
                 </im-selector>
             </el-form-item>
             <el-form-item prop="barCode" :label="data.form.input.barCode">
@@ -80,7 +80,7 @@
                         :mapModel.sync="dataForm"
                         mapKeyVal="dName:defaultVendorId"
                         dataType="biz.customer"
-                        style="width: 178px">
+                        style="width: 200px">
                 </im-selector>
             </el-form-item>
             <el-form-item prop="pinyinCode" :label="data.form.input.status">

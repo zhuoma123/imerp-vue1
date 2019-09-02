@@ -1,15 +1,14 @@
 <template>
     <el-dialog :visible.sync="visible" :title="isNew ? $t('views.public.add') : $t('views.public.update')"
-               :close-on-click-modal="false" :close-on-press-escape="false" width="700px">
+               :close-on-click-modal="false" :close-on-press-escape="false" width="388px">
         <el-form :model="dataForm" :rules="rules" ref="dataForm"
-                 label-width="120px" :inline="true" labelSuffix="："
+                 label-width="120px" labelSuffix="："
                  size="mini">
             <el-form-item prop="id" v-show="false" />
-            <el-form-item prop="code" :label="data.form.input.code">
-                <el-input v-model="dataForm.code" :placeholder="data.form.input.code"/>
-            </el-form-item>
             <el-form-item prop="name" :label="data.form.input.name">
                 <el-input v-model="dataForm.name" :placeholder="data.form.input.name"/>
+            </el-form-item><el-form-item prop="code" :label="data.form.input.code">
+                <el-input v-model="dataForm.code" :placeholder="data.form.input.code"/>
             </el-form-item>
             <el-form-item prop="pinyinCode" :label="data.form.input.pinyinCode">
                 <el-input v-model="dataForm.pinyinCode" :placeholder="data.form.input.pinyinCode"/>
@@ -61,10 +60,10 @@ export default {
       },
       rules: {
         name: [{
-          required: true, message: '名称不可缺少'
+          required: true, message: '名称不可缺少', trigger: 'blur'
         }],
         code: [{
-          required: true, message: '编码不可缺少'
+          required: true, message: '编码不可缺少', trigger: 'blur'
         }]
       }
     }

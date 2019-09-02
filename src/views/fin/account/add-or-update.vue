@@ -1,7 +1,7 @@
 <template>
     <div>
         <el-dialog :visible.sync="visible" :title="isNew ? '新增' : '修改'"
-                   :close-on-click-modal="false" :close-on-press-escape="false" width="40%">
+                   :close-on-click-modal="false" :close-on-press-escape="false" width="30%">
             <el-form :model="dataForm" :rules="rules" ref="dataForm"
                      label-width="110px" labelSuffix="："
                      size="mini" class="ddl-matthew">
@@ -22,12 +22,6 @@
                 <el-form-item prop="initBalance" :label="data.form.account.initBalance" class="ddl-matthew-child">
                     <el-input v-model.number="dataForm.initBalance" :placeholder="data.form.account.initBalance"/>
                 </el-form-item>
-                <el-form-item prop="status" :label="data.form.account.status" class="ddl-matthew-child">
-                    <el-radio-group v-model="dataForm.status" style="width: 178px">
-                        <el-radio :label='1'>是</el-radio>
-                        <el-radio :label='0'>否</el-radio>
-                    </el-radio-group>
-                </el-form-item>
                 <el-form-item prop="remark" :label="data.form.account.remark" class="ddl-matthew-child">
                     <el-input v-model="dataForm.remark" :placeholder="data.form.account.remark"/>
                 </el-form-item>
@@ -47,6 +41,22 @@ import mixinViewModule from '@/mixins/view-module'
 export default {
   mixins: [mixinViewModule],
   data () {
+    let checkValidName = (rule, value, callback) => {
+      if (!value) {
+        return callback(new Error('账户名称不能为空'))
+      }
+      this.$axios({
+        url: '/fin/account/nameValid',
+        method: 'post',
+        data: { 'name': value }
+      }).then(res => {
+        if (res) {
+          callback(new Error(res))
+        } else {
+          callback()
+        }
+      })
+    }
     return {
       btnDisable: false,
       mixinViewModuleOptions: {
@@ -65,29 +75,23 @@ export default {
         bankName: undefined,
         initBalance: undefined,
         balance: undefined,
-        status: 1,
         remark: undefined
       },
       typeData: [],
       rules: {
         name: [
-          { required: true, message: '名称不可缺少' }
+          { validator: checkValidName, trigger: 'blur' }
         ],
         balance: [
           { type: 'number', message: '余额必须为数字值' }
         ],
         initBalance: [
           { type: 'number', message: '初始余额必须为数字值' }
-        ],
-        bankNum: [
-          { type: 'number', message: '账号必须为数字值' }
         ]
       }
     }
   },
-  methods: {
-    toggleBtn () {}
-  }
+  methods: {}
 }
 </script>
 
@@ -95,5 +99,8 @@ export default {
     .ddl-matthew >.ddl-matthew-child{
             margin-bottom: 8px;
         }
+    .el-dialog__footer{
+        margin-right: 60px;
+    }
 
 </style>

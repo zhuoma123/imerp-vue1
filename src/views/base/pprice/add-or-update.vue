@@ -1,10 +1,10 @@
 <template>
     <el-dialog :visible.sync="visible" :title="isNew ? $t('views.public.add') : $t('views.public.update')"
-               :close-on-click-modal="false" :close-on-press-escape="false" width="450px">
+               :close-on-click-modal="false" :close-on-press-escape="false" width="388px">
         <el-form :model="dataForm" :rules="rules" ref="dataForm"
                  label-width="120px" labelSuffix="："
                  size="mini">
-            <el-form-item prop="id" v-show="false" />
+            <el-form-item prop="id" v-show="false"/>
             <el-form-item prop="productId" :label="data.form.input.productId">
                 <im-selector
                         placeholder="请选择产品"
@@ -35,6 +35,7 @@
 <script>
 import data from './data'
 import mixinViewModule from '@/mixins/view-module'
+
 export default {
   mixins: [mixinViewModule],
   data () {
@@ -56,8 +57,14 @@ export default {
       },
       rules: {
         productId: [{
-          required: true, message: '产品名称不可缺少'
-        }]
+          required: true, message: '产品名称不可缺少', trigger: 'blur'
+        }],
+        salePrice: [{
+          type: 'number', message: '必须为数字类型', trigger: 'blur'
+        }],
+        costPrice: [
+          { type: 'number', message: '必须为数字类型', trigger: 'blur' }
+        ]
       }
     }
   },
@@ -105,5 +112,8 @@ export default {
                 width: 100%;
             }
         }
+    }
+    .el-dialog__footer {
+        margin-right: 20px;
     }
 </style>

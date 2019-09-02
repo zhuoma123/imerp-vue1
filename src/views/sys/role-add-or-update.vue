@@ -94,6 +94,7 @@ export default {
       this.visible = true
       this.dataForm.roleId=null
       this.$nextTick(() => { 
+        this.resetTree();
        this.$refs.dataForm.resetFields()
       })
     },
@@ -127,6 +128,10 @@ export default {
       for(let item in row.deptIdList) {
         this.$refs.deptTree.setChecked(row.deptIdList[item], true, false)
       } 
+    },
+    resetTree(){
+      this.$refs.menuListTree.setCheckedKeys([]);
+      this.$refs.deptTree.setCheckedKeys([])
     },
     // 获取部门列表
     getDeptList () {

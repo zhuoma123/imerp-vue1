@@ -66,7 +66,7 @@
 import mixinViewModule from '@/mixins/view-module'
 import AddOrUpdate from './user-add-or-update'
 import UpdatePassword from './user-update-password'
-
+import store from '@/store/index'
 export default {
   name: 'sys-user',
   mixins: [mixinViewModule],
@@ -90,6 +90,12 @@ export default {
         {
           title: this.$t("views.public.user.username"),
           field: "username",
+          sortable: true,
+          align: "center"
+        },
+        {
+          title: "用户名称",
+          field: "name",
           sortable: true,
           align: "center"
         },
@@ -142,9 +148,9 @@ export default {
           slots: {
                     default: ({ row }) => {
                       return [
-                        <el-button size="mini" onClick={ () => this.addOrUpdateData(row) } type="primary">修改</el-button>,
-                        <el-button size="mini" type="danger" onClick={ () => this.deleteHandleSetter(row) }>删除</el-button>,
-                        <el-button size="mini" type="success" onClick={ () => this.updatePasswordData(row) }>更改密码</el-button>
+                        <el-button size="mini" disabled={row.superUser==1 && row.currenId != 1 ? true:false} onClick={ () => this.addOrUpdateData(row) } type="primary">修改</el-button>,
+                        <el-button size="mini" type="danger" disabled={row.superUser==1 && row.currenId != 1 ? true:false} onClick={ () => this.deleteHandleSetter(row) }>删除</el-button>,
+                        <el-button size="mini" type="success"  onClick={ () => this.updatePasswordData(row) }>更改密码</el-button>
                       ]
                     }
                   }
@@ -158,15 +164,24 @@ export default {
   },
   methods: {
     //增改
-   addOrUpdateData (row) {
+   async addOrUpdateData (row) {
+
       this.addOrUpdateVisible = true;
+      const user = await store.dispatch('d2admin/db/get',{
+        dbName: 'sys',
+        path: 'user.info',
+        defaultValue: {},
+        user: true
+        }, { root: true })
       if (row) {
         this.$nextTick(() => {
           this.$refs.addOrUpdate.dataForm.userId = row.userId;
+          this.$refs.addOrUpdate.dataForm.currenId = row.currenId
           this.$refs.addOrUpdate.update(row);
         })
       } else {
         this.$nextTick(() => {
+          this.$refs.addOrUpdate.dataForm.currenId = user.id
           this.$refs.addOrUpdate.init();
         })
       }

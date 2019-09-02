@@ -50,6 +50,15 @@ export default {
         }
         callback()
       }
+      var validatePasswordAsync = (rule, value, callback) => {
+          this.$axios.post('/sys/user/checkpassword', { password: value,userId: this.dataForm.userId }).then(res => {
+          if(res === '') {
+            callback()
+          } else {
+            return callback(new Error(res))
+          }
+        })
+      }
       return {
         newPassword: [
           { validator: validatePassword, trigger: 'blur' }
@@ -58,7 +67,8 @@ export default {
           { validator: validateComfirmPassword, trigger: 'blur' }
         ],
         password: [
-          {  required: true, message:"密码不能为空！", trigger: 'blur' }
+          {  required: true, message:"密码不能为空！", trigger: 'blur' },
+          { validator: validatePasswordAsync, trigger: 'blur' }
         ]
       }
     }
@@ -78,6 +88,7 @@ export default {
     // 表单提交
     dataFormSubmitHandle: debounce(function () {
       this.$refs['dataForm'].validate((valid) => {
+        console.log(valid)
         if (!valid) {
           return false
         }

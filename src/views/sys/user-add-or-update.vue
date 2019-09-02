@@ -1,8 +1,11 @@
 <template>
   <el-dialog class="abow-dialog" :visible.sync="visible" :title="!dataForm.userId ? $t('views.public.add') : $t('views.public.update')" :close-on-click-modal="false" :close-on-press-escape="false">
     <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmitHandle()" label-width="120px">
-      <el-form-item prop="username" :label="$t('views.public.user.username')">
-        <el-input v-model="dataForm.username" :placeholder="$t('views.public.user.username')"/>
+      <el-form-item prop="username" :label="$t('views.public.user.username')" >
+        <el-input v-model="dataForm.username" :placeholder="$t('views.public.user.username')"  :disabled="!dataForm.userId ? false:true"/>
+      </el-form-item>
+      <el-form-item prop="name" label="用户名称">
+        <el-input v-model="dataForm.name" placeholder="用户名称"/>
       </el-form-item>
       <el-form-item prop="deptName" :label="$t('views.public.user.deptName')" class="dept-list">
         <el-popover v-model="deptListVisible" ref="deptListPopover" placement="bottom-start" trigger="click">
@@ -25,8 +28,8 @@
       <el-form-item prop="password"  :label="$t('views.public.user.password')" v-show="!this.dataForm.userId?true:false">
         <el-input v-model="dataForm.password" type="password" show-password :placeholder="$t('views.public.user.password')"/>
       </el-form-item>
-      <el-form-item  prop="comfirmPassword" :label="$t('views.public.user.comfirmPassword')" v-show="!this.dataForm.userId?true:false">
-        <el-input v-model="dataForm.comfirmPassword" type="password" show-password :placeholder="$t('views.public.user.comfirmPassword')"/>
+      <el-form-item  prop="comPassword" :label="$t('views.public.user.comfirmPassword')" v-show="!this.dataForm.userId?true:false">
+        <el-input v-model="dataForm.comPassword" type="password" show-password autocomplete="off"  :placeholder="$t('views.public.user.comfirmPassword')"/>
       </el-form-item>
       <el-form-item prop="email" :label="$t('views.public.user.email')">
         <el-input v-model="dataForm.email" :placeholder="$t('views.public.user.email')"/>
@@ -39,10 +42,16 @@
           <el-option v-for="role in roleList" :key="role.roleId" :label="role.roleName" :value="role.roleId"/>
         </el-select>
       </el-form-item>
-      <el-form-item prop="status" :label="$t('views.public.user.status')" size="mini">
+      <el-form-item prop="status" :label="$t('views.public.user.status')" size="mini" v-show="!this.dataForm.userId ? false:true">
         <el-radio-group v-model="dataForm.status">
           <el-radio :label="0">{{ $t('views.public.user.status0') }}</el-radio>
           <el-radio :label="1">{{ $t('views.public.user.status1') }}</el-radio>
+        </el-radio-group>
+      </el-form-item>
+      <el-form-item prop="superUser" label="是否设置超级用户" size="mini" v-show="this.dataForm.currenId ==1 ? true:false">
+        <el-radio-group v-model="dataForm.superUser">
+          <el-radio :label="0">否</el-radio>
+          <el-radio :label="1">是</el-radio>
         </el-radio-group>
       </el-form-item>
     </el-form>
@@ -71,13 +80,16 @@ export default {
         deptId: '0',
         deptName: '',
         password: '',
-        comfirmPassword: '',
+        comPassword: '',
         roleIds: '',
         gender: 0,
         email: '',
         mobile: '',
         roleIdList: [],
-        status: 1  
+        status: 1 ,
+        superUser:0 ,
+        currenId:'',
+        name:''
       }
     }
   },
@@ -87,9 +99,27 @@ export default {
   },
   computed: {
     dataRule () {
+      var validateUsername = (rule, value, callback) => {
+        if(!this.dataForm.userId){
+          this.$axios.post('/sys/user/checkusername', { username: value }).then(res => {
+              if(res === '') {
+                callback()
+              } else {
+                return callback(new Error(res))
+              }
+            })
+        }
+         callback()
+      }
       var validatePassword = (rule, value, callback) => {
         if (!this.dataForm.userId && !/\S/.test(value)) {
           return callback(new Error(this.$t('public.rules.required', { 'name': this.$t('views.public.user.password') })))
+        }
+        callback()
+      }
+      var validateName = (rule, value, callback) => {
+        if (!this.dataForm.userId && !/\S/.test(value)) {
+          return callback(new Error(this.$t('public.rules.required', { 'name': "用户名不能为空！" })))
         }
         callback()
       }
@@ -110,19 +140,11 @@ export default {
         }
         callback()
       }
-      var validateMobile = (rule, value, callback) => {
-        if (!isMobile(value)) {
-          return callback(new Error(this.$t('public.rules.format', { 'name': this.$t('views.public.user.mobile') })))
-        }
-        callback()
-      }
-
       var validateMobileAsync = (rule, value, callback) => {
         if (!isMobile(value)) {
           return callback(new Error(this.$t('public.rules.format', { 'name': this.$t('views.public.user.mobile') })))
         }else{
-          this.$axios.post('/sys/user/checkmobile', { mobile: value,menuId: this.dataForm.userId }).then(res => {
-          debugger
+          this.$axios.post('/sys/user/checkmobile', { mobile: value,userId: this.dataForm.userId }).then(res => {
           if(res === '') {
             callback()
           } else {
@@ -134,7 +156,8 @@ export default {
       }
       return {
         username: [
-          { required: true, message: this.$t('public.rules.required', { 'name': this.$t('views.public.user.username') }), trigger: 'blur' }
+          { required: true, message: this.$t('public.rules.required', { 'name': this.$t('views.public.user.username') }), trigger: 'blur' },
+          { validator: validateUsername, trigger: 'blur' }
         ],
         deptName: [
           { required: true, message: this.$t('public.rules.required', { 'name': this.$t('views.public.user.deptName') }), trigger: 'change' }
@@ -142,7 +165,7 @@ export default {
         password: [
           { validator: validatePassword, trigger: 'blur' }
         ],
-        comfirmPassword: [
+        comPassword: [
           { validator: validateComfirmPassword, trigger: 'blur' }
         ],
         email: [
@@ -153,7 +176,12 @@ export default {
           { required: true, message: this.$t('public.rules.required', { 'name': this.$t('views.public.user.mobile') }), trigger: 'blur' },
           //{ validator: validateMobile, trigger: 'blur' }
           { validator: validateMobileAsync, trigger: 'blur' }
-        ]
+        ],
+        name: [
+          { required: true, message: "用户名称不能为空！", trigger: 'blur' },
+          {validator: validateName, trigger: 'blur'}
+          
+        ],
       }
     }
   },
@@ -172,7 +200,7 @@ export default {
       this.visible = true
       this.$nextTick(() => {
         this.dataForm = Object.assign({}, row)
-        this.dataForm.comfirmPassword=row.password
+        this.dataForm.comPassword=row.password
         this.$refs['dataForm'].clearValidate()
       })
     },
@@ -197,7 +225,9 @@ export default {
     },
     // 表单提交
     dataFormSubmitHandle: debounce(function () {
+      debugger
       this.$refs['dataForm'].validate((valid) => {
+        console.log(valid)
         if (!valid) {
           return false
         }

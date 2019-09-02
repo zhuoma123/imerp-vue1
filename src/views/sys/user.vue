@@ -35,21 +35,16 @@
         >{{ $t('views.public.export') }}</el-button>
       </el-form-item>
     </el-form>
-    <d2-crud
-      ref="d2Crud"
-      index-row                                                           
+    <vxe-grid
+      border
+      resizable
+      highlight-hover-row
+      size="mini"
+      ref="pGrid"                                                       
       :columns="columns"
-      :options="options"
-      selectionRow
-      :row-handle="rowHandler"
-      :loading="dataListLoading"
       :data="dataList"
-      @selection-change="dataListSelectionChangeHandle"
-      @sort-change="dataListSortChangeHandle"
-      @user-update="addOrUpdateData"
-      @user-password="updatePasswordData"
-      @user-delete="deleteHandleSetter"
-    ></d2-crud>
+      :edit-config="{trigger: 'click', mode: 'row', showStatus: true}"
+    ></vxe-grid>
     <!-- 分页 -->
     <el-pagination
       slot="footer"
@@ -91,78 +86,68 @@ export default {
       dataFormOp: {
         username: 'like'
       },
-      rowHandler: {
-        width:240,
-        align:"center",
-        custom: [
-          {
-            text: this.$t('views.public.update'),
-            type: 'primary',
-            size: 'mini',
-            emit: 'user-update',
-            show: (index, row) => {
-              return this.$hasPermission('sys:user:update')
-            }
-          },
-          
-          {
-            text: this.$t('views.public.delete'),
-            type: 'danger',
-            size: 'mini',
-            emit: 'user-delete',
-            show: (index, row) => {
-              return this.$hasPermission('sys:user:delete')
-            }
-          },
-          {
-            text: '更改密码',
-            type: 'primary',
-            size: 'mini',
-            emit: 'user-password',
-            show: (index, row) => {
-              return this.$hasPermission('sys:user:update')
-            }
-          }
-        ]
-      },
       columns: [
         {
           title: this.$t("views.public.user.username"),
-          key: "username",
+          field: "username",
           sortable: true,
           align: "center"
         },
         {
           title: '部门名称',
-          key: "deptName",
+          field: "deptName",
           sortable: true,
           align: "center"
         },
         {
           title: this.$t("views.public.user.mobile"),
-          key: "mobile",
+          field: "mobile",
           sortable: true,
           align: "center"
         },
         {
           title: "角色",
-          key: "roleNames",
+          field: "roleNames",
           sortable: true,
           align: "center"
         },
         {
           title: this.$t("views.public.user.email"),
-          key: "email",
+          field: "email",
           sortable: true,
           align: "center",
           width:140
         },
         {
           title: this.$t("views.public.user.status"),
-          key: "status",
+          field: "status",
           sortable: true,
           align: "center",
-
+          slots: {
+            default: ({ row }) => {
+                      return [
+                        <el-tag type={row.status===1?"success":"danger"}>
+                        {row.status===1?"正常":"禁用"}
+                        </el-tag>
+                      ]
+                    }
+          }
+        },
+        {
+          title: '操作',
+          field: 'other',
+          width:220,
+          sortable: true,
+          align: "center",
+          slots: {
+                    default: ({ row }) => {
+                      return [
+                        <el-button size="mini" onClick={ () => this.addOrUpdateData(row) } type="primary">修改</el-button>,
+                        <el-button size="mini" type="danger" onClick={ () => this.deleteHandleSetter(row) }>删除</el-button>,
+                        <el-button size="mini" type="success" onClick={ () => this.updatePasswordData(row) }>更改密码</el-button>
+                      ]
+                    }
+                  }
         }
       ]
     };
@@ -177,8 +162,8 @@ export default {
       this.addOrUpdateVisible = true;
       if (row) {
         this.$nextTick(() => {
-          this.$refs.addOrUpdate.dataForm.userId = row.row.userId;
-          this.$refs.addOrUpdate.update(row.row);
+          this.$refs.addOrUpdate.dataForm.userId = row.userId;
+          this.$refs.addOrUpdate.update(row);
         })
       } else {
         this.$nextTick(() => {
@@ -190,7 +175,7 @@ export default {
     updatePasswordData(row){
       this.updatePasswordVisible = true;
       this.$nextTick(() => {
-        this.$refs.updatePassword.dataForm.userId = row.row.userId;
+        this.$refs.updatePassword.dataForm.userId = row.userId;
         this.$refs.updatePassword.updatepass();
       })
       
@@ -206,7 +191,7 @@ export default {
       if (!index) {
         row = undefined
       } else {
-        row = index.row
+        row = index
       }
       if (row) {
         const id = row.userId

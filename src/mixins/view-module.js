@@ -31,6 +31,7 @@ export default {
       fullscreenLoading: false,   // 全页面遮罩
       dataListSelections: [],     // 数据列表，多选项
       addOrUpdateVisible: false,   // 新增／更新，弹窗visible状态
+      updatePasswordVisible:false, // 更改密码弹窗visible状态
       // 表单属性
       formprops: {
         labelSuffix:'：'
@@ -55,6 +56,7 @@ export default {
       pGrid: {},
       sGrid: {},
       addOrUpdate: {},
+      updatePassword: {},
       entityModel: {},
       isNew: false,
       tableProxy: {

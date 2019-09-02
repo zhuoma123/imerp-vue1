@@ -137,7 +137,7 @@ export default {
             callback()
           }
         })
-      }else {
+      } else {
         callback()
       }
     }

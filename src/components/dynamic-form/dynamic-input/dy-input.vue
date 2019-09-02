@@ -1,8 +1,10 @@
 <template>
+  <span class='el-form-item__label' v-if="isMapKey">{{isMapKey}}</span>
+  <span class='el-form-item__label' v-else-if="custProps.readonly">{{_value}}</span>
   <component
     class="dynamic-input"
     v-model="_value"
-    v-if="!isSpecialType(type)"
+    v-else-if="!isSpecialType(type)"
     v-bind="custProps"
     :map-model="mapModel"
     :is="name"
@@ -10,7 +12,6 @@
     :disabled="disabled"
     :placeholder="placeholder">
   </component>
-  
   <!-- integer, number type use el-input with v-model.number -->
   <el-input v-bind="custProps" v-else-if="['integer'].includes(type)" v-only-number=0
   v-model.number="_value" :size="size" :disabled="disabled" :placeholder="placeholder"></el-input>
@@ -22,7 +23,7 @@
     <el-option v-for="option in _options" :key="option.label" :value="option.value" :label="option.label" :disabled="option.disabled"></el-option>
   </el-select>
   <!-- date type use el-date-picker -->
-  <el-date-picker v-bind="custProps" v-else-if="type === 'date'" class="dynamic-input" v-model="_value" :size="size" :disabled="disabled" :type="custProps.type || datetime" :placeholder="placeholder"></el-date-picker>
+  <el-date-picker v-bind="custProps" v-else-if="type === 'date'" class="dynamic-input" v-model="_value" :size="size" :disabled="disabled" :type="custProps.type || 'datetime'" :placeholder="placeholder"></el-date-picker>
 </template>
 
 <script>
@@ -88,6 +89,15 @@ export default {
       } else {
         return []
       }
+    },
+    isMapKey() {
+      if(this.custProps.readonly && this.custProps.mapKeyVal && this.mapModel) {
+        return this.mapModel[this.custProps.mapKeyVal.split(':')[0]+'Mean'] || this.mapModel[this.custProps.mapKeyVal.split(':')[0]]
+      } else 
+        return null
+    },
+    disabled() {
+      return this.custProps.disabled
     }
   },
   watch: {
@@ -97,8 +107,7 @@ export default {
   },
   data () {
     return {
-      name: '',
-      disabled: this.custProps.disabled
+      name: ''
     }
   },
   created () {
@@ -118,6 +127,6 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 
 </style>

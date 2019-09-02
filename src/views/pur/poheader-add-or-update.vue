@@ -11,7 +11,7 @@
 			<dynamic-form
 				v-model="dataForm"
 				:formprops="formprops"
-				ref="dynamic-form"
+				ref="dataForm"
 				col-span='8,8,8'
 				:read-only='formReadOnly'
 				:alldescriptors="descriptors">
@@ -49,206 +49,228 @@
 </template>
 
 <script>
-	import mixinViewModule from "@/mixins/view-module"
-	import XEUtils from 'xe-utils'
+import mixinViewModule from '@/mixins/view-module'
+import XEUtils from 'xe-utils'
 
-	const separate = {type: 'separate'}
-	export default {
-		mixins: [mixinViewModule],
-		data() {
-			return {
-				mixinViewModuleOptions: {
-					getDataListURL: '/pur/poline/list',
-					updateURL: '/pur/poheader/save',
-					prodURL: '/base/product/search',
-					deleteIsBatch: true,
-					getDataListIsPage: false
-				},
-				visible: false,
-				btnDisable: false,
-				dataForm: {
-				  orderType:'PO',
-					vendorId: '',
-					contactName: '',
-					contactPhone: '',
-					agentId: '',
-          warehouseId: '',
-					planDeliveryDate: '',
-					remark: '',
-				},
-				descriptors: {
-					orderNum: {
-						type: 'string', label: '采购单号', disabled: "disabled",
-						props: {
-							clearable: true
-						}
-					},
-					vendorId: {
-						type: 'cust', label: '供应商',ruletype:'integer',
-						name: 'im-selector',
-						props: {
-							mapKeyVal: "vendorName:vendorId",
-							dataType: "biz.vendor",
-							clearable: true
-						}
-					},
-					agentId: {
-						type: 'cust', label: '采购员',ruletype:'integer',
-						name: 'im-selector',
-						props: {
-							mapKeyVal: "agentName:agentId",
-							dataType: "biz.employee",
-							clearable: true
-						}
-					},
-					separate1: separate,
-          contactName: {
-            type: 'string', label: '供应商联系人',
-            props: {
-              clearable: true
-            }
-          },
-          planDeliveryDate: {
+const separate = { type: 'separate' }
+export default {
+  mixins: [mixinViewModule],
+  data () {
+    return {
+      mixinViewModuleOptions: {
+        getDataListURL: '/pur/poline/list',
+        updateURL: '/pur/poheader/save',
+        prodURL: '/base/product/search',
+        deleteIsBatch: true,
+        getDataListIsPage: false
+      },
+      visible: false,
+      btnDisable: false,
+      dataForm: {
+				  orderType: 'PO',
+        vendorId: '',
+        contactName: '',
+        contactPhone: '',
+        agentId: '',
+        warehouseId: '',
+        planDeliveryDate: '',
+        remark: ''
+      },
+      descriptors: {
+        orderNum: {
+          type: 'string',
+          label: '采购单号',
+          disabled: 'disabled',
+          props: {
+            clearable: true
+          }
+        },
+        vendorId: {
+          type: 'cust',
+          label: '供应商',
+          ruletype: 'integer',
+          name: 'im-selector',
+          props: {
+            mapKeyVal: 'vendorName:vendorId',
+            dataType: 'biz.vendor',
+            clearable: true
+          }
+        },
+        agentId: {
+          type: 'cust',
+          label: '采购员',
+          name: 'im-selector',
+          props: {
+            mapKeyVal: 'agentName:agentId',
+            dataType: 'biz.employee',
+            clearable: true
+          }
+        },
+        separate1: separate,
+        contactName: {
+          type: 'string',
+          label: '供应商联系人',
+          props: {
+            clearable: true
+          }
+        },
+        /* planDeliveryDate: {
             type: 'cust', label: '计划交货日期',
             name: 'el-date-picker',
             props: {
               valueFormat: "yyyy-MM-dd"
             },
+          }, */
+        warehouseId: { type: 'cust',
+          label: '仓库',
+          ruletype: 'integer',
+          name: 'im-selector',
+          props: {
+            mapKeyVal: 'warehouseCode:warehouseId',
+            dataType: 'biz.warehouse',
+            clearable: true
+          }
+        },
+        separate2: separate,
+        contactPhone: {
+          type: 'string',
+          label: '供应商联系电话',
+          props: {
+            clearable: true
+          }
+        },
+        remark: { type: 'string', label: '备注', colspan: 2 }
+      },
+      dataRule: {
+        vendorId: [
+          { required: true, message: '供应商不能为空', trigger: 'blur' }
+        ],
+        agentId: [
+          { required: true, message: '采购员不能为空', trigger: 'blur' }
+        ]
+      },
+      tableProxy: {
+        autoLoad: false
+      },
+      tableColumn: [
+        { type: 'selection', width: 30, align: 'center' },
+        { type: 'index', width: 30, align: 'center' },
+        {
+          title: '商品',
+          field: 'productCode',
+          sortable: true,
+          align: 'center',
+          editRender: {
+            name: 'ElAutocomplete',
+            props: { fetchSuggestions: this.prodSeach, triggerOnFocus: false },
+            events: { select: this.handleProcSelect }
           },
-          warehouseId: { type: 'cust', label: '仓库',ruletype:'integer',
-            name:'im-selector',
-            props: {
-              mapKeyVal: "warehouseCode:warehouseId",
-              dataType: "biz.warehouse",
-              clearable: true
+          footerRender: function (column, data) {
+            return '汇总'
+          }
+        },
+        {
+          title: '单位',
+          field: 'uom',
+          sortable: true,
+          align: 'center'
+        },
+        {
+          title: '下单数',
+          field: 'orderQty',
+          sortable: true,
+          align: 'center',
+          editRender: { name: 'input' }
+        },
+        {
+          title: '实际收货数',
+          field: 'realQty',
+          sortable: true,
+          align: 'center'
+        },
+        {
+          title: '采购价',
+          field: 'price',
+          sortable: true,
+          align: 'center',
+          editRender: { name: 'input' }
+        },
+        {
+          title: '采购总金额',
+          field: 'totalPrice',
+          align: 'left',
+          formatter: ['toFixedString', 2],
+          editPost: function (column, row) {
+            var qty = row.orderQty
+            var price = row.price
+            if (!Number.isNaN(qty) && !Number.isNaN(price)) {
+              return Number(qty) * Number(price).toFixed(2)
             }
           },
-					separate2: separate,
-          contactPhone: {
-            type: 'string', label: '供应商联系电话',
-            props: {
-              clearable: true
+          footerRender: function (column, data) {
+            return XEUtils.sum(data, column.property)
+          }
+        },
+        {
+          title: '备注',
+          field: 'remark',
+          sortable: true,
+          align: 'center',
+          editRender: { name: 'input' }
+        }
+      ],
+      toolbar: {
+        id: 'full_edit_1',
+        resizable: {
+          storage: true
+        },
+        setting: {
+          storage: true
+        }
+      }
+    }
+  },
+  methods: {
+    prodSeach (queryString, cb) {
+      if (queryString) {
+        this.$axios
+          .post(this.mixinViewModuleOptions.prodURL, { name: queryString })
+          .then(res => {
+            for (var i = 0; i < res.length; i++) {
+              res[i].value = res[i].val
             }
-          },
-					remark: {type: 'string', label: '备注',colspan: 2},
-				},
-				dataRule: {
-					vendorId: [
-						{required: true, message: "供应商ID不能为空", trigger: "blur"}
-					],
-					agentId: [
-						{required: true, message: "采购员不能为空", trigger: "blur"}
-					],
-				},
-				tableProxy: {
-					autoLoad: false
-				},
-				tableColumn: [
-					{type: "selection", width: 30, align: "center"},
-					{type: "index", width: 30, align: "center"},
-					{
-						title: '商品',
-						field: 'productCode',
-						sortable: true,
-						align: 'center',
-						editRender: {
-							name: 'ElAutocomplete',
-							props: {fetchSuggestions: this.prodSeach, triggerOnFocus: false},
-							events: {select: this.handleProcSelect}
-						},
-            footerRender: function (column, data) {
-              return '汇总'
-            }
-					},
-          {
-            title: '单位',
-            field: 'uom',
-            sortable: true,
-            align: 'center'
-          },
-					{
-						title: '下单数',
-						field: 'orderQty',
-						sortable: true,
-						align: 'center',
-						editRender: {name: "input"}
-					},
-					{
-						title: '实际收货数',
-						field: 'realQty',
-						sortable: true,
-						align: 'center'
-					},
-					{
-						title: '采购价',
-						field: 'price',
-						sortable: true,
-						align: 'center',
-						editRender: {name: "input"}
-					},
-          {
-            title: '采购总金额',
-            field: 'totalPrice',
-            align: 'left',
-            formatter: ['toFixedString', 2],
-            editPost: function (column, row) {
-              var qty = row.orderQty
-              var price = row.price
-              if (!Number.isNaN(qty) && !Number.isNaN(price)) {
-                return Number(qty) * Number(price).toFixed(2)
-              }
-            },
-            footerRender: function (column, data) {
-              return XEUtils.sum(data, column.property)
-            }
-          },
-					{
-						title: '备注',
-						field: 'remark',
-						sortable: true,
-						align: 'center',
-						editRender: {name: "input"}
-					}
-				],
-				toolbar: {
-					id: "full_edit_1",
-					resizable: {
-						storage: true
-					},
-					setting: {
-						storage: true
-					}
-				}
-			}
-		},
-		methods: {
-			prodSeach(queryString, cb) {
-				if (queryString) {
-					this.$axios
-						.post(this.mixinViewModuleOptions.prodURL, {name: queryString})
-						.then(res => {
-							for (var i = 0; i < res.length; i++) {
-								res[i].value = res[i].val
-							}
-							clearTimeout(this.timeout)
-							this.timeout = setTimeout(() => {
-								cb(res)
-							}, 100 * Math.random())
-						})
-				}
-			},
-			handleProcSelect(t, item) {
-				var row = t.row
-				if (item) {
-					Object.assign(row, item)
-					row.uom = item.unit
-					row.productId = item.id
-					row.productCode = item.code
-				} else {
-				}
-			}
-		},
-		mounted() {
-		}
-	};
+            clearTimeout(this.timeout)
+            this.timeout = setTimeout(() => {
+              cb(res)
+            }, 100 * Math.random())
+          })
+      }
+    },
+    handleProcSelect (t, item) {
+      var row = t.row
+      if (item) {
+        Object.assign(row, item)
+        row.uom = item.unit
+        row.productId = item.id
+        row.productCode = item.code
+      } else {
+      }
+    },
+	  initCB () {
+		  this.$nextTick(() => {
+			  if (this.isNew) {
+				  this.$refs.dataForm.readOnly(false)
+			  } else {
+				  if (this.entityModel.status == 'NEW') {
+					  this.$refs.dataForm.readOnly(false)
+				  } else {
+					  this.$refs.dataForm.readOnly(true)
+				  }
+			  }
+		  })
+	  }
+  },
+  mounted () {
+  }
+}
 </script>

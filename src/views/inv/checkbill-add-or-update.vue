@@ -18,23 +18,23 @@
       </dynamic-form>
     </div>
     <vxe-grid
-      border
-      resizable
-      size="mini"
-      highlight-current-row
-      class="vxe-table-element"
-      remote-filter
-      ref="sGrid"
-      :toolbar="toolbar"
-      :proxy-config="tableProxy"
-      :columns="tableColumn"
-      :select-config="{reserve: true}"
-      :mouse-config="{selected: true}"
-      @edit-closed="jsCy"
-      :footer-method="footerMethod"
-      show-footer
-      :keyboard-config="{isArrow: true, isDel: true, isTab: true, isEdit: true}"
-      :edit-config="{trigger: 'dblclick', mode: 'cell',showStatus: true}"
+	    border
+	    resizable
+	    size="mini"
+	    highlight-current-row
+	    class="vxe-table-element"
+	    remote-filter
+	    ref="sGrid"
+	    :toolbar="toolbar"
+	    :proxy-config="tableProxy"
+	    :columns="tableColumn"
+	    :select-config="{reserve: true}"
+	    :mouse-config="{selected: true}"
+	    :keyboard-config="{isArrow: true, isDel: true, isTab: true, isEdit: true}"
+	    :edit-config="{trigger: 'dblclick', mode: 'cell'}"
+	    :footer-cell-class-name="footerCellClassName"
+	    :footer-method="footerMethod"
+	    show-footer
     >
       <template v-slot:buttons>
         <el-button
@@ -60,7 +60,7 @@
 <script>
 import mixinViewModule from '@/mixins/view-module'
 import XEUtils from 'xe-utils'
-const separate = {type: 'separate'}
+const separate = { type: 'separate' }
 export default {
   mixins: [mixinViewModule],
   data () {
@@ -78,40 +78,42 @@ export default {
         warehouseId: '',
         pic: '',
         remark: '',
-        warehouseCode:'',
-        picName:''
+        warehouseCode: '',
+        picName: ''
       },
       descriptors: {
-        orderNum: { type: 'string', label: '盘点单号',disabled:"disabled",
+        orderNum: { type: 'string',
+          label: '盘点单号',
+          disabled: 'disabled',
           props: {
             clearable: true
           }
         },
-        warehouseId: { type: 'cust', label: '仓库',ruletype:'integer',
+        warehouseId: { type: 'cust',
+          label: '仓库',
           ruletype: 'integer',
-          name:'im-selector',
+          required: true,
+          message: '仓库不能为空',
+          ruletype: 'integer',
+          name: 'im-selector',
           props: {
-            mapKeyVal: "warehouseCode:warehouseId",
-            dataType: "biz.warehouse",
+            mapKeyVal: 'warehouseCode:warehouseId',
+            dataType: 'biz.warehouse',
             clearable: true
           }
         },
-        pic: { type: 'cust', label: '负责人',ruletype:'integer',
-          name:'im-selector',
+        pic: { type: 'cust',
+          label: '负责人',
+          required: true,
+          name: 'im-selector',
           props: {
-            mapKeyVal: "picName:pic",
-            dataType: "biz.employee",
+            mapKeyVal: 'picName:pic',
+            dataType: 'biz.employee',
             clearable: true
           }
         },
         separate1: separate,
-        remark: { type: 'string', label: '备注',colspan: 3},
-      },
-      dataRule: {
-        warehouseId: [
-          { required: true, message: '仓库不能为空', trigger: 'blur' }
-        ],
-        pic: [{ required: true, message: '负责人不能为空', trigger: 'blur' }]
+        remark: { type: 'string', label: '备注', colspan: 3 }
       },
       tableProxy: {
         autoLoad: false
@@ -128,6 +130,9 @@ export default {
             name: 'ElAutocomplete',
             props: { fetchSuggestions: this.prodSeach, triggerOnFocus: false },
             events: { select: this.handleProcSelect }
+          },
+          footerRender: function (column, data) {
+            return '汇总'
           }
         },
         {
@@ -141,19 +146,35 @@ export default {
           field: 'quantityNew',
           sortable: true,
           align: 'center',
-          editRender: { name: 'input', autoselect: true }
+          editRender: { name: 'input', autoselect: true },
+          footerRender: function (column, data) {
+            return XEUtils.sum(data, column.property)
+          }
         },
         {
           title: '帐面数量',
           field: 'quantityOld',
           sortable: true,
-          align: 'center'
+          align: 'center',
+          footerRender: function (column, data) {
+            return XEUtils.sum(data, column.property)
+          }
         },
         {
           title: '差异数',
           field: 'orderQty',
           sortable: true,
-          align: 'center'
+          align: 'center',
+          editPost: function (column, row) {
+            var quantityNew = row.quantityNew
+            var quantityOld = row.quantityOld
+            if (!Number.isNaN(quantityNew)) {
+              return quantityNew - Number(quantityOld)
+            }
+          },
+          footerRender: function (column, data) {
+            return XEUtils.sum(data, column.property)
+          }
         },
         {
           title: '差异原因',
@@ -182,35 +203,6 @@ export default {
     }
   },
   methods: {
-    jsCy: function ({ column, row }) {
-      if (column.property === 'quantityNew') {
-        var quantityNew = row.quantityNew
-        var quantityOld = row.quantityOld
-        if (!Number.isNaN(quantityNew)) {
-          row.orderQty = quantityNew-Number(quantityOld)
-        }
-      }
-      this.$refs.sGrid.updateFooter()
-    },
-    footerMethod ({ columns, data }) {
-      return [
-        columns.map((column, columnIndex) => {
-          if (columnIndex === 2) {
-            return '汇总'
-          }
-          if (['quantityOld'].includes(column.property)) {
-            return XEUtils.sum(data, column.property)
-          }
-          if (['quantityNew'].includes(column.property)) {
-            return XEUtils.sum(data, column.property)
-          }
-          if (['orderQty'].includes(column.property)) {
-            return XEUtils.sum(data, column.property)
-          }
-          return null
-        })
-      ]
-    },
     prodSeach (queryString, cb) {
       if (queryString) {
         this.$axios
@@ -228,7 +220,7 @@ export default {
     },
     handleProcSelect (t, item) {
       var row = t.row
-      debugger;
+      debugger
       if (item) {
         Object.assign(row, item)
         row.quantityOld = item.stock
@@ -237,6 +229,19 @@ export default {
         row.productCode = item.code
       } else {
       }
+    },
+    initCB () {
+      this.$nextTick(() => {
+        if (this.isNew) {
+          this.$refs.dataForm.readOnly(false)
+        } else {
+          if (this.entityModel.status == 'NEW') {
+            this.$refs.dataForm.readOnly(false)
+          } else {
+            this.$refs.dataForm.readOnly(true)
+          }
+        }
+      })
     }
   },
   mounted () {}

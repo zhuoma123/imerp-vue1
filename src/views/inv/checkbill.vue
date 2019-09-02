@@ -19,7 +19,7 @@
 				</dynamic-form>
 			</el-collapse-item>
 		</el-collapse>
-		
+
 		<vxe-grid
 			border
 			resizable
@@ -94,7 +94,7 @@
 				</el-button>
 			</template>
 		</vxe-grid>
-		
+
 		<!-- 分页 -->
 		<el-pagination
 			slot="footer"
@@ -106,86 +106,91 @@
 			@size-change="val => pageSizeChangeHandle(val, 'vxe')"
 			@current-change="val => pageCurrentChangeHandle(val, 'vxe')"
 		></el-pagination>
-		
+
 		<!-- 弹窗, 新增 / 修改 -->
 		<add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="search"></add-or-update>
 	</d2-container>
 </template>
 
 <script>
-	import AddOrUpdate from './checkbill-add-or-update'
-	import mixinViewModule from '@/mixins/view-module'
-
-	const separate = {type: 'separate'}
-	export default {
-		name: 'inv-checkbill',
-		mixins: [mixinViewModule],
-		data() {
-			return {
-				mixinViewModuleOptions: {
-					getDataListURL: '/inv/checkbill/list',
-					getDataListIsPage: true,
-					updateURL: '/inv/checkbill/save',
-					submitURL: '/inv/checkbill/submit',
-					deleteIsBatch: true,
-					exportURL: '/inv/checkbill/export'
-				},
-				order: 'desc',
-				orderField: 'id',
-				dataForm: {
-					orderNum: '',
-					warehouseId: '',
-					status: ''
-				},
-				descriptors: {
-					orderNum: {
-						type: 'string', label: '盘点单号',
-						props: {
-							clearable: true
-						}
-					},
-					warehouseId: {
-						type: 'cust', label: '仓库', ruletype: 'integer',
-						name: 'im-selector',
-						props: {
-							mapKeyVal: "warehouseCode:warehouseId",
-							dataType: "biz.warehouse",
-							clearable: true
-						}
-					},
-					status: {
-						type: 'cust', label: '单据状态',
-						placeholder: '请选择状态',
-						name: 'im-selector',
-						props: {
-							mapKeyVal: "status",
-							dataType: "code.status",
-							clearable: true
-						}
-					},
-					separate1: separate,
-					pic: {
-						type: 'cust', label: '负责人', ruletype: 'integer',
-						name: 'im-selector',
-						props: {
-							mapKeyVal: "picName:pic",
-							dataType: "biz.employee",
-							clearable: true
-						}
-					},
-					checkDate: {
-						type: 'cust', label: '盘点日期', colspan: 2,
-						name: 'el-date-picker',
-						props: {
-							type: 'daterange',
-							rangeSeparator: "至",
-							startPlaceholder: "开始日期",
-							endPlaceholder: "结束日期",
-							valueFormat: "yyyy-MM-dd",
-							class: 'input-class'
-						}
-					},
-					/*begingCheckDate: {
+import AddOrUpdate from './checkbill-add-or-update'
+import mixinViewModule from '@/mixins/view-module'
+export default {
+  name: 'inv-checkbill',
+  mixins: [mixinViewModule],
+  data () {
+    return {
+      mixinViewModuleOptions: {
+        getDataListURL: '/inv/checkbill/list',
+        getDataListIsPage: true,
+        updateURL: '/inv/checkbill/save',
+        submitURL: '/inv/checkbill/submit',
+        deleteIsBatch: true,
+        exportURL: '/inv/checkbill/export'
+      },
+      order: 'desc',
+      orderField: 'id',
+      dataForm: {
+        orderNum: '',
+        warehouseId: '',
+        status: ''
+      },
+      descriptors: {
+        orderNum: {
+          type: 'string',
+          label: '盘点单号',
+          props: {
+            clearable: true
+          }
+        },
+        warehouseId: {
+          type: 'cust',
+          label: '仓库',
+          ruletype: 'integer',
+          name: 'im-selector',
+          props: {
+            mapKeyVal: 'warehouseCode:warehouseId',
+            dataType: 'biz.warehouse',
+            clearable: true
+          }
+        },
+        status: {
+          type: 'cust',
+          label: '单据状态',
+          placeholder: '请选择状态',
+          name: 'im-selector',
+          props: {
+            mapKeyVal: 'status',
+            dataType: 'code.status',
+            clearable: true
+          }
+        },
+        separate1: this.$g.separate,
+        pic: {
+          type: 'cust',
+          label: '负责人',
+          name: 'im-selector',
+          props: {
+            mapKeyVal: 'picName:pic',
+            dataType: 'biz.employee',
+            clearable: true
+          }
+        },
+        checkDate: {
+          type: 'cust',
+          label: '盘点日期',
+          colspan: 2,
+          name: 'el-date-picker',
+          props: {
+            type: 'daterange',
+            rangeSeparator: '至',
+            startPlaceholder: '开始日期',
+            endPlaceholder: '结束日期',
+            valueFormat: 'yyyy-MM-dd',
+            class: 'input-class'
+          }
+        },
+        /* begingCheckDate: {
 						name: 'el-date-picker',
 						type: 'cust', label: '盘点日期从',
 						props: {
@@ -198,92 +203,92 @@
 						props: {
 							type:'date'
 						}
-					},*/
-					btnSearch: {
-						type: 'slot',
-						name: 'btnsearch'
-					},
-				},
-				tableColumn: [
-					{type: 'index', width: 30, align: 'center'},
-					{
-						title: '盘点单号',
-						field: 'orderNum',
-						sortable: true,
-						align: 'center'
-					},
-					{
-						title: '公司',
-						field: 'companyName',
-						sortable: true,
-						align: 'center'
-					},
-					{
-						title: '仓库',
-						field: 'warehouseCode',
-						sortable: true,
-						align: 'center'
-					},
-					{
-						title: '盘点日期',
-						field: 'checkDate',
-						sortable: true,
-						align: 'center',
-						formatter: ['toDateString', 'yyyy-MM-dd']
-					},
-					{
-						title: '负责人',
-						field: 'picName',
-						sortable: true,
-						align: 'center'
-					},
-					{
-						title: '状态',
-						field: 'statusMean',
-						sortable: true,
-						align: 'center'
-					},
-					{
-						title: '备注',
-						field: 'remark',
-						sortable: true,
-						align: 'center'
-					},
-					{
-						title: '修改人',
-						field: 'updateBy',
-						sortable: true,
-						align: 'center'
-					},
-					{
-						title: '修改日期',
-						field: 'updateDate',
-						sortable: true,
-						align: 'center',
-						formatter: ['toDateString', 'yyyy-MM-dd']
-					}
-				],
-				toolbar: {
-					id: 'full_edit_1',
-					refresh: true,
-					resizable: {
-						storage: true
-					},
-					setting: {
-						storage: true
-					}
-				}
-			}
-		},
-		components: {
-			AddOrUpdate
-		},
-		methods: {
-			reset() {
-				this.$refs.dataForm.resetFields()
-			}
-		},
-		mounted() {
-		}
-	}
+					}, */
+        btnSearch: {
+          type: 'slot',
+          name: 'btnsearch'
+        }
+      },
+      tableColumn: [
+        { type: 'index', width: 30, align: 'center' },
+        {
+          title: '盘点单号',
+          field: 'orderNum',
+          sortable: true,
+          align: 'center'
+        },
+        {
+          title: '公司',
+          field: 'companyName',
+          sortable: true,
+          align: 'center'
+        },
+        {
+          title: '仓库',
+          field: 'warehouseCode',
+          sortable: true,
+          align: 'center'
+        },
+        {
+          title: '盘点日期',
+          field: 'checkDate',
+          sortable: true,
+          align: 'center',
+          formatter: ['toDateString', 'yyyy-MM-dd']
+        },
+        {
+          title: '负责人',
+          field: 'picName',
+          sortable: true,
+          align: 'center'
+        },
+        {
+          title: '状态',
+          field: 'statusMean',
+          sortable: true,
+          align: 'center'
+        },
+        {
+          title: '备注',
+          field: 'remark',
+          sortable: true,
+          align: 'center'
+        },
+        {
+          title: '修改人',
+          field: 'updateBy',
+          sortable: true,
+          align: 'center'
+        },
+        {
+          title: '修改日期',
+          field: 'updateDate',
+          sortable: true,
+          align: 'center',
+          formatter: ['toDateString', 'yyyy-MM-dd']
+        }
+      ],
+      toolbar: {
+        id: 'full_edit_1',
+        refresh: true,
+        resizable: {
+          storage: true
+        },
+        setting: {
+          storage: true
+        }
+      }
+    }
+  },
+  components: {
+    AddOrUpdate
+  },
+  methods: {
+    reset () {
+      this.$refs.dataForm.resetFields()
+    }
+  },
+  mounted () {
+  }
+}
 </script>

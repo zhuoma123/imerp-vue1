@@ -1,11 +1,11 @@
 <template>
+  <span class='el-form-item__label' v-if="curprops.readonly">{{selectVal.key}}</span>
   <el-select
-    v-if="!curprops.disabled"
+    v-else
     :value="selectVal"
     :filterable="selType == 'dyamic'"
     :remote="selType == 'dyamic'"
     :automatic-dropdown="selType == 'dyamic'"
-    default-first-option
     :loading="loading"
     :remote-method="_selDyamicList"
     v-bind="curprops"
@@ -17,7 +17,6 @@
       :value="item">
     </el-option>
   </el-select>
-  <el-input v-else v-model="selectVal.key" readonly></el-input>
 </template>
 
 <script>

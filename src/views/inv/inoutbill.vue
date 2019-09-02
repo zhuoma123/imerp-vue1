@@ -38,11 +38,11 @@
       show-footer
       >
       <template v-slot:buttons>
-        <el-button ref="btnStatusPick" type="primary" size="mini" icon="el-icon-user" 
+        <el-button ref="btnStatusPick" type="primary" size="mini" icon="el-icon-user"
         enablestatus='NEW'
         row-dbclick
         form-readonly
-        v-if="$hasPermission('inv:inoutbill:save')" 
+        v-if="$hasPermission('inv:inoutbill:save')"
         @click="e => cellDblClick({row: $refs.pGrid.getCurrentRow()}, e)">拣货</el-button>
         <el-button type="info" size="mini" icon="el-icon-printer" v-if="$hasPermission('inv:inoutbill:print')" >打印</el-button>
         <el-button type="info" size="mini" icon="fa fa-file-excel-o" v-if="$hasPermission('inv:inoutbill:export')" @click="$refs.pGrid.exportCsv()">  导出</el-button>
@@ -69,7 +69,7 @@
 <script>
 import AddOrUpdate from './inoutbill-add-or-update'
 import mixinViewModule from '@/mixins/view-module'
-import XEUtils from "xe-utils"
+import XEUtils from 'xe-utils'
 
 export default {
   name: 'inv-inoutbill',
@@ -83,34 +83,39 @@ export default {
         deleteIsBatch: true,
         exportURL: '/inv/inoutbill/export'
       },
+      order: 'desc',
+      orderField: 'id',
       dataForm: {
-        billNum:null,
+        billNum: null,
         transactionType: null,
-        sourceOrderNum:null,
+        sourceOrderNum: null,
         status: null,
         warehouse: null
       },
       descriptors: {
-        billNum: { type: 'string', label: '业务单号', 
+        billNum: { type: 'string',
+          label: '业务单号',
           props: {
             clearable: true
           }
         },
-        transactionType: { type: 'cust', label: '业务类型', 
-          name:'im-selector',
+        transactionType: { type: 'cust',
+          label: '业务类型',
+          name: 'im-selector',
           placeholder: '请选择业务类型',
           props: {
-            mapKeyVal: "transactionType",
-            dataType: "code.tran_type",
+            mapKeyVal: 'transactionType',
+            dataType: 'code.tran_type',
             clearable: true
           }
         },
-        status: { type: 'cust', label: '单据状态',
+        status: { type: 'cust',
+          label: '单据状态',
           placeholder: '请选择状态',
-          name:'im-selector',
+          name: 'im-selector',
           props: {
-            mapKeyVal: "status",
-            dataType: "code.status",
+            mapKeyVal: 'status',
+            dataType: 'code.status',
             clearable: true
           }
         },
@@ -118,24 +123,26 @@ export default {
           type: 'slot',
           name: 'btnsearch'
         },
-        separate1: this.$g.separate, 
-        sourceOrderNum: { type: 'string', label: '单据单号'},
-        warehouseId: { type: 'cust', label: '仓库', 
+        separate1: this.$g.separate,
+        sourceOrderNum: { type: 'string', label: '单据单号' },
+        warehouseId: { type: 'cust',
+          label: '仓库',
           ruletype: 'integer',
-          name:'im-selector',
+          name: 'im-selector',
           props: {
-            mapKeyVal: "warehouseCode:warehouseId",
-            dataType: "biz.warehouse",
+            mapKeyVal: 'warehouseCode:warehouseId',
+            dataType: 'biz.warehouse',
             clearable: true
           }
         },
-        inDate: { type: 'date', label: '入库日期', 
+        inDate: { type: 'date',
+          label: '入库日期',
           props: {
             type: 'daterange',
-            rangeSeparator: "至",
-            startPlaceholder: "开始日期",
-            endPlaceholder: "结束日期",
-            valueFormat: "yyyy-MM-dd"
+            rangeSeparator: '至',
+            startPlaceholder: '开始日期',
+            endPlaceholder: '结束日期',
+            valueFormat: 'yyyy-MM-dd'
           }
         }
       },
@@ -224,7 +231,7 @@ export default {
           sortable: true,
           align: 'center',
           formatter: ['toDateString', 'yyyy-MM-dd']
-        },
+        }
       ],
       toolbar: {
         id: 'inoutbill_toolbar_1',
@@ -242,10 +249,10 @@ export default {
     AddOrUpdate
   },
   methods: {
-    initSelData() {
-      for(const key in this.descriptors) {
-        if(XEUtils.get(this.descriptors[key], "name") === 'el-date-picker' || 
-        XEUtils.get(this.descriptors[key], "type") === 'date') {
+    initSelData () {
+      for (const key in this.descriptors) {
+        if (XEUtils.get(this.descriptors[key], 'name') === 'el-date-picker' ||
+        XEUtils.get(this.descriptors[key], 'type') === 'date') {
           this.descriptors[key].props.pickerOptions = this.pickerOptions
         }
       }

@@ -22,6 +22,12 @@
       <el-form-item prop="deptId" v-show="false" >
         <el-input v-model="dataForm.deptId"/>
       </el-form-item>
+      <el-form-item prop="password"  :label="$t('views.public.user.password')" v-show="!this.dataForm.userId?true:false">
+        <el-input v-model="dataForm.password" type="password" show-password :placeholder="$t('views.public.user.password')"/>
+      </el-form-item>
+      <el-form-item  prop="comfirmPassword" :label="$t('views.public.user.comfirmPassword')" v-show="!this.dataForm.userId?true:false">
+        <el-input v-model="dataForm.comfirmPassword" type="password" show-password :placeholder="$t('views.public.user.comfirmPassword')"/>
+      </el-form-item>
       <el-form-item prop="email" :label="$t('views.public.user.email')">
         <el-input v-model="dataForm.email" :placeholder="$t('views.public.user.email')"/>
       </el-form-item>
@@ -50,6 +56,7 @@
 <script>
 import { debounce } from 'lodash'
 import { isEmail, isMobile } from '@/libs/validate'
+import schema from 'async-validator';
 export default {
   data () {
     return {
@@ -87,11 +94,13 @@ export default {
         callback()
       }
       var validateComfirmPassword = (rule, value, callback) => {
+
         if (!this.dataForm.userId && !/\S/.test(value)) {
           return callback(new Error(this.$t('public.rules.required', { 'name': this.$t('views.public.user.comfirmPassword') })))
         }
         if (this.dataForm.password !== value) {
-          return callback(new Error(this.$t('views.public.user.validate.comfirmPassword')))
+        return callback(new Error(this.$t('views.public.user.validate.comfirmPassword')))
+        
         }
         callback()
       }
@@ -106,6 +115,22 @@ export default {
           return callback(new Error(this.$t('public.rules.format', { 'name': this.$t('views.public.user.mobile') })))
         }
         callback()
+      }
+
+      var validateMobileAsync = (rule, value, callback) => {
+        if (!isMobile(value)) {
+          return callback(new Error(this.$t('public.rules.format', { 'name': this.$t('views.public.user.mobile') })))
+        }else{
+          this.$axios.post('/sys/user/checkmobile', { mobile: value,menuId: this.dataForm.userId }).then(res => {
+          debugger
+          if(res === '') {
+            callback()
+          } else {
+            return callback(new Error(res))
+          }
+        })
+        }
+        
       }
       return {
         username: [
@@ -126,7 +151,8 @@ export default {
         ],
         mobile: [
           { required: true, message: this.$t('public.rules.required', { 'name': this.$t('views.public.user.mobile') }), trigger: 'blur' },
-          { validator: validateMobile, trigger: 'blur' }
+          //{ validator: validateMobile, trigger: 'blur' }
+          { validator: validateMobileAsync, trigger: 'blur' }
         ]
       }
     }
@@ -146,6 +172,7 @@ export default {
       this.visible = true
       this.$nextTick(() => {
         this.dataForm = Object.assign({}, row)
+        this.dataForm.comfirmPassword=row.password
         this.$refs['dataForm'].clearValidate()
       })
     },
@@ -161,25 +188,7 @@ export default {
         this.roleList = res
       }).catch(() => {})
     },
-    // 获取信息
-    getInfo () {
-      this.$axios.get(`/sys/user/${this.dataForm.userId}`).then(res => {
-        this.dataForm = {
-          ...this.dataForm,
-          ...res,
-          roleIdList: []
-        }
-        this.$refs.deptListTree.setCurrentKey(this.dataForm.deptId)
-        // 角色配置, 区分是否为默认角色
-        for (var i = 0; i < res.roleIdList.length; i++) {
-          if (this.roleList.filter(item => item.id === res.roleIdList[i])[0]) {
-            this.dataForm.roleIdList.push(res.roleIdList[i])
-            continue
-          }
-          this.roleIdListDefault.push(res.roleIdList[i])
-        }
-      }).catch(() => {})
-    },
+   
     // 所属部门树, 选中
     deptListTreeCurrentChangeHandle (data, node) {
       this.dataForm.deptId = data.deptId
@@ -192,12 +201,8 @@ export default {
         if (!valid) {
           return false
         }
-        this.$axios[!this.dataForm.userId ? 'post' : 'put']('/sys/user/save', {
-          ...this.dataForm,
-          roleIdList: [
-            ...this.dataForm.roleIdList,
-            ...this.roleIdListDefault
-          ]
+        this.$axios['post']('/sys/user/save', {
+          ...this.dataForm
         }).then(res => {
           this.$message({
             message: this.$t('views.public.success'),

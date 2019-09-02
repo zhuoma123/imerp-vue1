@@ -29,13 +29,6 @@
       </el-form-item>
       <el-form-item>
         <el-button
-          v-if="$hasPermission('sys:user:delete')"
-          type="danger"
-          @click="deleteHandleSetter()"
-        >{{ $t('views.public.deleteBatch') }}</el-button>
-      </el-form-item>
-      <el-form-item>
-        <el-button
           v-if="$hasPermission('sys:user:export')"
           type="info"
           @click="exportHandle()"
@@ -54,6 +47,7 @@
       @selection-change="dataListSelectionChangeHandle"
       @sort-change="dataListSortChangeHandle"
       @user-update="addOrUpdateData"
+      @user-password="updatePasswordData"
       @user-delete="deleteHandleSetter"
     ></d2-crud>
     <!-- 分页 -->
@@ -69,12 +63,14 @@
     ></el-pagination>
     <!-- 弹窗, 新增 / 修改 -->
     <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList" />
+    <update-password v-if="updatePasswordVisible" ref="updatePassword" @refreshDataList="getDataList" />
   </d2-container>
 </template>
 
 <script>
 import mixinViewModule from '@/mixins/view-module'
 import AddOrUpdate from './user-add-or-update'
+import UpdatePassword from './user-update-password'
 
 export default {
   name: 'sys-user',
@@ -96,6 +92,8 @@ export default {
         username: 'like'
       },
       rowHandler: {
+        width:240,
+        align:"center",
         custom: [
           {
             text: this.$t('views.public.update'),
@@ -106,6 +104,7 @@ export default {
               return this.$hasPermission('sys:user:update')
             }
           },
+          
           {
             text: this.$t('views.public.delete'),
             type: 'danger',
@@ -113,6 +112,15 @@ export default {
             emit: 'user-delete',
             show: (index, row) => {
               return this.$hasPermission('sys:user:delete')
+            }
+          },
+          {
+            text: '更改密码',
+            type: 'primary',
+            size: 'mini',
+            emit: 'user-password',
+            show: (index, row) => {
+              return this.$hasPermission('sys:user:update')
             }
           }
         ]
@@ -131,12 +139,6 @@ export default {
           align: "center"
         },
         {
-          title: this.$t("views.public.user.email"),
-          key: "email",
-          sortable: true,
-          align: "center"
-        },
-        {
           title: this.$t("views.public.user.mobile"),
           key: "mobile",
           sortable: true,
@@ -149,16 +151,25 @@ export default {
           align: "center"
         },
         {
+          title: this.$t("views.public.user.email"),
+          key: "email",
+          sortable: true,
+          align: "center",
+          width:140
+        },
+        {
           title: this.$t("views.public.user.status"),
           key: "status",
           sortable: true,
-          align: "center"
+          align: "center",
+
         }
       ]
     };
   },
   components: {
-    AddOrUpdate
+    AddOrUpdate,
+    UpdatePassword
   },
   methods: {
     //增改
@@ -166,7 +177,7 @@ export default {
       this.addOrUpdateVisible = true;
       if (row) {
         this.$nextTick(() => {
-          this.$refs.addOrUpdate.dataForm.id = row.row.userId;
+          this.$refs.addOrUpdate.dataForm.userId = row.row.userId;
           this.$refs.addOrUpdate.update(row.row);
         })
       } else {
@@ -174,6 +185,16 @@ export default {
           this.$refs.addOrUpdate.init();
         })
       }
+    },
+    //修改密码
+    updatePasswordData(row){
+      this.updatePasswordVisible = true;
+      this.$nextTick(() => {
+        this.$refs.updatePassword.dataForm.userId = row.row.userId;
+        this.$refs.updatePassword.updatepass();
+      })
+      
+
     },
      // 删除
     deleteHandleSetter (index) {

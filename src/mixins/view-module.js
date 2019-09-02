@@ -31,6 +31,7 @@ export default {
       fullscreenLoading: false,   // 全页面遮罩
       dataListSelections: [],     // 数据列表，多选项
       addOrUpdateVisible: false,   // 新增／更新，弹窗visible状态
+      updatePasswordVisible:false, // 更改密码弹窗visible状态
       // 表单属性
       formprops: {
         labelSuffix:'：'
@@ -55,6 +56,7 @@ export default {
       pGrid: {},
       sGrid: {},
       addOrUpdate: {},
+      updatePassword: {},
       entityModel: {},
       isNew: false,
       tableProxy: {
@@ -119,13 +121,12 @@ export default {
      * 该方法只用于子页面
      * @param {*} item
      */
-    init (item, read=false, sub=true) {
+    init (item, read=false, submit=true) {
       this.isNew = !item
       if (item) {
         this.entityModel = Object.assign({}, item)
       }
-      this.formReadOnly = read
-      this.enableSubmit = sub
+      this.enableSubmit = submit
       this.visible = true
       this.initCB()
     },
@@ -192,15 +193,15 @@ export default {
       this.dataListLoading = true
       let vxeParams = { page: null, sort: null, filters: [] }
       this.vxeTabQuery(vxeParams, dataForm).then((resolve, rejects) => {
-        if (this.$refs.sGrid) {
-          this.$refs.sGrid.loadData(this.dataList)
-        } else { this.pGrid.loadData(this.dataList) }
-
         this.dataListLoading = false
         if (this.$refs.sGrid) {
+          this.$refs.sGrid.loadData(this.dataList)
           this.$refs.sGrid.updateFooter()
+          this.$refs.sGrid.clearCurrentRow()
         } else if (this.$refs.pGrid) {
+          this.$refs.pGrid.loadData(this.dataList)
           this.$refs.pGrid.updateFooter()
+          this.$refs.pGrid.clearCurrentRow()
         }
         this.vxeQueryCB(this)
       })
@@ -214,7 +215,13 @@ export default {
         this.checkForm(),
         this.checkGrid(this.$refs.sGrid)
       ]).then(() => {
-        this.doSubmit();
+        this.$confirm('确定要保存吗！', '操作提示', {
+          confirmButtonText: this.$t('views.public.confirm'),
+          cancelButtonText: this.$t('views.public.cancel'),
+          type: 'info'
+        }).then(() => {
+          this.doSubmit()
+        }).catch(() => {})
       }).catch(err => {})
 
       /*
@@ -357,13 +364,40 @@ export default {
           type: 'warning'
         })
       }
-      this.$confirm('确定要提交吗，提交后不能在修改！', '操作操作', {
+      this.$confirm('确定要提交吗，提交后不能在修改！', '操作提示', {
         confirmButtonText: this.$t('views.public.confirm'),
         cancelButtonText: this.$t('views.public.cancel'),
         type: 'info'
       }).then(() => {
         this.$axios.post(
           this.mixinViewModuleOptions.submitURL, { 'id': row.id, 'isAuto': isAuto }
+        ).then(res => {
+          this.$message({
+            message: this.$t('views.public.success'),
+            type: 'success',
+            duration: 500,
+            onClose: () => {
+              this.search()
+            }
+          })
+        }).catch(() => {})
+      }).catch(() => {})
+    },
+    rollbackHandle (event) {
+      let row = this.pGrid.getCurrentRow()
+      if (!row) {
+        return this.$message({
+          message: '请选择要回滚的记录',
+          type: 'warning'
+        })
+      }
+      this.$confirm('确定要回滚吗！', '操作提示', {
+        confirmButtonText: this.$t('views.public.confirm'),
+        cancelButtonText: this.$t('views.public.cancel'),
+        type: 'warning'
+      }).then(() => {
+        this.$axios.get(
+          this.mixinViewModuleOptions.rollbackURL + '?sourceId=' + row.id
         ).then(res => {
           this.$message({
             message: this.$t('views.public.success'),

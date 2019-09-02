@@ -8,7 +8,7 @@
 				<dynamic-form
 					v-model="dataForm"
 					:formprops="formprops"
-					ref="dynamic-form"
+					ref="dataForm"
 					col-span='6,6,6,*'
 					:alldescriptors="descriptors">
 					<template slot="btnsearch">
@@ -18,7 +18,7 @@
 				</dynamic-form>
 			</el-collapse-item>
 		</el-collapse>
-		
+
 		<vxe-grid
 			border
 			resizable
@@ -35,7 +35,7 @@
 			@cell-dblclick="cellDblClick"
 			@current-change='currentChange'>
 			<template v-slot:buttons>
-				<el-button ref="btnStatusAdd" enablestatus='NEW,COMPLETED' size="mini" icon="el-icon-circle-plus"
+				<el-button ref="btnStatusAdd" enablestatus='NEW,SENDED,COMPLETED' size="mini" icon="el-icon-circle-plus"
 				           v-if="$hasPermission('pur:poheader:save')" @click="addHandle">新增
 				</el-button>
 				<el-button ref="btnStatusEdit"
@@ -57,6 +57,10 @@
                    enablestatus='NEW' type="success" size="mini" icon="el-icon-check"
                    v-if="$hasPermission('pur:poheader:submit')" @click="submitHandle($refs.pGrid,false)">人工入库
         </el-button>
+				<el-button ref="btnStatusRollback"
+				           enablestatus='SENDED' type="warning" size="mini" icon="fa fa-undo"
+				           v-if="$hasPermission('pur:poheader:rollback')" @click="rollbackHandle($refs.pGrid)">撤回
+				</el-button>
 				<el-button type="info" size="mini" icon="el-icon-printer" v-if="$hasPermission('pur:poheader:print')">打印
 				</el-button>
 				<el-button type="info" size="mini" icon="fa fa-file-excel-o" v-if="$hasPermission('pur:poheader:export')"
@@ -64,7 +68,7 @@
 				</el-button>
 			</template>
 		</vxe-grid>
-		
+
 		<!-- 分页 -->
 		<el-pagination
 			slot="footer"
@@ -76,87 +80,95 @@
 			@size-change="val => pageSizeChangeHandle(val, 'vxe')"
 			@current-change="val => pageCurrentChangeHandle(val, 'vxe')"
 		></el-pagination>
-		
+
 		<!-- 弹窗, 新增 / 修改 -->
 		<add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="search"></add-or-update>
 	</d2-container>
 </template>
 
 <script>
-	import AddOrUpdate from './poheader-add-or-update'
-	import mixinViewModule from '@/mixins/view-module'
-  const separate = {type: 'separate'}
-	export default {
-		name: 'pur-poheader',
-		mixins: [mixinViewModule],
-		data() {
-			return {
-				mixinViewModuleOptions: {
-					getDataListURL: '/pur/poheader/list',
-					getDataListIsPage: true,
-					updateURL: '/pur/poheader/save',
-					submitURL: '/pur/poheader/submit',
-					exportURL: '/pur/poheader/export'
-				},
-        order: 'desc',
-        orderField: 'id',
-				dataForm: {
-					orderType:'PO',
-					orderNum: '',
-					vendorId: '',
-          warehouseId: '',
-          vendorName: '',
-					status: ''
-				},
-        descriptors: {
-          orderNum: {
-            type: 'string', label: '采购单号',
-            props: {
-              clearable: true
-            }
-          },
-          vendorId: {
-            type: 'cust', label: '供应商',
-            name: 'im-selector',
-            props: {
-              mapKeyVal: "vendorName:vendorId",
-              dataType: "biz.vendor",
-              clearable: true
-            }
-          },
-          status: {
-            type: 'cust', label: '单据状态',
-            placeholder: '请选择状态',
-            name: 'im-selector',
-            props: {
-              mapKeyVal: "status",
-              dataType: "code.status",
-              clearable: true
-            }
-          },
-          separate1: separate,
-          warehouseId: {
-            type: 'cust', label: '仓库',
-            name: 'im-selector',
-            props: {
-              mapKeyVal: "warehouseCode:warehouseId",
-              dataType: "biz.warehouse",
-              clearable: true
-            }
-          },
-          orderDate: {
-            type: 'cust', label: '采购日期', colspan: 2,
-            name: 'el-date-picker',
-            props: {
-              type: 'daterange',
-              rangeSeparator: "至",
-              startPlaceholder: "开始日期",
-              endPlaceholder: "结束日期",
-              valueFormat: "yyyy-MM-dd",
-              class: 'input-class'
-            }
-          },
-          /*begingCheckDate: {
+import AddOrUpdate from './poheader-add-or-update'
+import mixinViewModule from '@/mixins/view-module'
+const separate = { type: 'separate' }
+export default {
+  name: 'pur-poheader',
+  mixins: [mixinViewModule],
+  data () {
+    return {
+      mixinViewModuleOptions: {
+        getDataListURL: '/pur/poheader/list',
+        getDataListIsPage: true,
+        updateURL: '/pur/poheader/save',
+        submitURL: '/pur/poheader/submit',
+        rollbackURL: '/pur/poheader/rollback',
+        exportURL: '/pur/poheader/export'
+      },
+      order: 'desc',
+      orderField: 'id',
+      dataForm: {
+        orderType: 'PO',
+        orderNum: '',
+        vendorId: '',
+        warehouseId: '',
+        vendorName: '',
+        status: ''
+      },
+      descriptors: {
+        orderNum: {
+          type: 'string',
+          label: '采购单号',
+          props: {
+            clearable: true
+          }
+        },
+        vendorId: {
+          type: 'cust',
+          label: '供应商',
+          ruletype: 'integer',
+          name: 'im-selector',
+          props: {
+            mapKeyVal: 'vendorName:vendorId',
+            dataType: 'biz.vendor',
+            clearable: true
+          }
+        },
+        status: {
+          type: 'cust',
+          label: '单据状态',
+          placeholder: '请选择状态',
+          name: 'im-selector',
+          props: {
+            mapKeyVal: 'status',
+            dataType: 'code.status',
+            clearable: true
+          }
+        },
+        separate1: separate,
+        warehouseId: {
+          type: 'cust',
+          label: '仓库',
+          name: 'im-selector',
+          props: {
+            mapKeyVal: 'warehouseCode:warehouseId',
+            dataType: 'biz.warehouse',
+            clearable: true
+          }
+        },
+        orderDate: {
+          type: 'cust',
+          label: '采购日期',
+          colspan: 2,
+          name: 'el-date-picker',
+          props: {
+            type: 'daterange',
+            rangeSeparator: '至',
+            startPlaceholder: '开始日期',
+            endPlaceholder: '结束日期',
+            valueFormat: 'yyyy-MM-dd',
+            class: 'input-class'
+          }
+        },
+        /* begingCheckDate: {
 						name: 'el-date-picker',
 						type: 'cust', label: '盘点日期从',
 						props: {
@@ -169,99 +181,99 @@
 						props: {
 							type:'date'
 						}
-					},*/
-          btnSearch: {
-            type: 'slot',
-            name: 'btnsearch'
-          },
+					}, */
+        btnSearch: {
+          type: 'slot',
+          name: 'btnsearch'
+        }
+      },
+      tableColumn: [
+        { type: 'index', width: 30, align: 'center' },
+        {
+          title: '采购单号',
+          field: 'orderNum',
+          sortable: true,
+          align: 'center'
         },
-				tableColumn: [
-					{type: 'index', width: 30, align: 'center'},
-					{
-						title: '采购单号',
-						field: 'orderNum',
-						sortable: true,
-						align: 'center'
-					},
-					{
-						title: '供应商',
-						field: 'vendorName',
-						sortable: true,
-						align: 'center'
-					},
-          {
-            title: '仓库',
-            field: 'warehouseCode',
-            sortable: true,
-            align: 'center'
-          },
-					{
-						title: '采购日期',
-						field: 'orderDate',
-						sortable: true,
-						align: 'center',
-						formatter: ['toDateString', 'yyyy-MM-dd']
-					},
-					{
-						title: '采购员',
-						field: 'agentName',
-						sortable: true,
-						align: 'center'
-					},
-					{
-						title: '计划交货期',
-						field: 'planDeliveryDate',
-						sortable: true,
-						align: 'center',
-						formatter: ['toDateString', 'yyyy-MM-dd']
-					},
-					{
-						title: '状态',
-						field: 'statusMean',
-						sortable: true,
-						align: 'center'
-					},
-					{
-						title: '采购总金额',
-						field: 'orderAmount',
-						sortable: true,
-						align: 'center'
-					},
-					{
-						title: '修改人',
-						field: 'updateBy',
-						sortable: true,
-						align: 'center'
-					},
-					{
-						title: '修改日期',
-						field: 'updateDate',
-						sortable: true,
-						align: 'center',
-						formatter: ['toDateString', 'yyyy-MM-dd']
-					},
-				],
-				toolbar: {
-					id: 'full_edit_1',
-					refresh: true,
-					resizable: {
-						storage: true
-					},
-					setting: {
-						storage: true
-					}
-				}
-			}
-		},
-		components: {
-			AddOrUpdate
-		},
-		methods: {
-      reset() {
-				this.$refs.dataForm.resetFields()
-			}
-		},
-		mounted() {
-		}
-	}
+        {
+          title: '供应商',
+          field: 'vendorName',
+          sortable: true,
+          align: 'center'
+        },
+        {
+          title: '仓库',
+          field: 'warehouseCode',
+          sortable: true,
+          align: 'center'
+        },
+        {
+          title: '采购日期',
+          field: 'orderDate',
+          sortable: true,
+          align: 'center',
+          formatter: ['toDateString', 'yyyy-MM-dd']
+        },
+        {
+          title: '采购员',
+          field: 'agentName',
+          sortable: true,
+          align: 'center'
+        },
+        {
+          title: '计划交货期',
+          field: 'planDeliveryDate',
+          sortable: true,
+          align: 'center',
+          formatter: ['toDateString', 'yyyy-MM-dd']
+        },
+        {
+          title: '状态',
+          field: 'statusMean',
+          sortable: true,
+          align: 'center'
+        },
+        {
+          title: '采购总金额',
+          field: 'orderAmount',
+          sortable: true,
+          align: 'center'
+        },
+        {
+          title: '修改人',
+          field: 'updateBy',
+          sortable: true,
+          align: 'center'
+        },
+        {
+          title: '修改日期',
+          field: 'updateDate',
+          sortable: true,
+          align: 'center',
+          formatter: ['toDateString', 'yyyy-MM-dd']
+        }
+      ],
+      toolbar: {
+        id: 'full_edit_1',
+        refresh: true,
+        resizable: {
+          storage: true
+        },
+        setting: {
+          storage: true
+        }
+      }
+    }
+  },
+  components: {
+    AddOrUpdate
+  },
+  methods: {
+    reset () {
+      this.$refs.dataForm.resetFields()
+    }
+  },
+  mounted () {
+  }
+}
 </script>

@@ -98,6 +98,7 @@ export default {
           field: 'other',
           width:130,
           sortable: true,
+          align: 'center',
           slots: {
                     default: ({ row }) => {
                       return [

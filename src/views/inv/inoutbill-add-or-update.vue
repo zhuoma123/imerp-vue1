@@ -202,6 +202,7 @@ export default {
     },
     doScan (e) {
       let realQty=0
+      let rows=[];
       let val=e.target?e.target.value:e;
       if (val && val.length > 0) {
         let isExist = false
@@ -241,13 +242,22 @@ export default {
               }
             }
           }
-          if(Math.abs(realQty)>0){
+          if(Math.abs(row.realQty)>0){
             console.log(this.$refs.sGrid)
-            this.$refs.sGrid.setSelection([this.$refs.sGrid.getCurrentRow()], true)
+            this.$refs.sGrid.setSelection([row], true)
           }else{
-            this.$refs.sGrid.setSelection(row)
+            this.$refs.sGrid.setSelection([row],false)
           }
+          /*if(Math.abs(realQty)>0){
+            rows.push(row)
+          }*/
         })
+        /*if(Math.abs(realQty)>0){
+          console.log(this.$refs.sGrid)
+          this.$refs.sGrid.setSelection(rows, true)
+        }else{
+          this.$refs.sGrid.setSelection(rows,false)
+        }*/
         if(!e.target)return realQty
         if (!isExist) {
           this.dataForm.barCode = ''

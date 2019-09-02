@@ -129,11 +129,7 @@ export default {
             duration: 500,
             onClose: () => {
               this.visible = false
-<<<<<<< HEAD
-              this.$emit('refreshDataList')
-=======
               this.search()
->>>>>>> 46064c1bbc014adcc32e2cd9b937bf8a50376015
               //this.$emit('refreshDataList')
             }
           })

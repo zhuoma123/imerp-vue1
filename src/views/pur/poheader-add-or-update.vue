@@ -190,7 +190,7 @@ export default {
         },
         {
           title: '采购价',
-          field: 'price',
+          field: 'costPrice',
           sortable: true,
           align: 'center',
           editRender: { name: 'input' }
@@ -202,9 +202,9 @@ export default {
           formatter: ['toFixedString', 2],
           editPost: function (column, row) {
             var qty = row.orderQty
-            var price = row.price
-            if (!Number.isNaN(qty) && !Number.isNaN(price)) {
-              return Number(qty) * Number(price).toFixed(2)
+            var costPrice = row.costPrice
+            if (!Number.isNaN(qty) && !Number.isNaN(costPrice)) {
+              return Number(qty) * Number(costPrice).toFixed(2)
             }
           },
           footerRender: function (column, data) {

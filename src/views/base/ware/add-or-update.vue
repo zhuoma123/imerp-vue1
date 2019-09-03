@@ -12,7 +12,10 @@
                 <el-input v-model="dataForm.code" :placeholder="data.form.input.code"/>
             </el-form-item>
             <el-form-item prop="virtualFlag" :label="data.form.input.virtualFlag" class="ddl-form-item">
-                <el-input v-model="dataForm.virtualFlag" :placeholder="data.form.input.virtualFlag"/>
+                <el-radio-group v-model="dataForm.virtualFlag">
+                    <el-radio :label=1>是</el-radio>
+                    <el-radio :label=0>否</el-radio>
+                </el-radio-group>
             </el-form-item>
             <el-form-item prop="address" :label="data.form.input.address" class="ddl-form-item">
                 <el-input v-model="dataForm.address" :placeholder="data.form.input.address"/>
@@ -32,7 +35,7 @@
         </el-form>
         <template slot="footer">
             <el-button @click="visible = false">{{ $t('views.public.cancel') }}</el-button>
-            <el-button type="primary" @click="dataFormSubmitHandle()">{{ $t('views.public.confirm') }}</el-button>
+            <el-button type="primary" @click="dataFormSubmit">{{ $t('views.public.confirm') }}</el-button>
         </template>
     </el-dialog>
 </template>
@@ -58,7 +61,7 @@ export default {
         name: undefined,
         address: undefined,
         remark: undefined,
-        virtualFlag: undefined,
+        virtualFlag: 1,
         pic: undefined,
         mobileNo: undefined,
         companyId: undefined,
@@ -105,7 +108,7 @@ export default {
 
     .ddl-form {
         .ddl-form-item {
-            margin-bottom: 10px;
+            margin-bottom: 5px;
         }
     }
 

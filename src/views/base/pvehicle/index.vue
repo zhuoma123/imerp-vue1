@@ -51,7 +51,6 @@
                 :select-config="{reserve: true}"
                 :edit-config="{trigger: 'click', mode: 'row', showStatus: true}"
                 @cell-dblclick="cellDblClick"
-                @cell-click="enableTlbBtn"
                 :tree-config="{children: 'children'}"
         >
             <template v-slot:buttons>
@@ -92,7 +91,7 @@
                 @current-change="pageCurrentChangeHandle"
         ></el-pagination>
         <!-- 弹窗, 新增 / 修改 -->
-        <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList"/>
+        <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="search"/>
     </d2-container>
 </template>
 
@@ -158,45 +157,48 @@ export default {
           title: '编号',
           field: 'code',
           sortable: true,
-          align: 'center'
+          align: 'center',
+          width: '14%'
         }, {
           title: '名称',
           field: 'name',
           sortable: true,
-          align: 'center'
+          align: 'center',
+          width: '15%'
         }, {
           title: '拼音码',
           field: 'pinyinCode',
           sortable: true,
           align: 'center',
-          width: '110px'
+          width: '12%'
         }, {
           title: '五笔码',
           field: 'wbCode',
           sortable: true,
           align: 'center',
-          width: '110px'
+          width: '13%'
         },
         {
           title: '备注',
           field: 'remark',
           sortable: true,
-          align: 'center'
+          align: 'center',
+          width: '14%'
         },
         {
           title: '修改人',
           field: 'updateBy',
           sortable: true,
           align: 'center',
-          width: '110px'
+          width: '13%'
         },
         {
           title: '修改日期',
           field: 'updateDate',
           sortable: true,
           align: 'center',
-          width: '120px',
-          formatter: ['toDateString', 'yyyy-MM-dd']
+          formatter: ['toDateString', 'yyyy-MM-dd'],
+          width: '13%'
         }
       ]
     }

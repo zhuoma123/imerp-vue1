@@ -5,25 +5,30 @@
                 <template slot="title">
                     查询条件<i class="el-icon-d-arrow-right"/>
                 </template>
-                <el-form :inline="true" size="mini" :model="dataForm" @keyup.enter.native="getDataList()" ref="dataForm">
+                <el-form :inline="true" size="mini" :model="dataForm" @keyup.enter.native="search" ref="dataForm">
                     <el-form-item prop="name">
                         <el-input
                                 v-model="dataForm.name"
-                                :data-operate="dataFormOp.username"
-                                :placeholder="$t('views.public.user.username')"
+                                :placeholder="data.form.subject.name"
                                 clearable
                         />
                     </el-form-item>
-                    <el-form-item prop="mobile">
+                    <el-form-item prop="subjectType">
                         <el-input
-                                v-model="dataForm.mobile"
-                                :data-operate="dataFormOp.mobile"
-                                :placeholder="$t('views.public.user.mobile')"
+                                v-model="dataForm.subjectType"
+                                :placeholder="data.form.subject.subjectType"
+                                clearable
+                        />
+                    </el-form-item>
+                    <el-form-item prop="category">
+                        <el-input
+                                v-model="dataForm.category"
+                                :placeholder="data.form.subject.category"
                                 clearable
                         />
                     </el-form-item>
                     <el-form-item>
-                        <el-button @click="getDataList()" icon="el-icon-search" type="primary">{{
+                        <el-button @click="search" icon="el-icon-search" type="primary">{{
                             $t('views.public.query') }}
                         </el-button>
                     </el-form-item>
@@ -39,6 +44,7 @@
         </el-collapse>
         <!--show data-->
         <vxe-grid
+                style="height: 400px"
                 border
                 resizable
                 highlight-current-row
@@ -92,168 +98,76 @@
                 @current-change="pageCurrentChangeHandle"
         ></el-pagination>
         <!-- 弹窗, 新增 / 修改 -->
-        <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="search"/>
+        <add-or-update v-if="addOrUpdateVisible" :parentDataList="dataList" ref="addOrUpdate" @refreshDataList="search"/>
     </d2-container>
 </template>
 
 <script>
 import mixinViewModule from '@/mixins/view-module'
-import AddOrUpdate from './add-or-update'
+import AddOrUpdate from './subject-add-or-update'
+import data from './data'
 
 export default {
-  name: 'cust',
+  name: 'fin-subject',
   mixins: [mixinViewModule],
   data: function () {
     return {
+      data: data,
       mixinViewModuleOptions: {
-        getDataListURL: '/base/cust/list',
-        getDataListIsPage: true,
-        deleteURL: '/base/cust/delete',
+        getDataListURL: '/fin/subject/list',
+        getDataListIsPage: false,
+        deleteURL: '/fin/subject/delete',
         deleteIsBatch: true
       },
       dataForm: {
-        custVendor: undefined,
+        id: undefined,
+        parentId: undefined,
+        companyId: undefined,
         code: undefined,
         name: undefined,
-        shortName: undefined,
-        type: undefined,
-        tel: undefined,
-        fax: undefined,
-        email: undefined,
-        mm: undefined,
-        companyId: undefined,
-        companyAddress: undefined,
-        legalMan: undefined,
-        webSite: undefined,
-        bank: undefined,
-        bankAccount: undefined,
-        taxNum: undefined,
-        pinyinCode: undefined,
-        wbCode: undefined,
-        pic: undefined,
-        remark: undefined
-      },
-      dataFormOp: {
-        username: 'like'
-      },
-      vendor: {
-        CUST: '顾客',
-        VENDOR: '供应商'
+        subjectType: undefined,
+        category: undefined,
+        subjectLevel: undefined,
+        direction: undefined
       },
       columns: [
-        {
-          title: '客户 | 供应商',
-          field: 'custVendor',
-          sortable: true,
-          align: 'center',
-          width: '120px',
-          formatter: this.flagSelector
-        },
         {
           title: '名称',
           field: 'name',
           sortable: true,
           align: 'center',
-          width: '150px'
+          width: '150px',
+          treeNode: true
         },
         {
-          title: '职称',
-          field: 'shortName',
+          title: '编码',
+          field: 'code',
           sortable: true,
           align: 'center',
           width: '150px'
         }, {
-          title: '类型',
-          field: 'type',
+          title: '类别',
+          field: 'subjectType',
           sortable: true,
           align: 'center'
         },
         {
-          title: '公司电话',
-          field: 'tel',
+          title: '科目类别',
+          field: 'category',
           sortable: true,
           align: 'center',
           width: '120px'
         },
         {
-          title: '公司传真',
-          field: 'fax',
+          title: '级别',
+          field: 'subjectLevel',
           sortable: true,
           align: 'center',
           width: '120px'
         },
         {
-          title: '公司邮箱',
-          field: 'email',
-          sortable: true,
-          align: 'center',
-          width: '120px'
-        },
-        {
-          title: '公司微信号',
-          field: 'mm',
-          sortable: true,
-          align: 'center',
-          width: '130px'
-        },
-        {
-          title: '公司地址',
-          field: 'companyAddress',
-          sortable: true,
-          align: 'center',
-          width: '120px'
-        },
-        {
-          title: '法人',
-          field: 'legalMan',
-          sortable: true,
-          align: 'center'
-        },
-        {
-          title: '公司网址',
-          field: 'webSite',
-          sortable: true,
-          align: 'center',
-          width: '120px'
-        },
-        {
-          title: '开户银行',
-          field: 'bank',
-          sortable: true,
-          align: 'center',
-          width: '120px'
-        },
-        {
-          title: '银行账号',
-          field: 'bankAccount',
-          sortable: true,
-          align: 'center',
-          width: '120px'
-        },
-        {
-          title: '纳税号',
-          field: 'taxNum',
-          sortable: true,
-          align: 'center',
-          width: '120px'
-        },
-        {
-          title: '拼音码',
-          field: 'pinyinCode',
-          sortable: true,
-          align: 'center',
-          width: '120px'
-        },
-        {
-          title: '五笔码',
-          field: 'wbCode',
-          sortable: true,
-          align: 'center',
-          width: '120px'
-        },
-        {
-          title: '业务员',
-          field: 'pic',
+          title: '余额方向',
+          field: 'direction',
           sortable: true,
           align: 'center',
           width: '120px'
@@ -298,13 +212,6 @@ export default {
   methods: {
     handleFormReset () {
       this.$refs['dataForm'].resetFields()
-    },
-    flagSelector ({ cellValue }) {
-      if (cellValue === 'CUST') {
-        return '客户'
-      } else {
-        return '供应商'
-      }
     }
   }
 }

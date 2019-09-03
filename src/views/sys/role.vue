@@ -29,20 +29,16 @@
         >{{ $t('views.public.export') }}</el-button>
       </el-form-item>
     </el-form>
-    <d2-crud
-      ref="d2Crud"
-      index-row                                                           
+    <vxe-grid
+      border
+      resizable
+      highlight-hover-row
+      size="mini"
+      ref="pGrid"                                                       
       :columns="columns"
-      :options="options"
-      selectionRow
-      :row-handle="rowHandler"
-      :loading="dataListLoading"
       :data="dataList"
-      @selection-change="dataListSelectionChangeHandle"
-      @sort-change="dataListSortChangeHandle"
-      @user-update="addOrUpdateData"
-      @user-delete="deleteHandleSetter"
-    ></d2-crud>
+      :edit-config="{trigger: 'click', mode: 'row', showStatus: true}"
+    ></vxe-grid>
     <!-- 分页 -->
     <el-pagination
       slot="footer"
@@ -82,46 +78,38 @@ export default {
       dataFormOp: {
         roleName: "like"
       },
-      rowHandler: {
-        custom: [
-          {
-            text: this.$t("views.public.update"),
-            type: 'primary',
-            size: 'mini',
-            emit: 'user-update',
-            show: (index,row) => {
-              return this.$hasPermission("sys:role:update");
-            }
-          },
-          {
-            text: this.$t("views.public.delete"),
-            type: 'danger',
-            size: 'mini',
-            emit: 'user-delete',
-            show: ( index) => {
-              return this.$hasPermission("sys:role:delete");
-            }
-          }
-        ]
-      },
       columns: [
         {
           title: '角色名称',
-          key: "roleName",
+          field: "roleName",
           sortable: true,
           align: "center"
         },
         {
           title: '部门名称',
-          key: "deptName",
+          field: "deptName",
           sortable: true,
           align: "center"
         },
         {
           title: "创建时间",
-          key: "createTime",
+          field: "createTime",
           sortable: true,
           align: "center"
+        },
+        {
+          title: '操作',
+          field: 'other',
+          width:130,
+          sortable: true,
+          slots: {
+                    default: ({ row }) => {
+                      return [
+                        <el-button size="mini" onClick={ () => this.addOrUpdateData(row) } type="primary">修改</el-button>,
+                        <el-button size="mini" type="danger" onClick={ () => this.deleteHandleSetter(row) }>删除</el-button>
+                      ]
+                    }
+                  }
         }
         
       ]
@@ -136,8 +124,8 @@ export default {
       this.addOrUpdateVisible = true;
       if (row) {
         this.$nextTick(() => {
-          this.$refs.addOrUpdate.dataForm.id = row.row.roleId;
-          this.$refs.addOrUpdate.update(row.row);
+          this.$refs.addOrUpdate.dataForm.id = row.roleId;
+          this.$refs.addOrUpdate.update(row);
         })
       } else {
         this.$nextTick(() => {
@@ -155,7 +143,7 @@ export default {
       if (!index) {
         row = undefined
       } else {
-        row = index.row
+        row = index
       }
       if (row) {
         const id = row.roleId

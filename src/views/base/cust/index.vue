@@ -141,6 +141,7 @@ export default {
         VENDOR: '供应商'
       },
       columns: [
+{ type: 'index', width: 30, fixed: 'left' },
         {
           title: '客户 | 供应商',
           field: 'custVendor',

@@ -144,7 +144,7 @@ export default {
         }
       },
       columns: [
-        { type: 'index', width: 60, fixed: 'left' },
+        { type: 'index', width: 30, fixed: 'left' },
         {
           title: '编号',
           field: 'code',

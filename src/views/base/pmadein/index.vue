@@ -153,6 +153,7 @@ export default {
         }
       },
       columns: [
+{ type: 'index', width: 30, fixed: 'left' },
         {
           title: '编号',
           field: 'code',

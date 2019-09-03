@@ -144,6 +144,7 @@ export default {
         }
       },
       columns: [
+{ type: 'index', width: 30, fixed: 'left' },
         {
           title: '产品',
           field: 'productName',

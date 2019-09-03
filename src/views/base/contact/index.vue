@@ -173,6 +173,7 @@ export default {
         }
       },
       columns: [
+{ type: 'index', width: 30, fixed: 'left' },
         {
           title: '客户',
           field: 'custName',

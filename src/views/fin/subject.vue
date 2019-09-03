@@ -131,6 +131,7 @@ export default {
         direction: undefined
       },
       columns: [
+        { type: 'index', width: 30, fixed: 'left' },
         {
           title: '名称',
           field: 'name',

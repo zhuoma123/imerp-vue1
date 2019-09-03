@@ -140,6 +140,7 @@ export default {
         }
       },
       columns: [
+        { type: 'index', width: 30, fixed: 'left' },
         {
           title: '仓库编号',
           field: 'code',

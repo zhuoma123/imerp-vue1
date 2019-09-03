@@ -28,7 +28,7 @@
           <el-input v-model="dataForm.extendVal" :placeholder="data.form.dict.extendVal"/>
         </el-form-item>
         <el-form-item prop="editFlag" :label="data.form.dict.editFlag">
-          <el-radio-group v-model="dataForm.editFlag" style="width: 200px">
+          <el-radio-group v-model="dataForm.editFlag" style="width: 200px;">
             <el-radio :label=1>是</el-radio>
             <el-radio :label=0>否</el-radio>
           </el-radio-group>
@@ -130,6 +130,9 @@ export default {
     .el-select {
       width: 100%;
     }
+  }
+  .el-form-item.el-input__inner{
+    width: 200px;
   }
 }
 </style>

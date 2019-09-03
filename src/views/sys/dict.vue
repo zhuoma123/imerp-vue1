@@ -80,6 +80,17 @@
                 </el-button>
             </template>
         </vxe-grid>
+        <!-- 分页 -->
+        <el-pagination
+                slot="footer"
+                :current-page="page"
+                :page-sizes="[10, 20, 50, 100]"
+                :page-size="limit"
+                :total="total"
+                layout="total, sizes, prev, pager, next, jumper"
+                @size-change="pageSizeChangeHandle"
+                @current-change="pageCurrentChangeHandle"
+        ></el-pagination>
         <!-- 弹窗, 新增 / 修改 -->
         <AddOrUpdate v-if="addOrUpdateVisible" :parentDataList="dataList" ref="addOrUpdate" @refreshDataList="search"/>
     </d2-container>
@@ -117,6 +128,7 @@ export default {
         }
       },
       columns: [
+        { type: 'index', width: 30, fixed: 'left' },
         {
           title: '字典类型',
           field: 'dictType',
@@ -218,7 +230,6 @@ export default {
       let row = this.pGrid.getCurrentRow()
       if (row) {
         if (row.deleteFlag) {
-          debugger
           this.deleteHandleSetter(this.$refs.pGrid)
         } else {
           return this.$message({

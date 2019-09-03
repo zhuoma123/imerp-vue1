@@ -96,7 +96,7 @@ export default {
         extendVal: undefined,
         remark: undefined,
         editFlag: 1,
-        deleteFlag: 0
+        deleteFlag: 1
       },
       rules: {
         dictType: [

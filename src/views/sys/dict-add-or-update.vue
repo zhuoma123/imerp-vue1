@@ -8,19 +8,25 @@
         <el-form-item prop="editFlag" v-show="false" />
         <el-form-item prop="deleteFlag" v-show="false" />
         <el-form-item prop="dictionaryId" v-show="false" />
-        <el-form-item prop="dictType" :label="data.form.dict.dictType">
-          <im-selector
-                  placeholder="请选择字典类型"
-                  v-model="dataForm.dictType"
-                  :mapModel.sync="dataForm"
-                  mapKeyVal="dictType:dictionaryId"
-                  dataType="bizweak.dict"
-                  style="width: 200px">
-          </im-selector>
-        </el-form-item>
-        <el-form-item prop="code" :label="data.form.dict.code">
-          <el-input v-model="dataForm.code" :placeholder="data.form.dict.code"/>
-        </el-form-item>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item prop="dictType" :label="data.form.dict.dictType">
+              <im-selector
+                      placeholder="请选择字典类型"
+                      v-model="dataForm.dictType"
+                      :mapModel.sync="dataForm"
+                      mapKeyVal="dictType:dictionaryId"
+                      dataType="bizweak.dict"
+                      style="width: 200px">
+              </im-selector>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item prop="code" :label="data.form.dict.code">
+              <el-input v-model="dataForm.code" :placeholder="data.form.dict.code"/>
+            </el-form-item>
+          </el-col>
+        </el-row>
         <el-form-item prop="name" :label="data.form.dict.name">
           <el-input v-model="dataForm.name" :placeholder="data.form.dict.name"/>
         </el-form-item>

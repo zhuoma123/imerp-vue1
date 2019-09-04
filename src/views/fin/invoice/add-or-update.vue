@@ -18,7 +18,7 @@
                     </el-date-picker>
                 </el-form-item>
                 <el-form-item prop="amount" :label="data.form.invoice.amount" class="ddl-matthew-child">
-                    <el-input v-model="dataForm.amount" :placeholder="data.form.invoice.amount"/>
+                    <el-input v-model.number="dataForm.amount" :placeholder="data.form.invoice.amount"/>
                 </el-form-item>
                 <el-form-item prop="ivType" :label="data.form.invoice.ivType" class="ddl-matthew-child">
                     <el-input v-model="dataForm.ivType" :placeholder="data.form.invoice.ivType"/>
@@ -77,6 +77,18 @@ import mixinViewModule from '@/mixins/view-module'
 export default {
   mixins: [mixinViewModule],
   data () {
+    let checkMobile = (rule, value, callback) => {
+      if (value) {
+        let pattern = /((\d{11})|^((\d{7,8})|(\d{4}|\d{3})-(\d{7,8})|(\d{4}|\d{3})-(\d{7,8})-(\d{4}|\d{3}|\d{2}|\d)|(\d{7,8})-(\d{4}|\d{3}|\d{2}|\d))$)/
+        if (pattern.test(value)) {
+          callback()
+        } else {
+          callback(new Error('输入的电话号码不符合格式'))
+        }
+      } else {
+        callback()
+      }
+    }
     return {
       custVisible: false,
       mixinViewModuleOptions: {
@@ -108,7 +120,13 @@ export default {
       rules: {
         name: [
           { required: true, message: '名称不可缺少' }
-        ]
+        ],
+        cpPhone: [{
+          validator: checkMobile, trigger: 'blur'
+        }],
+        amount: [{
+          type: 'number', message: '票据金额必须为数字类型', trigger: 'blur'
+        }]
       }
     }
   },
@@ -136,8 +154,8 @@ export default {
 </script>
 
 <style>
-    .ddl-matthew >.ddl-matthew-child{
-            margin-bottom: 8px;
+    input.el-input__inner{
+            margin-bottom: 5px;
         }
 
 </style>

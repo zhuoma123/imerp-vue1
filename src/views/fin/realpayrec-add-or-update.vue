@@ -82,7 +82,7 @@ export default {
 separate4:     this.$g.separate,
      summary: {
         type: 'string',
-        label: '收付款类型（预收客户款、预付供应商款、核销预收客户款、核销预付供应商款、采购订单、销售退货、其他等）'
+        label: '收付款类型'
       },
          payrecId: {
         type: 'string',

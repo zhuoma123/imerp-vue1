@@ -1,6 +1,7 @@
 <template>
-  <el-dialog class="abow-dialog" :visible.sync="visible" :title="!dataForm.userId ? $t('views.public.add') : $t('views.public.update')" :close-on-click-modal="false" :close-on-press-escape="false">
-    <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmitHandle()" label-width="120px">
+  <el-dialog class="abow-dialog" :visible.sync="visible" :title="!dataForm.userId ? $t('views.public.add') : $t('views.public.update')" 
+  :close-on-click-modal="false" :close-on-press-escape="false" width="700px">
+    <el-form :model="dataForm" :rules="dataRule" ref="dataForm" label-width="120px" size="mini" :inline="true" labelSuffix="：" >
       <el-form-item prop="username" :label="$t('views.public.user.username')" >
         <el-input v-model="dataForm.username" :placeholder="$t('views.public.user.username')"  :disabled="!dataForm.userId ? false:true"/>
       </el-form-item>
@@ -28,18 +29,22 @@
       <el-form-item prop="password"  :label="$t('views.public.user.password')" v-show="!this.dataForm.userId?true:false">
         <el-input v-model="dataForm.password" type="password" show-password :placeholder="$t('views.public.user.password')"/>
       </el-form-item>
+      <el-form-item prop="mobile" :label="$t('views.public.user.mobile')">
+        <el-input v-model="dataForm.mobile" :placeholder="$t('views.public.user.mobile')"/>
+      </el-form-item>
       <el-form-item  prop="comPassword" :label="$t('views.public.user.comfirmPassword')" v-show="!this.dataForm.userId?true:false">
         <el-input v-model="dataForm.comPassword" type="password" show-password autocomplete="off"  :placeholder="$t('views.public.user.comfirmPassword')"/>
       </el-form-item>
       <el-form-item prop="email" :label="$t('views.public.user.email')">
         <el-input v-model="dataForm.email" :placeholder="$t('views.public.user.email')"/>
       </el-form-item>
-      <el-form-item prop="mobile" :label="$t('views.public.user.mobile')">
-        <el-input v-model="dataForm.mobile" :placeholder="$t('views.public.user.mobile')"/>
-      </el-form-item>
+      
       <el-form-item prop="roleIdList" :label="$t('views.public.user.roleIdList')" class="role-list">
         <el-select v-model="dataForm.roleIds" multiple :placeholder="$t('views.public.user.roleIdList')">
-          <el-option v-for="role in roleList" :key="role.roleId" :label="role.roleName" :value="role.roleId"/>
+          <el-option v-for="role in roleList" :key="role.roleId" :label="role.roleName" :value="role.roleId" >
+          <span style="float: left">{{ role.roleName }}</span>
+          <span style="float: right; color: #8492a6; font-size: 13px">{{ role.companyName }}</span>
+          </el-option>
         </el-select>
       </el-form-item>
       <el-form-item prop="status" :label="$t('views.public.user.status')" size="mini" v-show="!this.dataForm.userId ? false:true">

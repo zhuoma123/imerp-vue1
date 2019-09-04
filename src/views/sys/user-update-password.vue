@@ -1,6 +1,6 @@
 <template>
   <el-dialog class="abow-dialog" :visible.sync="visible" title="修改密码" :close-on-click-modal="false" :close-on-press-escape="false">
-    <el-form :model="dataForm" width="300px" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmitHandle()" label-width="120px">
+    <el-form :model="dataForm" width="300px" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmitHandle()" label-width="120px" size="mini">
       <el-form-item prop="password"  label="原来密码" >
         <el-input v-model="dataForm.password" type="password" show-password placeholder="原来密码"/>
       </el-form-item>

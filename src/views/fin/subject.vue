@@ -5,17 +5,30 @@
                 <template slot="title">
                     查询条件<i class="el-icon-d-arrow-right"/>
                 </template>
-                <el-form :inline="true" size="mini" :model="dataForm" @keyup.enter.native="getDataList()" ref="dataForm">
-                    <el-form-item prop="productId">
+                <el-form :inline="true" size="mini" :model="dataForm" @keyup.enter.native="search" ref="dataForm">
+                    <el-form-item prop="name">
                         <el-input
-                                v-model="dataForm.productId"
-                                :data-operate="dataFormOp.liekOps"
-                                :placeholder="data.form.input.productId"
+                                v-model="dataForm.name"
+                                :placeholder="data.form.subject.name"
+                                clearable
+                        />
+                    </el-form-item>
+                    <el-form-item prop="subjectType">
+                        <el-input
+                                v-model="dataForm.subjectType"
+                                :placeholder="data.form.subject.subjectType"
+                                clearable
+                        />
+                    </el-form-item>
+                    <el-form-item prop="category">
+                        <el-input
+                                v-model="dataForm.category"
+                                :placeholder="data.form.subject.category"
                                 clearable
                         />
                     </el-form-item>
                     <el-form-item>
-                        <el-button @click="getDataList()" icon="el-icon-search" type="primary">{{
+                        <el-button @click="search" icon="el-icon-search" type="primary">{{
                             $t('views.public.query') }}
                         </el-button>
                     </el-form-item>
@@ -29,7 +42,9 @@
             </el-collapse-item>
 
         </el-collapse>
+        <!--show data-->
         <vxe-grid
+                style="height: 400px"
                 border
                 resizable
                 highlight-current-row
@@ -83,56 +98,103 @@
                 @current-change="pageCurrentChangeHandle"
         ></el-pagination>
         <!-- 弹窗, 新增 / 修改 -->
-        <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="search"/>
+        <add-or-update v-if="addOrUpdateVisible" :parentDataList="dataList" ref="addOrUpdate" @refreshDataList="search"/>
     </d2-container>
 </template>
 
 <script>
 import mixinViewModule from '@/mixins/view-module'
-import AddOrUpdate from './add-or-update'
+import AddOrUpdate from './subject-add-or-update'
 import data from './data'
 
 export default {
-  name: 'pprice',
+  name: 'fin-subject',
   mixins: [mixinViewModule],
-  data () {
+  data: function () {
     return {
       data: data,
       mixinViewModuleOptions: {
-        getDataListURL: '/base/productprice/list',
-        getDataListIsPage: true,
-        deleteURL: '/base/productprice/delete',
+        getDataListURL: '/fin/subject/list',
+        getDataListIsPage: false,
+        deleteURL: '/fin/subject/delete',
         deleteIsBatch: true
       },
       dataForm: {
-        productId: undefined
+        id: undefined,
+        parentId: undefined,
+        companyId: undefined,
+        code: undefined,
+        name: undefined,
+        subjectType: undefined,
+        category: undefined,
+        subjectLevel: undefined,
+        direction: undefined
       },
-      dataFormOp: {
-        likeOps: 'like'
-      },
-      rowHandler: {
-        width: '160px',
-        custom: [
-          {
-            text: this.$t('views.public.update'),
-            type: 'primary',
-            size: 'mini',
-            emit: 'user-update',
-            show: (index, row) => {
-              return this.$hasPermission('sys:user:update')
-            }
-          },
-          {
-            text: this.$t('views.public.delete'),
-            type: 'danger',
-            size: 'mini',
-            emit: 'user-delete',
-            show: (index, row) => {
-              return this.$hasPermission('sys:user:delete')
-            }
-          }
-        ]
-      },
+      columns: [
+        { type: 'index', width: 30, fixed: 'left' },
+        {
+          title: '名称',
+          field: 'name',
+          sortable: true,
+          align: 'center',
+          width: '150px',
+          treeNode: true
+        },
+        {
+          title: '编码',
+          field: 'code',
+          sortable: true,
+          align: 'center',
+          width: '150px'
+        }, {
+          title: '类别',
+          field: 'subjectType',
+          sortable: true,
+          align: 'center'
+        },
+        {
+          title: '科目类别',
+          field: 'category',
+          sortable: true,
+          align: 'center',
+          width: '120px'
+        },
+        {
+          title: '级别',
+          field: 'subjectLevel',
+          sortable: true,
+          align: 'center',
+          width: '120px'
+        },
+        {
+          title: '余额方向',
+          field: 'direction',
+          sortable: true,
+          align: 'center',
+          width: '120px'
+        },
+        {
+          title: '备注',
+          field: 'remark',
+          sortable: true,
+          align: 'center'
+        },
+        {
+          title: '修改人',
+          field: 'updateBy',
+          sortable: true,
+          align: 'center',
+          width: '120px'
+        },
+        {
+          title: '修改日期',
+          field: 'updateDate',
+          sortable: true,
+          align: 'center',
+          width: '200px',
+          formatter: ['toDateString', 'yyyy-MM-dd']
+        }
+      ],
       toolbar: {
         id: 'full_edit_1',
         refresh: true,
@@ -142,43 +204,7 @@ export default {
         setting: {
           storage: true
         }
-      },
-      columns: [
-{ type: 'index', width: 30, fixed: 'left' },
-        {
-          title: '产品',
-          field: 'productName',
-          sortable: true,
-          align: 'center'
-        }, {
-          title: '默认销售价',
-          field: 'salePrice',
-          sortable: true,
-          align: 'center'
-        }, {
-          title: '当前成本价',
-          field: 'costPrice',
-          sortable: true,
-          align: 'center'
-        }, {
-          title: '备注',
-          field: 'remark',
-          sortable: true,
-          align: 'center'
-        }, {
-          title: '修改人',
-          field: 'updateBy',
-          sortable: true,
-          align: 'center'
-        },
-        {
-          title: '修改日期',
-          field: 'updateDate',
-          sortable: true,
-          align: 'center',
-          formatter: ['toDateString', 'yyyy-MM-dd']
-        }
-      ]
+      }
     }
   },
   components: {

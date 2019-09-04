@@ -1,11 +1,11 @@
 <template>
     <el-dialog :visible.sync="visible" :title="isNew ? $t('views.public.add') : $t('views.public.update')"
-               :close-on-click-modal="false" :close-on-press-escape="false" width="500px">
+               :close-on-click-modal="false" :close-on-press-escape="false" width="400px">
         <el-form :model="dataForm" :rules="rules" ref="dataForm"
                  label-width="120px" labelSuffix="："
                  size="mini">
             <el-form-item prop="id" v-show="false" />
-            <el-form-item prop="warehouseId" :label="data.form.input.warehouse" style="width: 410px">
+            <el-form-item prop="warehouseId" :label="data.form.input.warehouse">
                 <im-selector
                         placeholder="请选择仓库"
                         v-model="dataForm.warehouseId"
@@ -103,5 +103,11 @@ export default {
                 width: 100%;
             }
         }
+    }
+    input.el-input__inner{
+        width: 200px;
+    }
+    .el-dialog__footer {
+        margin-right: 38px;
     }
 </style>

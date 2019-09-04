@@ -5,17 +5,25 @@
                 <template slot="title">
                     查询条件<i class="el-icon-d-arrow-right"/>
                 </template>
-                <el-form :inline="true" size="mini" :model="dataForm" @keyup.enter.native="getDataList()" ref="dataForm">
-                    <el-form-item prop="productId">
+                <el-form :inline="true" size="mini" :model="dataForm"
+                         ref="dataForm"
+                         @keyup.enter.native="search">
+                    <el-form-item prop="dictType">
                         <el-input
-                                v-model="dataForm.productId"
-                                :data-operate="dataFormOp.liekOps"
-                                :placeholder="data.form.input.productId"
+                                v-model="dataForm.dictType"
+                                :placeholder="data.form.dict.dictType"
+                                clearable
+                        />
+                    </el-form-item>
+                    <el-form-item prop="name">
+                        <el-input
+                                v-model="dataForm.name"
+                                :placeholder="data.form.dict.name"
                                 clearable
                         />
                     </el-form-item>
                     <el-form-item>
-                        <el-button @click="getDataList()" icon="el-icon-search" type="primary">{{
+                        <el-button @click="search" icon="el-icon-search" type="primary">{{
                             $t('views.public.query') }}
                         </el-button>
                     </el-form-item>
@@ -29,6 +37,7 @@
             </el-collapse-item>
 
         </el-collapse>
+        <!--data show-->
         <vxe-grid
                 border
                 resizable
@@ -58,7 +67,7 @@
                         type="primary"
                         size="mini"
                         icon="el-icon-edit"
-                        @click="updateHandle($refs.pGrid)"
+                        @click="updateHandleRefer($refs.pGrid)"
                 >修改
                 </el-button>
                 <el-button
@@ -66,7 +75,7 @@
                         type="danger"
                         size="mini"
                         icon="el-icon-delete"
-                        @click="deleteHandleSetter($refs.pGrid)"
+                        @click="deleteHandleSetterRefer($refs.pGrid)"
                 >删除
                 </el-button>
             </template>
@@ -83,55 +92,30 @@
                 @current-change="pageCurrentChangeHandle"
         ></el-pagination>
         <!-- 弹窗, 新增 / 修改 -->
-        <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="search"/>
+        <AddOrUpdate v-if="addOrUpdateVisible" :parentDataList="dataList" ref="addOrUpdate" @refreshDataList="search"/>
     </d2-container>
 </template>
 
 <script>
 import mixinViewModule from '@/mixins/view-module'
-import AddOrUpdate from './add-or-update'
+import AddOrUpdate from './dict-add-or-update'
 import data from './data'
 
 export default {
-  name: 'pprice',
+  name: 'sys-dict',
   mixins: [mixinViewModule],
   data () {
     return {
       data: data,
       mixinViewModuleOptions: {
-        getDataListURL: '/base/productprice/list',
+        getDataListURL: '/sys/dict/list',
         getDataListIsPage: true,
-        deleteURL: '/base/productprice/delete',
+        deleteURL: '/sys/dict/delete',
         deleteIsBatch: true
       },
       dataForm: {
-        productId: undefined
-      },
-      dataFormOp: {
-        likeOps: 'like'
-      },
-      rowHandler: {
-        width: '160px',
-        custom: [
-          {
-            text: this.$t('views.public.update'),
-            type: 'primary',
-            size: 'mini',
-            emit: 'user-update',
-            show: (index, row) => {
-              return this.$hasPermission('sys:user:update')
-            }
-          },
-          {
-            text: this.$t('views.public.delete'),
-            type: 'danger',
-            size: 'mini',
-            emit: 'user-delete',
-            show: (index, row) => {
-              return this.$hasPermission('sys:user:delete')
-            }
-          }
-        ]
+        dictType: undefined,
+        name: undefined
       },
       toolbar: {
         id: 'full_edit_1',
@@ -144,29 +128,54 @@ export default {
         }
       },
       columns: [
-{ type: 'index', width: 30, fixed: 'left' },
+        { type: 'index', width: 30, fixed: 'left' },
         {
-          title: '产品',
-          field: 'productName',
+          title: '字典类型',
+          field: 'dictType',
+          sortable: true,
+          align: 'center',
+          treeNode: true
+        },
+        {
+          title: '编码',
+          field: 'code',
           sortable: true,
           align: 'center'
-        }, {
-          title: '默认销售价',
-          field: 'salePrice',
+        },
+        {
+          title: '名称',
+          field: 'name',
           sortable: true,
           align: 'center'
-        }, {
-          title: '当前成本价',
-          field: 'costPrice',
+        },
+        {
+          title: '序号',
+          field: 'extendVal',
           sortable: true,
           align: 'center'
-        }, {
+        },
+        {
           title: '备注',
           field: 'remark',
           sortable: true,
           align: 'center'
-        }, {
-          title: '修改人',
+        },
+        {
+          title: '可否编辑',
+          field: 'editFlag',
+          sortable: true,
+          align: 'center',
+          formatter: this.flagSelector
+        },
+        {
+          title: '可否删除',
+          field: 'deleteFlag',
+          sortable: true,
+          align: 'center',
+          formatter: this.flagSelector
+        },
+        {
+          title: '更新人',
           field: 'updateBy',
           sortable: true,
           align: 'center'
@@ -176,6 +185,7 @@ export default {
           field: 'updateDate',
           sortable: true,
           align: 'center',
+          width: '100px',
           formatter: ['toDateString', 'yyyy-MM-dd']
         }
       ]
@@ -187,11 +197,56 @@ export default {
   methods: {
     handleFormReset () {
       this.$refs['dataForm'].resetFields()
+    },
+    flagSelector ({ cellValue }) {
+      if (cellValue) {
+        return '是'
+      } else {
+        return '否'
+      }
+    },
+    updateHandleRefer () {
+      let row = this.pGrid.getCurrentRow()
+      this.addOrUpdateVisible = true
+      if (row) {
+        if (row.editFlag) {
+          this.$nextTick(() => {
+            this.$refs.addOrUpdate.init(row)
+          })
+        } else {
+          return this.$message({
+            message: '当前记录已被设置为不能被编辑',
+            type: 'warning'
+          })
+        }
+      } else {
+        return this.$message({
+          message: '请选择要修改的记录',
+          type: 'warning'
+        })
+      }
+    },
+    deleteHandleSetterRefer () {
+      let row = this.pGrid.getCurrentRow()
+      if (row) {
+        if (row.deleteFlag) {
+          this.deleteHandleSetter(this.$refs.pGrid)
+        } else {
+          return this.$message({
+            message: '当前记录已被设置不能被删除',
+            type: 'warning'
+          })
+        }
+      } else {
+        return this.$message({
+          message: '请选择要删除的记录',
+          type: 'warning'
+        })
+      }
     }
+  },
+  created () {
+    this.search()
   }
 }
 </script>
-
-<style>
-
-</style>

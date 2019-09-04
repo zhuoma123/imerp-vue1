@@ -6,8 +6,8 @@
   :close-on-press-escape="false"
   v-loading.fullscreen.lock="fullscreenLoading"
   >
-    <el-form  :model="dataForm" ref="dataForm" @keyup.enter.native="dataFormSubmitHandle()" label-width="120px">
-      <el-form-item prop="name" :label="$t('views.public.dept.name')" :rules="{required: true, message: '部门名称不能为空', trigger: 'blur'}">
+    <el-form  :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmitHandle()" label-width="120px" size="mini">
+      <el-form-item prop="name" :label="$t('views.public.dept.name')" >
         <el-input v-model="dataForm.name" :placeholder="$t('views.public.dept.name')" />
       </el-form-item>
       <el-form-item prop="parentName" :label="$t('views.public.dept.parentId')" class="dept-list" >
@@ -65,6 +65,34 @@ export default {
         delFlat:0
       }
      
+    }
+  },
+  computed: {
+      dataRule () {
+        var validateDeptName = (rule, value, callback) => {
+          if (!this.dataForm.roleId && !/\S/.test(value)) {
+            return callback(new Error("部门名称不能为空！"))
+          }
+          callback()
+          }
+          var validateParentName = (rule, value, callback) => {
+          if (!this.dataForm.roleId && !/\S/.test(value)) {
+            return callback(new Error("部门名称不能为空！"))
+          }
+          callback()
+          }
+          
+      return{
+         name: [
+          { required: true, message: "部门名称不能为空！", trigger: 'blur' },
+          { validator: validateDeptName, trigger: 'blur' }
+        ],
+        parentName: [
+          { required: true, message: "上级部门不能为空！", trigger: 'blur' },
+          { validator: validateParentName, trigger: 'blur' }
+        ]
+        
+      }
     }
   },
   methods: {
@@ -129,7 +157,7 @@ export default {
             duration: 500,
             onClose: () => {
               this.visible = false
-              this.$emit('refreshDataList')
+              this.search()
               //this.$emit('refreshDataList')
             }
           })

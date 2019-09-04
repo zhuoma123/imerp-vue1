@@ -14,7 +14,7 @@
                     style="width: 178px">
                 </im-selector>
             </el-form-item>
-            <el-form-item prop="name" :label="data.form.input.name">
+            <el-form-item prop="name" :label="data.form.input.name" style="margin-left: 20px">
                 <el-input v-model="dataForm.name" :placeholder="data.form.input.name"/>
             </el-form-item>
             <el-form-item prop="shortName" :label="data.form.input.shortName">
@@ -52,6 +52,38 @@ import mixinViewModule from '@/mixins/view-module'
 export default {
   mixins: [mixinViewModule],
   data () {
+    let checkMobile = (rule, value, callback) => {
+      if (value) {
+        let pattern = /^(13[0-9]|14[5|7]|15[0|1|2|3|5|6|7|8|9]|18[0|1|2|3|5|6|7|8|9])\d{8}$/
+        pattern.test(value) ? callback() : callback(new Error('手机号码格式不正确'))
+      } else {
+        callback()
+      }
+    }
+    let checkTel = (rule, value, callback) => {
+      if (value) {
+        let pattern = /\d{3}-\d{8}|\d{4}-\d{7}/
+        pattern.test(value) ? callback() : callback(new Error('电话格式不正确'))
+      } else {
+        callback()
+      }
+    }
+    let checkEmail = (rule, value, callback) => {
+      if (value) {
+        let pattern = /^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/
+        pattern.test(value) ? callback() : callback(new Error('邮箱格式不正确'))
+      } else {
+        callback()
+      }
+    }
+    let checkWechat = (rule, value, callback) => {
+      if (value) {
+        let pattern = /^[a-zA-Z\d_]{5,}$/
+        pattern.test(value) ? callback() : callback(new Error('微信号格式不正确'))
+      } else {
+        callback()
+      }
+    }
     return {
       mixinViewModuleOptions: {
         getDataListURL: '/base/custcontact/list',
@@ -79,6 +111,18 @@ export default {
         }],
         code: [{
           required: true, message: '编码不可缺少'
+        }],
+        mobileNo: [{
+          validator: checkMobile, trigger: 'blur'
+        }],
+        tel: [{
+          validator: checkTel, trigger: 'blur'
+        }],
+        email: [{
+          validator: checkEmail, trigger: 'blur'
+        }],
+        weixinNo: [{
+          validator: checkWechat, trigger: 'blur'
         }]
       },
       vendor: {

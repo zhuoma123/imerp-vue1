@@ -1,5 +1,5 @@
 <template>
-  <el-dialog :title="isNew ? '销售单新增' : '销售单修改'"
+  <el-dialog :title="isNew ? '退货单新增' : '退货单修改'"
     :close-on-click-modal="false"
     :visible.sync="visible"
     v-loading.fullscreen.lock="fullscreenLoading"
@@ -31,71 +31,32 @@
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="销售日期" prop="orderDate">
+            <el-form-item label="退货日期" prop="orderDate">
               <el-date-picker
                 v-model="dataForm.orderDate"
-                placeholder="销售日期"
+                placeholder="退货日期"
                 value-format="yyyy-MM-dd"
               ></el-date-picker>
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="要求交货期" prop="planDeliveryDate">
-              <el-date-picker
-                v-model="dataForm.planDeliveryDate"
-                placeholder="要求交货期"
-                value-format="yyyy-MM-dd"
-              ></el-date-picker>
-            </el-form-item>
-          </el-col>
-        </el-row>
-
-        <el-row >
-          <el-col :span="8">
-            <el-form-item label="发运方式" prop="shipType">
-              <im-selector
-              v-model="dataForm.shipType"
-              :mapModel.sync="dataForm"
-              mapKeyVal="shipType"
-              dataType="dict.SHIP_TYPE"
-              @change="changeCust">
-              </im-selector>
             </el-form-item>
           </el-col>
           <el-col :span="8">
             <el-form-item label="仓库" prop="autoPeaking">
-              <el-checkbox v-model="dataForm.autoPeaking">是否自动拣货</el-checkbox>
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="订单金额" prop="orderAmount">
-              <el-input v-model="dataForm.orderAmount" disabled placeholder="订单金额" clearable></el-input>
+              <el-checkbox v-model="dataForm.autoPeaking">是否自动入库</el-checkbox>
             </el-form-item>
           </el-col>
         </el-row>
 
         <el-row >
-          <el-col :span="8">
-            <el-form-item label="收货人" prop="receiveName">
-              <el-input v-model="dataForm.receiveName" placeholder="收货人" clearable></el-input>
+          <el-col :span="16">
+            <el-form-item label="备注" prop="remark">
+              <el-input style="width:100%" v-model="dataForm.remark" placeholder="备注"></el-input>
             </el-form-item>
           </el-col>
+          
           <el-col :span="8">
-            <el-form-item label="收货人电话" prop="receivePhone">
-              <el-input v-model="dataForm.receivePhone" placeholder="收货人电话" clearable></el-input>
+            <el-form-item label="退货金额" prop="orderAmount">
+              <el-input v-model="dataForm.orderAmount" disabled placeholder="退货金额" clearable></el-input>
             </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="收货地址" prop="receiveAddress">
-              <el-input v-model="dataForm.receiveAddress" placeholder="收货地址" clearable></el-input>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row >
-          <el-col >
-        <el-form-item label="备注" prop="remark">
-          <el-input style="width:100%" v-model="dataForm.remark" placeholder="备注"></el-input>
-        </el-form-item>
           </el-col>
         </el-row>
       </el-form>
@@ -154,12 +115,12 @@ export default {
       dataForm: {
         id: undefined,
         orderNum: "",
-        orderType: "SO",
+        orderType: "RETURN",
         customerId: "",
         orderDate: new Date(),
         planDeliveryDate: new Date(),
         orderAmount: "0",
-        shipType: "",
+        shipType: "0",
         remark: "",
         autoPeaking: true,
         deletedFlag: "N"
@@ -169,7 +130,7 @@ export default {
           { required: true, message: "客户不能为空", trigger: "blur" }
         ],
         orderDate: [
-          { required: true, message: "销售日期不能为空", trigger: "blur" }
+          { required: true, message: "退货日期不能为空", trigger: "blur" }
         ]
       },
       tableProxy: {
@@ -183,11 +144,11 @@ export default {
           { required: true, message: '物料必填' }
         ],
         orderQty: [
-          { required: true, message: '销售数量必填'},
+          { required: true, message: '退货数量必填'},
           { type:"number",message: '请输入数字'}
         ],
         price: [
-          { required: true, message: '销售价格必填' },
+          { required: true, message: '退货价格必填' },
           { type:"number",message: '请输入数字'}
         ]
       },
@@ -215,12 +176,7 @@ export default {
           width: '110px',
           align: 'left'
         },
-        {
-          title: '库存',
-          field: 'stock',
-          width: '40px',
-          align: 'left'
-        },
+        
         {
           title: '指导售价',
           field: 'bPrice',
@@ -228,14 +184,20 @@ export default {
           align: 'left'
         },
         {
-          title: '数量',
+          title: '退货数量',
           field: 'orderQty',
           align: 'left',
           width: '40px',
-          editRender: { name: 'input' ,autoselect: true}
+          editRender: { name: 'input' ,autoselect: true},
+          editPost: function (column, row) {
+            var qty = row.orderQty
+            if (!Number.isNaN(qty)) {
+              return -Math.abs(Number(qty))
+            }
+          }
         },
         {
-          title: '销售价',
+          title: '退货价',
           field: 'price',
           sortable: true,
           align: 'center',
@@ -243,10 +205,10 @@ export default {
           editRender: { name: 'input',autoselect: true}
         },
         {
-          title: '总金额',
+          title: '退货总金额',
           field: 'amount',
           align: 'left',
-          width: '70px',
+          width: '90px',
           formatter: ['toFixedString', 2],
           editPost: function (column, row) {
             var qty = row.orderQty

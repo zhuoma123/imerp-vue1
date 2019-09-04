@@ -59,7 +59,6 @@
                 :select-config="{reserve: true}"
                 :edit-config="{trigger: 'click', mode: 'row', showStatus: true}"
                 @cell-dblclick="cellDblClick"
-                @cell-click="enableTlbBtn"
                 :tree-config="{children: 'children'}"
         >
             <template v-slot:buttons>
@@ -132,6 +131,7 @@ export default {
         }
       },
       columns: [
+{ type: 'index', width: 30, fixed: 'left' },
         {
           title: '类型',
           field: 'type',

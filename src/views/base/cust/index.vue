@@ -52,7 +52,6 @@
                 :select-config="{reserve: true}"
                 :edit-config="{trigger: 'click', mode: 'row', showStatus: true}"
                 @cell-dblclick="cellDblClick"
-                @cell-click="enableTlbBtn"
                 :tree-config="{children: 'children'}"
         >
             <template v-slot:buttons>
@@ -93,7 +92,7 @@
                 @current-change="pageCurrentChangeHandle"
         ></el-pagination>
         <!-- 弹窗, 新增 / 修改 -->
-        <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList"/>
+        <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="search"/>
     </d2-container>
 </template>
 
@@ -142,18 +141,14 @@ export default {
         VENDOR: '供应商'
       },
       columns: [
+{ type: 'index', width: 30, fixed: 'left' },
         {
           title: '客户 | 供应商',
           field: 'custVendor',
           sortable: true,
           align: 'center',
-          width: '120px'
-        },
-        {
-          title: '编号',
-          field: 'code',
-          sortable: true,
-          align: 'center'
+          width: '120px',
+          formatter: this.flagSelector
         },
         {
           title: '名称',
@@ -304,6 +299,13 @@ export default {
   methods: {
     handleFormReset () {
       this.$refs['dataForm'].resetFields()
+    },
+    flagSelector ({ cellValue }) {
+      if (cellValue === 'CUST') {
+        return '客户'
+      } else {
+        return '供应商'
+      }
     }
   }
 }

@@ -1,21 +1,18 @@
 <template>
     <el-dialog :visible.sync="visible" :title="isNew ? $t('views.public.add') : $t('views.public.update')"
-               :close-on-click-modal="false" :close-on-press-escape="false" width="800px">
+               :close-on-click-modal="false" :close-on-press-escape="false" width="750px">
         <el-form :model="dataForm" :rules="rules" ref="dataForm"
                  label-width="120px" :inline="true" labelSuffix="："
                  size="mini">
             <el-form-item prop="id" v-show="false" />
             <el-form-item prop="custVendor" :label="data.form.input.custVendor">
-                <el-radio-group v-model="dataForm.custVendor" style="width: 178px">
+                <el-radio-group v-model="dataForm.custVendor" style="width: 200px">
                     <el-radio label='CUST'>顾客</el-radio>
                     <el-radio label='VENDOR'>供应商</el-radio>
                 </el-radio-group>
             </el-form-item>
             <el-form-item prop="name" :label="data.form.input.name">
                 <el-input v-model="dataForm.name" :placeholder="data.form.input.name"/>
-            </el-form-item>
-            <el-form-item prop="code" :label="data.form.input.code">
-                <el-input v-model="dataForm.code" :placeholder="data.form.input.code"/>
             </el-form-item>
             <el-form-item prop="shortName" :label="data.form.input.shortName">
                 <el-input v-model="dataForm.shortName" :placeholder="data.form.input.shortName"/>
@@ -79,6 +76,30 @@ import mixinViewModule from '@/mixins/view-module'
 export default {
   mixins: [mixinViewModule],
   data () {
+    let checkEmail = (rule, value, callback) => {
+      if (value) {
+        let pattern = /^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/
+        pattern.test(value) ? callback() : callback(new Error('邮箱格式不正确'))
+      } else {
+        callback()
+      }
+    }
+    let checkTel = (rule, value, callback) => {
+      if (value) {
+        let pattern = /\d{3}-\d{8}|\d{4}-\d{7}/
+        pattern.test(value) ? callback() : callback(new Error('电话格式不正确'))
+      } else {
+        callback()
+      }
+    }
+    let checkFax = (rule, value, callback) => {
+      if (value) {
+        let pattern = /^(\d{3,4}-)?\d{7,8}$/
+        pattern.test(value) ? callback() : callback(new Error('传真号码格式不正确'))
+      } else {
+        callback()
+      }
+    }
     return {
       mixinViewModuleOptions: {
         getDataListURL: '/base/cust/list',
@@ -114,6 +135,15 @@ export default {
       rules: {
         name: [{
           required: true, message: '名称不可缺少'
+        }],
+        tel: [{
+          validator: checkTel, trigger: 'blur'
+        }],
+        fax: [{
+          validator: checkFax, trigger: 'blur'
+        }],
+        email: [{
+          validator: checkEmail, trigger: 'blur'
         }]
       }
     }
@@ -162,5 +192,8 @@ export default {
                 width: 100%;
             }
         }
+    }
+    .el-dialog__footer {
+        margin-right: 7px;
     }
 </style>

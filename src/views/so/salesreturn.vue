@@ -51,29 +51,7 @@
           <!--</el-col>-->
         <!--</el-row>-->
 
-        <!--<el-row >-->
-          <!--<el-col :span="6">-->
-          <el-form-item label="配送方式" prop="shipType">
-            <im-selector
-              v-model="dataForm.shipType"
-              :mapModel.sync="dataForm"
-              mapKeyVal="shipType"
-              dataType="dict.SHIP_TYPE">
-              </im-selector>
-          </el-form-item>
-          <!--</el-col>-->
-          <!--<el-col :span="6">-->
-          <el-form-item label="收货地址" prop="receiveAddress">
-            <el-input v-model="dataForm.receiveAddress" clearable></el-input>
-          </el-form-item>
-          <!--</el-col>-->
-          <!--<el-col :span="12">-->
-          <el-form-item label="收货人" prop="receiveName">
-            <el-input v-model="dataForm.receiveName" placeholder="收货人/手机" clearable></el-input>
-          </el-form-item>
-          <!--</el-col>-->
-        <!--</el-row>-->
-
+        
         <!--<el-row >-->
           <!--<el-col :span="6">-->
           <el-form-item label="销售员" prop="pic">
@@ -86,7 +64,7 @@
           </el-form-item>
           <!--</el-col>-->
             <!--<el-col :span="6">-->
-              <el-form-item label="销售单号" prop="orderNum">
+              <el-form-item label="退货单号" prop="orderNum">
                 <el-input v-model="dataForm.orderNum" clearable/>
               </el-form-item>
             <!--</el-col>-->
@@ -154,7 +132,7 @@
 <script>
 import mixinViewModule from '@/mixins/view-module'
 import XEUtils from 'xe-utils'
-import AddOrUpdate from './salesorder-add-or-update'
+import AddOrUpdate from './salesreturn-add-or-update'
 export default {
   mixins: [mixinViewModule],
   data () {
@@ -168,7 +146,7 @@ export default {
         getDataListIsPage: true
       },
       dataForm: {
-        orderType: 'SO',
+        orderType: 'RETURN',
         custName: '',
         status: '',
         bDate: null,
@@ -185,7 +163,7 @@ export default {
         { type: 'selection', width: 30, align: 'center' },
         { type: 'index', width: 40, align: 'center' },
         {
-          title: '下单日期',
+          title: '退货日期',
           field: 'orderDate',
           sortable: true,
           width: '110px',
@@ -196,7 +174,7 @@ export default {
           }
         },
         {
-          title: '销售单号',
+          title: '退货单号',
           field: 'orderNum',
           width: '120px',
           sortable: true,
@@ -216,7 +194,7 @@ export default {
           align: 'left'
         },
         {
-          title: '订单金额',
+          title: '退货金额',
           field: 'orderAmount',
           sortable: true,
           width: '100px',
@@ -225,12 +203,6 @@ export default {
           footerRender: function (column, data) {
             return XEUtils.sum(data, column.property)
           }
-        },
-        {
-          title: '发运方式',
-          field: 'shipTypeMean',
-          width: '80px',
-          align: 'center'
         },
         {
           title: '销售员',

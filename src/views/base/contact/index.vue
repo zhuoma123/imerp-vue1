@@ -12,7 +12,6 @@
                                 :data-opedrate="dataFormOp.likeOps"
                                 :placeholder="data.form.input.custName"
                                 clearable
-                                style="width: 170px"
                         />
                     </el-form-item>
                     <el-form-item prop="name">
@@ -21,7 +20,6 @@
                                 :data-operate="dataFormOp.likeOps"
                                 :placeholder="data.form.input.name"
                                 clearable
-                                style="width: 170px"
                         />
                     </el-form-item>
                     <el-form-item prop="shortName">
@@ -30,7 +28,6 @@
                                 :data-operate="dataFormOp.likeOps"
                                 :placeholder="data.form.input.shortName"
                                 clearable
-                                style="width: 170px"
                         />
                     </el-form-item>
                     <el-form-item prop="mobileNo">
@@ -39,7 +36,6 @@
                                 :data-operate="dataFormOp.likeOps"
                                 :placeholder="data.form.input.mobileNo"
                                 clearable
-                                style="width: 170px"
                         />
                     </el-form-item>
                     <el-form-item>
@@ -72,7 +68,6 @@
                 :select-config="{reserve: true}"
                 :edit-config="{trigger: 'click', mode: 'row', showStatus: true}"
                 @cell-dblclick="cellDblClick"
-                @cell-click="enableTlbBtn"
                 :tree-config="{children: 'children'}"
         >
             <template v-slot:buttons>
@@ -113,7 +108,7 @@
                 @current-change="pageCurrentChangeHandle"
         ></el-pagination>
         <!-- 弹窗, 新增 / 修改 -->
-        <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList"/>
+        <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="search"/>
     </d2-container>
 </template>
 
@@ -178,6 +173,7 @@ export default {
         }
       },
       columns: [
+{ type: 'index', width: 30, fixed: 'left' },
         {
           title: '客户',
           field: 'custName',

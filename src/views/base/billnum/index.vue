@@ -42,7 +42,6 @@
                 border
                 resizable
                 highlight-current-row
-                height="390px"
                 remote-filter
                 size="mini"
                 ref="pGrid"

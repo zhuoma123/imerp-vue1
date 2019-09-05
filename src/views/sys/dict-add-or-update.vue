@@ -27,24 +27,36 @@
             </el-form-item>
           </el-col>
         </el-row>
-        <el-form-item prop="name" :label="data.form.dict.name">
-          <el-input v-model="dataForm.name" :placeholder="data.form.dict.name"/>
-        </el-form-item>
-        <el-form-item prop="extendVal" :label="data.form.dict.extendVal">
-          <el-input v-model="dataForm.extendVal" :placeholder="data.form.dict.extendVal"/>
-        </el-form-item>
-        <el-form-item prop="editFlag" :label="data.form.dict.editFlag">
-          <el-radio-group v-model="dataForm.editFlag" style="width: 200px;">
-            <el-radio :label=1>是</el-radio>
-            <el-radio :label=0>否</el-radio>
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item prop="deleteFlag" :label="data.form.dict.deleteFlag">
-          <el-radio-group v-model="dataForm.deleteFlag" style="width: 200px">
-            <el-radio :label=1>是</el-radio>
-            <el-radio :label=0>否</el-radio>
-          </el-radio-group>
-        </el-form-item>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item prop="name" :label="data.form.dict.name">
+              <el-input v-model="dataForm.name" :placeholder="data.form.dict.name"/>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item prop="extendVal" :label="data.form.dict.extendVal">
+              <el-input v-model="dataForm.extendVal" :placeholder="data.form.dict.extendVal"/>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item prop="editFlag" :label="data.form.dict.editFlag">
+              <el-radio-group v-model="dataForm.editFlag" style="width: 200px;">
+                <el-radio :label=1>是</el-radio>
+                <el-radio :label=0>否</el-radio>
+              </el-radio-group>
+            </el-form-item>
+          </el-col>
+         <el-col :span="12">
+           <el-form-item prop="deleteFlag" :label="data.form.dict.deleteFlag">
+             <el-radio-group v-model="dataForm.deleteFlag" style="width: 200px">
+               <el-radio :label=1>是</el-radio>
+               <el-radio :label=0>否</el-radio>
+             </el-radio-group>
+           </el-form-item>
+         </el-col>
+        </el-row>
         <el-form-item prop="remark" :label="data.form.dict.remark">
           <el-input v-model="dataForm.remark" :placeholder="data.form.dict.remark"/>
         </el-form-item>
@@ -125,20 +137,4 @@ export default {
 </script>
 
 <style lang="scss">
-.mod-sys__user {
-  .dept-list {
-    .el-input__inner,
-    .el-input__suffix {
-      cursor: pointer;
-    }
-  }
-  .role-list {
-    .el-select {
-      width: 100%;
-    }
-  }
-  .el-form-item.el-input__inner{
-    width: 200px;
-  }
-}
 </style>

@@ -71,7 +71,6 @@
 
         </el-collapse>
         <vxe-grid
-                height="350px"
                 border
                 resizable
                 highlight-current-row

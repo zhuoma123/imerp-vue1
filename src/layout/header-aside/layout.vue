@@ -183,7 +183,7 @@ export default {
           this.userInfoSet({
             id: res.userId,
             name: res.username,
-            superAdmin: res.superAdmin
+            superUser: res.superUser
           })
         })
         .catch(() => {})

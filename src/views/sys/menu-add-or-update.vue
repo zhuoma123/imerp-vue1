@@ -1,7 +1,7 @@
 <template>
   <el-dialog class="abow-dialog" :visible.sync="visible" :title="!dataForm.menuId ? $t('views.public.add') : $t('views.public.update')" :close-on-click-modal="false" :close-on-press-escape="false">
-    <el-form :model="dataForm" ref="dataForm" @keyup.enter.native="dataFormSubmitHandle()" label-width="120px">
-      <el-form-item prop="name" label="菜单名称" :rules="{required: true, message: '菜单名称不能为空', trigger: 'blur'}">
+    <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmitHandle()" label-width="120px" size="mini">
+      <el-form-item prop="name" label="菜单名称" >
         <el-input v-model="dataForm.name" placeholder="菜单名称" />
       </el-form-item>
       <el-form-item prop="parentName" label="上级菜单" class="dept-list" >
@@ -77,6 +77,23 @@ export default {
   },
   created() {
     this.getDeptList()
+  },
+  computed: {
+      dataRule () {
+        var validateMenuName = (rule, value, callback) => {
+          if (!this.dataForm.roleId && !/\S/.test(value)) {
+            return callback(new Error("部门名称不能为空！"))
+          }
+          callback()
+          }
+          
+      return{
+         name: [
+          { required: true, message: "菜单名称不能为空！", trigger: 'blur' },
+          { validator: validateMenuName, trigger: 'blur' }
+        ]
+      }
+    }
   },
   methods: {
     init () {

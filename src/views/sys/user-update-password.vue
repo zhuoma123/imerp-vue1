@@ -1,6 +1,6 @@
 <template>
   <el-dialog class="abow-dialog" :visible.sync="visible" title="修改密码" :close-on-click-modal="false" :close-on-press-escape="false">
-    <el-form :model="dataForm" width="300px" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmitHandle()" label-width="120px">
+    <el-form :model="dataForm" width="300px" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmitHandle()" label-width="120px" size="mini">
       <el-form-item prop="password"  label="原来密码" >
         <el-input v-model="dataForm.password" type="password" show-password placeholder="原来密码"/>
       </el-form-item>
@@ -50,6 +50,15 @@ export default {
         }
         callback()
       }
+      var validatePasswordAsync = (rule, value, callback) => {
+          this.$axios.post('/sys/user/checkpassword', { password: value,userId: this.dataForm.userId }).then(res => {
+          if(res === '') {
+            callback()
+          } else {
+            return callback(new Error(res))
+          }
+        })
+      }
       return {
         newPassword: [
           { validator: validatePassword, trigger: 'blur' }
@@ -58,7 +67,8 @@ export default {
           { validator: validateComfirmPassword, trigger: 'blur' }
         ],
         password: [
-          {  required: true, message:"密码不能为空！", trigger: 'blur' }
+          {  required: true, message:"密码不能为空！", trigger: 'blur' },
+          { validator: validatePasswordAsync, trigger: 'blur' }
         ]
       }
     }
@@ -78,6 +88,7 @@ export default {
     // 表单提交
     dataFormSubmitHandle: debounce(function () {
       this.$refs['dataForm'].validate((valid) => {
+        console.log(valid)
         if (!valid) {
           return false
         }

@@ -2,8 +2,8 @@
   <el-dialog class="abow_dialog" :visible.sync="visible" 
   :title="dataForm.roleId==null ? $t('views.public.add') : $t('views.public.update')" 
   :close-on-click-modal="false" :close-on-press-escape="false" width="80%">
-    <el-form  :model="dataForm" ref="dataForm" @keyup.enter.native="dataFormSubmitHandle()" label-width="120px">
-      <el-form-item prop="roleName" label="角色名称" :rules="{required: true, message: '角色名称不能为空', trigger: 'blur'}">
+    <el-form  :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmitHandle()" label-width="120px" size="mini">
+      <el-form-item prop="roleName" label="角色名称" >
         <el-input v-model="dataForm.roleName" placeholder="角色名称" />
       </el-form-item>
       <el-form-item prop="deptName" label="所属部门" class="dept-list" >
@@ -88,12 +88,31 @@ export default {
     this.getDeptList()
     this.getMenuList()
   },
+  computed: {
+      dataRule () {
+        var validateRoleName = (rule, value, callback) => {
+          if (!this.dataForm.roleId && !/\S/.test(value)) {
+            return callback(new Error("角色名称不能为空！"))
+          }
+          callback()
+          }
+          
+      return{
+         roleName: [
+          { required: true, message: "角色名称不能为空！", trigger: 'blur' },
+          { validator: validateRoleName, trigger: 'blur' }
+        ]
+        
+      }
+    }
+  },
   methods: {
     
     init () {
       this.visible = true
       this.dataForm.roleId=null
       this.$nextTick(() => { 
+        this.resetTree();
        this.$refs.dataForm.resetFields()
       })
     },
@@ -127,6 +146,10 @@ export default {
       for(let item in row.deptIdList) {
         this.$refs.deptTree.setChecked(row.deptIdList[item], true, false)
       } 
+    },
+    resetTree(){
+      this.$refs.menuListTree.setCheckedKeys([]);
+      this.$refs.deptTree.setCheckedKeys([])
     },
     // 获取部门列表
     getDeptList () {

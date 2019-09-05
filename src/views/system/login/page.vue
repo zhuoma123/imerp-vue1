@@ -23,6 +23,7 @@
                 :rules="rules"
                 :model="formLogin"
                 size="default"
+                @submit.native.prevent
               >
                 <el-form-item prop="username">
                   <el-input
@@ -46,6 +47,7 @@
                   size="default"
                   @click="submit"
                   :disabled="submitDisabled"
+                  native-type="submit"
                   type="primary"
                   class="button-login"
                 >{{ $t('views.system.login.form.button.login') }}</el-button>

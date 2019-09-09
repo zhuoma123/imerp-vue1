@@ -16,10 +16,10 @@
                 </im-selector>
             </el-form-item>
             <el-form-item prop="salePrice" :label="data.form.input.salePrice">
-                <el-input v-model="dataForm.salePrice" :placeholder="data.form.input.salePrice" style="width: 193px"/>
+                <el-input v-model.number="dataForm.salePrice" :placeholder="data.form.input.salePrice" style="width: 193px"/>
             </el-form-item>
             <el-form-item prop="costPrice" :label="data.form.input.costPrice">
-                <el-input v-model="dataForm.costPrice" :placeholder="data.form.input.costPrice" style="width: 193px"/>
+                <el-input v-model.number="dataForm.costPrice" :placeholder="data.form.input.costPrice" style="width: 193px"/>
             </el-form-item>
             <el-form-item prop="remark" :label="data.form.input.remark">
                 <el-input v-model="dataForm.remark" :placeholder="data.form.input.remark" style="width: 193px"/>

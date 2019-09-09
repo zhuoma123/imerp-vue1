@@ -19,10 +19,10 @@
                     <el-input v-model="dataForm.prefixSeprator" :placeholder="data.form.input.prefixSeprator"/>
                 </el-form-item>
                 <el-form-item prop="yLength" :label="data.form.input.yLength" class="ddl-matthew-child">
-                    <el-input v-model="dataForm.yLength" :placeholder="data.form.input.yLength"/>
+                    <el-input v-model.number="dataForm.yLength" :placeholder="data.form.input.yLength"/>
                 </el-form-item>
                 <el-form-item prop="sequenceLength" :label="data.form.input.sequenceLength" class="ddl-matthew-child">
-                    <el-input v-model="dataForm.sequenceLength" :placeholder="data.form.input.sequenceLength"/>
+                    <el-input v-model.number="dataForm.sequenceLength" :placeholder="data.form.input.sequenceLength"/>
                 </el-form-item>
                 <el-form-item prop="loopType" :label="data.form.input.loopType" v-show="false"
                               class="ddl-matthew-child">
@@ -52,13 +52,13 @@
                     </el-date-picker>
                 </el-form-item>
                 <el-form-item prop="year" :label="data.form.input.year" class="ddl-matthew-child">
-                    <el-input v-model="dataForm.year" :placeholder="data.form.input.year"/>
+                    <el-input v-model.number="dataForm.year" :placeholder="data.form.input.year"/>
                 </el-form-item>
                 <el-form-item prop="month" :label="data.form.input.month" class="ddl-matthew-child">
-                    <el-input v-model="dataForm.month" :placeholder="data.form.input.month"/>
+                    <el-input v-model.number="dataForm.month" :placeholder="data.form.input.month"/>
                 </el-form-item>
                 <el-form-item prop="day" :label="data.form.input.day" class="ddl-matthew-child">
-                    <el-input v-model="dataForm.day" :placeholder="data.form.input.day"/>
+                    <el-input v-model.number="dataForm.day" :placeholder="data.form.input.day"/>
                 </el-form-item>
                 <el-form-item prop="yearFlag" :label="data.form.input.yearFlag" class="ddl-matthew-child">
                     <el-radio-group v-model="dataForm.yearFlag">

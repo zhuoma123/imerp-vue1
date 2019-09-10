@@ -11,7 +11,7 @@
                         v-model="dataForm.productId"
                         :mapModel.sync="dataForm"
                         mapKeyVal="productName:productId"
-                        dataType="biz.product"
+                        dataType="biz.priceproduct"
                         style="width: 300px">
                 </im-selector>
             </el-form-item>
@@ -39,6 +39,22 @@ import mixinViewModule from '@/mixins/view-module'
 export default {
   mixins: [mixinViewModule],
   data () {
+    let checkProduct = (rule, value, callback) => {
+      debugger
+      if (value) {
+        this.$axios.post('/base/productprice/checkProduct', {
+          productId: value
+        }).then(res => {
+          if (res) {
+            callback(new Error('相关产品价格记录已经存在'))
+          } else {
+            callback()
+          }
+        })
+      } else {
+        callback(new Error('产品不可为空'))
+      }
+    }
     return {
       mixinViewModuleOptions: {
         getDataListURL: '/base/productprice/list',
@@ -57,7 +73,7 @@ export default {
       },
       rules: {
         productId: [{
-          required: true, message: '产品名称不可缺少', trigger: 'blur'
+          required: true, message: '产品不可为空'
         }],
         salePrice: [{
           type: 'number', message: '必须为数字类型', trigger: 'blur'

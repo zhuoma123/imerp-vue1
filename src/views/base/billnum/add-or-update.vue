@@ -8,8 +8,7 @@
                 <!--dataForm must be showed all-->
                 <el-form-item prop="id" v-show="false"/>
                 <el-form-item prop="code" v-show="false"/>
-                <el-form-item prop="name" :label="data.form.input.name" @click.native="showPid"
-                              >
+                <el-form-item prop="name" :label="data.form.input.name" @click.native="showPid">
                     <el-input v-model="dataForm.name" :placeholder="data.form.input.name"/>
                 </el-form-item>
                 <el-form-item prop="prefix" :label="data.form.input.prefix">
@@ -273,6 +272,9 @@ export default {
 </script>
 
 <style>
+    input.el-input__inner{
+        width: 200px;
+    }
     div.el-radio-group{
         width: 200px;
     }

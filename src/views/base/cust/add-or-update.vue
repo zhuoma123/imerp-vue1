@@ -6,7 +6,7 @@
                  size="mini">
             <el-form-item prop="id" v-show="false" />
             <el-form-item prop="custVendor" :label="data.form.input.custVendor">
-                <el-radio-group v-model="dataForm.custVendor" style="width: 200px">
+                <el-radio-group v-model="dataForm.custVendor">
                     <el-radio label='CUST'>顾客</el-radio>
                     <el-radio label='VENDOR'>供应商</el-radio>
                 </el-radio-group>
@@ -194,6 +194,12 @@ export default {
         }
     }
     .el-dialog__footer {
-        margin-right: 7px;
+         margin-right: 7px;
+     }
+    div.el-radio-group {
+        width: 200px
+    }
+    input.el-input__inner{
+        width: 200px;
     }
 </style>

@@ -18,7 +18,7 @@
           <el-input v-model="dataForm.orderNum" :placeholder="data.data.input.orderNum"/>
         </el-form-item>
         <el-form-item prop="sys" :label="data.data.input.sys">
-          <el-radio-group v-model="dataForm.sys" style="width: 200px">
+          <el-radio-group v-model="dataForm.sys">
             <el-radio :label=1>是</el-radio>
             <el-radio :label=0>否</el-radio>
           </el-radio-group>
@@ -167,5 +167,11 @@ export default {
       width: 100%;
     }
   }
+}
+input.el-input__inner{
+  width: 200px;
+}
+div.el-radio-group{
+  width: 200px;
 }
 </style>

@@ -10,11 +10,10 @@
                     v-model="dataForm.custId"
                     :mapModel.sync="dataForm"
                     mapKeyVal="custName:custId"
-                    dataType="biz.customer"
-                    style="width: 178px">
+                    dataType="biz.customer">
                 </im-selector>
             </el-form-item>
-            <el-form-item prop="name" :label="data.form.input.name" style="margin-left: 20px">
+            <el-form-item prop="name" :label="data.form.input.name">
                 <el-input v-model="dataForm.name" :placeholder="data.form.input.name"/>
             </el-form-item>
             <el-form-item prop="shortName" :label="data.form.input.shortName">
@@ -151,5 +150,11 @@ export default {
                 width: 100%;
             }
         }
+    }
+    input.el-input__inner{
+        width: 200px;
+    }
+    div.el-radio-group{
+        width: 200px;
     }
 </style>

@@ -7,22 +7,22 @@
                      size="mini" class="ddl-matthew">
                 <!--dataForm must be showed all-->
                 <el-form-item prop="id" v-show="false" />
-                <el-form-item prop="name" :label="data.form.account.name" class="ddl-matthew-child">
+                <el-form-item prop="name" :label="data.form.account.name" >
                     <el-input v-model="dataForm.name" :placeholder="data.form.account.name"/>
                 </el-form-item>
-                <el-form-item prop="bankName" :label="data.form.account.bankName" class="ddl-matthew-child">
+                <el-form-item prop="bankName" :label="data.form.account.bankName" >
                     <el-input v-model="dataForm.bankName" :placeholder="data.form.account.bankName"/>
                 </el-form-item>
-                <el-form-item prop="bankNum" :label="data.form.account.bankNum" class="ddl-matthew-child">
+                <el-form-item prop="bankNum" :label="data.form.account.bankNum" >
                     <el-input v-model.number="dataForm.bankNum" :placeholder="data.form.account.bankNum"/>
                 </el-form-item>
-                <el-form-item prop="balance" :label="data.form.account.balance" class="ddl-matthew-child">
+                <el-form-item prop="balance" :label="data.form.account.balance" >
                     <el-input v-model.number="dataForm.balance" :placeholder="data.form.account.balance"/>
                 </el-form-item>
-                <el-form-item prop="initBalance" :label="data.form.account.initBalance" class="ddl-matthew-child">
+                <el-form-item prop="initBalance" :label="data.form.account.initBalance" >
                     <el-input v-model.number="dataForm.initBalance" :placeholder="data.form.account.initBalance"/>
                 </el-form-item>
-                <el-form-item prop="remark" :label="data.form.account.remark" class="ddl-matthew-child">
+                <el-form-item prop="remark" :label="data.form.account.remark" >
                     <el-input v-model="dataForm.remark" :placeholder="data.form.account.remark"/>
                 </el-form-item>
             </el-form>
@@ -96,7 +96,7 @@ export default {
 </script>
 
 <style>
-    .ddl-matthew >.ddl-matthew-child{
+     >-child{
             margin-bottom: 8px;
         }
     .el-dialog__footer{

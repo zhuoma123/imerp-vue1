@@ -2,34 +2,34 @@
     <el-dialog :visible.sync="visible" :title="isNew ? $t('views.public.add') : $t('views.public.update')"
                :close-on-click-modal="false" :close-on-press-escape="false" width="700px">
         <el-form :inline="true" :model="dataForm" :rules="rules"
-                 class="ddl-form" label-width="120px" labelSuffix="："
+                 label-width="120px" labelSuffix="："
                  ref="dataForm" size="mini">
-            <el-form-item prop="id" v-show="false" class="ddl-form-item" />
+            <el-form-item prop="id" v-show="false"/>
             <el-form-item prop="name" :label="data.form.input.name">
                 <el-input v-model="dataForm.name" :placeholder="data.form.input.name"/>
             </el-form-item>
-            <el-form-item prop="code" :label="data.form.input.code" class="ddl-form-item" >
+            <el-form-item prop="code" :label="data.form.input.code">
                 <el-input v-model="dataForm.code" :placeholder="data.form.input.code"/>
             </el-form-item>
-            <el-form-item prop="virtualFlag" :label="data.form.input.virtualFlag" class="ddl-form-item">
+            <el-form-item prop="virtualFlag" :label="data.form.input.virtualFlag" >
                 <el-radio-group v-model="dataForm.virtualFlag">
                     <el-radio :label=1>是</el-radio>
                     <el-radio :label=0>否</el-radio>
                 </el-radio-group>
             </el-form-item>
-            <el-form-item prop="address" :label="data.form.input.address" class="ddl-form-item">
+            <el-form-item prop="address" :label="data.form.input.address" >
                 <el-input v-model="dataForm.address" :placeholder="data.form.input.address"/>
             </el-form-item>
-            <el-form-item prop="pic" :label="data.form.input.pic" class="ddl-form-item">
+            <el-form-item prop="pic" :label="data.form.input.pic" >
                 <el-input v-model="dataForm.pic" :placeholder="data.form.input.pic"/>
             </el-form-item>
-            <el-form-item prop="mobileNo" :label="data.form.input.mobileNo" class="ddl-form-item">
+            <el-form-item prop="mobileNo" :label="data.form.input.mobileNo" >
                 <el-input v-model="dataForm.mobileNo" :placeholder="data.form.input.mobileNo"/>
             </el-form-item>
-            <el-form-item prop="tel" :label="data.form.input.tel" class="ddl-form-item">
+            <el-form-item prop="tel" :label="data.form.input.tel" >
                 <el-input v-model="dataForm.tel" :placeholder="data.form.input.tel"/>
             </el-form-item>
-            <el-form-item prop="remark" :label="data.form.input.remark" class="ddl-form-item">
+            <el-form-item prop="remark" :label="data.form.input.remark" >
                 <el-input v-model="dataForm.remark" :placeholder="data.form.input.remark"/>
             </el-form-item>
         </el-form>
@@ -105,11 +105,11 @@ export default {
 </script>
 
 <style lang="scss">
-
-    .ddl-form {
-        .ddl-form-item {
-            margin-bottom: 5px;
-        }
+    input.el-input__inner{
+        width: 200px;
+    }
+    div.el-radio-group{
+        width: 200px;
     }
 
 </style>

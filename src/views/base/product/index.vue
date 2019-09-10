@@ -313,7 +313,8 @@ export default {
           title: '备注',
           field: 'remark',
           sortable: true,
-          align: 'center'
+          align: 'center',
+          width: '200px'
         }, {
           title: '修改人',
           field: 'updateBy',

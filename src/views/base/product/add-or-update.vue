@@ -187,18 +187,10 @@ export default {
 </script>
 
 <style lang="scss">
-    .mod-sys__user {
-        .dept-list {
-            .el-input__inner,
-            .el-input__suffix {
-                cursor: pointer;
-            }
-        }
-
-        .role-list {
-            .el-select {
-                width: 100%;
-            }
-        }
+    input.el-input__inner{
+        width: 200px;
+    }
+    div.el-radio-group{
+        width: 200px;
     }
 </style>

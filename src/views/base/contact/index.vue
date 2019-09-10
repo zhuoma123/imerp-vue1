@@ -5,7 +5,7 @@
                 <template slot="title">
                     查询条件<i class="el-icon-d-arrow-right"/>
                 </template>
-                <el-form :inline="true" size="mini" :model="dataForm" @keyup.enter.native="getDataList()" ref="dataForm">
+                <el-form :inline="true" size="mini" :model="dataForm" @keyup.enter.native="search" ref="dataForm">
                     <el-form-item prop="custName">
                         <el-input
                                 v-model="dataForm.custName"
@@ -39,7 +39,7 @@
                         />
                     </el-form-item>
                     <el-form-item>
-                        <el-button @click="getDataList()" icon="el-icon-search" type="primary">{{
+                        <el-button @click="search" icon="el-icon-search" type="primary">{{
                             $t('views.public.query') }}
                         </el-button>
                     </el-form-item>
@@ -57,7 +57,6 @@
                 border
                 resizable
                 highlight-current-row
-                height="420px"
                 remote-filter
                 size="mini"
                 ref="pGrid"
@@ -173,7 +172,7 @@ export default {
         }
       },
       columns: [
-{ type: 'index', width: 30, fixed: 'left' },
+        { type: 'index', width: 30 },
         {
           title: '客户',
           field: 'custName',

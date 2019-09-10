@@ -5,7 +5,7 @@
                 <template slot="title">
                     查询条件<i class="el-icon-d-arrow-right"/>
                 </template>
-                <el-form :inline="true" size="mini" @keyup.enter.native="getDataList()" :model="dataForm"
+                <el-form :inline="true" size="mini" @keyup.enter.native="search" :model="dataForm"
                          ref="dataForm">
                     <el-form-item prop="name">
                         <el-input
@@ -24,7 +24,7 @@
                         />
                     </el-form-item>
                     <el-form-item>
-                        <el-button @click="getDataList()" icon="el-icon-search" type="primary">{{
+                        <el-button @click="search" icon="el-icon-search" type="primary">{{
                             $t('views.public.query') }}
                         </el-button>
                     </el-form-item>
@@ -134,7 +134,7 @@ export default {
         }
       },
       columns: [
-{ type: 'index', width: 30, fixed: 'left' },
+        { type: 'index', width: 30 },
         {
           title: '编号',
           field: 'code',

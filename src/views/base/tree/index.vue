@@ -7,7 +7,7 @@
                 </template>
                 <el-form :inline="true" size="mini" :model="dataForm"
                          ref="dataForm"
-                         @keyup.enter.native="getDataList()">
+                         @keyup.enter.native="search">
                     <el-form-item prop="type">
                         <el-input
                                 v-model="dataForm.type"
@@ -30,7 +30,7 @@
                         />
                     </el-form-item>
                     <el-form-item>
-                        <el-button @click="getDataList()" icon="el-icon-search" type="primary">{{
+                        <el-button @click="search" icon="el-icon-search" type="primary">{{
                             $t('views.public.query') }}
                         </el-button>
                     </el-form-item>

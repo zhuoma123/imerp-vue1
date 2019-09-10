@@ -5,7 +5,7 @@
                 <template slot="title">
                     查询条件<i class="el-icon-d-arrow-right"/>
                 </template>
-                <el-form :inline="true" size="mini" @keyup.enter.native="getDataList()" :model="dataForm"
+                <el-form :inline="true" size="mini" @keyup.enter.native="search" :model="dataForm"
                          ref="dataForm">
                     <el-form-item prop="name">
                         <el-input

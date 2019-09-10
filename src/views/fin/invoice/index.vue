@@ -5,7 +5,7 @@
                 <template slot="title">
                     查询条件<i class="el-icon-d-arrow-right"/>
                 </template>
-                <el-form :inline="true" size="mini" @keyup.enter.native="getDataList()" :model="dataForm"
+                <el-form :inline="true" size="mini" @keyup.enter.native="search" :model="dataForm"
                          ref="dataForm">
                     <el-form-item prop="code">
                         <el-input
@@ -54,7 +54,6 @@
                 border
                 resizable
                 highlight-current-row
-                height="390px"
                 remote-filter
                 size="mini"
                 ref="pGrid"
@@ -144,7 +143,7 @@ export default {
         }
       },
       columns: [
-        { type: 'index', width: 30, fixed: 'left' },
+        { type: 'index', width: 30 },
         {
           title: '编号',
           field: 'code',

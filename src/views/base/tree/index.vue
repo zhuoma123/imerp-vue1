@@ -131,7 +131,7 @@ export default {
         }
       },
       columns: [
-{ type: 'index', width: 30, fixed: 'left' },
+{ type: 'index', width: 30 },
         {
           title: '类型',
           field: 'type',

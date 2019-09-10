@@ -9,16 +9,14 @@
                     <el-form-item prop="name">
                         <el-input
                                 v-model="dataForm.name"
-                                :data-operate="dataFormOp.username"
-                                :placeholder="$t('views.public.user.username')"
+                                :placeholder=data.form.input.name
                                 clearable
                         />
                     </el-form-item>
                     <el-form-item prop="mobile">
                         <el-input
-                                v-model="dataForm.mobile"
-                                :data-operate="dataFormOp.mobile"
-                                :placeholder="$t('views.public.user.mobile')"
+                                v-model="dataForm.tel"
+                                :placeholder=data.form.input.tel
                                 clearable
                         />
                     </el-form-item>
@@ -99,12 +97,14 @@
 <script>
 import mixinViewModule from '@/mixins/view-module'
 import AddOrUpdate from './add-or-update'
+import data from './data'
 
 export default {
   name: 'cust',
   mixins: [mixinViewModule],
   data: function () {
     return {
+      data: data,
       mixinViewModuleOptions: {
         getDataListURL: '/base/cust/list',
         getDataListIsPage: true,
@@ -141,7 +141,7 @@ export default {
         VENDOR: '供应商'
       },
       columns: [
-{ type: 'index', width: 30, fixed: 'left' },
+        { type: 'index', width: 30 },
         {
           title: '客户 | 供应商',
           field: 'custVendor',

@@ -77,6 +77,7 @@
     "text-loader": "0.0.1",
     "vue-cli-plugin-i18n": "^0.6.0",
     "vue-template-compiler": "^2.6.10",
+    "webpack-dev-server": "^3.7.2",
     "webpack-theme-color-replacer": "^1.2.17"
   }
 }

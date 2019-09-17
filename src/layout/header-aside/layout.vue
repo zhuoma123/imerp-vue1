@@ -338,6 +338,10 @@ export default {
     -webkit-box-shadow: inset 0 0 0 1px #409eff !important;
     box-shadow: inset 0 0 0 1px #409eff !important;
 }
+/*商品下拉框宽度*/
+.prod-popper {
+    width: auto !important;
+}
 
 /*弹出框*/
 .abow_dialog {

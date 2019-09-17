@@ -179,14 +179,12 @@ export default {
 </script>
 
 <style lang="scss">
-
-    .el-dialog__footer {
-         margin-right: 7px;
-     }
+  .tb-matthew{
     div.el-radio-group {
         width: 200px
     }
     input.el-input__inner{
         width: 200px;
     }
+  }
 </style>

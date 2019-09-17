@@ -296,10 +296,6 @@ export default {
   font-size: 12px;
 }
 
-.el-dialog__body {
-  padding: 0px 20px;
-}
-
 .el-form-item__error {
   position: relative;
 }

@@ -1,8 +1,8 @@
 <template>
     <el-dialog :visible.sync="visible" :title="isNew ? $t('views.public.add') : $t('views.public.update')"
-               :close-on-click-modal="false" :close-on-press-escape="false" width="700px">
+               :close-on-click-modal="false" :close-on-press-escape="false"  width="55%">
         <el-form :model="dataForm" :rules="rules" ref="dataForm" label-width="120px" :inline="true" labelSuffix="："
-                 size="mini">
+                 size="mini" class="tb-matthew">
             <el-form-item prop="id" v-show="false" />
             <el-form-item label="顾客" prop="custId">
                 <im-selector
@@ -137,24 +137,14 @@ export default {
 </script>
 
 <style lang="scss">
-    .mod-sys__user {
-        .dept-list {
-            .el-input__inner,
-            .el-input__suffix {
-                cursor: pointer;
+    .tb-matthew{
+        .el-form-item{
+            input.el-input__inner{
+                width: 200px;
+            }
+            div.el-radio-group{
+                width: 200px;
             }
         }
-
-        .role-list {
-            .el-select {
-                width: 100%;
-            }
-        }
-    }
-    input.el-input__inner{
-        width: 200px;
-    }
-    div.el-radio-group{
-        width: 200px;
     }
 </style>

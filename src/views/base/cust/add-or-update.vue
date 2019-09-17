@@ -1,9 +1,9 @@
 <template>
     <el-dialog :visible.sync="visible" :title="isNew ? $t('views.public.add') : $t('views.public.update')"
-               :close-on-click-modal="false" :close-on-press-escape="false" width="750px">
+               :close-on-click-modal="false" :close-on-press-escape="false" width="55%">
         <el-form :model="dataForm" :rules="rules" ref="dataForm"
                  label-width="120px" :inline="true" labelSuffix="："
-                 size="mini">
+                 size="mini" class="tb-matthew">
             <el-form-item prop="id" v-show="false" />
             <el-form-item prop="custVendor" :label="data.form.input.custVendor">
                 <el-radio-group v-model="dataForm.custVendor">
@@ -179,20 +179,7 @@ export default {
 </script>
 
 <style lang="scss">
-    .mod-sys__user {
-        .dept-list {
-            .el-input__inner,
-            .el-input__suffix {
-                cursor: pointer;
-            }
-        }
 
-        .role-list {
-            .el-select {
-                width: 100%;
-            }
-        }
-    }
     .el-dialog__footer {
          margin-right: 7px;
      }

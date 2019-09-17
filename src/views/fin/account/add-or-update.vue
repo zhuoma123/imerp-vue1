@@ -1,10 +1,10 @@
 <template>
     <div>
         <el-dialog :visible.sync="visible" :title="isNew ? '新增' : '修改'"
-                   :close-on-click-modal="false" :close-on-press-escape="false" width="30%">
+                   :close-on-click-modal="false" :close-on-press-escape="false" width="30%" class="dlg-matthew">
             <el-form :model="dataForm" :rules="rules" ref="dataForm"
                      label-width="110px" labelSuffix="："
-                     size="mini" class="ddl-matthew">
+                     size="mini" class="tb-matthew">
                 <!--dataForm must be showed all-->
                 <el-form-item prop="id" v-show="false" />
                 <el-form-item prop="name" :label="data.form.account.name" >
@@ -95,12 +95,14 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss">
      >-child{
             margin-bottom: 8px;
         }
-    .el-dialog__footer{
-        margin-right: 60px;
-    }
+     .dlg-matthew{
+         .el-dialog__footer {
+             margin-right: 60px;
+         }
+     }
 
 </style>

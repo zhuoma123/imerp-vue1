@@ -1,7 +1,7 @@
 <template>
     <div>
         <el-dialog :visible.sync="visible" :title="isNew ? $t('views.public.add') : $t('views.public.update')"
-                   :close-on-click-modal="false" :close-on-press-escape="false" width="750px">
+                   :close-on-click-modal="false" :close-on-press-escape="false" width="750px" class="dlg-matthew">
             <el-form :model="dataForm" :rules="rules" ref="dataForm"
                      label-width="120px" :inline="true" labelSuffix="："
                      size="mini">
@@ -127,7 +127,9 @@ export default {
 </script>
 
 <style lang="scss">
-    .el-dialog__footer {
-        margin-right: 7px;
+    .dlg-matthew{
+        .el-dialog__footer {
+            margin-right: 7px;
+        }
     }
 </style>

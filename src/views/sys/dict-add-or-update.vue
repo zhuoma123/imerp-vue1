@@ -1,9 +1,9 @@
 <template>
     <div>
         <el-dialog :visible.sync="visible" :title="isNew ? $t('views.public.add') : $t('views.public.update')"
-                   :close-on-click-modal="false" :close-on-press-escape="false">
+                   :close-on-click-modal="false" :close-on-press-escape="false"  width="55%">
             <el-form :model="dataForm" :rules="rules" :inline="true" ref="dataForm" label-width="105px" labelSuffix="："
-                     size="mini">
+                     size="mini" class="tb-matthew">
                 <el-form-item prop="id" v-show="false"/>
                 <el-form-item prop="editFlag" v-show="false"/>
                 <el-form-item prop="deleteFlag" v-show="false"/>
@@ -125,10 +125,14 @@ export default {
 </script>
 
 <style lang="scss">
-  input.el-input__inner{
-    width: 200px;
-  }
-  div.el-radio-group{
-    width: 200px;
-  }
+    .tb-matthew{
+        .el-form-item{
+            input.el-input__inner{
+                width: 200px;
+            }
+            div.el-radio-group{
+                width: 200px;
+            }
+        }
+    }
 </style>

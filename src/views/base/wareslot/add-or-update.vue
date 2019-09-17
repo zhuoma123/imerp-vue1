@@ -1,9 +1,9 @@
 <template>
     <el-dialog :visible.sync="visible" :title="isNew ? $t('views.public.add') : $t('views.public.update')"
-               :close-on-click-modal="false" :close-on-press-escape="false" width="400px">
+               :close-on-click-modal="false" :close-on-press-escape="false" width="400px" class="dlg-matthew">
         <el-form :model="dataForm" :rules="rules" ref="dataForm"
                  label-width="120px" labelSuffix="："
-                 size="mini">
+                 size="mini" class="tb-matthew">
             <el-form-item prop="id" v-show="false" />
             <el-form-item prop="warehouseId" :label="data.form.input.warehouse">
                 <im-selector
@@ -90,24 +90,16 @@ export default {
 </script>
 
 <style lang="scss">
-    .mod-sys__user {
-        .dept-list {
-            .el-input__inner,
-            .el-input__suffix {
-                cursor: pointer;
-            }
-        }
-
-        .role-list {
-            .el-select {
-                width: 100%;
+    .tb-matthew{
+        .el-form-item{
+            input.el-input__inner{
+                width: 200px;
             }
         }
     }
-    input.el-input__inner{
-        width: 200px;
-    }
-    .el-dialog__footer {
-        margin-right: 38px;
+    .dlg-matthew{
+        .el-dialog__footer {
+            margin-right: 38px;
+        }
     }
 </style>

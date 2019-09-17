@@ -4,7 +4,7 @@
                    :close-on-click-modal="false" :close-on-press-escape="false" width="55%">
             <el-form :model="dataForm" :rules="rules" ref="dataForm"
                      label-width="110px" :inline="true" labelSuffix="："
-                     size="mini" class="ddl-matthew">
+                     size="mini" class="tb-matthew">
                 <!--dataForm must be showed all-->
                 <el-form-item prop="id" v-show="false" />
                 <el-form-item prop="name" :label="data.form.invoice.name" >
@@ -153,9 +153,5 @@ export default {
 }
 </script>
 
-<style>
-    input.el-input__inner{
-            margin-bottom: 5px;
-        }
-
+<style lang="scss">
 </style>

@@ -3,7 +3,7 @@
                :close-on-click-modal="false" :close-on-press-escape="false" width="388px">
         <el-form :model="dataForm" :rules="rules" ref="dataForm"
                  label-width="120px" labelSuffix="："
-                 size="mini">
+                 size="mini" class="tb-matthew">
             <el-form-item prop="id" v-show="false"/>
             <el-form-item prop="productId" :label="data.form.input.productId">
                 <im-selector
@@ -115,11 +115,15 @@ export default {
 </script>
 
 <style lang="scss">
-    input.el-input__inner{
-        width: 200px;
-    }
-    div.el-radio-group{
-        width: 200px;
+    .tb-matthew{
+        .el-form-item{
+            input.el-input__inner{
+                width: 200px;
+            }
+            div.el-radio-group{
+                width: 200px;
+            }
+        }
     }
     .el-dialog__footer {
         margin-right: 20px;

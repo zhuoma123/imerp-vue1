@@ -128,7 +128,7 @@ export default {
           align: 'center',
           editRender: {
             name: 'ElAutocomplete',
-            props: { fetchSuggestions: this.prodSeach, triggerOnFocus: false },
+            props: { fetchSuggestions: this.prodSeach, triggerOnFocus: false, popperClass:'prod-popper' },
             events: { select: this.handleProcSelect }
           },
           footerRender: function (column, data) {

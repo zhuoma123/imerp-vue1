@@ -75,7 +75,7 @@ export default {
       mixinViewModuleOptions: {
         getDataListURL: '/sys/user/list',
         getDataListIsPage: true,
-        deleteURL: '/sys/user',
+        deleteURL: '/sys/user/delete',
         deleteIsBatch: true,
         exportURL: '/sys/user/export'
       },
@@ -175,29 +175,41 @@ export default {
         }, { root: true })
       if (row) {
         this.$nextTick(() => {
-          this.$refs.addOrUpdate.dataForm.userId = row.userId;
+          this.$refs.addOrUpdate.dataForm.userId = row.userId
           this.$refs.addOrUpdate.dataForm.currenId = row.currenId
-          this.$refs.addOrUpdate.update(row);
+          this.$refs.addOrUpdate.update(row)
         })
       } else {
         this.$nextTick(() => {
           this.$refs.addOrUpdate.dataForm.currenId = user.id
-          this.$refs.addOrUpdate.init();
+          this.$refs.addOrUpdate.init()
         })
       }
     },
     //修改密码
-    updatePasswordData(row){
-      this.updatePasswordVisible = true;
+    async updatePasswordData(row){
+      this.updatePasswordVisible = true
+      const user = await store.dispatch('d2admin/db/get',{
+        dbName: 'sys',
+        path: 'user.info',
+        defaultValue: {},
+        user: true
+        }, { root: true })
       this.$nextTick(() => {
-        this.$refs.updatePassword.dataForm.userId = row.userId;
-        this.$refs.updatePassword.updatepass();
+        debugger
+        if(user.superUser===1){
+          this.$refs.updatePassword.dataForm.password = row.password
+          this.$refs.updatePassword.dataForm.superUser = user.superUser
+        }
+        this.$refs.updatePassword.dataForm.userId = row.userId
+        this.$refs.updatePassword.updatepass()
       })
       
 
     },
      // 删除
     deleteHandleSetter (index) {
+      debugger
       let data
       if (this.mixinViewModuleOptions.deleteIsBatch && this.dataListSelections.length > 0) {
         data = this.dataListSelections.map(item => item[this.mixinViewModuleOptions.deleteIsBatchKey])

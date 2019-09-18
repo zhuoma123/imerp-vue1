@@ -157,8 +157,8 @@ export default {
             duration: 500,
             onClose: () => {
               this.visible = false
-              this.search()
-              //this.$emit('refreshDataList')
+              //this.search()
+              this.$emit('refreshDataList')
             }
           })
         }).catch(() => {

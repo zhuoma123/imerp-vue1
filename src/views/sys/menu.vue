@@ -52,6 +52,11 @@
           <i :class="'fa fa-' + row.icon"/>
         </template>
       </vxe-table-column>
+      <vxe-table-column field="orderNum" title="排序" align="center" width=50>
+        <template v-slot="{ row }">
+          <span v-html="row.orderNum"></span>
+        </template>
+      </vxe-table-column>
       <vxe-table-column title="操作" align="center">
         <template v-slot="{ row }">
           <el-button size="mini" @click="addOrUpdateData(row)" type="primary">修改</el-button>

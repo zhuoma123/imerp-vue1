@@ -65,9 +65,9 @@
 				           enablestatus='SENDED' type="warning" size="mini" icon="fa fa-undo"
 				           v-if="$hasPermission('pur:poheader:rollback')" @click="rollbackHandle($refs.pGrid)">撤回
 				</el-button>
-				<el-button type="info" size="mini" icon="el-icon-printer" v-if="$hasPermission('inv:transferbill:print')">打印
+				<el-button type="info" size="mini" icon="el-icon-printer">打印
 				</el-button>
-				<el-button type="info" size="mini" icon="fa fa-file-excel-o" v-if="$hasPermission('inv:transferbill:export')"
+				<el-button type="info" size="mini" icon="fa fa-file-excel-o"
 				           @click="$refs.pGrid.exportCsv()"> 导出
 				</el-button>
 			</template>
@@ -149,10 +149,9 @@ export default {
         },
         separate1: separate,
         transferDate: {
-          type: 'cust',
+          type: 'date',
           label: '调拨日期',
           colspan: 2,
-          name: 'el-date-picker',
           props: {
             type: 'daterange',
             rangeSeparator: '至',

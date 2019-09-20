@@ -15,11 +15,14 @@
                 <el-form-item prop="code" :label="data.form.subject.code">
                     <el-input v-model="dataForm.code" :placeholder="data.form.subject.code"/>
                 </el-form-item>
-                <el-form-item prop="subjectType" :label="data.form.subject.subjectType">
-                    <el-input v-model="dataForm.subjectType" :placeholder="data.form.subject.subjectType"/>
-                </el-form-item>
                 <el-form-item prop="category" :label="data.form.subject.category">
-                    <el-input v-model="dataForm.category" :placeholder="data.form.subject.category"/>
+                    <im-selector
+                            placeholder="请选择科目类型"
+                            v-model="dataForm.category"
+                            :mapModel.sync="dataForm"
+                            mapKeyVal="categoryName:category"
+                            dataType="biz.subjectCat" style="width: 200px">
+                    </im-selector>
                 </el-form-item>
                 <el-form-item prop="subjectLevel" :label="data.form.subject.subjectLevel">
                     <el-input v-model="dataForm.subjectLevel" :placeholder="data.form.subject.subjectLevel"/>

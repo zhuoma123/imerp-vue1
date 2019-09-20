@@ -7,7 +7,7 @@
             <el-form-item prop="id" v-show="false" />
             <el-form-item prop="custVendor" :label="data.form.input.custVendor">
                 <el-radio-group v-model="dataForm.custVendor">
-                    <el-radio label='CUST'>顾客</el-radio>
+                    <el-radio label='CUST'>客户</el-radio>
                     <el-radio label='VENDOR'>供应商</el-radio>
                 </el-radio-group>
             </el-form-item>
@@ -18,7 +18,20 @@
                 <el-input v-model="dataForm.shortName" :placeholder="data.form.input.shortName"/>
             </el-form-item>
             <el-form-item prop="type" :label="data.form.input.type">
-                <el-input v-model="dataForm.type" :placeholder="data.form.input.type"/>
+                <im-selector v-show="this.dataForm.custVendor==='CUST'"
+                        placeholder="请选择客户类型"
+                        v-model="dataForm.type"
+                        :mapModel.sync="dataForm"
+                        mapKeyVal="tName:type"
+                        dataType="biz.custType" style="width: 200px">
+                </im-selector>
+                <im-selector  v-show="this.dataForm.custVendor==='VENDOR'"
+                        placeholder="请选择供应商类型"
+                        v-model="dataForm.type"
+                        :mapModel.sync="dataForm"
+                        mapKeyVal="tName:type"
+                        dataType="biz.vendorType" style="width: 200px">
+                </im-selector>
             </el-form-item>
             <el-form-item prop="tel" :label="data.form.input.tel">
                 <el-input v-model="dataForm.tel" :placeholder="data.form.input.tel"/>

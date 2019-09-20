@@ -102,14 +102,6 @@
                         @click="updateHandle($refs.pGrid)"
                 >修改
                 </el-button>
-                <el-button
-                        ref="btnDelete"
-                        type="danger"
-                        size="mini"
-                        icon="el-icon-delete"
-                        @click="deleteHandleSetter($refs.pGrid)"
-                >删除
-                </el-button>
             </template>
         </vxe-grid>
         <!-- 分页 -->
@@ -120,8 +112,8 @@
                 :page-size="limit"
                 :total="total"
                 layout="total, sizes, prev, pager, next, jumper"
-                @size-change="pageSizeChangeHandle"
-                @current-change="pageCurrentChangeHandle"
+                @size-change="val => pageSizeChangeHandle(val, 'vxe')"
+                @current-change="val => pageCurrentChangeHandle(val, 'vxe')"
         ></el-pagination>
         <!-- 弹窗, 新增 / 修改 -->
         <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="search"/>

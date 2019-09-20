@@ -27,6 +27,7 @@
 			ref="sGrid"
 			:toolbar="toolbar"
 			:proxy-config="tableProxy"
+			:edit-rules="validRules"
 			:columns="tableColumn"
 			:select-config="{reserve: true}"
 			:mouse-config="{selected: true}"
@@ -81,24 +82,24 @@ export default {
         fromWarehouseId: { type: 'cust',
           label: '调出仓',
           ruletype: 'integer',
-          ruletype: 'integer',
           name: 'im-selector',
           props: {
             mapKeyVal: 'fromWarehouseCode:fromWarehouseId',
             dataType: 'biz.warehouse',
             clearable: true
-          }
+          },
+	        required: true
         },
         toWarehouseId: { type: 'cust',
           label: '调入仓',
-          ruletype: 'integer',
           ruletype: 'integer',
           name: 'im-selector',
           props: {
             mapKeyVal: 'toWarehouseCode:toWarehouseId',
             dataType: 'biz.warehouse',
             clearable: true
-          }
+          },
+	        required: true
         },
         pic: { type: 'cust',
           label: '负责人',
@@ -112,20 +113,18 @@ export default {
         separate1: separate,
         remark: { type: 'string', label: '备注', colspan: 4 }
       },
-      dataRule: {
-        fromWarehouseId: [
-          { required: true, message: '调出仓不能为空', trigger: 'blur' }
-        ],
-        toWarehouseId: [
-          { required: true, message: '调入仓不能为空', trigger: 'blur' }
-        ],
-        pic: [
-          { required: true, message: '负责人不能为空', trigger: 'blur' }
-        ]
-      },
       tableProxy: {
         autoLoad: false
       },
+	    validRules: {
+		    productCode: [
+			    { required: true, message: '物料必填' }
+		    ],
+		    orderQty: [
+			    { required: true, message: '调拨数量必填'},
+			    { type:"number",message: '请输入数字'}
+		    ]
+	    },
       tableColumn: [
         { type: 'selection', width: 30, align: 'center' },
         { type: 'index', width: 30, align: 'center' },

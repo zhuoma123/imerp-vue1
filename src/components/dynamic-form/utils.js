@@ -36,7 +36,7 @@ export function getLabelWidth (descriptors, fontSize) {
       }
     }
   }
-  return `${maxLen * fontSize + 35}px` // add 30px for required char '*'
+  return `${maxLen * fontSize + 30}px` // add 30px for required char '*'
 }
 
 /**

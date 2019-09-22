@@ -44,8 +44,8 @@
         form-readonly
         v-if="$hasPermission('inv:inoutbill:save')"
         @click="e => cellDblClick({row: $refs.pGrid.getCurrentRow()}, e)">拣货</el-button>
-        <el-button type="info" size="mini" icon="el-icon-printer" v-if="$hasPermission('inv:inoutbill:print')" >打印</el-button>
-        <el-button type="info" size="mini" icon="fa fa-file-excel-o" v-if="$hasPermission('inv:inoutbill:export')" @click="$refs.pGrid.exportCsv()">  导出</el-button>
+        <el-button type="info" size="mini" icon="el-icon-printer">打印</el-button>
+        <el-button type="info" size="mini" icon="fa fa-file-excel-o" @click="$refs.pGrid.exportCsv()">  导出</el-button>
       </template>
     </vxe-grid>
 

@@ -296,10 +296,6 @@ export default {
   font-size: 12px;
 }
 
-.el-dialog__body {
-  padding: 0px 20px;
-}
-
 .el-form-item__error {
   position: relative;
 }
@@ -337,6 +333,10 @@ export default {
 .vxe-table .vxe-body--column.col--selected:not(.col--checked) {
     -webkit-box-shadow: inset 0 0 0 1px #409eff !important;
     box-shadow: inset 0 0 0 1px #409eff !important;
+}
+/*商品下拉框宽度*/
+.prod-popper {
+    width: auto !important;
 }
 
 /*弹出框*/

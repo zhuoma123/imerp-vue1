@@ -27,6 +27,7 @@
 			ref="sGrid"
 			:toolbar="toolbar"
 			:proxy-config="tableProxy"
+			:edit-rules="validRules"
 			:columns="tableColumn"
 			:select-config="{reserve: true}"
 			:mouse-config="{selected: true}"
@@ -93,8 +94,9 @@ export default {
           props: {
             mapKeyVal: 'vendorName:vendorId',
             dataType: 'biz.vendor',
-            clearable: true
-          }
+            clearable: true,
+          },
+	        required: true
         },
         agentId: {
           type: 'cust',
@@ -104,7 +106,8 @@ export default {
             mapKeyVal: 'agentName:agentId',
             dataType: 'biz.employee',
             clearable: true
-          }
+          },
+	        required: true
         },
         separate1: separate,
         contactName: {
@@ -129,7 +132,8 @@ export default {
             mapKeyVal: 'warehouseCode:warehouseId',
             dataType: 'biz.warehouse',
             clearable: true
-          }
+          },
+	        required: true
         },
         separate2: separate,
         contactPhone: {
@@ -141,17 +145,22 @@ export default {
         },
         remark: { type: 'string', label: '备注', colspan: 2 }
       },
-      dataRule: {
-        vendorId: [
-          { required: true, message: '供应商不能为空', trigger: 'blur' }
-        ],
-        agentId: [
-          { required: true, message: '采购员不能为空', trigger: 'blur' }
-        ]
-      },
       tableProxy: {
         autoLoad: false
       },
+	    validRules: {
+		    productCode: [
+			    { required: true, message: '物料必填' }
+		    ],
+		    orderQty: [
+			    { required: true, message: '下单数必填'},
+			    { type:"number",message: '请输入数字'}
+		    ],
+		    costPrice: [
+			    { required: true, message: '采购价必填' },
+			    { type:"number",message: '请输入数字'}
+		    ]
+	    },
       tableColumn: [
         { type: 'selection', width: 30, align: 'center' },
         { type: 'index', width: 30, align: 'center' },
@@ -162,8 +171,9 @@ export default {
           align: 'center',
           editRender: {
             name: 'ElAutocomplete',
-            props: { fetchSuggestions: this.prodSeach, triggerOnFocus: false },
-            events: { select: this.handleProcSelect }
+            props: { fetchSuggestions: this.prodSeach, triggerOnFocus: false, popperClass:'prod-popper' },
+            events: { select: this.handleProcSelect },
+	          autoselect: true
           },
           footerRender: function (column, data) {
             return '汇总'
@@ -175,6 +185,12 @@ export default {
           sortable: true,
           align: 'center'
         },
+	      {
+		      title: '物料描述',
+		      field: 'description',
+		      sortable: true,
+		      align: 'center'
+	      },
         {
           title: '下单数',
           field: 'orderQty',

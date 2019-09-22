@@ -27,6 +27,7 @@
 	    ref="sGrid"
 	    :toolbar="toolbar"
 	    :proxy-config="tableProxy"
+	    :edit-rules="validRules"
 	    :columns="tableColumn"
 	    :select-config="{reserve: true}"
 	    :mouse-config="{selected: true}"
@@ -118,6 +119,15 @@ export default {
       tableProxy: {
         autoLoad: false
       },
+	    validRules: {
+		    productCode: [
+			    { required: true, message: '物料必填' }
+		    ],
+		    quantityNew: [
+			    { required: true, message: '盘点数量必填'},
+			    { type:"number",message: '请输入数字'}
+		    ]
+	    },
       tableColumn: [
         { type: 'selection', width: 30, align: 'center' },
         { type: 'index', width: 30, align: 'center' },
@@ -128,7 +138,7 @@ export default {
           align: 'center',
           editRender: {
             name: 'ElAutocomplete',
-            props: { fetchSuggestions: this.prodSeach, triggerOnFocus: false },
+            props: { fetchSuggestions: this.prodSeach, triggerOnFocus: false, popperClass:'prod-popper' },
             events: { select: this.handleProcSelect }
           },
           footerRender: function (column, data) {

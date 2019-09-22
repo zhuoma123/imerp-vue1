@@ -51,19 +51,19 @@
 				</el-button>
 				<el-button ref="btnStatusAutoPick"
 				           enablestatus='NEW' type="success" size="mini" icon="el-icon-check"
-				           v-if="$hasPermission('pur:poreturnheader:submit')" @click="submitHandle($refs.pGrid,true)">自动入库
+				           v-if="$hasPermission('pur:poreturnheader:submit')" @click="submitHandle($refs.pGrid,true)">自动出库
 				</el-button>
         <el-button ref="btnStatusPick"
                    enablestatus='NEW' type="success" size="mini" icon="el-icon-check"
-                   v-if="$hasPermission('pur:poreturnheader:submit')" @click="submitHandle($refs.pGrid,false)">人工入库
+                   v-if="$hasPermission('pur:poreturnheader:submit')" @click="submitHandle($refs.pGrid,false)">人工出库
         </el-button>
 				<el-button ref="btnStatusRollback"
 				           enablestatus='SENDED' type="warning" size="mini" icon="fa fa-undo"
 				           v-if="$hasPermission('pur:poheader:rollback')" @click="rollbackHandle($refs.pGrid)">撤回
 				</el-button>
-				<el-button type="info" size="mini" icon="el-icon-printer" v-if="$hasPermission('pur:poreturnheader:print')">打印
+				<el-button type="info" size="mini" icon="el-icon-printer">打印
 				</el-button>
-				<el-button type="info" size="mini" icon="fa fa-file-excel-o" v-if="$hasPermission('pur:poreturnheader:export')"
+				<el-button type="info" size="mini" icon="fa fa-file-excel-o"
 				           @click="$refs.pGrid.exportCsv()"> 导出
 				</el-button>
 			</template>
@@ -147,6 +147,7 @@ export default {
         warehouseId: {
           type: 'cust',
           label: '仓库',
+	        ruletype: 'integer',
           name: 'im-selector',
           props: {
             mapKeyVal: 'warehouseCode:warehouseId',
@@ -155,10 +156,9 @@ export default {
           }
         },
         orderDate: {
-          type: 'cust',
+          type: 'date',
           label: '采购退货日期',
           colspan: 2,
-          name: 'el-date-picker',
           props: {
             type: 'daterange',
             rangeSeparator: '至',

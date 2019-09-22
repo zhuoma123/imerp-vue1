@@ -7,9 +7,7 @@
       flex-box="0"
       flex="dir:top main:center cross:center"
       @click.self="handlePanelClick">
-      <d2-icon-svg
-        class="panel-search__logo"
-        name="d2-admin-text"/>
+      <img :src="`${$baseUrl}image/theme/${themeActiveSetting.name}/logo/all.png`" />
       <el-autocomplete
         class="panel-search__input"
         ref="input"
@@ -49,7 +47,7 @@
 
 <script>
 import Fuse from 'fuse.js'
-import { mapState } from 'vuex'
+import { mapState, mapGetters, mapActions } from 'vuex'
 import mixin from '../mixin/menu'
 export default {
   mixins: [
@@ -65,6 +63,9 @@ export default {
     }
   },
   computed: {
+    ...mapGetters('d2admin', {
+      themeActiveSetting: 'theme/activeSetting'
+    }),
     ...mapState('d2admin/search', [
       'hotkey',
       'pool'

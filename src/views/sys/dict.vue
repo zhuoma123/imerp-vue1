@@ -15,6 +15,13 @@
                                 clearable
                         />
                     </el-form-item>
+                    <el-form-item prop="code">
+                        <el-input
+                                v-model="dataForm.code"
+                                :placeholder="data.form.dict.code"
+                                clearable
+                        />
+                    </el-form-item>
                     <el-form-item prop="name">
                         <el-input
                                 v-model="dataForm.name"

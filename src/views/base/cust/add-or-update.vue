@@ -113,6 +113,14 @@ export default {
         callback()
       }
     }
+    let checkMM = (rule, value, callback) => {
+      if (value) {
+        let pattern = /^[a-zA-Z]{1}[-_a-zA-Z0-9]{5,19}$/
+        pattern.test(value) ? callback() : callback(new Error('微信号码格式不正确'))
+      } else {
+        callback()
+      }
+    }
     return {
       mixinViewModuleOptions: {
         getDataListURL: '/base/cust/list',
@@ -157,6 +165,9 @@ export default {
         }],
         email: [{
           validator: checkEmail, trigger: 'blur'
+        }],
+        mm: [{
+          validator: checkMM, trigger: 'blur'
         }]
       }
     }

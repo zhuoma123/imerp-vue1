@@ -8,10 +8,16 @@
                 <el-form :inline="true" size="mini" :model="dataForm"
                          ref="dataForm"
                          @keyup.enter.native="search">
+                    <el-form-item prop="productName">
+                        <el-input
+                                v-model="dataForm.productName"
+                                :placeholder="data.form.input.productName"
+                                clearable
+                        />
+                    </el-form-item>
                     <el-form-item prop="warehouseName">
                         <el-input
                                 v-model="dataForm.warehouseName"
-                                :data-operate="dataFormOp.likeOps"
                                 :placeholder="data.form.input.warehouseName"
                                 clearable
                         />
@@ -157,6 +163,13 @@ export default {
       columns: [
         { type: 'index', width: 30},
         {
+          title: '物料',
+          field: 'productName',
+          sortable: true,
+          align: 'center',
+          width: '20%'
+        },
+        {
           title: '仓库',
           field: 'warehouseName',
           sortable: true,
@@ -181,7 +194,7 @@ export default {
           field: 'updateBy',
           sortable: true,
           align: 'center',
-          width: '19%'
+          width: '15 %'
         },
         {
           title: '修改日期',

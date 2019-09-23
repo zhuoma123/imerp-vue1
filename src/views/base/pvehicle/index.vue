@@ -79,16 +79,6 @@
                 </el-button>
             </template>
         </vxe-grid>
-        <el-pagination
-        slot="footer"
-        :current-page="page"
-        :page-sizes="[10, 20, 50, 100]"
-        :page-size="limit"
-        :total="total"
-        layout="total, sizes, prev, pager, next, jumper"
-        @size-change="val => pageSizeChangeHandle(val, 'vxe')"
-        @current-change="val => pageCurrentChangeHandle(val, 'vxe')"
-></el-pagination>
         <!-- 弹窗, 新增 / 修改 -->
         <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="search"/>
     </d2-container>
@@ -107,7 +97,7 @@ export default {
       data: data,
       mixinViewModuleOptions: {
         getDataListURL: '/base/productvehicle/list',
-        getDataListIsPage: true,
+        getDataListIsPage: false,
         deleteURL: '/base/productvehicle/delete',
         deleteIsBatch: true
       },
@@ -152,47 +142,42 @@ export default {
         }
       },
       columns: [
-        { type: 'index', width: 30 },
+        { type: 'index', width: 60 },
         {
           title: '名称',
           field: 'name',
           sortable: true,
           align: 'center',
-          width: '15%'
+          treeNode: true
         }, {
           title: '拼音码',
           field: 'pinyinCode',
           sortable: true,
-          align: 'center',
-          width: '12%'
+          align: 'center'
         }, {
           title: '五笔码',
           field: 'wbCode',
           sortable: true,
-          align: 'center',
-          width: '13%'
+          align: 'center'
         },
         {
           title: '备注',
           field: 'remark',
           sortable: true,
-          align: 'center',
-          width: '14%'
+          align: 'center'
         },
         {
           title: '修改人',
           field: 'updateBy',
           sortable: true,
-          align: 'center',
-          width: '13%'
+          align: 'center'
         },
         {
           title: '修改日期',
           field: 'updateDate',
           sortable: true,
           align: 'center',
-          formatter: ['toDateString', 'yyyy-MM-dd'],
-          width: '13%'
+          formatter: ['toDateString', 'yyyy-MM-dd']
         }
       ]
     }

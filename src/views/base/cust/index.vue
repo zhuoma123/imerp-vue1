@@ -13,10 +13,24 @@
                                 clearable
                         />
                     </el-form-item>
-                    <el-form-item prop="mobile">
+                    <el-form-item prop="type">
+                        <el-input
+                                v-model="dataForm.type"
+                                :placeholder=data.form.input.type
+                                clearable
+                        />
+                    </el-form-item>
+                    <el-form-item prop="tel">
                         <el-input
                                 v-model="dataForm.tel"
                                 :placeholder=data.form.input.tel
+                                clearable
+                        />
+                    </el-form-item>
+                    <el-form-item prop="pic">
+                        <el-input
+                                v-model="dataForm.pic"
+                                :placeholder=data.form.input.pic
                                 clearable
                         />
                     </el-form-item>
@@ -157,7 +171,7 @@ export default {
           width: '150px'
         },
         {
-          title: '职称',
+          title: '简称',
           field: 'shortName',
           sortable: true,
           align: 'center',

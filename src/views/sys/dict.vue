@@ -15,6 +15,13 @@
                                 clearable
                         />
                     </el-form-item>
+                    <el-form-item prop="code">
+                        <el-input
+                                v-model="dataForm.code"
+                                :placeholder="data.form.dict.code"
+                                clearable
+                        />
+                    </el-form-item>
                     <el-form-item prop="name">
                         <el-input
                                 v-model="dataForm.name"
@@ -88,8 +95,8 @@
                 :page-size="limit"
                 :total="total"
                 layout="total, sizes, prev, pager, next, jumper"
-                @size-change="pageSizeChangeHandle"
-                @current-change="pageCurrentChangeHandle"
+                @size-change="val => pageSizeChangeHandle(val, 'vxe')"
+                @current-change="val => pageCurrentChangeHandle(val, 'vxe')"
         ></el-pagination>
         <!-- 弹窗, 新增 / 修改 -->
         <AddOrUpdate v-if="addOrUpdateVisible" :parentDataList="dataList" ref="addOrUpdate" @refreshDataList="search"/>
@@ -149,7 +156,7 @@ export default {
           align: 'center'
         },
         {
-          title: '序号',
+          title: '扩展属性',
           field: 'extendVal',
           sortable: true,
           align: 'center'

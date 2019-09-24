@@ -186,25 +186,3 @@ export default {
 
 </script>
 
-<style>
-.statistics {
-    padding: 10px;
-    .hiddenRow {
-        display: none;
-    }
-    .searchForm{
-        padding: 10px;
-        span.label{
-            margin-right: 10px;
-        }
-        span.attention{
-            color: #e50021;
-        }
-    }
-  .el-table-column .cell {
-  white-space: pre-line;
-}
-    
-}
-
-</style>

@@ -116,6 +116,33 @@ import mixinViewModule from '@/mixins/view-module'
 export default {
   mixins: [mixinViewModule],
   data () {
+    let codeValidator = (rule, value, callback) => {
+      if (!value) {
+        callback(new Error('内容不能为空'))
+      } else {
+        let form = {}
+        if (this.dataForm.code) {
+          form.code = this.dataForm.code
+        }
+        if (this.dataForm.barCode) {
+          form.barCode = this.dataForm.barCode
+        }
+        if (this.dataForm.id) {
+          form.id = this.dataForm.id
+        }
+        this.$axios({
+          url: '/base/product/checkCode',
+          method: 'post',
+          data: form
+        }).then(res => {
+          if (res) {
+            callback(new Error(res))
+          } else {
+            callback()
+          }
+        })
+      }
+    }
     return {
       mixinViewModuleOptions: {
         getDataListURL: '/base/product/list',
@@ -152,6 +179,12 @@ export default {
       rules: {
         name: [{
           required: true, message: '名称不可缺少'
+        }],
+        code: [{
+          validator: codeValidator, trigger: 'blur'
+        }],
+        barCode: [{
+          validator: codeValidator, trigger: 'blur'
         }]
       }
     }

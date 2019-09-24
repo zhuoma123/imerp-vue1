@@ -5,6 +5,16 @@
                  label-width="120px" labelSuffix="："
                  size="mini" class="tb-matthew">
             <el-form-item prop="id" v-show="false" />
+            <el-form-item prop="productId" :label="data.form.input.productId">
+                <im-selector
+                        placeholder="请选择产品"
+                        v-model="dataForm.productId"
+                        :mapModel.sync="dataForm"
+                        mapKeyVal="productName:productId"
+                        dataType="biz.priceproduct"
+                        style="width: 300px">
+                </im-selector>
+            </el-form-item>
             <el-form-item prop="warehouseId" :label="data.form.input.warehouse">
                 <im-selector
                         placeholder="请选择仓库"
@@ -47,7 +57,8 @@ export default {
         id: undefined,
         warehouseId: undefined,
         name: undefined,
-        remark: undefined
+        remark: undefined,
+        productId: undefined
       },
       rules: {
         name: [{
@@ -55,6 +66,12 @@ export default {
         }],
         code: [{
           required: true, message: '编码不可缺少'
+        }],
+        warehouseId: [{
+          required: true, message: '仓库不可缺少'
+        }],
+        productId: [{
+          required: true, message: '产品不可缺少'
         }]
       }
     }

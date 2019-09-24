@@ -25,6 +25,7 @@
           v-if="$hasPermission('sys:user:save')"
           type="primary"
           @click="addOrUpdateData()"
+          v-show="dataForm.superUser===1?true:false"
         >{{ $t('views.public.add') }}</el-button>
       </el-form-item>
       <el-form-item>
@@ -81,7 +82,8 @@ export default {
       },
       dataForm: {
         username: '',
-        mobile: ''
+        mobile: '',
+        superUser:''
       },
       dataFormOp: {
         username: 'like'
@@ -149,7 +151,7 @@ export default {
                     default: ({ row }) => {
                       return [
                         <el-button size="mini" disabled={row.superUser==1 && row.currenId != 1 ? true:false} onClick={ () => this.addOrUpdateData(row) } type="primary">修改</el-button>,
-                        <el-button size="mini" type="danger" disabled={row.superUser==1 && row.currenId != 1 ? true:false} onClick={ () => this.deleteHandleSetter(row) }>删除</el-button>,
+                        <el-button size="mini" type="danger" disabled={row.superUser==1 && row.currenId != 1 || this.dataForm.superUser !==1 ? true:false} onClick={ () => this.deleteHandleSetter(row) }>删除</el-button>,
                         <el-button size="mini" type="success"  onClick={ () => this.updatePasswordData(row) }>更改密码</el-button>
                       ]
                     }
@@ -162,7 +164,22 @@ export default {
     AddOrUpdate,
     UpdatePassword
   },
+   created() {
+     this.ondo()
+  },
   methods: {
+
+    async ondo(){
+        const user = await store.dispatch('d2admin/db/get',{
+        dbName: 'sys',
+        path: 'user.info',
+        defaultValue: {},
+        user: true
+        }, { root: true })
+        debugger
+        this.dataForm.superUser = user.superUser
+    },
+
     //增改
    async addOrUpdateData (row) {
 

@@ -13,10 +13,24 @@
                                 clearable
                         />
                     </el-form-item>
-                    <el-form-item prop="mobile">
+                    <el-form-item prop="type">
+                        <el-input
+                                v-model="dataForm.type"
+                                :placeholder=data.form.input.type
+                                clearable
+                        />
+                    </el-form-item>
+                    <el-form-item prop="tel">
                         <el-input
                                 v-model="dataForm.tel"
                                 :placeholder=data.form.input.tel
+                                clearable
+                        />
+                    </el-form-item>
+                    <el-form-item prop="pic">
+                        <el-input
+                                v-model="dataForm.pic"
+                                :placeholder=data.form.input.pic
                                 clearable
                         />
                     </el-form-item>
@@ -78,17 +92,16 @@
                 </el-button>
             </template>
         </vxe-grid>
-        <!-- 分页 -->
         <el-pagination
-                slot="footer"
-                :current-page="page"
-                :page-sizes="[10, 20, 50, 100]"
-                :page-size="limit"
-                :total="total"
-                layout="total, sizes, prev, pager, next, jumper"
-                @size-change="pageSizeChangeHandle"
-                @current-change="pageCurrentChangeHandle"
-        ></el-pagination>
+        slot="footer"
+        :current-page="page"
+        :page-sizes="[10, 20, 50, 100]"
+        :page-size="limit"
+        :total="total"
+        layout="total, sizes, prev, pager, next, jumper"
+        @size-change="val => pageSizeChangeHandle(val, 'vxe')"
+        @current-change="val => pageCurrentChangeHandle(val, 'vxe')"
+></el-pagination>
         <!-- 弹窗, 新增 / 修改 -->
         <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="search"/>
     </d2-container>
@@ -158,14 +171,14 @@ export default {
           width: '150px'
         },
         {
-          title: '职称',
+          title: '简称',
           field: 'shortName',
           sortable: true,
           align: 'center',
           width: '150px'
         }, {
           title: '类型',
-          field: 'type',
+          field: 'tName',
           sortable: true,
           align: 'center'
         },

@@ -20,7 +20,7 @@
       ref="pGrid"
       :data="list2"
       :columns="tableColumn"
-      :tree-config="{ children: 'children', expandAll: true, indent: 8}"
+      :tree-config="{ children: 'children', expandAll: false, indent: 8}"
       :edit-config="{trigger: 'click', mode: 'row', showStatus: true}"
       >
     </vxe-grid>
@@ -91,7 +91,16 @@ export default {
           field: 'orderNum',
           sortable: true,
           width: 110,
-          align: 'center'
+          align: 'center',
+          slots: {
+            default: ({ row }) => {
+                      return [
+                        <el-tag type="primary" v-show={row.isTop === 1 && row.currentId !==1 ? false:true} >
+                        {row.orderNum}
+                        </el-tag>
+                      ]
+                    }
+          }
         },
         {
           title: '操作',
@@ -102,8 +111,8 @@ export default {
           slots: {
                     default: ({ row }) => {
                       return [
-                        <el-button size="mini" onClick={ () => this.addOrUpdateData(row) } type="primary">修改</el-button>,
-                        <el-button size="mini" type="danger" onClick={ () => this.deleteHandleSetter(row) }>删除</el-button>
+                        <el-button size="mini" onClick={ () => this.addOrUpdateData(row) } type="primary" v-show={row.isTop === 1 && row.currentId !==1 ? false:true} >修改</el-button>,
+                        <el-button size="mini" type="danger" onClick={ () => this.deleteHandleSetter(row) }  v-show={row.isTop === 1 && row.currentId !==1 ? false:true} >删除</el-button>
                       ]
                     }
                   }

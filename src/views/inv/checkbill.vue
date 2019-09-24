@@ -81,14 +81,12 @@
 					type="info"
 					size="mini"
 					icon="el-icon-printer"
-					v-if="$hasPermission('inv:checkbill:print')"
 				>打印
 				</el-button>
 				<el-button
 					type="info"
 					size="mini"
 					icon="fa fa-file-excel-o"
-					v-if="$hasPermission('inv:checkbill:export')"
 					@click="$refs.pGrid.exportCsv()"
 				>导出
 				</el-button>
@@ -177,10 +175,9 @@ export default {
           }
         },
         checkDate: {
-          type: 'cust',
+          type: 'date',
           label: '盘点日期',
           colspan: 2,
-          name: 'el-date-picker',
           props: {
             type: 'daterange',
             rangeSeparator: '至',

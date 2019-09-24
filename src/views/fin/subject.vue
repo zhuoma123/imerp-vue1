@@ -13,13 +13,6 @@
                                 clearable
                         />
                     </el-form-item>
-                    <el-form-item prop="subjectType">
-                        <el-input
-                                v-model="dataForm.subjectType"
-                                :placeholder="data.form.subject.subjectType"
-                                clearable
-                        />
-                    </el-form-item>
                     <el-form-item prop="category">
                         <el-input
                                 v-model="dataForm.category"
@@ -86,17 +79,6 @@
                 </el-button>
             </template>
         </vxe-grid>
-        <!-- 分页 -->
-        <el-pagination
-                slot="footer"
-                :current-page="page"
-                :page-sizes="[10, 20, 50, 100]"
-                :page-size="limit"
-                :total="total"
-                layout="total, sizes, prev, pager, next, jumper"
-                @size-change="pageSizeChangeHandle"
-                @current-change="pageCurrentChangeHandle"
-        ></el-pagination>
         <!-- 弹窗, 新增 / 修改 -->
         <add-or-update v-if="addOrUpdateVisible" :parentDataList="dataList" ref="addOrUpdate" @refreshDataList="search"/>
     </d2-container>
@@ -126,12 +108,13 @@ export default {
         code: undefined,
         name: undefined,
         subjectType: undefined,
+        subjectName: undefined,
         category: undefined,
         subjectLevel: undefined,
         direction: undefined
       },
       columns: [
-        { type: 'index', width: 30 },
+        { type: 'index', width: 70 },
         {
           title: '名称',
           field: 'name',
@@ -146,15 +129,10 @@ export default {
           sortable: true,
           align: 'center',
           width: '150px'
-        }, {
-          title: '类别',
-          field: 'subjectType',
-          sortable: true,
-          align: 'center'
         },
         {
           title: '科目类别',
-          field: 'category',
+          field: 'categoryName',
           sortable: true,
           align: 'center',
           width: '120px'

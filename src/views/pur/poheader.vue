@@ -61,9 +61,9 @@
 				           enablestatus='SENDED' type="warning" size="mini" icon="fa fa-undo"
 				           v-if="$hasPermission('pur:poheader:rollback')" @click="rollbackHandle($refs.pGrid)">撤回
 				</el-button>
-				<el-button type="info" size="mini" icon="el-icon-printer" v-if="$hasPermission('pur:poheader:print')">打印
+				<el-button type="info" size="mini" icon="el-icon-printer">打印
 				</el-button>
-				<el-button type="info" size="mini" icon="fa fa-file-excel-o" v-if="$hasPermission('pur:poheader:export')"
+				<el-button type="info" size="mini" icon="fa fa-file-excel-o"
 				           @click="$refs.pGrid.exportCsv()"> 导出
 				</el-button>
 			</template>
@@ -147,6 +147,7 @@ export default {
         warehouseId: {
           type: 'cust',
           label: '仓库',
+	        ruletype: 'integer',
           name: 'im-selector',
           props: {
             mapKeyVal: 'warehouseCode:warehouseId',
@@ -155,10 +156,9 @@ export default {
           }
         },
         orderDate: {
-          type: 'cust',
+          type: 'date',
           label: '采购日期',
           colspan: 2,
-          name: 'el-date-picker',
           props: {
             type: 'daterange',
             rangeSeparator: '至',

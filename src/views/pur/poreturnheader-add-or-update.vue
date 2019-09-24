@@ -26,6 +26,7 @@
 			remote-filter
 			ref="sGrid"
 			:toolbar="toolbar"
+			:edit-rules="validRules"
 			:proxy-config="tableProxy"
 			:columns="tableColumn"
 			:select-config="{reserve: true}"
@@ -94,7 +95,8 @@ export default {
             mapKeyVal: 'vendorName:vendorId',
             dataType: 'biz.vendor',
             clearable: true
-          }
+          },
+	        required: true
         },
         agentId: {
           type: 'cust',
@@ -104,7 +106,8 @@ export default {
             mapKeyVal: 'agentName:agentId',
             dataType: 'biz.employee',
             clearable: true
-          }
+          },
+	        required: true
         },
         separate1: separate,
         contactName: {
@@ -130,7 +133,8 @@ export default {
             mapKeyVal: 'warehouseCode:warehouseId',
             dataType: 'biz.warehouse',
             clearable: true
-          }
+          },
+	        required: true
         },
         separate2: separate,
         contactPhone: {
@@ -142,17 +146,22 @@ export default {
         },
         remark: { type: 'string', label: '备注', colspan: 2 }
       },
-      dataRule: {
-        vendorId: [
-          { required: true, message: '供应商不能为空', trigger: 'blur' }
-        ],
-        agentId: [
-          { required: true, message: '负责人不能为空', trigger: 'blur' }
-        ]
-      },
       tableProxy: {
         autoLoad: false
       },
+	    validRules: {
+		    productCode: [
+			    { required: true, message: '物料必填' }
+		    ],
+		    orderQty: [
+			    { required: true, message: '退货数必填'},
+			    { type:"number",message: '请输入数字'}
+		    ],
+		    costPrice: [
+			    { required: true, message: '退货价必填' },
+			    { type:"number",message: '请输入数字'}
+		    ]
+	    },
       tableColumn: [
         { type: 'selection', width: 30, align: 'center' },
         { type: 'index', width: 30, align: 'center' },

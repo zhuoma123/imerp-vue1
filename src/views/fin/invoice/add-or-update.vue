@@ -21,7 +21,14 @@
                     <el-input v-model.number="dataForm.amount" :placeholder="data.form.invoice.amount"/>
                 </el-form-item>
                 <el-form-item prop="ivType" :label="data.form.invoice.ivType" >
-                    <el-input v-model="dataForm.ivType" :placeholder="data.form.invoice.ivType"/>
+                    <im-selector
+                            placeholder="请选择票据分类"
+                            v-model="dataForm.ivType"
+                            :mapModel.sync="dataForm"
+                            mapKeyVal="ivName:ivType"
+                            dataType="biz.ivType"
+                            style="width: 200px">
+                    </im-selector>
                 </el-form-item>
                 <el-form-item prop="summary" :label="data.form.invoice.summary" >
                     <el-input v-model="dataForm.summary" :placeholder="data.form.invoice.summary"/>

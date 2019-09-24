@@ -140,12 +140,6 @@ export default {
           treeNode: true
         },
         {
-          title: '编码',
-          field: 'code',
-          sortable: true,
-          align: 'center'
-        },
-        {
           title: '名称',
           field: 'name',
           sortable: true,

@@ -9,7 +9,7 @@
       :label="findTypeDescriptor(descriptor).label || key"
       :prop="key"
       :map-model="_value"
-      :label-width="descriptor.type === 'slot' ? '0px' : labelWidth"
+      :label-width="descriptor.labelWidth || (descriptor.type === 'slot' ? '10px' : labelWidth)"
       :descriptor="descriptor"
       :language="language"
       :size="size"

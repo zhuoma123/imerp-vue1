@@ -85,17 +85,16 @@
                 </el-button>
             </template>
         </vxe-grid>
-        <!-- 分页 -->
         <el-pagination
-                slot="footer"
-                :current-page="page"
-                :page-sizes="[10, 20, 50, 100]"
-                :page-size="limit"
-                :total="total"
-                layout="total, sizes, prev, pager, next, jumper"
-                @size-change="pageSizeChangeHandle"
-                @current-change="pageCurrentChangeHandle"
-        ></el-pagination>
+        slot="footer"
+        :current-page="page"
+        :page-sizes="[10, 20, 50, 100]"
+        :page-size="limit"
+        :total="total"
+        layout="total, sizes, prev, pager, next, jumper"
+        @size-change="val => pageSizeChangeHandle(val, 'vxe')"
+        @current-change="val => pageCurrentChangeHandle(val, 'vxe')"
+></el-pagination>
         <!-- 弹窗, 新增 / 修改 -->
         <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="search"/>
     </d2-container>
@@ -165,7 +164,8 @@ export default {
           title: '状态',
           field: 'status',
           sortable: true,
-          align: 'center'
+          align: 'center',
+          formatter: this.flagSelector
         }, {
           title: '备注',
           field: 'remark',
@@ -191,6 +191,13 @@ export default {
   methods: {
     handleFormReset () {
       this.$refs['dataForm'].resetFields()
+    },
+    flagSelector ({ cellValue }) {
+      if (cellValue) {
+        return '正常'
+      } else {
+        return '停用'
+      }
     }
   },
   created () {}

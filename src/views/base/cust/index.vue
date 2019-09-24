@@ -156,7 +156,7 @@ export default {
       columns: [
         { type: 'index', width: 30 },
         {
-          title: '客户 | 供应商',
+          title: '单位类型',
           field: 'custVendor',
           sortable: true,
           align: 'center',

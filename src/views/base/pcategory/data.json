@@ -1,6 +1,7 @@
 {
   "form": {
     "input": {
+      "pname": "父级菜单",
       "code": "编号",
       "name": "名称",
       "pinyinCode": "拼音码",

@@ -79,6 +79,16 @@
                 </el-button>
             </template>
         </vxe-grid>
+        <el-pagination
+                slot="footer"
+                :current-page="page"
+                :page-sizes="[10, 20, 50, 100]"
+                :page-size="limit"
+                :total="total"
+                layout="total, sizes, prev, pager, next, jumper"
+                @size-change="val => pageSizeChangeHandle(val, 'vxe')"
+                @current-change="val => pageCurrentChangeHandle(val, 'vxe')"
+        ></el-pagination>
         <!-- 弹窗, 新增 / 修改 -->
         <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="search"/>
     </d2-container>
@@ -97,7 +107,7 @@ export default {
       data: data,
       mixinViewModuleOptions: {
         getDataListURL: '/base/productvehicle/list',
-        getDataListIsPage: false,
+        getDataListIsPage: true,
         deleteURL: '/base/productvehicle/delete',
         deleteIsBatch: true
       },
@@ -147,7 +157,7 @@ export default {
           title: '名称',
           field: 'name',
           sortable: true,
-          align: 'center',
+          align: 'left',
           treeNode: true
         }, {
           title: '拼音码',

@@ -5,23 +5,20 @@
                  size="mini" class="tb-matthew">
             <el-form-item prop="id" v-show="false" />
             <el-form-item prop="name" :label="data.form.input.name">
-                <el-input v-model="dataForm.name" :placeholder="data.form.input.name"/>
+                <im-selector
+                        placeholder="请选择物料名称"
+                        v-model="dataForm.name"
+                        :mapModel.sync="dataForm"
+                        mapKeyVal="name:categoryId"
+                        dataType="biz.pcategory"
+                        style="width: 200px">
+                </im-selector>
             </el-form-item>
             <el-form-item prop="code" :label="data.form.input.code">
                 <el-input v-model="dataForm.code" :placeholder="data.form.input.code"/>
             </el-form-item>
             <el-form-item prop="alisaName" :label="data.form.input.alisaName">
                 <el-input v-model="dataForm.alisaName" :placeholder="data.form.input.alisaName"/>
-            </el-form-item>
-            <el-form-item prop="categoryId" :label="data.form.input.categoryId">
-                <im-selector
-                        placeholder="请选择物料分类"
-                        v-model="dataForm.categoryId"
-                        :mapModel.sync="dataForm"
-                        mapKeyVal="cName:categoryId"
-                        dataType="biz.pcategory"
-                        style="width: 200px">
-                </im-selector>
             </el-form-item>
             <el-form-item prop="vehicleId" :label="data.form.input.vehicleId">
                 <im-selector

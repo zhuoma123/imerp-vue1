@@ -1,7 +1,7 @@
 <template>
   <el-dialog class="abow-dialog" :visible.sync="visible" title="修改密码" :close-on-click-modal="false" :close-on-press-escape="false">
     <el-form :model="dataForm" width="300px" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmitHandle()" label-width="120px" size="mini">
-      <el-form-item prop="password"  label="原来密码" >
+      <el-form-item prop="password"  label="原来密码" v-show="this.dataForm.superUser ===1 ? false:true" >
         <el-input v-model="dataForm.password" type="password" show-password placeholder="原来密码"/>
       </el-form-item>
       <el-form-item prop="newPassword" label="新密码" >
@@ -29,7 +29,8 @@ export default {
         userId: '',
         password: '',
         newPassword: '',
-        comfirmPassword:''
+        comfirmPassword:'',
+        surperUser:undefined
       }
     }
   },
@@ -61,9 +62,11 @@ export default {
       }
       return {
         newPassword: [
+          {  required: true, message:"新密码不能为空！", trigger: 'blur' },
           { validator: validatePassword, trigger: 'blur' }
         ],
         comfirmPassword: [
+          {  required: true, message:"确认新密码不能为空！", trigger: 'blur' },
           { validator: validateComfirmPassword, trigger: 'blur' }
         ],
         password: [
@@ -75,9 +78,8 @@ export default {
   },
   methods: {   
     updatepass(){
-      debugger
       this.visible = true
-      this.dataForm.password=null
+      
       this.dataForm.newPassword=null
       this.dataForm.comfirmPassword=null
       this.$nextTick(() => {

@@ -79,6 +79,8 @@ export default {
         roleName: '',
         deptId: '',
         deptName: '',
+        companyId:'',
+        companyName:'',
         deptIdList:[],
         menuIdList:[]
       }

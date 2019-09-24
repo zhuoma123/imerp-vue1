@@ -104,7 +104,7 @@ export default {
   },
   computed: {
     dataRule () {
-      var validateUsername = (rule, value, callback) => {
+      var validateUsernameAsync = (rule, value, callback) => {
         if(!this.dataForm.userId){
           this.$axios.post('/sys/user/checkusername', { username: value }).then(res => {
               if(res === '') {
@@ -114,7 +114,6 @@ export default {
               }
             })
         }
-         callback()
       }
       var validatePassword = (rule, value, callback) => {
         if (!this.dataForm.userId && !/\S/.test(value)) {
@@ -161,8 +160,8 @@ export default {
       }
       return {
         username: [
-          { required: true, message: this.$t('public.rules.required', { 'name': this.$t('views.public.user.username') }), trigger: 'blur' },
-          { validator: validateUsername, trigger: 'blur' }
+          { required: true, message: "用户帐户不能为空!", trigger: 'blur' },
+          { validator: validateUsernameAsync, trigger: 'blur' }
         ],
         deptName: [
           { required: true, message: this.$t('public.rules.required', { 'name': this.$t('views.public.user.deptName') }), trigger: 'change' }

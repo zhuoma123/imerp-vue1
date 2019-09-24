@@ -37,6 +37,7 @@
       ref="pGrid"                                                       
       :columns="columns"
       :data="dataList"
+      :customs.sync="customColumns"
       :edit-config="{trigger: 'click', mode: 'row', showStatus: true}"
     ></vxe-grid>
     <!-- 分页 -->
@@ -75,6 +76,8 @@ export default {
       dataForm: {
         roleName: ""
       },
+      customColumns: [
+              ],
       dataFormOp: {
         roleName: "like"
       },
@@ -84,6 +87,13 @@ export default {
           field: "roleName",
           sortable: true,
           align: "center"
+        },
+        {
+          title: '公司名称',
+          field: "companyName",
+          sortable: true,
+          align: "center",
+          
         },
         {
           title: '部门名称',
@@ -102,6 +112,7 @@ export default {
           field: 'other',
           width:130,
           sortable: true,
+          align: "center",
           slots: {
                     default: ({ row }) => {
                       return [
@@ -173,6 +184,9 @@ export default {
         }).catch(() => {})
       }).catch(() => {})
     }
+  },
+  created () {
+    
   }
   
  

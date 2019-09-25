@@ -125,6 +125,8 @@ export default {
       this.isNew = !item
       if (item) {
         this.entityModel = Object.assign({}, item)
+      } else {
+        this.entityModel = {}
       }
       this.enableSubmit = submit
       this.visible = true
@@ -675,6 +677,9 @@ export default {
           })
         }
       })
+    },
+    footerSum(column, data) {
+      return XEUtils.sum(data, column.property);
     }
   },
   watch: {

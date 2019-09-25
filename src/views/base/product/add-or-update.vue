@@ -9,7 +9,7 @@
                         placeholder="请选择物料名称"
                         v-model="dataForm.name"
                         :mapModel.sync="dataForm"
-                        mapKeyVal="name:categoryId"
+                        mapKeyVal="name:name"
                         dataType="biz.pcategory"
                         style="width: 200px">
                 </im-selector>
@@ -36,7 +36,7 @@
                         v-model="dataForm.brandId"
                         :mapModel.sync="dataForm"
                         mapKeyVal="bName:brandId"
-                        dataType="biz.pbrand" style="width: 200px">
+                        dataType="bizweak.pbrand" style="width: 200px">
                 </im-selector>
             </el-form-item>
             <el-form-item prop="madeinId" :label="data.form.input.madeinId">
@@ -140,6 +140,28 @@ export default {
         })
       }
     }
+    let nameValidator = (rule, value, callback) => {
+      if (!value) {
+        callback(new Error('内容不能为空'))
+      } else {
+        let form = {}
+        form.name = value
+        if (this.dataForm.id) {
+          form.id = this.dataForm.id
+        }
+        this.$axios({
+          url: '/base/product/checkCode',
+          method: 'post',
+          data: form
+        }).then(res => {
+          if (res) {
+            callback(new Error(res))
+          } else {
+            callback()
+          }
+        })
+      }
+    }
     return {
       mixinViewModuleOptions: {
         getDataListURL: '/base/product/list',
@@ -175,7 +197,7 @@ export default {
       },
       rules: {
         name: [{
-          required: true, message: '名称不可缺少'
+          validator: nameValidator, trigger: 'blur'
         }],
         code: [{
           validator: codeValidator, trigger: 'blur'

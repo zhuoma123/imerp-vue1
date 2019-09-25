@@ -1,7 +1,7 @@
 {
   "form": {
     "input": {
-      "custName": "顾客",
+      "custName": "往来单位",
       "name": "姓名",
       "shortName": "职务",
       "linkman": "首要联系人",

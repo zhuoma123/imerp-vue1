@@ -509,6 +509,13 @@ export default {
         }).catch(() => {})
       }).catch(() => {})
     },
+    deliverData (custId, custName) {
+      this.$nextTick(() => {
+        let dataForm = this.$refs.addOrUpdate.dataForm
+        dataForm.custId = custId
+        dataForm.custName = custName
+      })
+    },
     // 导出
     exportHandle () {
       let params = qs.stringify({
@@ -672,8 +679,10 @@ export default {
   },
   watch: {
     visible: function (newName, oldName) {
+      debugger
       if (newName) {
         this.$nextTick(() => {
+          debugger
           if (this.$refs.sGrid) {
             this.dataList = []
             this.$refs.sGrid.loadData(this.dataList)
@@ -685,7 +694,7 @@ export default {
               this.initSelData()
               this.search(this.entityModel)
             }
-          }else{
+          } else {
             if (this.isNew) {
               this.reset()
             } else {

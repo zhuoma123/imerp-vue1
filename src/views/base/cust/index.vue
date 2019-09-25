@@ -90,6 +90,14 @@
                         @click="deleteHandleSetter($refs.pGrid)"
                 >删除
                 </el-button>
+                <el-button
+                        ref="btnContact"
+                        type="warning"
+                        size="mini"
+                        icon="el-icon-star-off"
+                        @click="addContact($refs.pGrid)"
+                >补充联系人
+                </el-button>
             </template>
         </vxe-grid>
         <el-pagination
@@ -318,6 +326,18 @@ export default {
         return '客户'
       } else {
         return '供应商'
+      }
+    },
+    addContact (grid) {
+      if (!grid.getCurrentRow()) {
+        return this.$message({
+          message: '请选择要要补充信息的记录',
+          type: 'warning'
+        })
+      } else {
+        let id = grid.getCurrentRow().id
+        let name = grid.getCurrentRow().name
+        this.$router.push({ name: 'base-contact', params: { custId: id, custName: name } })
       }
     }
   }

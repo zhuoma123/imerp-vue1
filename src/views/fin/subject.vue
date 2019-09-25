@@ -79,6 +79,15 @@
                 </el-button>
             </template>
         </vxe-grid>
+        <el-pagination
+                slot="footer"
+                :current-page="page"
+                :page-sizes="[10, 20, 50, 100]"
+                :page-size="limit"
+                :total="total"
+                layout="total, sizes, prev, pager, next, jumper"
+                @size-change="val => pageSizeChangeHandle(val, 'vxe')"
+                @current-change="val => pageCurrentChangeHandle(val, 'vxe')"/>
         <!-- 弹窗, 新增 / 修改 -->
         <add-or-update v-if="addOrUpdateVisible" :parentDataList="dataList" ref="addOrUpdate" @refreshDataList="search"/>
     </d2-container>
@@ -97,7 +106,7 @@ export default {
       data: data,
       mixinViewModuleOptions: {
         getDataListURL: '/fin/subject/list',
-        getDataListIsPage: false,
+        getDataListIsPage: true,
         deleteURL: '/fin/subject/delete',
         deleteIsBatch: true
       },

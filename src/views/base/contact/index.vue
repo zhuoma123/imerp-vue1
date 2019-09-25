@@ -121,6 +121,7 @@ export default {
   data () {
     return {
       data: data,
+      pathId: undefined,
       mixinViewModuleOptions: {
         getDataListURL: '/base/custcontact/list',
         getDataListIsPage: true,
@@ -173,7 +174,7 @@ export default {
       columns: [
         { type: 'index', width: 30 },
         {
-          title: '客户',
+          title: '单位',
           field: 'custName',
           sortable: true,
           align: 'center',
@@ -256,6 +257,18 @@ export default {
   methods: {
     handleFormReset () {
       this.$refs['dataForm'].resetFields()
+    }
+  },
+  created () {
+    debugger
+    if (this.$route.params.custId) {
+      this.$nextTick(() => {
+        this.$refs['btnAdd'].$el.click()
+        let custId = this.$route.params.custId
+        let custName = this.$route.params.custName
+        this.deliverData(custId, custName)
+        this.$route.params.custId = undefined
+      })
     }
   }
 }

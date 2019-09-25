@@ -245,8 +245,8 @@ export default {
         ]
       },
       tableColumn: [
-        { type: "selection", width: 50, align: "center" },
-        { type: "index", width: 50, align: "center" },
+        { type: "selection", width: 30, align: "center" }, 
+        { type: "index", width: 40, align: "center" },
         {
           title: "商品",
           field: "productCode",
@@ -298,7 +298,7 @@ export default {
           field: "costPrice",
           sortable: true,
           align: "right",
-          formatter: ["toFixedString", 2],
+          formatter: this.formatterMoney,
           editRender: { name: "input" }
         },
         {
@@ -306,7 +306,7 @@ export default {
           field: "freight",
           sortable: true,
           align: "right",
-          formatter: ["toFixedString", 2],
+          formatter: this.formatterMoney,
           editRender: { name: "input" },
           footerRender: this.footerSum
         },
@@ -314,7 +314,7 @@ export default {
           title: "采购总金额",
           field: "totalPrice",
           align: "right",
-          formatter: ["toFixedString", 2],
+          formatter: this.formatterMoney,
           editPost: function(column, row) {
             var qty = row.orderQty;
             var costPrice = row.costPrice;
@@ -381,7 +381,7 @@ export default {
             if (this.entityModel.status === "SUBMIT") {
               this.entityModel.saveType='pick'
               this.enableSubmit = true;
-              this.pageTitle = "采购单配货";
+              this.pageTitle = "采购单接收";
               this.$refs.dataForm.readOnly(true, [
                 "shipId",
                 "shipType",
@@ -408,8 +408,23 @@ export default {
         this.$refs.sGrid.loadColumn(this.tableColumn)
       });
     },
-    editClosed({row,rowIndex,cell}) {
-      this.calFreight(this.totalFreight)
+    editClosed({row,rowIndex,$rowIndex,column,columnIndex,$columnIndex,cell}) {
+      if(column.property === 'freight'){
+        if(Number(row.freight) > this.totalFreight) {
+          alert('分摊运费不能大于总运费')
+          row.freight = 0
+          return
+        } else {
+          const totalData = this.$refs.sGrid.getTableData().fullData
+          const totalFrei = XEUtils.sum(totalData, 'freight')
+          if(totalFrei > this.totalFreight) {
+            alert('分摊运费之和不能大于总运费')
+            row.freight = 0
+            return
+          }
+        }
+        //this.calFreight(this.totalFreight)
+      }
     },
     calFreight(freight) {
       const totalData = this.$refs.sGrid.getTableData().fullData
@@ -418,10 +433,21 @@ export default {
       if(!freight)freight = 0
       let average =  freight/totalQty | 0
       let mod = freight % totalQty
-      console.log('>>>>', average, mod)
       this.$nextTick(() => {
         for(var i = 0; i < totalData.length ; i++) {
+          if(freight <= 0) {
+            totalData[i].freight = 0;
+            continue;
+          }
           totalData[i].freight = totalData[i].acceptQty * average
+          if(average === 0) {
+            mod = 0
+            if(totalData[i].acceptQty >= freight) {
+               totalData[i].freight = freight;
+            } else {
+              totalData[i].freight = totalData[i].acceptQty;
+            }
+          }
           if(!totalData[i].freight) {
             totalData[i].freight = 0;
             continue;
@@ -429,6 +455,7 @@ export default {
           if(i === totalData.length -1) {
             totalData[i].freight += mod
           }
+          freight -= totalData[i].freight
           this.$refs.sGrid.reloadRow(totalData[i])
         }
         this.$refs.sGrid.updateFooter()
@@ -437,7 +464,7 @@ export default {
   },
   computed: {
     totalFreight() {
-      return this.dataForm.freight
+      return Number(this.dataForm.freight)
     }
   },
   watch: {

@@ -54,7 +54,7 @@
 				           v-if="$hasPermission('pur:poheader:delete')" @click="deleteEntityHandle($refs.pGrid)">删除
 				</el-button>
         <el-button ref="btnStatusPick"
-                   enablestatus='SUBMIT' type="success" size="mini" icon="el-icon-check"
+                   enablestatus='SUBMIT,SENDED' type="success" size="mini" icon="el-icon-check"
                    v-if="$hasPermission('pur:poheader:submit')" 
                    @click="e => cellDblClick({row: $refs.pGrid.getCurrentRow()}, e)">收货
         </el-button>

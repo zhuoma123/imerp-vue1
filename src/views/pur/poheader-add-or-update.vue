@@ -39,9 +39,9 @@
       show-footer
     >
       <template v-slot:buttons>
-        <el-button v-show="enableSubmit && entityModel.status !== 'SUBMIT'" size="mini" icon="el-icon-circle-plus" @click="$refs.sGrid.insert({})">新增</el-button>
+        <el-button v-show="enableSubmit && (entityModel.status !== 'SUBMIT' && entityModel.status !== 'SENDED')" size="mini" icon="el-icon-circle-plus" @click="$refs.sGrid.insert({})">新增</el-button>
         <el-button
-          v-show="enableSubmit && entityModel.status !== 'SUBMIT'" 
+          v-show="enableSubmit &&  (entityModel.status !== 'SUBMIT' && entityModel.status !== 'SENDED')" 
           type="danger"
           size="mini"
           icon="el-icon-delete"
@@ -378,7 +378,7 @@ export default {
           if (this.entityModel.status === "NEW") {
             this.$refs.dataForm.readOnly(false);
           } else {
-            if (this.entityModel.status === "SUBMIT") {
+            if (this.entityModel.status === "SUBMIT" || this.entityModel.status === 'SENDED') {
               this.entityModel.saveType='pick'
               this.enableSubmit = true;
               this.pageTitle = "采购单收货";

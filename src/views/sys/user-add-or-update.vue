@@ -33,7 +33,7 @@
         <el-input v-model="dataForm.mobile" :placeholder="$t('views.public.user.mobile')"/>
       </el-form-item>
       <el-form-item  prop="comPassword" :label="$t('views.public.user.comfirmPassword')" v-show="!this.dataForm.userId?true:false">
-        <el-input v-model="dataForm.comPassword" type="password" show-password autocomplete="off"  :placeholder="$t('views.public.user.comfirmPassword')"/>
+        <el-input v-model="dataForm.comPassword" type="password" show-password  :placeholder="$t('views.public.user.comfirmPassword')"/>
       </el-form-item>
       <el-form-item prop="email" :label="$t('views.public.user.email')">
         <el-input v-model="dataForm.email" :placeholder="$t('views.public.user.email')"/>
@@ -77,6 +77,7 @@ export default {
       visible: false,
       deptList: [],
       deptListVisible: false,
+      fullscreenLoading: false,
       roleList: [],
       roleIdListDefault: [],
       dataForm: {

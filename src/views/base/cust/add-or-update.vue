@@ -6,9 +6,10 @@
                  size="mini" class="tb-matthew">
             <el-form-item prop="id" v-show="false" />
             <el-form-item prop="custVendor" :label="data.form.input.custVendor">
-                <el-radio-group v-model="dataForm.custVendor">
+                <el-radio-group v-model="dataForm.custVendor" style="width: 400px">
                     <el-radio label='CUST'>客户</el-radio>
                     <el-radio label='VENDOR'>供应商</el-radio>
+                    <el-radio label='SUP'>物流公司 </el-radio>
                 </el-radio-group>
             </el-form-item>
             <el-form-item prop="name" :label="data.form.input.name">
@@ -31,6 +32,13 @@
                         :mapModel.sync="dataForm"
                         mapKeyVal="tName:type"
                         dataType="biz.vendorType" style="width: 200px">
+                </im-selector>
+                <im-selector  v-show="this.dataForm.custVendor==='SUP'"
+                              placeholder="请选择物流公司"
+                              v-model="dataForm.type"
+                              :mapModel.sync="dataForm"
+                              mapKeyVal="tName:type"
+                              dataType="biz.supType" style="width: 200px">
                 </im-selector>
             </el-form-item>
             <el-form-item prop="tel" :label="data.form.input.tel">
@@ -78,7 +86,7 @@
         </el-form>
         <template slot="footer">
             <el-button @click="visible = false">{{ $t('views.public.cancel') }}</el-button>
-            <el-button type="primary" @click="dataFormSubmitHandle()">{{ $t('views.public.confirm') }}</el-button>
+            <el-button type="primary" @click="dataFormSubmit">{{ $t('views.public.confirm') }}</el-button>
         </template>
     </el-dialog>
 </template>

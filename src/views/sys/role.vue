@@ -11,7 +11,7 @@
       </el-form-item>
       
       <el-form-item>
-        <el-button @click="getDataList()">{{ $t('views.public.query') }}</el-button>
+        <el-button  icon="el-icon-search" type="primary" @click="getDataList()">{{ $t('views.public.query') }}</el-button>
       </el-form-item>
       <el-form-item>
         <el-button
@@ -110,14 +110,14 @@ export default {
         {
           title: '操作',
           field: 'other',
-          width:130,
+          width:170,
           sortable: true,
           align: "center",
           slots: {
                     default: ({ row }) => {
                       return [
-                        <el-button size="mini" onClick={ () => this.addOrUpdateData(row) } type="primary">修改</el-button>,
-                        <el-button size="mini" type="danger" onClick={ () => this.deleteHandleSetter(row) }>删除</el-button>
+                        <el-button size="mini" icon="el-icon-edit" onClick={ () => this.addOrUpdateData(row) } type="primary">修改</el-button>,
+                        <el-button size="mini" icon="el-icon-delete" type="danger" onClick={ () => this.deleteHandleSetter(row) }>删除</el-button>
                       ]
                     }
                   }

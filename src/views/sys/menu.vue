@@ -57,10 +57,10 @@
           <span v-html="row.orderNum"></span>
         </template>
       </vxe-table-column>
-      <vxe-table-column title="操作" align="center">
+      <vxe-table-column title="操作" align="center" width=170>
         <template v-slot="{ row }">
-          <el-button size="mini" @click="addOrUpdateData(row)" type="primary">修改</el-button>
-          <el-button size="mini" type="danger"
+          <el-button size="mini" icon="el-icon-edit" @click="addOrUpdateData(row)" type="primary">修改</el-button>
+          <el-button size="mini" type="danger" icon="el-icon-delete"
           @click="deleteHandleSetter(row)">删除</el-button>
         </template>
       </vxe-table-column>

@@ -5,23 +5,20 @@
                  size="mini" class="tb-matthew">
             <el-form-item prop="id" v-show="false" />
             <el-form-item prop="name" :label="data.form.input.name">
-                <el-input v-model="dataForm.name" :placeholder="data.form.input.name"/>
+                <im-selector
+                        placeholder="请选择物料名称"
+                        v-model="dataForm.name"
+                        :mapModel.sync="dataForm"
+                        mapKeyVal="name:name"
+                        dataType="biz.pcategory"
+                        style="width: 200px">
+                </im-selector>
             </el-form-item>
             <el-form-item prop="code" :label="data.form.input.code">
                 <el-input v-model="dataForm.code" :placeholder="data.form.input.code"/>
             </el-form-item>
             <el-form-item prop="alisaName" :label="data.form.input.alisaName">
                 <el-input v-model="dataForm.alisaName" :placeholder="data.form.input.alisaName"/>
-            </el-form-item>
-            <el-form-item prop="categoryId" :label="data.form.input.categoryId">
-                <im-selector
-                        placeholder="请选择物料分类"
-                        v-model="dataForm.categoryId"
-                        :mapModel.sync="dataForm"
-                        mapKeyVal="cName:categoryId"
-                        dataType="biz.pcategory"
-                        style="width: 200px">
-                </im-selector>
             </el-form-item>
             <el-form-item prop="vehicleId" :label="data.form.input.vehicleId">
                 <im-selector
@@ -39,7 +36,7 @@
                         v-model="dataForm.brandId"
                         :mapModel.sync="dataForm"
                         mapKeyVal="bName:brandId"
-                        dataType="biz.pbrand" style="width: 200px">
+                        dataType="bizweak.pbrand" style="width: 200px">
                 </im-selector>
             </el-form-item>
             <el-form-item prop="madeinId" :label="data.form.input.madeinId">
@@ -143,6 +140,28 @@ export default {
         })
       }
     }
+    let nameValidator = (rule, value, callback) => {
+      if (!value) {
+        callback(new Error('内容不能为空'))
+      } else {
+        let form = {}
+        form.name = value
+        if (this.dataForm.id) {
+          form.id = this.dataForm.id
+        }
+        this.$axios({
+          url: '/base/product/checkCode',
+          method: 'post',
+          data: form
+        }).then(res => {
+          if (res) {
+            callback(new Error(res))
+          } else {
+            callback()
+          }
+        })
+      }
+    }
     return {
       mixinViewModuleOptions: {
         getDataListURL: '/base/product/list',
@@ -178,7 +197,7 @@ export default {
       },
       rules: {
         name: [{
-          required: true, message: '名称不可缺少'
+          validator: nameValidator, trigger: 'blur'
         }],
         code: [{
           validator: codeValidator, trigger: 'blur'

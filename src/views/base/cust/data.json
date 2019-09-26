@@ -1,7 +1,7 @@
 {
   "form": {
     "input": {
-      "custVendor": "客户/供应商",
+      "custVendor": "单位类型",
       "code": "编号",
       "name": "名称",
       "shortName": "简称",

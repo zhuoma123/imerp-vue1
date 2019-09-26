@@ -4,9 +4,10 @@
         <el-form :model="dataForm" :rules="rules" ref="dataForm" label-width="120px" :inline="true" labelSuffix="："
                  size="mini" class="tb-matthew">
             <el-form-item prop="id" v-show="false" />
-            <el-form-item label="顾客" prop="custId">
+            <el-form-item prop="custName" v-show="false" />
+            <el-form-item label="单位" prop="custId">
                 <im-selector
-                    placeholder="请选择客户"
+                    placeholder="请选择往来单位"
                     v-model="dataForm.custId"
                     :mapModel.sync="dataForm"
                     mapKeyVal="custName:custId"
@@ -72,6 +73,7 @@ export default {
         let pattern = /^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/
         pattern.test(value) ? callback() : callback(new Error('邮箱格式不正确'))
       } else {
+        console.log(JSON.stringify(this.dataForm))
         callback()
       }
     }
@@ -95,6 +97,7 @@ export default {
       dataForm: {
         id: undefined,
         custId: undefined,
+        custName: undefined,
         name: undefined,
         shortName: undefined,
         linkman: undefined,

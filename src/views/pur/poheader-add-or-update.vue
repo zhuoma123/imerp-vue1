@@ -381,7 +381,7 @@ export default {
             if (this.entityModel.status === "SUBMIT") {
               this.entityModel.saveType='pick'
               this.enableSubmit = true;
-              this.pageTitle = "采购单接收";
+              this.pageTitle = "采购单收货";
               this.$refs.dataForm.readOnly(true, [
                 "shipId",
                 "shipType",

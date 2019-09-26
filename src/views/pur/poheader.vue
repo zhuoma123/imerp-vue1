@@ -56,7 +56,7 @@
         <el-button ref="btnStatusPick"
                    enablestatus='SUBMIT' type="success" size="mini" icon="el-icon-check"
                    v-if="$hasPermission('pur:poheader:submit')" 
-                   @click="e => cellDblClick({row: $refs.pGrid.getCurrentRow()}, e)">配货
+                   @click="e => cellDblClick({row: $refs.pGrid.getCurrentRow()}, e)">收货
         </el-button>
 				<el-button ref="btnStatusRollback"
 				           enablestatus='SENDED' type="warning" size="mini" icon="fa fa-undo"
@@ -239,7 +239,17 @@ export default {
           title: '采购总金额',
           field: 'orderAmount',
           sortable: true,
-          align: 'center'
+          align: 'right',
+          formatter: this.formatterMoney,
+          footerRender: this.footerSum
+        },
+        {
+          title: '采购总运费',
+          field: 'totalFreight',
+          sortable: true,
+          align: 'right',
+          formatter: this.formatterMoney,
+          footerRender: this.footerSum
         },
         {
           title: '修改人',

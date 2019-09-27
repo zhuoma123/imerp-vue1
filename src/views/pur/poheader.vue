@@ -59,7 +59,7 @@
                    @click="e => cellDblClick({row: $refs.pGrid.getCurrentRow()}, e)">收货
         </el-button>
 				<el-button ref="btnStatusRollback"
-				           enablestatus='SENDED' type="warning" size="mini" icon="fa fa-undo"
+				           enablestatus='SUBMIT,SENDED' type="warning" size="mini" icon="fa fa-undo"
 				           v-if="$hasPermission('pur:poheader:rollback')" @click="rollbackHandle($refs.pGrid)">撤回
 				</el-button>
 				<el-button type="info" size="mini" icon="el-icon-printer">打印

@@ -1,24 +1,22 @@
 <template>
     <d2-container class="mod-sys__user">
-        <el-collapse slot="header">
-            <el-collapse-item>
+        <el-collapse slot="header" v-model="activeName">
+            <el-collapse-item name="1">
                 <template slot="title">
                     查询条件<i class="el-icon-d-arrow-right"/>
                 </template>
                 <el-form :inline="true" size="mini" @keyup.enter.native="search" :model="dataForm"
                          ref="dataForm">
-                    <el-form-item prop="name">
+                    <el-form-item prop="code">
                         <el-input
                                 v-model="dataForm.code"
-                                :data-operate="dataFormOp.likeOps"
                                 :placeholder="data.form.input.code"
                                 clearable
                         />
                     </el-form-item>
-                    <el-form-item prop="code">
+                    <el-form-item prop="name">
                         <el-input
                                 v-model="dataForm.name"
-                                :data-operate="dataFormOp.likeOps"
                                 :placeholder="data.form.input.name"
                                 clearable
                         />
@@ -104,6 +102,7 @@ export default {
   mixins: [mixinViewModule],
   data () {
     return {
+      activeName: '1',
       data: data,
       mixinViewModuleOptions: {
         getDataListURL: '/base/billnum/list',
@@ -116,10 +115,6 @@ export default {
       dataForm: {
         code: undefined,
         name: undefined
-      },
-      dataFormOp: {
-        likeOps: 'like',
-        equalsOps: '='
       },
       toolbar: {
         id: 'full_edit_1',

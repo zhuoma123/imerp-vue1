@@ -4,7 +4,7 @@
                    :close-on-click-modal="false" :close-on-press-escape="false" width="750px" class="dlg-matthew">
             <el-form :model="dataForm" :rules="rules" ref="dataForm"
                      label-width="120px" :inline="true" labelSuffix="："
-                     size="mini">
+                     size="mini" class="tb-matthew">
                 <el-form-item prop="id" v-show="false" />
                 <el-form-item prop="pname" :label="data.form.subject.parentId" @click.native="showPid">
                     <el-input v-model="dataForm.pname" :placeHolder="data.form.subject.parentId"/>
@@ -13,7 +13,7 @@
                     <el-input v-model="dataForm.name" :placeholder="data.form.subject.name"/>
                 </el-form-item>
                 <el-form-item prop="code" :label="data.form.subject.code">
-                    <el-input v-model="dataForm.code" :placeholder="data.form.subject.code"/>
+                    <el-input v-model="dataForm.code" :placeholder="data.form.subject.code" :disabled="dataForm.id"/>
                 </el-form-item>
                 <el-form-item prop="category" :label="data.form.subject.category">
                     <im-selector
@@ -21,7 +21,7 @@
                             v-model="dataForm.category"
                             :mapModel.sync="dataForm"
                             mapKeyVal="categoryName:category"
-                            dataType="biz.subjectCat" style="width: 200px">
+                            dataType="biz.subjectCat">
                     </im-selector>
                 </el-form-item>
                 <el-form-item prop="subjectLevel" :label="data.form.subject.subjectLevel">
@@ -130,9 +130,14 @@ export default {
 </script>
 
 <style lang="scss">
-    .dlg-matthew{
-        .el-dialog__footer {
-            margin-right: 7px;
+    .tb-matthew{
+        .el-form-item{
+            input.el-input__inner{
+                width: 200px;
+            }
+            div.el-radio-group{
+                width: 200px;
+            }
         }
     }
 </style>

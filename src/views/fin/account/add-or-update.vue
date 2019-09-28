@@ -82,7 +82,8 @@ export default {
         initBalance: undefined,
         balance: undefined,
         remark: undefined,
-        status: 1
+        status: 1,
+        deletedFlag: undefined
       },
       typeData: [],
       rules: {

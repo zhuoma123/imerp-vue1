@@ -22,7 +22,8 @@
       "salePrice": "销售价",
       "costPrice": "成本价",
       "remark": "备注",
-      "companyId": "公司"
+      "companyId": "公司",
+      "cateCode": "物料名称"
     }
   }
 }

@@ -3,16 +3,19 @@
                :close-on-click-modal="false" :close-on-press-escape="false" width="388px">
         <el-form :model="dataForm" :rules="rules" ref="dataForm"
                  label-width="120px" labelSuffix="："
-                 size="mini">
+                 size="mini" class="tb-matthew">
             <el-form-item prop="id" v-show="false" />
+            <el-form-item prop="parentId" :label="data.form.input.parentId">
+                <im-selector
+                        placeholder="请选择上级菜单"
+                        v-model="dataForm.parentId"
+                        :mapModel.sync="dataForm"
+                        mapKeyVal="pname:parentId"
+                        dataType="biz.pvehicle">
+                </im-selector>
+            </el-form-item>
             <el-form-item prop="name" :label="data.form.input.name">
                 <el-input v-model="dataForm.name" :placeholder="data.form.input.name"/>
-            </el-form-item>
-            <el-form-item prop="pinyinCode" :label="data.form.input.pinyinCode">
-                <el-input v-model="dataForm.pinyinCode" :placeholder="data.form.input.pinyinCode"/>
-            </el-form-item>
-            <el-form-item prop="wbCode" :label="data.form.input.wbCode">
-                <el-input v-model="dataForm.wbCode" :placeholder="data.form.input.wbCode"/>
             </el-form-item>
             <el-form-item prop="remark" :label="data.form.input.remark">
                 <el-input v-model="dataForm.remark" :placeholder="data.form.input.remark"/>
@@ -46,7 +49,9 @@ export default {
         name: undefined,
         pinyinCode: undefined,
         wbCode: undefined,
-        remark: undefined
+        remark: undefined,
+        parentId: undefined,
+        pname: undefined
       },
       rules: {
         name: [{

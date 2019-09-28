@@ -1,22 +1,22 @@
 <template>
     <d2-container class="mod-sys__user">
-        <el-collapse slot="header">
-            <el-collapse-item>
+        <el-collapse slot="header" v-model="activeName">
+            <el-collapse-item name="1">
                 <template slot="title">
                     查询条件<i class="el-icon-d-arrow-right"/>
                 </template>
                 <el-form :inline="true" size="mini" :model="dataForm" @keyup.enter.native="search" ref="dataForm">
+                    <el-form-item prop="type">
+                        <el-select v-model="dataForm.type" placeholder="请选择单位类型">
+                            <el-option label="客户" value="CUST"></el-option>
+                            <el-option label="供应商" value="VENDOR"></el-option>
+                            <el-option label="物流公司" value="SUP"></el-option>
+                        </el-select>
+                    </el-form-item>
                     <el-form-item prop="name">
                         <el-input
                                 v-model="dataForm.name"
                                 :placeholder=data.form.input.name
-                                clearable
-                        />
-                    </el-form-item>
-                    <el-form-item prop="type">
-                        <el-input
-                                v-model="dataForm.type"
-                                :placeholder=data.form.input.type
                                 clearable
                         />
                     </el-form-item>
@@ -96,7 +96,7 @@
                         size="mini"
                         icon="el-icon-star-off"
                         @click="addContact($refs.pGrid)"
-                >补充联系人
+                >联系人信息
                 </el-button>
             </template>
         </vxe-grid>
@@ -125,6 +125,7 @@ export default {
   mixins: [mixinViewModule],
   data: function () {
     return {
+      activeName: '1',
       data: data,
       mixinViewModuleOptions: {
         getDataListURL: '/base/cust/list',
@@ -153,9 +154,6 @@ export default {
         wbCode: undefined,
         pic: undefined,
         remark: undefined
-      },
-      dataFormOp: {
-        username: 'like'
       },
       vendor: {
         CUST: '顾客',

@@ -8,12 +8,6 @@
             <el-form-item prop="name" :label="data.form.input.name">
                 <el-input v-model="dataForm.name" :placeholder="data.form.input.name"/>
             </el-form-item>
-            <el-form-item prop="pinyinCode" :label="data.form.input.pinyinCode">
-                <el-input v-model="dataForm.pinyinCode" :placeholder="data.form.input.pinyinCode"/>
-            </el-form-item>
-            <el-form-item prop="wbCode" :label="data.form.input.wbCode">
-                <el-input v-model="dataForm.wbCode" :placeholder="data.form.input.wbCode"/>
-            </el-form-item>
             <el-form-item prop="remark" :label="data.form.input.remark">
                 <el-input v-model="dataForm.remark" :placeholder="data.form.input.remark"/>
             </el-form-item>

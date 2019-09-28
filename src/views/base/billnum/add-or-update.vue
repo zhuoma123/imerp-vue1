@@ -90,7 +90,7 @@
             </template>
         </el-dialog>
         <el-dialog title="菜单选择" :visible.sync="menuFormVisible" width="388px">
-            <el-input placeholder="输入关键字进行过滤" v-model="filterText"></el-input>
+            <el-input placeholder="输入关键字进行过滤" v-model="filterText" @keyup.enter.native="getMenuList"></el-input>
             <el-tree
                     :data="menuList"
                     :props="defaultProps"
@@ -231,7 +231,6 @@ export default {
     },
     filterNode (value, data) {
       // let data = this.menuList
-      debugger
       if (!value) return true
       return data.name.indexOf(value) !== -1
     },

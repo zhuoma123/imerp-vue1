@@ -7,7 +7,8 @@
       "pinyinCode": "拼音码",
       "wbCode": "五笔码",
       "remark": "备注",
-      "companyId": "公司"
+      "companyId": "公司",
+      "parentId": "父级菜单"
     }
   }
 }

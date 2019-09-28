@@ -39,11 +39,11 @@
         <el-input v-model="dataForm.email" :placeholder="$t('views.public.user.email')"/>
       </el-form-item>
       
-      <el-form-item prop="roleIdList" :label="$t('views.public.user.roleIdList')" class="role-list">
+      <el-form-item prop="roleIds" :label="$t('views.public.user.roleIdList')" class="role-list">
         <el-select v-model="dataForm.roleIds" multiple :placeholder="$t('views.public.user.roleIdList')">
           <el-option v-for="role in roleList" :key="role.roleId" :label="role.roleName" :value="role.roleId" >
           <span style="float: left">{{ role.roleName }}</span>
-          <span style="float: right; color: #8492a6; font-size: 13px">{{ role.companyName }}</span>
+          <span style="float: right; color: #8492a6; font-size: 13px" v-show="dataForm.currenId ==1 ? true:false">{{ role.companyName }}</span>
           </el-option>
         </el-select>
       </el-form-item>
@@ -104,17 +104,7 @@ export default {
   },
   computed: {
     dataRule () {
-      var validateUsernameAsync = (rule, value, callback) => {
-        if(!this.dataForm.userId){
-          this.$axios.post('/sys/user/checkusername', { username: value }).then(res => {
-              if(res === '') {
-                callback()
-              } else {
-                return callback(new Error(res))
-              }
-            })
-        }
-      }
+      
       var validatePassword = (rule, value, callback) => {
         if (!this.dataForm.userId && !/\S/.test(value)) {
           return callback(new Error(this.$t('public.rules.required', { 'name': this.$t('views.public.user.password') })))
@@ -156,7 +146,19 @@ export default {
           }
         })
         }
-        
+      }
+      var validateUsernameAsync = (rule, value, callback) => {
+        if(!this.dataForm.userId){
+          this.$axios.post('/sys/user/checkusername', { username: value }).then(res => {
+              if(res === '') {
+            callback()
+          } else {
+            return callback(new Error(res))
+          }
+            })
+        }else{
+          return callback()
+        }
       }
       return {
         username: [
@@ -186,6 +188,9 @@ export default {
           {validator: validateName, trigger: 'blur'}
           
         ],
+        roleIds: [
+          { required: true, message: "角色不能为空！", trigger: 'change' },
+        ]
       }
     }
   },
@@ -194,6 +199,8 @@ export default {
       this.visible = true
       this.dataForm.userId=null
       this.dataForm.roleIds=null
+      this.dataForm.password=null
+      this.dataForm.comPassword=null
       this.$nextTick(() => {
         this.$refs['dataForm'].resetFields()
         this.roleIdListDefault = []
@@ -231,7 +238,7 @@ export default {
     dataFormSubmitHandle: debounce(function () {
       debugger
       this.$refs['dataForm'].validate((valid) => {
-        console.log(valid)
+        console.log(valid+"--+++++-----------")
         if (!valid) {
           return false
         }

@@ -50,9 +50,9 @@
     "vue-splitpane": "^1.0.4",
     "vue-ueditor-wrap": "^2.4.1",
     "vuex": "^3.1.1",
-    "vxe-table": "^2.2.8",
-    "vxe-table-plugin-element": "^1.4.0",
-    "xe-utils": "^1.9.8"
+    "vxe-table": "^2.5.22",
+    "vxe-table-plugin-element": "^1.4.3",
+    "xe-utils": "^2.2.4"
   },
   "devDependencies": {
     "@kazupon/vue-i18n-loader": "^0.3.0",

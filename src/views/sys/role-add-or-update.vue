@@ -42,7 +42,7 @@
         </el-col>
       
         <el-col :span="12">
-      <el-form-item prop="deptName" label="数据授权" class="dept-list" >        
+      <el-form-item prop="deptNames" label="数据授权" class="dept-list" >        
         <el-tree
           :data="deptList"
           :props="{ label: 'name', children: 'children' }"
@@ -79,6 +79,7 @@ export default {
         roleName: '',
         deptId: '',
         deptName: '',
+        deptNames:'',
         companyId:'',
         companyName:'',
         deptIdList:[],
@@ -103,6 +104,9 @@ export default {
          roleName: [
           { required: true, message: "角色名称不能为空！", trigger: 'blur' },
           { validator: validateRoleName, trigger: 'blur' }
+        ],
+        deptName: [
+          { required: true, message: "所属部门不能为空！", trigger: 'blur' },
         ]
         
       }
@@ -170,6 +174,7 @@ export default {
     deptListTreeCurrentChangeHandle (data, node) {
       this.dataForm.deptId = data.deptId
       this.dataForm.deptName = data.name
+      this.dataForm.deptNames = data.naem
       this.deptListVisible = false
     },
     // 数据, 选中
@@ -196,6 +201,7 @@ export default {
         if (!valid) {
           return false
         }
+        debugger
         this.menuListTreeCurrentChangeHandle(this)
         this.deptIdListTreeCurrentChangeHandle(this)
         this.$axios['post']('/sys/role/save', {

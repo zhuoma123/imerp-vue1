@@ -1,7 +1,7 @@
 <template>
     <d2-container class="mod-sys__user">
-        <el-collapse slot="header">
-            <el-collapse-item>
+        <el-collapse slot="header" v-model="activeName">
+            <el-collapse-item name="1">
                 <template slot="title">
                     查询条件<i class="el-icon-d-arrow-right"/>
                 </template>
@@ -25,6 +25,7 @@
                         <el-date-picker
                                 v-model="dataForm.from"
                                 type="date"
+                                valueFormat="yyyy-MM-dd"
                                 placeholder="票据日期起">
                         </el-date-picker>
                     </el-form-item>
@@ -32,6 +33,7 @@
                         <el-date-picker
                                 v-model="dataForm.to"
                                 type="date"
+                                valueFormat="yyyy-MM-dd"
                                 placeholder="止">
                         </el-date-picker>
                     </el-form-item>
@@ -116,6 +118,7 @@ export default {
   mixins: [mixinViewModule],
   data () {
     return {
+      activeName: '1',
       data: data,
       mixinViewModuleOptions: {
         getDataListURL: '/fin/invoice/list',

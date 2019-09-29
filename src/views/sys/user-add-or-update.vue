@@ -161,13 +161,20 @@ export default {
           return callback()
         }
       }
+       var validateParentName = (rule, value, callback) => {
+          if (!this.dataForm.roleId && !/\S/.test(value)) {
+            return callback(new Error("部门名称不能为空！"))
+          }
+          callback()
+          }
       return {
         username: [
           { required: true, message: "用户帐户不能为空!", trigger: 'blur' },
           { validator: validateUsernameAsync, trigger: 'blur' }
         ],
         deptName: [
-          { required: true, message: this.$t('public.rules.required', { 'name': this.$t('views.public.user.deptName') }), trigger: 'change' }
+          { required: true, message: this.$t('public.rules.required', { 'name': this.$t('views.public.user.deptName') }), trigger: 'change' },
+           { validator: validateParentName, trigger: 'blur' }
         ],
         password: [
           { validator: validatePassword, trigger: 'blur' }

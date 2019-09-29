@@ -17,7 +17,7 @@
         <el-button
           v-if="$hasPermission('sys:role:save')"
           type="primary"
-           icon="el-icon-edit"
+          icon="el-icon-circle-plus"
           @click="addOrUpdateData()"
         >{{ $t('views.public.add') }}</el-button>
       </el-form-item>
@@ -36,6 +36,7 @@
       size="mini"
       ref="pGrid"                                                       
       :columns="columns"
+      :loading="dataListLoading"
       :data="dataList"
       :customs.sync="customColumns"
       :edit-config="{trigger: 'click', mode: 'row', showStatus: true}"

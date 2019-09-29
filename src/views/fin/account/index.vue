@@ -1,7 +1,7 @@
 <template>
     <d2-container class="mod-sys__user">
-        <el-collapse slot="header">
-            <el-collapse-item>
+        <el-collapse slot="header" v-model="activeName">
+            <el-collapse-item name="1">
                 <template slot="title">
                     查询条件<i class="el-icon-d-arrow-right"/>
                 </template>
@@ -72,7 +72,7 @@
                         type="primary"
                         size="mini"
                         icon="el-icon-edit"
-                        @click="updateHandle($refs.pGrid)"
+                        @click="updateHandle($refs.pGrid)" v-show="$refs.pGrid.getCurrentRow().deletedFlag==='N'"
                 >修改
                 </el-button>
                 <el-button
@@ -80,7 +80,7 @@
                         type="danger"
                         size="mini"
                         icon="el-icon-delete"
-                        @click="deleteHandleSetter($refs.pGrid)"
+                        @click="deleteEntityHandle($refs.pGrid)" v-show="$refs.pGrid.getCurrentRow().deletedFlag === 'N'"
                 >删除
                 </el-button>
             </template>
@@ -110,18 +110,21 @@ export default {
   mixins: [mixinViewModule],
   data () {
     return {
+      activeName: '1',
       data: data,
       mixinViewModuleOptions: {
         getDataListURL: '/fin/account/list',
         getDataListIsPage: true,
         deleteURL: '/fin/account/delete',
+        updateURL: '/fin/account/save',
         deleteIsBatch: true,
         deleteIsBatchKey: 'id'
       },
       dataForm: {
         bankName: undefined,
         bankNum: undefined,
-        name: undefined
+        name: undefined,
+        deletedFlag: undefined
       },
       toolbar: {
         id: 'full_edit_1',

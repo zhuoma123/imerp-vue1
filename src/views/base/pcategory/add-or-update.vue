@@ -4,22 +4,23 @@
                    :close-on-click-modal="false" :close-on-press-escape="false" width="388px">
             <el-form :model="dataForm" :rules="rules" ref="dataForm"
                      label-width="120px" labelSuffix="："
-                     size="mini">
+                     size="mini" class="tb-matthew">
                 <el-form-item prop="id" v-show="false" />
-                <el-form-item prop="pname" :label="data.form.input.pname" @click.native="showPid">
-                    <el-input v-model="dataForm.pname" :placeholder="data.form.input.pname"/>
+                <el-form-item prop="pname" v-show="false" />
+                <el-form-item prop="parentId" :label="data.form.input.parentId">
+                    <im-selector
+                            placeholder="请选择父级物料名称"
+                            v-model="dataForm.parentId"
+                            :mapModel.sync="dataForm"
+                            mapKeyVal="pname:parentId"
+                            dataType="biz.productcategoryall">
+                    </im-selector>
                 </el-form-item>
                 <el-form-item prop="code" :label="data.form.input.code">
-                    <el-input v-model="dataForm.code" :placeholder="data.form.input.code"/>
+                    <el-input v-model="dataForm.code" :placeholder="data.form.input.code" :disabled="dataForm.id"/>
                 </el-form-item>
                 <el-form-item prop="name" :label="data.form.input.name">
                     <el-input v-model="dataForm.name" :placeholder="data.form.input.name"/>
-                </el-form-item>
-                <el-form-item prop="pinyinCode" :label="data.form.input.pinyinCode">
-                    <el-input v-model="dataForm.pinyinCode" :placeholder="data.form.input.pinyinCode"/>
-                </el-form-item>
-                <el-form-item prop="wbCode" :label="data.form.input.wbCode">
-                    <el-input v-model="dataForm.wbCode" :placeholder="data.form.input.wbCode"/>
                 </el-form-item>
                 <el-form-item prop="remark" :label="data.form.input.remark">
                     <el-input v-model="dataForm.remark" :placeholder="data.form.input.remark"/>
@@ -29,25 +30,6 @@
                 <el-button @click="visible = false">{{ $t('views.public.cancel') }}</el-button>
                 <el-button type="primary" @click="dataFormSubmitHandle()">{{ $t('views.public.confirm') }}</el-button>
             </template>
-        </el-dialog>
-        <el-dialog title="菜单选择" :visible.sync="menuFormVisible" width="388px">
-            <el-input placeholder="输入关键字进行过滤" v-model="filterText"></el-input>
-            <el-tree
-                    :data="menuList"
-                    :props="defaultProps"
-                    style="height: 300px;"
-                    node-key="id"
-                    ref="tree"
-                    class="tree-container"
-                    default-expand-all
-                    :filter-node-method="filterNode"
-                    @node-click="getSelectedMenu"/>
-            <div slot="footer" class="dialog-footer">
-                <div class="menuDia">
-                    <el-button @click="menuFormVisible = false">取消</el-button>
-                    <el-button type="primary" @click="getSelectedMenu">确定</el-button>
-                </div>
-            </div>
         </el-dialog>
     </div>
 

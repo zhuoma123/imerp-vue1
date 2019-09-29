@@ -9,7 +9,7 @@
                 <el-input v-model="dataForm.name" :placeholder="data.form.input.name"/>
             </el-form-item>
             <el-form-item prop="code" :label="data.form.input.code">
-                <el-input v-model="dataForm.code" :placeholder="data.form.input.code"/>
+                <el-input v-model="dataForm.code" :placeholder="data.form.input.code" :disabled="dataForm.id"/>
             </el-form-item>
             <el-form-item prop="virtualFlag" :label="data.form.input.virtualFlag" >
                 <el-radio-group v-model="dataForm.virtualFlag">

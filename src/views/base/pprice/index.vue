@@ -1,7 +1,7 @@
 <template>
     <d2-container class="mod-sys__user">
-        <el-collapse slot="header">
-            <el-collapse-item>
+        <el-collapse slot="header" v-model="activeName">
+            <el-collapse-item name="1">
                 <template slot="title">
                     查询条件<i class="el-icon-d-arrow-right"/>
                 </template>
@@ -9,7 +9,6 @@
                     <el-form-item prop="productId">
                         <el-input
                                 v-model="dataForm.productId"
-                                :data-operate="dataFormOp.liekOps"
                                 :placeholder="data.form.input.productId"
                                 clearable
                         />
@@ -96,6 +95,7 @@ export default {
   mixins: [mixinViewModule],
   data () {
     return {
+      activeName: '1',
       data: data,
       mixinViewModuleOptions: {
         getDataListURL: '/base/productprice/list',
@@ -105,9 +105,6 @@ export default {
       },
       dataForm: {
         productId: undefined
-      },
-      dataFormOp: {
-        likeOps: 'like'
       },
       rowHandler: {
         width: '160px',

@@ -215,7 +215,7 @@ export default {
           }
         },
         separate4: separate,
-        remark: { type: "string", label: "备注", colspan: 2 }
+        remark: { type: "string", label: "备注", colspan: 3 }
       },
       tableProxy: {
         autoLoad: false
@@ -234,8 +234,8 @@ export default {
           {
             validator: (rule, val, callback,{row})=>{
               if(val) {
-                if(Number(val)> row.orderQty) {
-                  callback(new Error('收货数不能大于下单数'))
+                if(Number(val)> (Number(row.orderQty)-Number(row.totalAcceptQty))) {
+                  callback(new Error('收货数不能大于剩余收货数'))
                   return
                 }
               }
@@ -287,6 +287,13 @@ export default {
           footerRender: this.footerSum
         },
         {
+          title: "累计收货数",
+          field: "totalAcceptQty",
+          sortable: true,
+          align: "center",
+          footerRender: this.footerSum
+        },
+        {
           title: "收货数",
           field: "acceptQty",
           sortable: true,
@@ -323,13 +330,6 @@ export default {
             }
           },
           footerRender: this.footerSum
-        },
-        {
-          title: "备注",
-          field: "remark",
-          sortable: true,
-          align: "center",
-          editRender: { name: "input" }
         }
       ],
       toolbar: {
@@ -391,9 +391,10 @@ export default {
                 "isAuto",
                 "remark"
               ]);
+              delete this.tableColumn[2].editRender
               delete this.tableColumn[5].editRender
-              Object.assign(this.tableColumn[6] ,{editRender: { name: "input" }})
-              Object.assign(this.tableColumn[8] ,{editRender: { name: "input" }})
+              Object.assign(this.tableColumn[7] ,{editRender: { name: "input" }})
+              Object.assign(this.tableColumn[9] ,{editRender: { name: "input" }})
               this.$refs.sGrid.loadColumn(this.tableColumn)
               return
             } else {
@@ -402,28 +403,37 @@ export default {
           }
         }
         delete this.dataForm.saveType
-        delete this.tableColumn[6].editRender
-        delete this.tableColumn[8].editRender
+        delete this.tableColumn[7].editRender
+        delete this.tableColumn[9].editRender
         Object.assign(this.tableColumn[5] ,{editRender: { name: "input" }})
+        Object.assign(this.tableColumn[2] ,{
+          editRender: {
+            name: "ElAutocomplete",
+            props: {
+              fetchSuggestions: this.prodSeach,
+              triggerOnFocus: false,
+              popperClass: "prod-popper"
+            },
+            events: { select: this.handleProcSelect },
+            autoselect: true
+          }
+        })
         this.$refs.sGrid.loadColumn(this.tableColumn)
       });
     },
     editClosed({row,rowIndex,$rowIndex,column,columnIndex,$columnIndex,cell}) {
       if(column.property === 'freight'){
-        if(Number(row.freight) > this.totalFreight) {
-          alert('分摊运费不能大于总运费')
+        const totalData = this.$refs.sGrid.getTableData().fullData
+        const totalFrei = XEUtils.sum(totalData, 'freight')
+        if(totalFrei > this.totalFreight) {
+          alert('分摊运费之和不能大于总运费')
           row.freight = 0
+          this.$refs.sGrid.updateFooter()
           return
-        } else {
-          const totalData = this.$refs.sGrid.getTableData().fullData
-          const totalFrei = XEUtils.sum(totalData, 'freight')
-          if(totalFrei > this.totalFreight) {
-            alert('分摊运费之和不能大于总运费')
-            row.freight = 0
-            return
-          }
         }
         //this.calFreight(this.totalFreight)
+      }else if(column.property === 'acceptQty'){
+        this.calFreight(this.totalFreight)
       }
     },
     calFreight(freight) {
@@ -452,9 +462,13 @@ export default {
             totalData[i].freight = 0;
             continue;
           }
-          if(i === totalData.length -1) {
+          if(totalData[i].acceptQty>0){
             totalData[i].freight += mod
+            mod=0
           }
+          /*if(i === totalData.length -1) {
+            totalData[i].freight += mod
+          }*/
           freight -= totalData[i].freight
           this.$refs.sGrid.reloadRow(totalData[i])
         }

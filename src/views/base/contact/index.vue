@@ -1,7 +1,7 @@
 <template>
     <d2-container class="mod-sys__user">
-        <el-collapse slot="header">
-            <el-collapse-item>
+        <el-collapse slot="header" v-model="activeName">
+            <el-collapse-item name="1" >
                 <template slot="title">
                     查询条件<i class="el-icon-d-arrow-right"/>
                 </template>
@@ -9,7 +9,6 @@
                     <el-form-item prop="custName">
                         <el-input
                                 v-model="dataForm.custName"
-                                :data-opedrate="dataFormOp.likeOps"
                                 :placeholder="data.form.input.custName"
                                 clearable
                         />
@@ -17,7 +16,6 @@
                     <el-form-item prop="name">
                         <el-input
                                 v-model="dataForm.name"
-                                :data-operate="dataFormOp.likeOps"
                                 :placeholder="data.form.input.name"
                                 clearable
                         />
@@ -25,7 +23,6 @@
                     <el-form-item prop="shortName">
                         <el-input
                                 v-model="dataForm.shortName"
-                                :data-operate="dataFormOp.likeOps"
                                 :placeholder="data.form.input.shortName"
                                 clearable
                         />
@@ -33,13 +30,12 @@
                     <el-form-item prop="mobileNo">
                         <el-input
                                 v-model="dataForm.mobileNo"
-                                :data-operate="dataFormOp.likeOps"
                                 :placeholder="data.form.input.mobileNo"
                                 clearable
                         />
                     </el-form-item>
                     <el-form-item>
-                        <el-button @click="search" icon="el-icon-search" type="primary">{{
+                        <el-button @click="search" icon="el-icon-search" type="primary" ref="btnSearch">{{
                             $t('views.public.query') }}
                         </el-button>
                     </el-form-item>
@@ -120,6 +116,7 @@ export default {
   mixins: [mixinViewModule],
   data () {
     return {
+      activeName: '1',
       data: data,
       pathId: undefined,
       mixinViewModuleOptions: {
@@ -133,10 +130,6 @@ export default {
         mobileNo: undefined,
         custName: undefined,
         shortName: undefined
-      },
-      dataFormOp: {
-        likeOps: 'like',
-        equalsOps: 'eq'
       },
       rowHandler: {
         width: '160px',
@@ -257,17 +250,14 @@ export default {
   methods: {
     handleFormReset () {
       this.$refs['dataForm'].resetFields()
+      this.dataForm.custName = undefined
     }
   },
   created () {
-    debugger
     if (this.$route.params.custId) {
+      this.dataForm.custName = this.$route.params.custName
       this.$nextTick(() => {
-        this.$refs['btnAdd'].$el.click()
-        let custId = this.$route.params.custId
-        let custName = this.$route.params.custName
-        this.deliverData(custId, custName)
-        this.$route.params.custId = undefined
+        // this.$refs['btnSearch'].$el.click()
       })
     }
   }

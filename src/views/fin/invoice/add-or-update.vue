@@ -3,12 +3,12 @@
         <el-dialog :visible.sync="visible" :title="isNew ? '新增' : '修改'"
                    :close-on-click-modal="false" :close-on-press-escape="false" width="55%">
             <el-form :model="dataForm" :rules="rules" ref="dataForm"
-                     label-width="110px" :inline="true" labelSuffix="："
+                     label-width="100px" :inline="true" labelSuffix="："
                      size="mini" class="tb-matthew">
                 <!--dataForm must be showed all-->
                 <el-form-item prop="id" v-show="false" />
                 <el-form-item prop="code" :label="data.form.invoice.code" >
-                    <el-input v-model="dataForm.code" :placeholder="data.form.invoice.code"/>
+                    <el-input v-model="dataForm.code" :placeholder="data.form.invoice.code" :disabled="dataForm.id"/>
                 </el-form-item>
                 <el-form-item prop="name" :label="data.form.invoice.name" >
                     <el-input v-model="dataForm.name" :placeholder="data.form.invoice.name"/>
@@ -194,6 +194,9 @@ export default {
             div.el-radio-group{
                 width: 200px;
             }
+        }
+        .el-date-editor.el-input, .el-date-editor.el-input__inner {
+            width: 200px;
         }
     }
 </style>

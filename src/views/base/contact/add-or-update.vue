@@ -11,7 +11,7 @@
                     v-model="dataForm.custId"
                     :mapModel.sync="dataForm"
                     mapKeyVal="custName:custId"
-                    dataType="biz.customer">
+                    dataType="biz.customer"  :disabled="dataForm.id">
                 </im-selector>
             </el-form-item>
             <el-form-item prop="name" :label="data.form.input.name">
@@ -49,6 +49,7 @@
 <script>
 import data from './data'
 import mixinViewModule from '@/mixins/view-module'
+
 export default {
   mixins: [mixinViewModule],
   data () {
@@ -94,6 +95,7 @@ export default {
       },
       data: data,
       visible: false,
+      count: 0,
       dataForm: {
         id: undefined,
         custId: undefined,
@@ -135,7 +137,13 @@ export default {
       }
     }
   },
-  methods: {}
+  methods: {
+    reset () {
+      this.$nextTick(() => {
+        this.$refs['dataForm'].resetFields()
+      })
+    }
+  }
 }
 </script>
 

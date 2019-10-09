@@ -1,7 +1,7 @@
 <template>
     <d2-container class="mod-sys__user">
-        <el-collapse slot="header">
-            <el-collapse-item>
+        <el-collapse slot="header" v-model="activeName">
+            <el-collapse-item name="1">
                 <template slot="title">
                     查询条件<i class="el-icon-d-arrow-right"/>
                 </template>
@@ -10,13 +10,6 @@
                         <el-input
                                 v-model="dataForm.name"
                                 :placeholder="data.form.subject.name"
-                                clearable
-                        />
-                    </el-form-item>
-                    <el-form-item prop="subjectType">
-                        <el-input
-                                v-model="dataForm.subjectType"
-                                :placeholder="data.form.subject.subjectType"
                                 clearable
                         />
                     </el-form-item>
@@ -86,7 +79,6 @@
                 </el-button>
             </template>
         </vxe-grid>
-        <!-- 分页 -->
         <el-pagination
                 slot="footer"
                 :current-page="page"
@@ -94,9 +86,8 @@
                 :page-size="limit"
                 :total="total"
                 layout="total, sizes, prev, pager, next, jumper"
-                @size-change="pageSizeChangeHandle"
-                @current-change="pageCurrentChangeHandle"
-        ></el-pagination>
+                @size-change="val => pageSizeChangeHandle(val, 'vxe')"
+                @current-change="val => pageCurrentChangeHandle(val, 'vxe')"/>
         <!-- 弹窗, 新增 / 修改 -->
         <add-or-update v-if="addOrUpdateVisible" :parentDataList="dataList" ref="addOrUpdate" @refreshDataList="search"/>
     </d2-container>
@@ -112,10 +103,11 @@ export default {
   mixins: [mixinViewModule],
   data: function () {
     return {
+      activeName: '1',
       data: data,
       mixinViewModuleOptions: {
         getDataListURL: '/fin/subject/list',
-        getDataListIsPage: false,
+        getDataListIsPage: true,
         deleteURL: '/fin/subject/delete',
         deleteIsBatch: true
       },
@@ -126,12 +118,13 @@ export default {
         code: undefined,
         name: undefined,
         subjectType: undefined,
+        subjectName: undefined,
         category: undefined,
         subjectLevel: undefined,
         direction: undefined
       },
       columns: [
-        { type: 'index', width: 30 },
+        { type: 'index', width: 70 },
         {
           title: '名称',
           field: 'name',
@@ -146,15 +139,10 @@ export default {
           sortable: true,
           align: 'center',
           width: '150px'
-        }, {
-          title: '类别',
-          field: 'subjectType',
-          sortable: true,
-          align: 'center'
         },
         {
           title: '科目类别',
-          field: 'category',
+          field: 'categoryName',
           sortable: true,
           align: 'center',
           width: '120px'

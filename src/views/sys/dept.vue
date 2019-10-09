@@ -2,7 +2,7 @@
   <d2-container class="mod-sys__user">
     <vxe-toolbar slot="header"  size="mini">
       <template v-slot:buttons>
-        <vxe-input v-model="filterName2" type="search" placeholder="根据名称查询"></vxe-input>
+        <vxe-input v-model="filterName2" prefixIcon="el-icon-search" type="search" placeholder="根据名称查询"></vxe-input>
         <el-button
           v-if="$hasPermission('sys:dept:save')"
           type="primary"
@@ -20,7 +20,7 @@
       ref="pGrid"
       :data="list2"
       :columns="tableColumn"
-      :tree-config="{ children: 'children', expandAll: true, indent: 8}"
+      :tree-config="{ children: 'children', expandAll: !!filterName2, indent: 8}"
       :edit-config="{trigger: 'click', mode: 'row', showStatus: true}"
       >
     </vxe-grid>
@@ -34,6 +34,7 @@ import mixinViewModule from "@/mixins/view-module";
 import AddOrUpdate from "./dept-add-or-update";
 import XEUtils from "xe-utils"
 import { type } from 'os';
+import store from '@/store/index'
 export default {
   mixins: [mixinViewModule],
   data() {
@@ -52,6 +53,7 @@ export default {
       dataForm: {
         name: ""
       },
+     
       dataFormOp: {
         name: "like"
       },
@@ -91,19 +93,28 @@ export default {
           field: 'orderNum',
           sortable: true,
           width: 110,
-          align: 'center'
+          align: 'center',
+          slots: {
+            default: ({ row }) => {
+                      return [
+                        <el-tag type="primary" v-show={row.isTop === 1 && row.currentId !==1 ? false:true} >
+                        {row.orderNum}
+                        </el-tag>
+                      ]
+                    }
+          }
         },
         {
           title: '操作',
           field: 'other',
-          width:130,
+          width:170,
           sortable: true,
           align: 'center',
           slots: {
                     default: ({ row }) => {
                       return [
-                        <el-button size="mini" onClick={ () => this.addOrUpdateData(row) } type="primary">修改</el-button>,
-                        <el-button size="mini" type="danger" onClick={ () => this.deleteHandleSetter(row) }>删除</el-button>
+                        <el-button size="mini" icon="el-icon-edit" onClick={ () => this.addOrUpdateData(row) } type="primary" v-show={row.isTop === 1 && row.currentId !==1 ? false:true} >修改</el-button>,
+                        <el-button size="mini" icon="el-icon-delete" type="danger" onClick={ () => this.deleteHandleSetter(row) }  v-show={row.isTop === 1 && row.currentId !==1 ? false:true} >删除</el-button>
                       ]
                     }
                   }
@@ -135,18 +146,27 @@ export default {
    mounted() {
     this.getDataList()
   },
+  
   methods: {
+  
     //增改
-   addOrUpdateData (row) {
+  async addOrUpdateData (row) {
      debugger
       this.addOrUpdateVisible = true;
+      const user = await store.dispatch('d2admin/db/get',{
+        dbName: 'sys',
+        path: 'user.info',
+        defaultValue: {},
+        user: true
+        }, { root: true })
+      this.$refs.addOrUpdate.dataForm.currentId = user.id
       if (row) {
         this.$nextTick(() => {
           this.$refs.addOrUpdate.dataForm.id = row.deptId;
           this.$refs.addOrUpdate.update(row);
         })
       } else {
-        this.$nextTick(() => {
+        this.$nextTick(() => { 
           this.$refs.addOrUpdate.init();
         })
       }

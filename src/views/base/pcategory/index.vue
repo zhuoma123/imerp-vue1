@@ -1,25 +1,22 @@
 <template>
     <d2-container class="mod-sys__user">
-        <el-collapse slot="header">
-            <el-collapse-item>
+        <el-collapse slot="header" v-model="activeName">
+            <el-collapse-item name="1">
                 <template slot="title">
                     查询条件<i class="el-icon-d-arrow-right"/>
                 </template>
                 <el-form :inline="true" size="mini" :model="dataForm" @keyup.enter.native="search" ref="dataForm">
-
-                    <el-form-item prop="code">
-                        <el-input
-                                v-model="dataForm.code"
-                                :data-operate="dataFormOp.likeOps"
-                                :placeholder="data.form.input.code"
-                                clearable
-                        />
-                    </el-form-item>
                     <el-form-item prop="name">
                         <el-input
                                 v-model="dataForm.name"
-                                :data-operate="dataFormOp.likeOps"
                                 :placeholder="data.form.input.name"
+                                clearable
+                        />
+                    </el-form-item>
+                    <el-form-item prop="code">
+                        <el-input
+                                v-model="dataForm.code"
+                                :placeholder="data.form.input.code"
                                 clearable
                         />
                     </el-form-item>
@@ -80,7 +77,6 @@
                 </el-button>
             </template>
         </vxe-grid>
-        <!-- 分页 -->
         <el-pagination
                 slot="footer"
                 :current-page="page"
@@ -88,11 +84,11 @@
                 :page-size="limit"
                 :total="total"
                 layout="total, sizes, prev, pager, next, jumper"
-                @size-change="pageSizeChangeHandle"
-                @current-change="pageCurrentChangeHandle"
+                @size-change="val => pageSizeChangeHandle(val, 'vxe')"
+                @current-change="val => pageCurrentChangeHandle(val, 'vxe')"
         ></el-pagination>
         <!-- 弹窗, 新增 / 修改 -->
-        <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="search"/>
+        <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="search" :parentDataList="dataList"/>
     </d2-container>
 </template>
 
@@ -106,6 +102,7 @@ export default {
   mixins: [mixinViewModule],
   data () {
     return {
+      activeName: '1',
       data: data,
       mixinViewModuleOptions: {
         getDataListURL: '/base/productcategory/list',
@@ -116,9 +113,6 @@ export default {
       dataForm: {
         code: undefined,
         name: undefined
-      },
-      dataFormOp: {
-        liekOps: 'like'
       },
       toolbar: {
         id: 'full_edit_1',
@@ -131,18 +125,20 @@ export default {
         }
       },
       columns: [
-{ type: 'index', width: 30 },
+        { type: 'index', width: 30 },
         {
-          title: '编号',
-          field: 'code',
-          sortable: true,
-          align: 'center'
-        }, {
           title: '名称',
           field: 'name',
           sortable: true,
+          align: 'left',
+          treeNode: true
+        },
+        {
+          title: '编码',
+          field: 'code',
+          sortable: true,
           align: 'center'
-        }, {
+        },{
           title: '拼音码',
           field: 'pinyinCode',
           sortable: true,
@@ -157,13 +153,6 @@ export default {
           field: 'remark',
           sortable: true,
           align: 'center'
-        },
-        {
-          title: '公司ID',
-          field: 'companyId',
-          sortable: true,
-          align: 'center',
-          'width': '120px'
         },
         {
           title: '修改人',

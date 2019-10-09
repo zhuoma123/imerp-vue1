@@ -9,7 +9,7 @@
                 <el-input v-model="dataForm.name" :placeholder="data.form.input.name"/>
             </el-form-item>
             <el-form-item prop="code" :label="data.form.input.code">
-                <el-input v-model="dataForm.code" :placeholder="data.form.input.code"/>
+                <el-input v-model="dataForm.code" :placeholder="data.form.input.code" :disabled="dataForm.id"/>
             </el-form-item>
             <el-form-item prop="virtualFlag" :label="data.form.input.virtualFlag" >
                 <el-radio-group v-model="dataForm.virtualFlag">
@@ -46,6 +46,22 @@ import mixinViewModule from '@/mixins/view-module'
 export default {
   mixins: [mixinViewModule],
   data () {
+    let checkTel = (rule, value, callback) => {
+      if (value) {
+        let pattern = /\d{3}-\d{8}|\d{4}-\d{7}/
+        pattern.test(value) ? callback() : callback(new Error('电话格式不正确'))
+      } else {
+        callback()
+      }
+    }
+    let checkMobile = (rule, value, callback) => {
+      if (value) {
+        let pattern = /^(13[0-9]|14[5|7]|15[0|1|2|3|5|6|7|8|9]|18[0|1|2|3|5|6|7|8|9])\d{8}$/
+        pattern.test(value) ? callback() : callback(new Error('手机号码格式不正确'))
+      } else {
+        callback()
+      }
+    }
     return {
       mixinViewModuleOptions: {
         getDataListURL: '/base/warehouse/list',
@@ -70,6 +86,12 @@ export default {
       rules: {
         name: [{
           required: true, message: '名称不可缺少'
+        }],
+        mobileNo: [{
+          validator: checkMobile, trigger: 'blur'
+        }],
+        tel: [{
+          validator: checkTel, trigger: 'blur'
         }]
       }
     }

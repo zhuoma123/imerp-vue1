@@ -1,7 +1,7 @@
 <template>
   <el-dialog class="abow_dialog" :visible.sync="visible" 
   :title="dataForm.roleId==null ? $t('views.public.add') : $t('views.public.update')" 
-  :close-on-click-modal="false" :close-on-press-escape="false" width="80%">
+  :close-on-click-modal="false" :close-on-press-escape="false" width="50%">
     <el-form  :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmitHandle()" label-width="120px" size="mini">
       <el-form-item prop="roleName" label="角色名称" >
         <el-input v-model="dataForm.roleName" placeholder="角色名称" />
@@ -42,7 +42,7 @@
         </el-col>
       
         <el-col :span="12">
-      <el-form-item prop="deptName" label="数据授权" class="dept-list" >        
+      <el-form-item prop="deptNames" label="数据授权" class="dept-list" >        
         <el-tree
           :data="deptList"
           :props="{ label: 'name', children: 'children' }"
@@ -74,11 +74,15 @@ export default {
       deptList: [],
       menuList: [],
       deptListVisible: false,
+      fullscreenLoading: false,
       dataForm: {
         roleId: '',
         roleName: '',
         deptId: '',
         deptName: '',
+        deptNames:'',
+        companyId:'',
+        companyName:'',
         deptIdList:[],
         menuIdList:[]
       }
@@ -101,6 +105,9 @@ export default {
          roleName: [
           { required: true, message: "角色名称不能为空！", trigger: 'blur' },
           { validator: validateRoleName, trigger: 'blur' }
+        ],
+        deptName: [
+          { required: true, message: "所属部门不能为空！", trigger: 'change' },
         ]
         
       }
@@ -168,6 +175,7 @@ export default {
     deptListTreeCurrentChangeHandle (data, node) {
       this.dataForm.deptId = data.deptId
       this.dataForm.deptName = data.name
+      this.dataForm.deptNames = data.naem
       this.deptListVisible = false
     },
     // 数据, 选中
@@ -194,6 +202,7 @@ export default {
         if (!valid) {
           return false
         }
+        debugger
         this.menuListTreeCurrentChangeHandle(this)
         this.deptIdListTreeCurrentChangeHandle(this)
         this.$axios['post']('/sys/role/save', {

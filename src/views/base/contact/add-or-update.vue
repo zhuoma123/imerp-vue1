@@ -4,13 +4,14 @@
         <el-form :model="dataForm" :rules="rules" ref="dataForm" label-width="120px" :inline="true" labelSuffix="："
                  size="mini" class="tb-matthew">
             <el-form-item prop="id" v-show="false" />
-            <el-form-item label="顾客" prop="custId">
+            <el-form-item prop="custName" v-show="false" />
+            <el-form-item label="单位" prop="custId">
                 <im-selector
-                    placeholder="请选择客户"
+                    placeholder="请选择往来单位"
                     v-model="dataForm.custId"
                     :mapModel.sync="dataForm"
                     mapKeyVal="custName:custId"
-                    dataType="biz.customer">
+                    dataType="biz.customer"  :disabled="dataForm.id">
                 </im-selector>
             </el-form-item>
             <el-form-item prop="name" :label="data.form.input.name">
@@ -48,6 +49,7 @@
 <script>
 import data from './data'
 import mixinViewModule from '@/mixins/view-module'
+
 export default {
   mixins: [mixinViewModule],
   data () {
@@ -72,6 +74,7 @@ export default {
         let pattern = /^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/
         pattern.test(value) ? callback() : callback(new Error('邮箱格式不正确'))
       } else {
+        console.log(JSON.stringify(this.dataForm))
         callback()
       }
     }
@@ -92,9 +95,11 @@ export default {
       },
       data: data,
       visible: false,
+      count: 0,
       dataForm: {
         id: undefined,
         custId: undefined,
+        custName: undefined,
         name: undefined,
         shortName: undefined,
         linkman: undefined,
@@ -132,7 +137,13 @@ export default {
       }
     }
   },
-  methods: {}
+  methods: {
+    reset () {
+      this.$nextTick(() => {
+        this.$refs['dataForm'].resetFields()
+      })
+    }
+  }
 }
 </script>
 

@@ -1,11 +1,18 @@
 <template>
     <d2-container class="mod-sys__user">
-        <el-collapse slot="header">
-            <el-collapse-item>
+        <el-collapse slot="header" v-model="activeName">
+            <el-collapse-item name="1">
                 <template slot="title">
                     查询条件<i class="el-icon-d-arrow-right"/>
                 </template>
                 <el-form :inline="true" size="mini" :model="dataForm" @keyup.enter.native="search" ref="dataForm">
+                    <el-form-item prop="type">
+                        <el-select v-model="dataForm.type" placeholder="请选择单位类型">
+                            <el-option label="客户" value="CUST"></el-option>
+                            <el-option label="供应商" value="VENDOR"></el-option>
+                            <el-option label="物流公司" value="SUP"></el-option>
+                        </el-select>
+                    </el-form-item>
                     <el-form-item prop="name">
                         <el-input
                                 v-model="dataForm.name"
@@ -13,10 +20,17 @@
                                 clearable
                         />
                     </el-form-item>
-                    <el-form-item prop="mobile">
+                    <el-form-item prop="tel">
                         <el-input
                                 v-model="dataForm.tel"
                                 :placeholder=data.form.input.tel
+                                clearable
+                        />
+                    </el-form-item>
+                    <el-form-item prop="pic">
+                        <el-input
+                                v-model="dataForm.pic"
+                                :placeholder=data.form.input.pic
                                 clearable
                         />
                     </el-form-item>
@@ -76,19 +90,26 @@
                         @click="deleteHandleSetter($refs.pGrid)"
                 >删除
                 </el-button>
+                <el-button
+                        ref="btnContact"
+                        type="warning"
+                        size="mini"
+                        icon="el-icon-star-off"
+                        @click="addContact($refs.pGrid)"
+                >联系人信息
+                </el-button>
             </template>
         </vxe-grid>
-        <!-- 分页 -->
         <el-pagination
-                slot="footer"
-                :current-page="page"
-                :page-sizes="[10, 20, 50, 100]"
-                :page-size="limit"
-                :total="total"
-                layout="total, sizes, prev, pager, next, jumper"
-                @size-change="pageSizeChangeHandle"
-                @current-change="pageCurrentChangeHandle"
-        ></el-pagination>
+        slot="footer"
+        :current-page="page"
+        :page-sizes="[10, 20, 50, 100]"
+        :page-size="limit"
+        :total="total"
+        layout="total, sizes, prev, pager, next, jumper"
+        @size-change="val => pageSizeChangeHandle(val, 'vxe')"
+        @current-change="val => pageCurrentChangeHandle(val, 'vxe')"
+></el-pagination>
         <!-- 弹窗, 新增 / 修改 -->
         <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="search"/>
     </d2-container>
@@ -104,6 +125,7 @@ export default {
   mixins: [mixinViewModule],
   data: function () {
     return {
+      activeName: '1',
       data: data,
       mixinViewModuleOptions: {
         getDataListURL: '/base/cust/list',
@@ -133,9 +155,6 @@ export default {
         pic: undefined,
         remark: undefined
       },
-      dataFormOp: {
-        username: 'like'
-      },
       vendor: {
         CUST: '顾客',
         VENDOR: '供应商'
@@ -143,7 +162,7 @@ export default {
       columns: [
         { type: 'index', width: 30 },
         {
-          title: '客户 | 供应商',
+          title: '单位类型',
           field: 'custVendor',
           sortable: true,
           align: 'center',
@@ -158,14 +177,14 @@ export default {
           width: '150px'
         },
         {
-          title: '职称',
+          title: '简称',
           field: 'shortName',
           sortable: true,
           align: 'center',
           width: '150px'
         }, {
           title: '类型',
-          field: 'type',
+          field: 'tName',
           sortable: true,
           align: 'center'
         },
@@ -305,6 +324,18 @@ export default {
         return '客户'
       } else {
         return '供应商'
+      }
+    },
+    addContact (grid) {
+      if (!grid.getCurrentRow()) {
+        return this.$message({
+          message: '请选择要要补充信息的记录',
+          type: 'warning'
+        })
+      } else {
+        let id = grid.getCurrentRow().id
+        let name = grid.getCurrentRow().name
+        this.$router.push({ name: 'base-contact', params: { custId: id, custName: name } })
       }
     }
   }

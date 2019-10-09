@@ -4,24 +4,21 @@
         <el-form :model="dataForm" :rules="rules" ref="dataForm" label-width="120px" :inline="true" labelSuffix="："
                  size="mini" class="tb-matthew">
             <el-form-item prop="id" v-show="false" />
-            <el-form-item prop="name" :label="data.form.input.name">
-                <el-input v-model="dataForm.name" :placeholder="data.form.input.name"/>
-            </el-form-item>
-            <el-form-item prop="code" :label="data.form.input.code">
-                <el-input v-model="dataForm.code" :placeholder="data.form.input.code"/>
-            </el-form-item>
-            <el-form-item prop="alisaName" :label="data.form.input.alisaName">
-                <el-input v-model="dataForm.alisaName" :placeholder="data.form.input.alisaName"/>
-            </el-form-item>
-            <el-form-item prop="categoryId" :label="data.form.input.categoryId">
+            <el-form-item prop="cateCode" :label="data.form.input.cateCode">
                 <im-selector
-                        placeholder="请选择物料分类"
-                        v-model="dataForm.categoryId"
+                        placeholder="请选择物料名称"
+                        v-model="dataForm.cateCode"
                         :mapModel.sync="dataForm"
-                        mapKeyVal="cName:categoryId"
+                        mapKeyVal="cateName:cateCode"
                         dataType="biz.pcategory"
                         style="width: 200px">
                 </im-selector>
+            </el-form-item>
+            <el-form-item prop="code" :label="data.form.input.code">
+                <el-input v-model="dataForm.code" :placeholder="data.form.input.code" :disabled="dataForm.id"/>
+            </el-form-item>
+            <el-form-item prop="alisaName" :label="data.form.input.alisaName">
+                <el-input v-model="dataForm.alisaName" :placeholder="data.form.input.alisaName"/>
             </el-form-item>
             <el-form-item prop="vehicleId" :label="data.form.input.vehicleId">
                 <im-selector
@@ -39,7 +36,7 @@
                         v-model="dataForm.brandId"
                         :mapModel.sync="dataForm"
                         mapKeyVal="bName:brandId"
-                        dataType="biz.pbrand" style="width: 200px">
+                        dataType="bizweak.pbrand" style="width: 200px">
                 </im-selector>
             </el-form-item>
             <el-form-item prop="madeinId" :label="data.form.input.madeinId">
@@ -53,7 +50,7 @@
                 </im-selector>
             </el-form-item>
             <el-form-item prop="barCode" :label="data.form.input.barCode">
-                <el-input v-model="dataForm.barCode" :placeholder="data.form.input.barCode"/>
+                <el-input v-model="dataForm.barCode" :placeholder="data.form.input.barCode" :disabled="dataForm.id"/>
             </el-form-item>
             <el-form-item prop="picCode" :label="data.form.input.picCode">
                 <el-input v-model="dataForm.picCode" :placeholder="data.form.input.picCode"/>
@@ -83,14 +80,8 @@
                         style="width: 200px">
                 </im-selector>
             </el-form-item>
-            <el-form-item prop="pinyinCode" :label="data.form.input.status">
-                <el-input v-model="dataForm.pinyinCode" :placeholder="data.form.input.pinyinCode"/>
-            </el-form-item>
-            <el-form-item prop="pinyinCode" :label="data.form.input.pinyinCode">
-                <el-input v-model="dataForm.pinyinCode" :placeholder="data.form.input.pinyinCode"/>
-            </el-form-item>
-            <el-form-item prop="wbCode" :label="data.form.input.wbCode">
-                <el-input v-model="dataForm.wbCode" :placeholder="data.form.input.wbCode"/>
+            <el-form-item prop="status" :label="data.form.input.status">
+                <el-input v-model="dataForm.status" :placeholder="data.form.input.status"/>
             </el-form-item>
             <el-form-item prop="salePrice" :label="data.form.input.salePrice">
                 <el-input v-model="dataForm.salePrice" :placeholder="data.form.input.salePrice"/>
@@ -116,6 +107,55 @@ import mixinViewModule from '@/mixins/view-module'
 export default {
   mixins: [mixinViewModule],
   data () {
+    let codeValidator = (rule, value, callback) => {
+      if (!value) {
+        callback(new Error('内容不能为空'))
+      } else {
+        let form = {}
+        if (this.dataForm.code) {
+          form.code = this.dataForm.code
+        }
+        if (this.dataForm.barCode) {
+          form.barCode = this.dataForm.barCode
+        }
+        if (this.dataForm.id) {
+          form.id = this.dataForm.id
+        }
+        this.$axios({
+          url: '/base/product/checkCode',
+          method: 'post',
+          data: form
+        }).then(res => {
+          if (res) {
+            callback(new Error(res))
+          } else {
+            callback()
+          }
+        })
+      }
+    }
+    let nameValidator = (rule, value, callback) => {
+      if (!value) {
+        callback(new Error('内容不能为空'))
+      } else {
+        let form = {}
+        form.name = value
+        if (this.dataForm.id) {
+          form.id = this.dataForm.id
+        }
+        this.$axios({
+          url: '/base/product/checkCode',
+          method: 'post',
+          data: form
+        }).then(res => {
+          if (res) {
+            callback(new Error(res))
+          } else {
+            callback()
+          }
+        })
+      }
+    }
     return {
       mixinViewModuleOptions: {
         getDataListURL: '/base/product/list',
@@ -147,11 +187,18 @@ export default {
         wbCode: undefined,
         salePrice: undefined,
         costPrice: undefined,
-        remark: undefined
+        remark: undefined,
+        cateCode: undefined
       },
       rules: {
-        name: [{
-          required: true, message: '名称不可缺少'
+        cateCode: [{
+          validator: nameValidator, trigger: 'blur'
+        }],
+        code: [{
+          validator: codeValidator, trigger: 'blur'
+        }],
+        barCode: [{
+          validator: codeValidator, trigger: 'blur'
         }]
       }
     }

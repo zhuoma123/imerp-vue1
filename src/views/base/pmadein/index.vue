@@ -1,7 +1,7 @@
 <template>
     <d2-container class="mod-sys__user">
-        <el-collapse slot="header">
-            <el-collapse-item>
+        <el-collapse slot="header" v-model="activeName">
+            <el-collapse-item name="1">
                 <template slot="title">
                     查询条件<i class="el-icon-d-arrow-right"/>
                 </template>
@@ -9,7 +9,6 @@
                     <el-form-item prop="code">
                         <el-input
                                 v-model="dataForm.code"
-                                :data-operate="dataFormOp.liekOps"
                                 :placeholder="data.form.input.code"
                                 clearable
                         />
@@ -17,7 +16,6 @@
                     <el-form-item prop="name">
                         <el-input
                                 v-model="dataForm.name"
-                                :data-operate="dataFormOp.likeOps"
                                 :placeholder="data.form.input.name"
                                 clearable
                         />
@@ -79,17 +77,16 @@
                 </el-button>
             </template>
         </vxe-grid>
-        <!-- 分页 -->
         <el-pagination
-                slot="footer"
-                :current-page="page"
-                :page-sizes="[10, 20, 50, 100]"
-                :page-size="limit"
-                :total="total"
-                layout="total, sizes, prev, pager, next, jumper"
-                @size-change="pageSizeChangeHandle"
-                @current-change="pageCurrentChangeHandle"
-        ></el-pagination>
+        slot="footer"
+        :current-page="page"
+        :page-sizes="[10, 20, 50, 100]"
+        :page-size="limit"
+        :total="total"
+        layout="total, sizes, prev, pager, next, jumper"
+        @size-change="val => pageSizeChangeHandle(val, 'vxe')"
+        @current-change="val => pageCurrentChangeHandle(val, 'vxe')"
+></el-pagination>
         <!-- 弹窗, 新增 / 修改 -->
         <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="search"/>
     </d2-container>
@@ -105,6 +102,7 @@ export default {
   mixins: [mixinViewModule],
   data () {
     return {
+      activeName: '1',
       data: data,
       mixinViewModuleOptions: {
         getDataListURL: '/base/productmadein/list',
@@ -115,9 +113,6 @@ export default {
       dataForm: {
         code: undefined,
         name: undefined
-      },
-      dataFormOp: {
-        likeOps: 'like'
       },
       rowHandler: {
         width: '160px',
@@ -153,13 +148,7 @@ export default {
         }
       },
       columns: [
-{ type: 'index', width: 30 },
-        {
-          title: '编号',
-          field: 'code',
-          sortable: true,
-          align: 'center'
-        }, {
+        { type: 'index', width: 30 }, {
           title: '名称',
           field: 'name',
           sortable: true,
@@ -177,12 +166,6 @@ export default {
         }, {
           title: '备注',
           field: 'remark',
-          sortable: true,
-          align: 'center'
-        },
-        {
-          title: '公司ID',
-          field: 'companyId',
           sortable: true,
           align: 'center'
         },

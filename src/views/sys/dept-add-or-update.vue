@@ -39,6 +39,14 @@
       </el-radio-group>
       </template>
       </el-form-item>
+      <el-form-item label="设置公司"  v-show="dataForm.currentId===1?true:false">
+       <template>
+      <el-radio-group v-model="dataForm.isTop">
+        <el-radio :label="1">是</el-radio>
+        <el-radio :label="0">否</el-radio>
+      </el-radio-group>
+      </template>
+      </el-form-item>
     </el-form>
     <template slot="footer">
       <el-button @click="visible = false">{{ $t('views.public.cancel') }}</el-button>
@@ -55,6 +63,7 @@ export default {
       visible: false,
       deptList: [],
       deptListVisible: false,
+      fullscreenLoading: false,
       dataForm: {
         deptId: '',
         name: '',
@@ -62,11 +71,14 @@ export default {
         parentName: '',
         orderNum: 0,
         type: 1,
-        delFlat:0
+        delFlat:0,
+        isTop: 0,
+        currentId:''
       }
      
     }
   },
+  
   computed: {
       dataRule () {
         var validateDeptName = (rule, value, callback) => {
@@ -88,18 +100,21 @@ export default {
           { validator: validateDeptName, trigger: 'blur' }
         ],
         parentName: [
-          { required: true, message: "上级部门不能为空！", trigger: 'blur' },
+          { required: true, message: "上级部门不能为空！", trigger: 'change' },
           { validator: validateParentName, trigger: 'blur' }
         ]
         
       }
     }
   },
+   
   methods: {
     
     init () {
       this.visible = true
       this.dataForm.deptId=null
+      this.dataForm.isTop = 0
+      this.dataForm.type = 1
       if(this.$refs.dataForm){
         this.$refs.dataForm.resetFields()
       }
@@ -157,8 +172,8 @@ export default {
             duration: 500,
             onClose: () => {
               this.visible = false
-              this.search()
-              //this.$emit('refreshDataList')
+              //this.search()
+              this.$emit('refreshDataList')
             }
           })
         }).catch(() => {

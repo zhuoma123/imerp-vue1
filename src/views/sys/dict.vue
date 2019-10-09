@@ -1,7 +1,7 @@
 <template>
     <d2-container class="mod-sys__user">
-        <el-collapse slot="header">
-            <el-collapse-item>
+        <el-collapse slot="header" v-model="activeName">
+            <el-collapse-item name="1">
                 <template slot="title">
                     查询条件<i class="el-icon-d-arrow-right"/>
                 </template>
@@ -12,6 +12,13 @@
                         <el-input
                                 v-model="dataForm.dictType"
                                 :placeholder="data.form.dict.dictType"
+                                clearable
+                        />
+                    </el-form-item>
+                    <el-form-item prop="code">
+                        <el-input
+                                v-model="dataForm.code"
+                                :placeholder="data.form.dict.code"
                                 clearable
                         />
                     </el-form-item>
@@ -88,8 +95,8 @@
                 :page-size="limit"
                 :total="total"
                 layout="total, sizes, prev, pager, next, jumper"
-                @size-change="pageSizeChangeHandle"
-                @current-change="pageCurrentChangeHandle"
+                @size-change="val => pageSizeChangeHandle(val, 'vxe')"
+                @current-change="val => pageCurrentChangeHandle(val, 'vxe')"
         ></el-pagination>
         <!-- 弹窗, 新增 / 修改 -->
         <AddOrUpdate v-if="addOrUpdateVisible" :parentDataList="dataList" ref="addOrUpdate" @refreshDataList="search"/>
@@ -106,6 +113,7 @@ export default {
   mixins: [mixinViewModule],
   data () {
     return {
+      activeName: '1',
       data: data,
       mixinViewModuleOptions: {
         getDataListURL: '/sys/dict/list',
@@ -149,7 +157,7 @@ export default {
           align: 'center'
         },
         {
-          title: '序号',
+          title: '扩展属性',
           field: 'extendVal',
           sortable: true,
           align: 'center'

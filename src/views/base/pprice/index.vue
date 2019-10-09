@@ -1,7 +1,7 @@
 <template>
     <d2-container class="mod-sys__user">
-        <el-collapse slot="header">
-            <el-collapse-item>
+        <el-collapse slot="header" v-model="activeName">
+            <el-collapse-item name="1">
                 <template slot="title">
                     查询条件<i class="el-icon-d-arrow-right"/>
                 </template>
@@ -9,7 +9,6 @@
                     <el-form-item prop="productId">
                         <el-input
                                 v-model="dataForm.productId"
-                                :data-operate="dataFormOp.liekOps"
                                 :placeholder="data.form.input.productId"
                                 clearable
                         />
@@ -71,17 +70,16 @@
                 </el-button>
             </template>
         </vxe-grid>
-        <!-- 分页 -->
         <el-pagination
-                slot="footer"
-                :current-page="page"
-                :page-sizes="[10, 20, 50, 100]"
-                :page-size="limit"
-                :total="total"
-                layout="total, sizes, prev, pager, next, jumper"
-                @size-change="pageSizeChangeHandle"
-                @current-change="pageCurrentChangeHandle"
-        ></el-pagination>
+        slot="footer"
+        :current-page="page"
+        :page-sizes="[10, 20, 50, 100]"
+        :page-size="limit"
+        :total="total"
+        layout="total, sizes, prev, pager, next, jumper"
+        @size-change="val => pageSizeChangeHandle(val, 'vxe')"
+        @current-change="val => pageCurrentChangeHandle(val, 'vxe')"
+></el-pagination>
         <!-- 弹窗, 新增 / 修改 -->
         <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="search"/>
     </d2-container>
@@ -97,6 +95,7 @@ export default {
   mixins: [mixinViewModule],
   data () {
     return {
+      activeName: '1',
       data: data,
       mixinViewModuleOptions: {
         getDataListURL: '/base/productprice/list',
@@ -106,9 +105,6 @@ export default {
       },
       dataForm: {
         productId: undefined
-      },
-      dataFormOp: {
-        likeOps: 'like'
       },
       rowHandler: {
         width: '160px',
@@ -144,7 +140,7 @@ export default {
         }
       },
       columns: [
-{ type: 'index', width: 30  },
+        { type: 'index', width: 30 },
         {
           title: '产品',
           field: 'productName',

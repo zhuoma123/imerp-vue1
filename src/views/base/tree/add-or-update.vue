@@ -11,6 +11,9 @@
         <el-form-item prop="type" :label="data.data.input.type">
           <el-input v-model="dataForm.type" :placeholder="data.data.input.type"/>
         </el-form-item>
+        <el-form-item prop="code" :label="data.data.input.code">
+          <el-input v-model="dataForm.code" :placeholder="data.data.input.code" :disabled="dataForm.id"/>
+        </el-form-item>
         <el-form-item prop="name" :label="data.data.input.name">
           <el-input v-model="dataForm.name" :placeholder="data.data.input.name"/>
         </el-form-item>
@@ -48,7 +51,7 @@
       </template>
     </el-dialog>
     <el-dialog title="菜单选择" :visible.sync="menuFormVisible" width="388px">
-        <el-input placeholder="输入关键字进行过滤" v-model="filterText"></el-input>
+        <el-input placeholder="输入关键字进行过滤" v-model="filterText" @keyup.enter.native="getParentData"></el-input>
         <el-tree
                 :data="menuList"
                 :props="defaultProps"
@@ -75,6 +78,28 @@ import data from './data'
 export default {
   mixins: [mixinViewModule],
   data () {
+    let checkCode = (rule, value, callback) => {
+      if (!value) {
+        callback(new Error('编码必须被填写'))
+      } else {
+        let form = {}
+        if (this.dataForm.id) {
+          form.id = this.dataForm.id
+        }
+        form.code = value
+        this.$axios({
+          url: '/base/tree/checkCode',
+          method: 'post',
+          data: form
+        }).then(res => {
+          if (res > 0) {
+            callback(new Error('编码重复，请重新指定'))
+          } else {
+            callback()
+          }
+        })
+      }
+    }
     return {
       mixinViewModuleOptions: {
         getDataListURL: '/base/tree/list',
@@ -84,6 +109,7 @@ export default {
       },
       filterText: undefined,
       menuList: [],
+      parentDataList: [],
       defaultProps: {
         children: 'children',
         label: 'name',
@@ -109,6 +135,9 @@ export default {
         pname: undefined
       },
       rules: {
+        code: [{
+          validator: checkCode, trigger: 'blur'
+        }],
         name: [{
           required: true, message: '名称不可缺少', trigger: 'blur'
         }],
@@ -122,23 +151,18 @@ export default {
       menuFormVisible: false
     }
   },
-  props: {
-    parentDataList: {
-      type: Array
-    }
-  },
   watch: {
     filterText: function (val) {
       console.log(val)
       // this.$refs.tree.filter(val)
+    },
+    parentDataList: function (val) {
+      this.menuList = [{ id: 0, name: '顶级菜单', children: this.parentDataList }]
     }
   },
   methods: {
     showPid () {
       this.menuFormVisible = true
-      this.$nextTick(() => {
-        this.menuList = [{ id: 0, name: '顶级菜单', children: this.parentDataList }]
-      })
     },
     getSelectedMenu () {
       let data = this.$refs.tree.getCurrentNode()
@@ -149,7 +173,18 @@ export default {
     filterNode (value, data) {
       if (!value) return true
       return data.label.indexOf(value) !== -1
+    },
+    getParentData () {
+      let dataForm = { data: {} }
+      dataForm.data.name = this.filterText
+      this.$axios.post('/base/tree/nolist', { dataForm: dataForm }).then(res => {
+        this.parentDataList = res
+        console.log('res: ' + JSON.stringify(res))
+      })
     }
+  },
+  created () {
+    this.getParentData()
   }
 }
 </script>

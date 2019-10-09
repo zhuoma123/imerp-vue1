@@ -1,12 +1,12 @@
 {
   "form": {
     "input": {
-      "custVendor": "客户/供应商",
+      "custVendor": "单位类型",
       "code": "编号",
-      "name": "姓名",
-      "shortName": "职务",
+      "name": "名称",
+      "shortName": "简称",
       "type": "类型",
-      "tel": "电话",
+      "tel": "公司电话",
       "fax": "传真",
       "mm": "企业微信号",
       "companyAddress": "企业地址",

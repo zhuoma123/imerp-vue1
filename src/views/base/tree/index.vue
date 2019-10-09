@@ -1,7 +1,7 @@
 <template>
     <d2-container class="mod-sys__user">
-        <el-collapse slot="header">
-            <el-collapse-item>
+        <el-collapse slot="header" v-model="activeName">
+            <el-collapse-item name="1">
                 <template slot="title">
                     查询条件<i class="el-icon-d-arrow-right"/>
                 </template>
@@ -74,7 +74,7 @@
                         type="primary"
                         size="mini"
                         icon="el-icon-edit"
-                        @click="updateHandle($refs.pGrid)"
+                        @click="updateHandleRefer($refs.pGrid)"
                 >修改
                 </el-button>
                 <el-button
@@ -82,13 +82,23 @@
                         type="danger"
                         size="mini"
                         icon="el-icon-delete"
-                        @click="deleteHandleSetter($refs.pGrid)"
+                        @click="deleteHandleSetterRefer($refs.pGrid)"
                 >删除
                 </el-button>
             </template>
         </vxe-grid>
+        <el-pagination
+                slot="footer"
+                :current-page="page"
+                :page-sizes="[10, 20, 50, 100]"
+                :page-size="limit"
+                :total="total"
+                layout="total, sizes, prev, pager, next, jumper"
+                @size-change="val => pageSizeChangeHandle(val, 'vxe')"
+                @current-change="val => pageCurrentChangeHandle(val, 'vxe')"
+        ></el-pagination>
         <!-- 弹窗, 新增 / 修改 -->
-        <AddOrUpdate v-if="addOrUpdateVisible" :parentDataList="dataList" ref="addOrUpdate" @refreshDataList="search"/>
+        <AddOrUpdate v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="search"/>
     </d2-container>
 </template>
 
@@ -103,11 +113,12 @@ export default {
   mixins: [mixinViewModule],
   data () {
     return {
+      activeName: '1',
       data: data,
       formMap: formMap,
       mixinViewModuleOptions: {
         getDataListURL: '/base/tree/list',
-        getDataListIsPage: false,
+        getDataListIsPage: true,
         deleteURL: '/base/tree/delete',
         deleteIsBatch: true
       },
@@ -115,9 +126,6 @@ export default {
         type: undefined,
         code: undefined,
         name: undefined
-      },
-      dataFormOp: {
-        likeOps: 'like'
       },
       sysDic: ['是', '否'],
       toolbar: {
@@ -131,12 +139,12 @@ export default {
         }
       },
       columns: [
-{ type: 'index', width: 30 },
+        { type: 'index', width: 30 },
         {
           title: '类型',
           field: 'type',
           sortable: true,
-          align: 'center',
+          align: 'left',
           treeNode: true
         },
         {
@@ -199,6 +207,45 @@ export default {
         return '是'
       } else {
         return '否'
+      }
+    },
+    updateHandleRefer () {
+      let row = this.pGrid.getCurrentRow()
+      this.addOrUpdateVisible = true
+      if (row) {
+        if (row.sys === 0) {
+          this.$nextTick(() => {
+            this.$refs.addOrUpdate.init(row)
+          })
+        } else if (row.sys === 1) {
+          return this.$message({
+            message: '系统数据已被设置为不能被编辑',
+            type: 'warning'
+          })
+        }
+      } else {
+        return this.$message({
+          message: '请选择要修改的记录',
+          type: 'warning'
+        })
+      }
+    },
+    deleteHandleSetterRefer () {
+      let row = this.pGrid.getCurrentRow()
+      if (row) {
+        if (row.sys === 0) {
+          this.deleteHandleSetter(this.$refs.pGrid)
+        } else if (row.sys === 1) {
+          return this.$message({
+            message: '系统数据不能被删除',
+            type: 'warning'
+          })
+        }
+      } else {
+        return this.$message({
+          message: '请选择要删除的记录',
+          type: 'warning'
+        })
       }
     }
   },

@@ -25,6 +25,12 @@
                 <el-form-item prop="remark" :label="data.form.account.remark" >
                     <el-input v-model="dataForm.remark" :placeholder="data.form.account.remark"/>
                 </el-form-item>
+                <el-form-item prop="status" :label="data.form.account.status" >
+                    <el-radio-group v-model="dataForm.status">
+                        <el-radio :label='1'>正常</el-radio>
+                        <el-radio :label='0'>停用</el-radio>
+                    </el-radio-group>
+                </el-form-item>
             </el-form>
             <template slot="footer">
                 <el-button @click="visible = false">{{ $t('views.public.cancel') }}</el-button>
@@ -75,7 +81,9 @@ export default {
         bankName: undefined,
         initBalance: undefined,
         balance: undefined,
-        remark: undefined
+        remark: undefined,
+        status: 1,
+        deletedFlag: undefined
       },
       typeData: [],
       rules: {
@@ -102,6 +110,16 @@ export default {
      .dlg-matthew{
          .el-dialog__footer {
              margin-right: 60px;
+         }
+     }
+     .tb-matthew{
+         .el-form-item{
+             input.el-input__inner{
+                 width: 200px;
+             }
+             div.el-radio-group{
+                 width: 200px;
+             }
          }
      }
 

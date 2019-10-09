@@ -1,7 +1,7 @@
 <template>
     <d2-container class="mod-sys__user">
         <el-collapse slot="header">
-            <el-collapse-item>
+            <el-collapse-item name="1">
                 <template slot="title">
                     查询条件<i class="el-icon-d-arrow-right"/>
                 </template>
@@ -10,7 +10,6 @@
                     <el-form-item prop="code">
                         <el-input
                                 v-model="dataForm.code"
-                                :data-operate="dataFormOp.likeOps"
                                 :placeholder="data.form.input.code"
                                 clearable
                         />
@@ -18,7 +17,6 @@
                     <el-form-item prop="name">
                         <el-input
                                 v-model="dataForm.name"
-                                :data-operate="dataFormOp.likeOps"
                                 :placeholder="data.form.input.name"
                                 clearable
                         />
@@ -26,7 +24,6 @@
                     <el-form-item prop="vehicleId">
                         <el-input
                                 v-model="dataForm.vehicleId"
-                                :data-operate="dataFormOp.likeOps"
                                 :placeholder="data.form.input.vehicleId"
                                 clearable
                         />
@@ -34,7 +31,6 @@
                     <el-form-item prop="categoryId">
                         <el-input
                                 v-model="dataForm.categoryId"
-                                :data-operate="dataFormOp.likeOps"
                                 :placeholder="data.form.input.categoryId"
                                 clearable
                         />
@@ -42,7 +38,6 @@
                     <el-form-item prop="brandId">
                         <el-input
                                 v-model="dataForm.brandId"
-                                :data-operate="dataFormOp.likeOps"
                                 :placeholder="data.form.input.brandId"
                                 clearable
                         />
@@ -50,7 +45,6 @@
                     <el-form-item prop="madeinId">
                         <el-input
                                 v-model="dataForm.madeinId"
-                                :data-operate="dataFormOp.likeOps"
                                 :placeholder="data.form.input.madeinId"
                                 clearable
                         />
@@ -102,14 +96,6 @@
                         @click="updateHandle($refs.pGrid)"
                 >修改
                 </el-button>
-                <el-button
-                        ref="btnDelete"
-                        type="danger"
-                        size="mini"
-                        icon="el-icon-delete"
-                        @click="deleteHandleSetter($refs.pGrid)"
-                >删除
-                </el-button>
             </template>
         </vxe-grid>
         <!-- 分页 -->
@@ -120,8 +106,8 @@
                 :page-size="limit"
                 :total="total"
                 layout="total, sizes, prev, pager, next, jumper"
-                @size-change="pageSizeChangeHandle"
-                @current-change="pageCurrentChangeHandle"
+                @size-change="val => pageSizeChangeHandle(val, 'vxe')"
+                @current-change="val => pageCurrentChangeHandle(val, 'vxe')"
         ></el-pagination>
         <!-- 弹窗, 新增 / 修改 -->
         <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="search"/>
@@ -138,6 +124,7 @@ export default {
   mixins: [mixinViewModule],
   data () {
     return {
+      activeName: '1',
       data: data,
       mixinViewModuleOptions: {
         getDataListURL: '/base/product/list',
@@ -152,9 +139,6 @@ export default {
         vehicleId: undefined,
         brandId: undefined,
         madeinId: undefined
-      },
-      dataFormOp: {
-        likeOps: 'like'
       },
       rowHandler: {
         width: '160px',
@@ -200,7 +184,7 @@ export default {
         },
         {
           title: '名称',
-          field: 'name',
+          field: 'cateName',
           sortable: true,
           align: 'center',
           width: '110px'

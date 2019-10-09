@@ -18,13 +18,15 @@
         />
       </el-form-item>
       <el-form-item>
-        <el-button @click="getDataList()">{{ $t('views.public.query') }}</el-button>
+        <el-button type="primary" icon="el-icon-search" @click="getDataList()">{{ $t('views.public.query') }}</el-button>
       </el-form-item>
       <el-form-item>
         <el-button
           v-if="$hasPermission('sys:user:save')"
           type="primary"
+          icon="el-icon-circle-plus"
           @click="addOrUpdateData()"
+          v-show="dataForm.superUser===1?true:false"
         >{{ $t('views.public.add') }}</el-button>
       </el-form-item>
       <el-form-item>
@@ -72,16 +74,19 @@ export default {
   mixins: [mixinViewModule],
   data () {
     return {
+      dataListLoading : false,
       mixinViewModuleOptions: {
         getDataListURL: '/sys/user/list',
         getDataListIsPage: true,
-        deleteURL: '/sys/user',
+        deleteURL: '/sys/user/delete',
         deleteIsBatch: true,
         exportURL: '/sys/user/export'
       },
+     
       dataForm: {
         username: '',
-        mobile: ''
+        mobile: '',
+        superUser:''
       },
       dataFormOp: {
         username: 'like'
@@ -128,6 +133,7 @@ export default {
           title: this.$t("views.public.user.status"),
           field: "status",
           sortable: true,
+          width:80,
           align: "center",
           slots: {
             default: ({ row }) => {
@@ -142,15 +148,15 @@ export default {
         {
           title: '操作',
           field: 'other',
-          width:220,
+          width:270,
           sortable: true,
           align: "center",
           slots: {
                     default: ({ row }) => {
                       return [
-                        <el-button size="mini" disabled={row.superUser==1 && row.currenId != 1 ? true:false} onClick={ () => this.addOrUpdateData(row) } type="primary">修改</el-button>,
-                        <el-button size="mini" type="danger" disabled={row.superUser==1 && row.currenId != 1 ? true:false} onClick={ () => this.deleteHandleSetter(row) }>删除</el-button>,
-                        <el-button size="mini" type="success"  onClick={ () => this.updatePasswordData(row) }>更改密码</el-button>
+                        <el-button size="mini" icon="el-icon-edit" disabled={row.superUser==1 && row.currenId != 1 ? true:false} onClick={ () => this.addOrUpdateData(row) } type="primary">修改</el-button>,
+                        <el-button size="mini" icon="el-icon-delete" type="danger" disabled={row.superUser==1 && row.currenId != 1 || this.dataForm.superUser !==1 ? true:false} onClick={ () => this.deleteHandleSetter(row) }>删除</el-button>,
+                        <el-button size="mini" icon="el-icon-edit" type="success"  onClick={ () => this.updatePasswordData(row) }>更改密码</el-button>
                       ]
                     }
                   }
@@ -162,7 +168,22 @@ export default {
     AddOrUpdate,
     UpdatePassword
   },
+   created() {
+     this.findCurrentId()
+  },
   methods: {
+
+    async findCurrentId(){
+        const user = await store.dispatch('d2admin/db/get',{
+        dbName: 'sys',
+        path: 'user.info',
+        defaultValue: {},
+        user: true
+        }, { root: true })
+        debugger
+        this.dataForm.superUser = user.superUser
+    },
+
     //增改
    async addOrUpdateData (row) {
 
@@ -175,29 +196,41 @@ export default {
         }, { root: true })
       if (row) {
         this.$nextTick(() => {
-          this.$refs.addOrUpdate.dataForm.userId = row.userId;
+          this.$refs.addOrUpdate.dataForm.userId = row.userId
           this.$refs.addOrUpdate.dataForm.currenId = row.currenId
-          this.$refs.addOrUpdate.update(row);
+          this.$refs.addOrUpdate.update(row)
         })
       } else {
         this.$nextTick(() => {
           this.$refs.addOrUpdate.dataForm.currenId = user.id
-          this.$refs.addOrUpdate.init();
+          this.$refs.addOrUpdate.init()
         })
       }
     },
     //修改密码
-    updatePasswordData(row){
-      this.updatePasswordVisible = true;
+    async updatePasswordData(row){
+      this.updatePasswordVisible = true
+      const user = await store.dispatch('d2admin/db/get',{
+        dbName: 'sys',
+        path: 'user.info',
+        defaultValue: {},
+        user: true
+        }, { root: true })
       this.$nextTick(() => {
-        this.$refs.updatePassword.dataForm.userId = row.userId;
-        this.$refs.updatePassword.updatepass();
+        debugger
+        if(user.superUser===1){
+          this.$refs.updatePassword.dataForm.password = row.password
+          this.$refs.updatePassword.dataForm.superUser = user.superUser
+        }
+        this.$refs.updatePassword.dataForm.userId = row.userId
+        this.$refs.updatePassword.updatepass()
       })
       
 
     },
      // 删除
     deleteHandleSetter (index) {
+      debugger
       let data
       if (this.mixinViewModuleOptions.deleteIsBatch && this.dataListSelections.length > 0) {
         data = this.dataListSelections.map(item => item[this.mixinViewModuleOptions.deleteIsBatchKey])

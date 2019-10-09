@@ -52,10 +52,15 @@
           <i :class="'fa fa-' + row.icon"/>
         </template>
       </vxe-table-column>
-      <vxe-table-column title="操作" align="center">
+      <vxe-table-column field="orderNum" title="排序" align="center" width=50>
         <template v-slot="{ row }">
-          <el-button size="mini" @click="addOrUpdateData(row)" type="primary">修改</el-button>
-          <el-button size="mini" type="danger"
+          <span v-html="row.orderNum"></span>
+        </template>
+      </vxe-table-column>
+      <vxe-table-column title="操作" align="center" width=170>
+        <template v-slot="{ row }">
+          <el-button size="mini" icon="el-icon-edit" @click="addOrUpdateData(row)" type="primary">修改</el-button>
+          <el-button size="mini" type="danger" icon="el-icon-delete"
           @click="deleteHandleSetter(row)">删除</el-button>
         </template>
       </vxe-table-column>
@@ -181,25 +186,3 @@ export default {
 
 </script>
 
-<style>
-.statistics {
-    padding: 10px;
-    .hiddenRow {
-        display: none;
-    }
-    .searchForm{
-        padding: 10px;
-        span.label{
-            margin-right: 10px;
-        }
-        span.attention{
-            color: #e50021;
-        }
-    }
-  .el-table-column .cell {
-  white-space: pre-line;
-}
-    
-}
-
-</style>

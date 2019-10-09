@@ -33,17 +33,17 @@
         <el-input v-model="dataForm.mobile" :placeholder="$t('views.public.user.mobile')"/>
       </el-form-item>
       <el-form-item  prop="comPassword" :label="$t('views.public.user.comfirmPassword')" v-show="!this.dataForm.userId?true:false">
-        <el-input v-model="dataForm.comPassword" type="password" show-password autocomplete="off"  :placeholder="$t('views.public.user.comfirmPassword')"/>
+        <el-input v-model="dataForm.comPassword" type="password" show-password  :placeholder="$t('views.public.user.comfirmPassword')"/>
       </el-form-item>
       <el-form-item prop="email" :label="$t('views.public.user.email')">
         <el-input v-model="dataForm.email" :placeholder="$t('views.public.user.email')"/>
       </el-form-item>
       
-      <el-form-item prop="roleIdList" :label="$t('views.public.user.roleIdList')" class="role-list">
+      <el-form-item prop="roleIds" :label="$t('views.public.user.roleIdList')" class="role-list">
         <el-select v-model="dataForm.roleIds" multiple :placeholder="$t('views.public.user.roleIdList')">
           <el-option v-for="role in roleList" :key="role.roleId" :label="role.roleName" :value="role.roleId" >
           <span style="float: left">{{ role.roleName }}</span>
-          <span style="float: right; color: #8492a6; font-size: 13px">{{ role.companyName }}</span>
+          <span style="float: right; color: #8492a6; font-size: 13px" v-show="dataForm.currenId ==1 ? true:false">{{ role.companyName }}</span>
           </el-option>
         </el-select>
       </el-form-item>
@@ -77,6 +77,7 @@ export default {
       visible: false,
       deptList: [],
       deptListVisible: false,
+      fullscreenLoading: false,
       roleList: [],
       roleIdListDefault: [],
       dataForm: {
@@ -104,18 +105,7 @@ export default {
   },
   computed: {
     dataRule () {
-      var validateUsername = (rule, value, callback) => {
-        if(!this.dataForm.userId){
-          this.$axios.post('/sys/user/checkusername', { username: value }).then(res => {
-              if(res === '') {
-                callback()
-              } else {
-                return callback(new Error(res))
-              }
-            })
-        }
-         callback()
-      }
+      
       var validatePassword = (rule, value, callback) => {
         if (!this.dataForm.userId && !/\S/.test(value)) {
           return callback(new Error(this.$t('public.rules.required', { 'name': this.$t('views.public.user.password') })))
@@ -157,12 +147,24 @@ export default {
           }
         })
         }
-        
+      }
+      var validateUsernameAsync = (rule, value, callback) => {
+        if(!this.dataForm.userId){
+          this.$axios.post('/sys/user/checkusername', { username: value }).then(res => {
+              if(res === '') {
+            callback()
+          } else {
+            return callback(new Error(res))
+          }
+            })
+        }else{
+          return callback()
+        }
       }
       return {
         username: [
-          { required: true, message: this.$t('public.rules.required', { 'name': this.$t('views.public.user.username') }), trigger: 'blur' },
-          { validator: validateUsername, trigger: 'blur' }
+          { required: true, message: "用户帐户不能为空!", trigger: 'blur' },
+          { validator: validateUsernameAsync, trigger: 'blur' }
         ],
         deptName: [
           { required: true, message: this.$t('public.rules.required', { 'name': this.$t('views.public.user.deptName') }), trigger: 'change' }
@@ -187,6 +189,9 @@ export default {
           {validator: validateName, trigger: 'blur'}
           
         ],
+        roleIds: [
+          { required: true, message: "角色不能为空！", trigger: 'change' },
+        ]
       }
     }
   },
@@ -195,6 +200,8 @@ export default {
       this.visible = true
       this.dataForm.userId=null
       this.dataForm.roleIds=null
+      this.dataForm.password=null
+      this.dataForm.comPassword=null
       this.$nextTick(() => {
         this.$refs['dataForm'].resetFields()
         this.roleIdListDefault = []
@@ -232,7 +239,7 @@ export default {
     dataFormSubmitHandle: debounce(function () {
       debugger
       this.$refs['dataForm'].validate((valid) => {
-        console.log(valid)
+        console.log(valid+"--+++++-----------")
         if (!valid) {
           return false
         }

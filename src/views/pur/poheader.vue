@@ -35,7 +35,7 @@
 			@cell-dblclick="cellDblClick"
 			@current-change='currentChange'>
 			<template v-slot:buttons>
-				<el-button ref="btnStatusAdd" enablestatus='NEW,SENDED,COMPLETED' size="mini" icon="el-icon-circle-plus"
+				<el-button ref="btnStatusAdd" enablestatus='NEW,SUBMIT,SENDED,COMPLETED' size="mini" icon="el-icon-circle-plus"
 				           v-if="$hasPermission('pur:poheader:save')" @click="addHandle">新增
 				</el-button>
 				<el-button ref="btnStatusEdit"
@@ -45,25 +45,26 @@
 				           v-if="$hasPermission('pur:poheader:save')"
 				           @click="e => cellDblClick({row: $refs.pGrid.getCurrentRow()}, e)">修改
 				</el-button>
+				<el-button ref="btnStatusSubmit"
+				           enablestatus='NEW' type="success" size="mini" icon="el-icon-check"
+				           v-if="$hasPermission('pur:poheader:submit')" @click="submitPoHandle($refs.pGrid,true)">提交
+				</el-button>
 				<el-button ref="btnStatusDelete"
 				           enablestatus='NEW' type="danger" size="mini" icon="el-icon-delete"
 				           v-if="$hasPermission('pur:poheader:delete')" @click="deleteEntityHandle($refs.pGrid)">删除
 				</el-button>
-				<el-button ref="btnStatusAutoPick"
-				           enablestatus='NEW' type="success" size="mini" icon="el-icon-check"
-				           v-if="$hasPermission('pur:poheader:submit')" @click="submitHandle($refs.pGrid,true)">自动入库
-				</el-button>
         <el-button ref="btnStatusPick"
-                   enablestatus='NEW' type="success" size="mini" icon="el-icon-check"
-                   v-if="$hasPermission('pur:poheader:submit')" @click="submitHandle($refs.pGrid,false)">人工入库
+                   enablestatus='SUBMIT,SENDED' type="success" size="mini" icon="el-icon-check"
+                   v-if="$hasPermission('pur:poheader:submit')" 
+                   @click="e => cellDblClick({row: $refs.pGrid.getCurrentRow()}, e)">收货
         </el-button>
 				<el-button ref="btnStatusRollback"
-				           enablestatus='SENDED' type="warning" size="mini" icon="fa fa-undo"
+				           enablestatus='SUBMIT,SENDED' type="warning" size="mini" icon="fa fa-undo"
 				           v-if="$hasPermission('pur:poheader:rollback')" @click="rollbackHandle($refs.pGrid)">撤回
 				</el-button>
-				<el-button type="info" size="mini" icon="el-icon-printer" v-if="$hasPermission('pur:poheader:print')">打印
+				<el-button type="info" size="mini" icon="el-icon-printer">打印
 				</el-button>
-				<el-button type="info" size="mini" icon="fa fa-file-excel-o" v-if="$hasPermission('pur:poheader:export')"
+				<el-button type="info" size="mini" icon="fa fa-file-excel-o"
 				           @click="$refs.pGrid.exportCsv()"> 导出
 				</el-button>
 			</template>
@@ -100,6 +101,7 @@ export default {
         getDataListIsPage: true,
         updateURL: '/pur/poheader/save',
         submitURL: '/pur/poheader/submit',
+        submitPoURL: '/pur/poheader/posubmit',
         rollbackURL: '/pur/poheader/rollback',
         exportURL: '/pur/poheader/export'
       },
@@ -147,6 +149,7 @@ export default {
         warehouseId: {
           type: 'cust',
           label: '仓库',
+	        ruletype: 'integer',
           name: 'im-selector',
           props: {
             mapKeyVal: 'warehouseCode:warehouseId',
@@ -155,10 +158,9 @@ export default {
           }
         },
         orderDate: {
-          type: 'cust',
+          type: 'date',
           label: '采购日期',
           colspan: 2,
-          name: 'el-date-picker',
           props: {
             type: 'daterange',
             rangeSeparator: '至',
@@ -237,7 +239,17 @@ export default {
           title: '采购总金额',
           field: 'orderAmount',
           sortable: true,
-          align: 'center'
+          align: 'right',
+          formatter: this.formatterMoney,
+          footerRender: this.footerSum
+        },
+        {
+          title: '采购总运费',
+          field: 'totalFreight',
+          sortable: true,
+          align: 'right',
+          formatter: this.formatterMoney,
+          footerRender: this.footerSum
         },
         {
           title: '修改人',
@@ -271,6 +283,63 @@ export default {
   methods: {
     reset () {
       this.$refs.dataForm.resetFields()
+    },
+    // 提交
+    submitPoHandle (event) {
+      let row = this.pGrid.getCurrentRow()
+      if (!row) {
+        return this.$message({
+          message: '请选择要提交的记录',
+          type: 'warning'
+        })
+      }
+      this.$confirm('确定要提交吗，提交后不能在修改！', '操作提示', {
+        confirmButtonText: this.$t('views.public.confirm'),
+        cancelButtonText: this.$t('views.public.cancel'),
+        type: 'info'
+      }).then(() => {
+        this.$axios.post(
+          this.mixinViewModuleOptions.submitPoURL, { 'id': row.id }
+        ).then(res => {
+          this.$message({
+            message: this.$t('views.public.success'),
+            type: 'success',
+            duration: 500,
+            onClose: () => {
+              this.search()
+            }
+          })
+        }).catch(() => {})
+      }).catch(() => {})
+    },
+     // 双击
+    cellDblClick ({row}, event) {
+      if(typeof row === 'undefined' || row === null) {
+        return this.$message({
+          message: '请选择要操作的记录',
+          type: 'error'
+        })
+      }
+       //默认自动拣货
+      row.isAuto = true
+      this.addOrUpdateVisible = true
+      this.$nextTick(() => {
+        let read = null
+        for(let r in this.$refs) {
+          if(r.startsWith('btnStatus')) {
+            let dc = this.$refs[r].$attrs['row-dbclick']
+            read = this.$refs[r].$attrs['form-readonly']
+            read = (typeof read !== 'undefined' && read !== null)
+            if(typeof dc !== 'undefined' && dc !== null) {
+              if(this.$refs[r].$el.style.display === 'none') {
+                this.$refs.addOrUpdate.init(row, read, false)
+                return
+              }
+            }
+          }
+        }
+        this.$refs.addOrUpdate.init(row, read)
+      })
     }
   },
   mounted () {

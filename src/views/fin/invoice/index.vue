@@ -1,7 +1,7 @@
 <template>
     <d2-container class="mod-sys__user">
-        <el-collapse slot="header">
-            <el-collapse-item>
+        <el-collapse slot="header" v-model="activeName">
+            <el-collapse-item name="1">
                 <template slot="title">
                     查询条件<i class="el-icon-d-arrow-right"/>
                 </template>
@@ -25,6 +25,7 @@
                         <el-date-picker
                                 v-model="dataForm.from"
                                 type="date"
+                                valueFormat="yyyy-MM-dd"
                                 placeholder="票据日期起">
                         </el-date-picker>
                     </el-form-item>
@@ -32,6 +33,7 @@
                         <el-date-picker
                                 v-model="dataForm.to"
                                 type="date"
+                                valueFormat="yyyy-MM-dd"
                                 placeholder="止">
                         </el-date-picker>
                     </el-form-item>
@@ -92,17 +94,15 @@
                 </el-button>
             </template>
         </vxe-grid>
-        <!-- 分页 -->
         <el-pagination
-                slot="footer"
-                :current-page="page"
-                :page-sizes="[10, 20, 50, 100]"
-                :page-size="limit"
-                :total="total"
-                layout="total, sizes, prev, pager, next, jumper"
-                @size-change="pageSizeChangeHandle"
-                @current-change="pageCurrentChangeHandle"
-        ></el-pagination>
+        slot="footer"
+        :current-page="page"
+        :page-sizes="[10, 20, 50, 100]"
+        :page-size="limit"
+        :total="total"
+        layout="total, sizes, prev, pager, next, jumper"
+        @size-change="val => pageSizeChangeHandle(val, 'vxe')"
+        @current-change="val => pageCurrentChangeHandle(val, 'vxe')"/>
         <!-- 弹窗, 新增 / 修改 -->
         <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="search"/>
     </d2-container>
@@ -118,6 +118,7 @@ export default {
   mixins: [mixinViewModule],
   data () {
     return {
+      activeName: '1',
       data: data,
       mixinViewModuleOptions: {
         getDataListURL: '/fin/invoice/list',
@@ -186,7 +187,7 @@ export default {
 
         {
           title: '票据类型',
-          field: 'ivType',
+          field: 'ivName',
           sortable: true,
           align: 'center',
           width: '110px'

@@ -9,6 +9,7 @@
     :loading="loading"
     :remote-method="_selDyamicList"
     v-bind="curprops"
+    @focus="e => _click(e)"
     @change="e => _selChange(e)">
     <el-option
       v-for="item in options"
@@ -82,6 +83,9 @@ export default {
           this.options = res
         } else { this.options = [] }
       })
+    },
+    _click(e) {
+      this._selLoadCode()
     },
     _selChange (e) {
       this.selectVal = e

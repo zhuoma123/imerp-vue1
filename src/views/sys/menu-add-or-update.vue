@@ -62,16 +62,18 @@ export default {
       visible: false,
       deptList: [],
       deptListVisible: false,
+      fullscreenLoading: false,
       dataForm: {
         menuId: '',
         name: '',
         parentId: '',
         parentName: '',
-        orderNum: '1',
+        orderNum: '0',
         url: '',
         perms:'',
         type:1,
-        icon:''
+        icon:'',
+        companyId:'0'
       }
     }
   },

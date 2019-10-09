@@ -1,7 +1,7 @@
 <template>
     <d2-container class="mod-sys__user">
-        <el-collapse slot="header">
-            <el-collapse-item>
+        <el-collapse slot="header" v-model="activeName">
+            <el-collapse-item name="1">
                 <template slot="title">
                     查询条件<i class="el-icon-d-arrow-right"/>
                 </template>
@@ -10,7 +10,6 @@
                     <el-form-item prop="code">
                         <el-input
                                 v-model="dataForm.code"
-                                :data-operate="dataFormOp.likeOps"
                                 :placeholder="data.form.input.code"
                                 clearable
                         />
@@ -18,7 +17,6 @@
                     <el-form-item prop="name">
                         <el-input
                                 v-model="dataForm.name"
-                                :data-operate="dataFormOp.likeOps"
                                 :placeholder="data.form.input.name"
                                 clearable
                         />
@@ -26,7 +24,6 @@
                     <el-form-item prop="mobileNo">
                         <el-input
                                 v-model="dataForm.mobileNo"
-                                :data-operate="dataFormOp.likeOps"
                                 :placeholder="data.form.input.mobileNo"
                                 clearable
                         />
@@ -88,17 +85,16 @@
                 </el-button>
             </template>
         </vxe-grid>
-        <!-- 分页 -->
         <el-pagination
-                slot="footer"
-                :current-page="page"
-                :page-sizes="[10, 20, 50, 100]"
-                :page-size="limit"
-                :total="total"
-                layout="total, sizes, prev, pager, next, jumper"
-                @size-change="pageSizeChangeHandle"
-                @current-change="pageCurrentChangeHandle"
-        ></el-pagination>
+        slot="footer"
+        :current-page="page"
+        :page-sizes="[10, 20, 50, 100]"
+        :page-size="limit"
+        :total="total"
+        layout="total, sizes, prev, pager, next, jumper"
+        @size-change="val => pageSizeChangeHandle(val, 'vxe')"
+        @current-change="val => pageCurrentChangeHandle(val, 'vxe')"
+></el-pagination>
         <!-- 弹窗, 新增 / 修改 -->
         <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="search"/>
     </d2-container>
@@ -114,6 +110,7 @@ export default {
   mixins: [mixinViewModule],
   data () {
     return {
+      activeName: '1',
       data: data,
       mixinViewModuleOptions: {
         getDataListURL: '/base/warehouse/list',
@@ -125,9 +122,6 @@ export default {
         code: undefined,
         name: undefined,
         mobileNo: undefined
-      },
-      dataFormOp: {
-        username: 'like'
       },
       toolbar: {
         id: 'full_edit_1',

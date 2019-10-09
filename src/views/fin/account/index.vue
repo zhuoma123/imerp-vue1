@@ -1,7 +1,7 @@
 <template>
     <d2-container class="mod-sys__user">
-        <el-collapse slot="header">
-            <el-collapse-item>
+        <el-collapse slot="header" v-model="activeName">
+            <el-collapse-item name="1">
                 <template slot="title">
                     查询条件<i class="el-icon-d-arrow-right"/>
                 </template>
@@ -72,7 +72,7 @@
                         type="primary"
                         size="mini"
                         icon="el-icon-edit"
-                        @click="updateHandle($refs.pGrid)"
+                        @click="updateHandle($refs.pGrid)" v-show="$refs.pGrid.getCurrentRow().deletedFlag==='N'"
                 >修改
                 </el-button>
                 <el-button
@@ -80,22 +80,21 @@
                         type="danger"
                         size="mini"
                         icon="el-icon-delete"
-                        @click="deleteHandleSetter($refs.pGrid)"
+                        @click="deleteEntityHandle($refs.pGrid)" v-show="$refs.pGrid.getCurrentRow().deletedFlag === 'N'"
                 >删除
                 </el-button>
             </template>
         </vxe-grid>
-        <!-- 分页 -->
         <el-pagination
-                slot="footer"
-                :current-page="page"
-                :page-sizes="[10, 20, 50, 100]"
-                :page-size="limit"
-                :total="total"
-                layout="total, sizes, prev, pager, next, jumper"
-                @size-change="pageSizeChangeHandle"
-                @current-change="pageCurrentChangeHandle"
-        ></el-pagination>
+        slot="footer"
+        :current-page="page"
+        :page-sizes="[10, 20, 50, 100]"
+        :page-size="limit"
+        :total="total"
+        layout="total, sizes, prev, pager, next, jumper"
+        @size-change="val => pageSizeChangeHandle(val, 'vxe')"
+        @current-change="val => pageCurrentChangeHandle(val, 'vxe')"
+></el-pagination>
         <!-- 弹窗, 新增 / 修改 -->
         <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="search"/>
     </d2-container>
@@ -111,18 +110,21 @@ export default {
   mixins: [mixinViewModule],
   data () {
     return {
+      activeName: '1',
       data: data,
       mixinViewModuleOptions: {
         getDataListURL: '/fin/account/list',
         getDataListIsPage: true,
         deleteURL: '/fin/account/delete',
+        updateURL: '/fin/account/save',
         deleteIsBatch: true,
         deleteIsBatchKey: 'id'
       },
       dataForm: {
         bankName: undefined,
         bankNum: undefined,
-        name: undefined
+        name: undefined,
+        deletedFlag: undefined
       },
       toolbar: {
         id: 'full_edit_1',
@@ -165,7 +167,8 @@ export default {
           title: '状态',
           field: 'status',
           sortable: true,
-          align: 'center'
+          align: 'center',
+          formatter: this.flagSelector
         }, {
           title: '备注',
           field: 'remark',
@@ -191,6 +194,13 @@ export default {
   methods: {
     handleFormReset () {
       this.$refs['dataForm'].resetFields()
+    },
+    flagSelector ({ cellValue }) {
+      if (cellValue) {
+        return '正常'
+      } else {
+        return '停用'
+      }
     }
   },
   created () {}

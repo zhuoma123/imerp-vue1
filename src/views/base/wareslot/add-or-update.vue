@@ -12,7 +12,7 @@
                         :mapModel.sync="dataForm"
                         mapKeyVal="productName:productId"
                         dataType="biz.priceproduct"
-                        style="width: 300px">
+                        style="width: 300px" :disabled="dataForm.id">
                 </im-selector>
             </el-form-item>
             <el-form-item prop="warehouseId" :label="data.form.input.warehouse">

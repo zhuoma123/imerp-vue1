@@ -25,6 +25,7 @@ export default {
   data () {
     return {
       visible: false,
+      fullscreenLoading: false,
       dataForm: {
         userId: '',
         password: '',

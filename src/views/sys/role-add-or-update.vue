@@ -1,7 +1,7 @@
 <template>
   <el-dialog class="abow_dialog" :visible.sync="visible" 
   :title="dataForm.roleId==null ? $t('views.public.add') : $t('views.public.update')" 
-  :close-on-click-modal="false" :close-on-press-escape="false" width="80%">
+  :close-on-click-modal="false" :close-on-press-escape="false" width="50%">
     <el-form  :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmitHandle()" label-width="120px" size="mini">
       <el-form-item prop="roleName" label="角色名称" >
         <el-input v-model="dataForm.roleName" placeholder="角色名称" />
@@ -74,6 +74,7 @@ export default {
       deptList: [],
       menuList: [],
       deptListVisible: false,
+      fullscreenLoading: false,
       dataForm: {
         roleId: '',
         roleName: '',
@@ -106,7 +107,7 @@ export default {
           { validator: validateRoleName, trigger: 'blur' }
         ],
         deptName: [
-          { required: true, message: "所属部门不能为空！", trigger: 'blur' },
+          { required: true, message: "所属部门不能为空！", trigger: 'change' },
         ]
         
       }

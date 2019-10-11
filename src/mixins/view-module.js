@@ -390,11 +390,11 @@ export default {
       let row = this.pGrid.getCurrentRow()
       if (!row) {
         return this.$message({
-          message: '请选择要回滚的记录',
+          message: '请选择要撤回的记录',
           type: 'warning'
         })
       }
-      this.$confirm('确定要回滚吗！', '操作提示', {
+      this.$confirm('确定要撤回吗！', '操作提示', {
         confirmButtonText: this.$t('views.public.confirm'),
         cancelButtonText: this.$t('views.public.cancel'),
         type: 'warning'

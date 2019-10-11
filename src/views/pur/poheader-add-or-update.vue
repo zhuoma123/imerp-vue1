@@ -82,7 +82,7 @@ export default {
       btnDisable: false,
       pageTitle: "采购单新增",
       dataForm: {
-        orderType: "PO",
+        orderType: "PO_ORDER",
         vendorId: "",
         contactName: "",
         contactPhone: "",

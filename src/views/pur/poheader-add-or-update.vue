@@ -308,7 +308,7 @@ export default {
           formatter: this.formatterMoney,
           editRender: { name: "input" }
         },
-        {
+        /*{
           title: "分摊运费",
           field: "freight",
           sortable: true,
@@ -316,7 +316,7 @@ export default {
           formatter: this.formatterMoney,
           editRender: { name: "input" },
           footerRender: this.footerSum
-        },
+        },*/
         {
           title: "采购总金额",
           field: "totalPrice",
@@ -394,7 +394,7 @@ export default {
               delete this.tableColumn[2].editRender
               delete this.tableColumn[5].editRender
               Object.assign(this.tableColumn[7] ,{editRender: { name: "input" }})
-              Object.assign(this.tableColumn[9] ,{editRender: { name: "input" }})
+              /*Object.assign(this.tableColumn[9] ,{editRender: { name: "input" }})*/
               this.$refs.sGrid.loadColumn(this.tableColumn)
               return
             } else {
@@ -404,7 +404,7 @@ export default {
         }
         delete this.dataForm.saveType
         delete this.tableColumn[7].editRender
-        delete this.tableColumn[9].editRender
+        /*delete this.tableColumn[9].editRender*/
         Object.assign(this.tableColumn[5] ,{editRender: { name: "input" }})
         Object.assign(this.tableColumn[2] ,{
           editRender: {
@@ -421,7 +421,7 @@ export default {
         this.$refs.sGrid.loadColumn(this.tableColumn)
       });
     },
-    editClosed({row,rowIndex,$rowIndex,column,columnIndex,$columnIndex,cell}) {
+    /*editClosed({row,rowIndex,$rowIndex,column,columnIndex,$columnIndex,cell}) {
       if(column.property === 'freight'){
         const totalData = this.$refs.sGrid.getTableData().fullData
         const totalFrei = XEUtils.sum(totalData, 'freight')
@@ -437,12 +437,13 @@ export default {
       }
     },
     calFreight(freight) {
+      debugger;
       const totalData = this.$refs.sGrid.getTableData().fullData
-      const totalQty = XEUtils.sum(totalData, 'acceptQty')
+      const totalQty = Number(XEUtils.sum(totalData, 'acceptQty'))
       if(totalQty <= 0)return
       if(!freight)freight = 0
       let average =  freight/totalQty | 0
-      let mod = freight % totalQty
+      let mod = Number(freight % totalQty)
       this.$nextTick(() => {
         for(var i = 0; i < totalData.length ; i++) {
           if(freight <= 0) {
@@ -463,29 +464,29 @@ export default {
             continue;
           }
           if(totalData[i].acceptQty>0){
-            totalData[i].freight += mod
+            totalData[i].freight += Number(mod)
             mod=0
           }
-          /*if(i === totalData.length -1) {
+          /!*if(i === totalData.length -1) {
             totalData[i].freight += mod
-          }*/
-          freight -= totalData[i].freight
+          }*!/
+          freight -= Number(totalData[i].freight)
           this.$refs.sGrid.reloadRow(totalData[i])
         }
         this.$refs.sGrid.updateFooter()
       })
-    }
+    }*/
   },
   computed: {
-    totalFreight() {
+    /*totalFreight() {
       return Number(this.dataForm.freight)
-    }
+    }*/
   },
-  watch: {
+  /*watch: {
     totalFreight: function(newValue, oldValue) {
      this.calFreight(Number(newValue))
     }
-  },
+  },*/
   mounted() {}
 };
 </script>

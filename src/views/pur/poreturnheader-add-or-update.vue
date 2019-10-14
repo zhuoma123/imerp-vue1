@@ -236,7 +236,7 @@ export default {
 			    {
 				    validator: (rule, val, callback,{row})=>{
 					    if(val) {
-						    if(Number(val)> (Number(row.orderQty)-Number(row.totalAcceptQty))) {
+						    if(Math.abs(Number(val))> (Math.abs(Number(row.orderQty))-Math.abs(Number(row.totalAcceptQty)))) {
 							    callback(new Error('退货数不能大于剩余退货数'))
 							    return
 						    }
@@ -269,6 +269,12 @@ export default {
           sortable: true,
           align: 'center'
         },
+	      {
+		      title: "物料描述",
+		      field: "description",
+		      sortable: true,
+		      align: "center"
+	      },
         {
           title: '退货数',
           field: 'orderQty',
@@ -283,6 +289,19 @@ export default {
           },
 	        footerRender: this.footerSum
         },
+	      {
+		      title: "累计退货数",
+		      field: "totalAcceptQty",
+		      sortable: true,
+		      align: "center",
+		      editPost: function (column, row) {
+			      var qty = row.totalAcceptQty
+			      if (!Number.isNaN(qty)) {
+				      return -Math.abs(Number(qty))
+			      }
+		      },
+		      footerRender: this.footerSum
+	      },
         {
           title: '实际退货数',
           field: 'acceptQty',
@@ -305,15 +324,6 @@ export default {
 	        formatter: this.formatterMoney,
 	        editRender: { name: "input" }
         },
-	      {
-		      title: "分摊运费",
-		      field: "freight",
-		      sortable: true,
-		      align: "right",
-		      formatter: this.formatterMoney,
-		      editRender: { name: "input" },
-		      footerRender: this.footerSum
-	      },
         {
           title: '退货总金额',
           field: 'totalPrice',
@@ -391,7 +401,6 @@ export default {
 						  delete this.tableColumn[2].editRender
 						  delete this.tableColumn[5].editRender
 						  Object.assign(this.tableColumn[7] ,{editRender: { name: "input" }})
-						  Object.assign(this.tableColumn[9] ,{editRender: { name: "input" }})
 						  this.$refs.sGrid.loadColumn(this.tableColumn)
 						  return
 					  } else {
@@ -401,7 +410,6 @@ export default {
 			  }
 			  delete this.dataForm.saveType
 			  delete this.tableColumn[7].editRender
-			  delete this.tableColumn[9].editRender
 			  Object.assign(this.tableColumn[5] ,{editRender: { name: "input" }})
 			  Object.assign(this.tableColumn[2] ,{
 				  editRender: {
@@ -418,71 +426,7 @@ export default {
 			  this.$refs.sGrid.loadColumn(this.tableColumn)
 		  });
 	  },
-	  editClosed({row,rowIndex,$rowIndex,column,columnIndex,$columnIndex,cell}) {
-		  if(column.property === 'freight'){
-			  const totalData = this.$refs.sGrid.getTableData().fullData
-			  const totalFrei = XEUtils.sum(totalData, 'freight')
-			  if(totalFrei > this.totalFreight) {
-				  alert('分摊运费之和不能大于总运费')
-				  row.freight = 0
-				  this.$refs.sGrid.updateFooter()
-				  return
-			  }
-			  //this.calFreight(this.totalFreight)
-		  }else if(column.property === 'acceptQty'){
-			  this.calFreight(this.totalFreight)
-		  }
-	  },
-	  calFreight(freight) {
-		  const totalData = this.$refs.sGrid.getTableData().fullData
-		  const totalQty = XEUtils.sum(totalData, 'acceptQty')
-		  if(totalQty <= 0)return
-		  if(!freight)freight = 0
-		  let average =  freight/totalQty | 0
-		  let mod = freight % totalQty
-		  this.$nextTick(() => {
-			  for(var i = 0; i < totalData.length ; i++) {
-				  if(freight <= 0) {
-					  totalData[i].freight = 0;
-					  continue;
-				  }
-				  totalData[i].freight = totalData[i].acceptQty * average
-				  if(average === 0) {
-					  mod = 0
-					  if(totalData[i].acceptQty >= freight) {
-						  totalData[i].freight = freight;
-					  } else {
-						  totalData[i].freight = totalData[i].acceptQty;
-					  }
-				  }
-				  if(!totalData[i].freight) {
-					  totalData[i].freight = 0;
-					  continue;
-				  }
-				  if(totalData[i].acceptQty>0){
-					  totalData[i].freight += mod
-					  mod=0
-				  }
-				  /*if(i === totalData.length -1) {
-						totalData[i].freight += mod
-					}*/
-				  freight -= totalData[i].freight
-				  this.$refs.sGrid.reloadRow(totalData[i])
-			  }
-			  this.$refs.sGrid.updateFooter()
-		  })
-	  }
   },
-	computed: {
-		totalFreight() {
-			return Number(this.dataForm.freight)
-		}
-	},
-	watch: {
-		totalFreight: function(newValue, oldValue) {
-			this.calFreight(Number(newValue))
-		}
-	},
   mounted () {
   }
 }

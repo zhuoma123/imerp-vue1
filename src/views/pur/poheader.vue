@@ -108,7 +108,7 @@ export default {
       order: 'desc',
       orderField: 'id',
       dataForm: {
-        orderType: 'PO',
+        orderType: 'PO_ORDER',
         orderNum: '',
         vendorId: '',
         warehouseId: '',

@@ -18,12 +18,13 @@
         />
       </el-form-item>
       <el-form-item>
-        <el-button @click="getDataList()">{{ $t('views.public.query') }}</el-button>
+        <el-button type="primary" icon="el-icon-search" @click="getDataList()">{{ $t('views.public.query') }}</el-button>
       </el-form-item>
       <el-form-item>
         <el-button
           v-if="$hasPermission('sys:user:save')"
           type="primary"
+          icon="el-icon-circle-plus"
           @click="addOrUpdateData()"
           v-show="dataForm.superUser===1?true:false"
         >{{ $t('views.public.add') }}</el-button>
@@ -43,6 +44,7 @@
       size="mini"
       ref="pGrid"                                                       
       :columns="columns"
+      :loading="dataListLoading"
       :data="dataList"
       :edit-config="{trigger: 'click', mode: 'row', showStatus: true}"
     ></vxe-grid>
@@ -73,6 +75,7 @@ export default {
   mixins: [mixinViewModule],
   data () {
     return {
+      dataListLoading : false,
       mixinViewModuleOptions: {
         getDataListURL: '/sys/user/list',
         getDataListIsPage: true,
@@ -80,6 +83,7 @@ export default {
         deleteIsBatch: true,
         exportURL: '/sys/user/export'
       },
+     
       dataForm: {
         username: '',
         mobile: '',
@@ -130,6 +134,7 @@ export default {
           title: this.$t("views.public.user.status"),
           field: "status",
           sortable: true,
+          width:80,
           align: "center",
           slots: {
             default: ({ row }) => {
@@ -144,15 +149,15 @@ export default {
         {
           title: '操作',
           field: 'other',
-          width:220,
+          width:270,
           sortable: true,
           align: "center",
           slots: {
                     default: ({ row }) => {
                       return [
-                        <el-button size="mini" disabled={row.superUser==1 && row.currenId != 1 ? true:false} onClick={ () => this.addOrUpdateData(row) } type="primary">修改</el-button>,
-                        <el-button size="mini" type="danger" disabled={row.superUser==1 && row.currenId != 1 || this.dataForm.superUser !==1 ? true:false} onClick={ () => this.deleteHandleSetter(row) }>删除</el-button>,
-                        <el-button size="mini" type="success"  onClick={ () => this.updatePasswordData(row) }>更改密码</el-button>
+                        <el-button size="mini" icon="el-icon-edit" disabled={row.superUser==1 && row.currenId != 1 ? true:false} onClick={ () => this.addOrUpdateData(row) } type="primary">修改</el-button>,
+                        <el-button size="mini" icon="el-icon-delete" type="danger" disabled={row.superUser==1 && row.currenId != 1 || this.dataForm.superUser !==1 ? true:false} onClick={ () => this.deleteHandleSetter(row) }>删除</el-button>,
+                        <el-button size="mini" icon="el-icon-edit" type="success"  onClick={ () => this.updatePasswordData(row) }>更改密码</el-button>
                       ]
                     }
                   }
@@ -165,11 +170,11 @@ export default {
     UpdatePassword
   },
    created() {
-     this.ondo()
+     this.findCurrentId()
   },
   methods: {
 
-    async ondo(){
+    async findCurrentId(){
         const user = await store.dispatch('d2admin/db/get',{
         dbName: 'sys',
         path: 'user.info',

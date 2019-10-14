@@ -118,7 +118,7 @@ export default {
       descriptors: {
         orderNum: {
           type: 'string',
-          label: '采购退货单号',
+          label: '退货单号',
           props: {
             clearable: true
           }
@@ -159,7 +159,7 @@ export default {
         },
         orderDate: {
           type: 'date',
-          label: '采购退货日期',
+          label: '退货日期',
           colspan: 2,
           props: {
             type: 'daterange',
@@ -192,7 +192,7 @@ export default {
       tableColumn: [
         { type: 'index', width: 30, align: 'center' },
         {
-          title: '采购退货单号',
+          title: '退货单号',
           field: 'orderNum',
           sortable: true,
           align: 'center'
@@ -210,7 +210,7 @@ export default {
           align: 'center'
         },
         {
-          title: '采购退货日期',
+          title: '退货日期',
           field: 'orderDate',
           sortable: true,
           align: 'center',
@@ -236,7 +236,7 @@ export default {
           align: 'center'
         },
         {
-          title: '采购退货总金额',
+          title: '退货总金额',
           field: 'orderAmount',
           sortable: true,
 	        align: 'right',
@@ -244,7 +244,7 @@ export default {
 	        footerRender: this.footerSum
         },
 	      {
-		      title: '采购总运费',
+		      title: '总运费',
 		      field: 'totalFreight',
 		      sortable: true,
 		      align: 'right',

@@ -62,6 +62,7 @@ export default {
       visible: false,
       deptList: [],
       deptListVisible: false,
+      fullscreenLoading: false,
       dataForm: {
         menuId: '',
         name: '',

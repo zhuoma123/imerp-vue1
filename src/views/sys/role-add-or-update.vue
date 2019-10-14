@@ -1,8 +1,8 @@
 <template>
   <el-dialog class="abow_dialog" :visible.sync="visible" 
   :title="dataForm.roleId==null ? $t('views.public.add') : $t('views.public.update')" 
-  :close-on-click-modal="false" :close-on-press-escape="false" width="80%">
-    <el-form  :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmitHandle()" label-width="120px" size="mini">
+  :close-on-click-modal="false" :close-on-press-escape="false" width="50%">
+    <el-form v-loading="loading"  :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmitHandle()" label-width="120px" size="mini">
       <el-form-item prop="roleName" label="角色名称" >
         <el-input v-model="dataForm.roleName" placeholder="角色名称" />
       </el-form-item>
@@ -74,6 +74,7 @@ export default {
       deptList: [],
       menuList: [],
       deptListVisible: false,
+      loading: true,
       dataForm: {
         roleId: '',
         roleName: '',
@@ -99,6 +100,12 @@ export default {
           }
           callback()
           }
+          var validateParentName = (rule, value, callback) => {
+          if (!this.dataForm.roleId && !/\S/.test(value)) {
+            return callback(new Error("部门名称不能为空！"))
+          }
+          callback()
+          }
           
       return{
          roleName: [
@@ -106,7 +113,8 @@ export default {
           { validator: validateRoleName, trigger: 'blur' }
         ],
         deptName: [
-          { required: true, message: "所属部门不能为空！", trigger: 'blur' },
+          { required: true, message: "所属部门不能为空！", trigger: 'change' },
+          { validator: validateParentName, trigger: 'blur' }
         ]
         
       }
@@ -116,15 +124,18 @@ export default {
     
     init () {
       this.visible = true
+      this.loading=true
       this.dataForm.roleId=null
       this.$nextTick(() => { 
-        this.resetTree();
+        this.loading=false
        this.$refs.dataForm.resetFields()
+       
       })
     },
     
     update(row){
       this.visible = true
+      this.loading=true
       this.$nextTick(() => {
         this.dataForm = Object.assign({}, row)
         let timer = setInterval(() => {
@@ -132,7 +143,8 @@ export default {
             this.setTree(row)
             clearInterval(timer)
           }
-          console.log('---------wait')
+          this.loading=false
+           
         }, 500)
         // while(true) {
         //   console.log('--------wait', this.menuList.length, this.deptList.length)

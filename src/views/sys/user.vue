@@ -44,6 +44,7 @@
       size="mini"
       ref="pGrid"                                                       
       :columns="columns"
+      :loading="dataListLoading"
       :data="dataList"
       :edit-config="{trigger: 'click', mode: 'row', showStatus: true}"
     ></vxe-grid>

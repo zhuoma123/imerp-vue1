@@ -1,20 +1,23 @@
 <template scope="scope">
-  <d2-container class="mod-sys__user">
-    <vxe-toolbar slot="header"  size="mini">
+  <d2-container class="mod-sys__user" >
+    <div class="shuruhead">
+    <vxe-toolbar slot="header" size="mini">
       <template v-slot:buttons>
-        <vxe-input v-model="filterName2" type="search" placeholder="根据名称查询"></vxe-input>
+        <el-input  size="mini" class="shuru"  prefixIcon="el-icon-search" v-model="filterName2" type="search" placeholder="根据名称查询"></el-input>
         <el-button
           v-if="$hasPermission('sys:menu:save')"
           type="primary"
-          icon="el-icon-edit"
+          icon="el-icon-circle-plus"
           size="mini"
           @click="addOrUpdateData()"
         >{{ $t('views.public.add') }}</el-button>
       </template>
     </vxe-toolbar>
+    </div>
     <vxe-table
       :data="list2"
       border
+      v-loading="loading"
       size="mini"
       ref="pGrid"
       highlight-hover-row
@@ -86,6 +89,7 @@ export default {
         deleteIsBatch: true,
         exportURL: "/sys/menu/export"
       },
+      loading: true,
       filterName2: '',
       dataList: [],
       tags: [
@@ -111,6 +115,7 @@ export default {
         }, options)
         return rest
       }
+      this.loading=false
       return this.dataList
     }
   },
@@ -118,7 +123,9 @@ export default {
   components: {
     AddOrUpdate
   },
+ 
   methods: {
+
  //增改
    addOrUpdateData (row) {
      debugger
@@ -186,3 +193,14 @@ export default {
 
 </script>
 
+<style  type="text/css">
+.shuru{
+display: inline-block;
+font-size: 14px;
+width: 180px;
+padding-right: 10px;
+}
+.shuruhead{
+  padding: 0px 0px 0px 0px;
+}
+</style>

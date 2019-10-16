@@ -216,7 +216,7 @@ export default {
     prodSeach (queryString, cb) {
       if (queryString) {
         this.$axios
-          .post(this.mixinViewModuleOptions.prodURL, { name: queryString })
+          .post(this.mixinViewModuleOptions.prodURL, { name: queryString,warehouseId:this.dataForm.warehouseId })
           .then(res => {
             for (var i = 0; i < res.length; i++) {
               res[i].value = res[i].val

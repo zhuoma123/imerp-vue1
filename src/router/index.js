@@ -42,7 +42,7 @@ router.beforeEach(async (to, from, next) => {
     count++
     // 这里暂时将cookie里是否存有token作为验证是否登录的条件
     // 请根据自身业务需要修改
-    const token = util.cookies.get('token')
+    const token = util.cookies.get('Mema-Token')
     const hasToken = token && token !== 'undefined'
     // 根据routers的值判断动态的菜单是否已经加载完成
     const isDynamicAddRoute = store.getters.permission.isDynamicAddRoute

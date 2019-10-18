@@ -522,7 +522,7 @@ export default {
     // 导出
     exportHandle () {
       let params = qs.stringify({
-        'token': util.cookies.get('token'),
+        'token': util.cookies.get('Mema-Token'),
         ...this.dataForm
       })
       window.location.href = `${window.SITE_CONFIG['apiURL']}${this.mixinViewModuleOptions.exportURL}?${params}`

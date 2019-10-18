@@ -186,7 +186,8 @@ export default {
           title: '类型',
           field: 'tName',
           sortable: true,
-          align: 'center'
+          align: 'center',
+          width: '50px'
         },
         {
           title: '公司电话',
@@ -227,7 +228,8 @@ export default {
           title: '法人',
           field: 'legalMan',
           sortable: true,
-          align: 'center'
+          align: 'center',
+          width: '80px'
         },
         {
           title: '公司网址',

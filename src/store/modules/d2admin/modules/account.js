@@ -35,7 +35,7 @@ export default {
             // token 代表用户当前登录状态 建议在网络请求中携带 token
             // 如有必要 token 需要定时更新，默认保存一天
             util.cookies.set('uuid', res.uuid)
-            util.cookies.set('token', res.token, { expires: res.expire })
+            util.cookies.set('Mema-Token', res.token, { expires: res.expire })
             debugger
             // 设置 vuex 用户信息
             await dispatch('d2admin/user/set', {
@@ -100,7 +100,7 @@ export default {
     async clear({ dispatch }) {
       console.log('----------清空缓存----------')
       // 删除cookie
-      util.cookies.remove('token')
+      util.cookies.remove('Mema-Token')
       util.cookies.remove('uuid')
       // 清空 vuex 菜单信息
       util.session.clear()

@@ -89,7 +89,7 @@ export default {
         billNum: null,
         transactionType: null,
         sourceOrderNum: null,
-        status: null,
+        status: 'NEW',
         warehouse: null
       },
       descriptors: {
@@ -159,78 +159,62 @@ export default {
           title: '业务类型',
           field: 'transactionTypeMean',
           sortable: true,
+          width: 80,
           align: 'center'
         },
         {
-          title: '上游业务单号',
+          title: '业务单号',
           field: 'sourceOrderNum',
           sortable: true,
           width: 110,
           align: 'center'
         },
         {
-          title: '上游业务单据类型',
+          title: '业务单据类型',
           field: 'sourceOrderTypeMean',
           sortable: true,
-          width: 120,
+          width: 100,
           align: 'center'
         },
         {
           title: '经办人',
           field: 'pic',
           sortable: true,
+          width: 70,
           align: 'center'
         },
         {
           title: '出入库日期',
           field: 'inDate',
           sortable: true,
-          align: 'center',
-          formatter: ['toDateString', 'yyyy-MM-dd']
+          align: 'center'
         },
         {
           title: '状态',
           field: 'statusMean',
           sortable: true,
+          width: 70,
           align: 'center'
         },
         {
           title: '出入库仓库',
           field: 'warehouseCode',
           sortable: true,
+          width: 100,
           align: 'center'
-        },
-        {
-          title: '备注',
-          field: 'remark',
-          sortable: true,
-          align: 'center'
-        },
-        {
-          title: '创建人',
-          field: 'createBy',
-          sortable: true,
-          align: 'center'
-        },
-        {
-          title: '创建日期',
-          field: 'createDate',
-          sortable: true,
-          align: 'center',
-          formatter: ['toDateString', 'yyyy-MM-dd']
         },
         {
           title: '修改人',
           field: 'updateBy',
           sortable: true,
+          width: 70,
           align: 'center'
         },
         {
           title: '修改日期',
           field: 'updateDate',
           sortable: true,
-          align: 'center',
-          formatter: ['toDateString', 'yyyy-MM-dd']
+          align: 'center'
         }
       ],
       toolbar: {

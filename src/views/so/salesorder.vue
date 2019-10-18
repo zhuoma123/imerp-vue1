@@ -156,6 +156,7 @@ import mixinViewModule from '@/mixins/view-module'
 import XEUtils from 'xe-utils'
 import AddOrUpdate from './salesorder-add-or-update'
 export default {
+  name: 'so-sales',
   mixins: [mixinViewModule],
   data () {
     return {

@@ -162,7 +162,10 @@ export default {
         shipType: "",
         remark: "",
         autoPeaking: true,
-        deletedFlag: "N"
+        deletedFlag: "N",
+        receiveName:"",
+        receivePhone:"",
+        receiveAddress:""
       },
       dataRule: {
         customerId: [
@@ -248,6 +251,7 @@ export default {
           align: 'left',
           width: '70px',
           formatter: ['toFixedString', 2],
+          needReturnAmount : true,
           editPost: function (column, row) {
             var qty = row.orderQty
             var price = row.price
@@ -345,7 +349,10 @@ export default {
     }, 
     changeCust (e) {
       console.log('------', e, this.dataForm)
-    }
+    },
+    setAmount(value){
+      this.dataForm.orderAmount = value;
+    },
   },
   mounted () {
   }

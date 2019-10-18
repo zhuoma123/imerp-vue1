@@ -583,6 +583,7 @@ export default {
         let footerRender = column.own.footerRender
         if (footerRender) {
           let cellValue = footerRender(column, data)
+          
           let cellLabel = cellValue
           let { formatter } = column
           if (formatter && cellValue !='汇总') {
@@ -595,6 +596,11 @@ export default {
             }
           }
 
+          //将汇总金额放回给页面某个元素.需要定义setAmount方法
+          let needReturnAmount = column.own.needReturnAmount
+          if (needReturnAmount) {
+            this.setAmount(cellLabel)
+          }
           return cellLabel
         }
 
@@ -602,9 +608,11 @@ export default {
       })
       ]
     },
+
+    
     removeSelecteds (grid) {
       grid.removeSelecteds().then(() => {
-        grid.updateFooter()
+        grid.updateFooter();
       })
     },
     computeHeight () {

@@ -22,7 +22,9 @@
             v-for="page in opened"
             :key="page.fullPath"
             :label="page.meta.title || $t('layout.header-aside.tabs.label-default')"
-            :name="page.fullPath"/>
+            :name="page.fullPath">
+            <span slot="label"><i :class="'fa fa-' + page.meta.icon"></i> {{page.meta.title || $t('layout.header-aside.tabs.label-default')}}</span>
+          </el-tab-pane>
         </el-tabs>
       </div>
     </div>

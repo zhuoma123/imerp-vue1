@@ -101,6 +101,7 @@
       </el-form>
       </el-collapse-item>
     </el-collapse>
+    <div style="height: 100%;">
     <vxe-grid
         border
         resizable
@@ -111,6 +112,7 @@
         ref="pGrid"
         row-id="id"
         auto-resize
+        height="100%"
         :sort-config="sortConfig"
         :loading="dataListLoading"
         :toolbar="toolbar"
@@ -134,7 +136,7 @@
         <el-button size="mini" type="info" icon="fa fa-file-excel-o" @click="$refs.pGrid.exportCsv()">导出</el-button>
       </template>
     </vxe-grid>
-
+    </div>
     <!-- 分页 -->
     <el-pagination
       slot="footer"

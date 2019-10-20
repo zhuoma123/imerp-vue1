@@ -616,6 +616,7 @@ export default {
       })
     },
     computeHeight () {
+      return;
       let self = this
       if (self.$refs.pGrid) {
         let toolbar = document.getElementsByClassName('vxe-toolbar')[0] ? `${document.getElementsByClassName('vxe-toolbar')[0].clientHeight}` : 0

@@ -1,4 +1,4 @@
-import { mapState, mapMutations } from 'vuex'
+import { mapState, mapMutations,mapActions } from 'vuex'
 
 import hotkeys from 'hotkeys-js'
 
@@ -33,10 +33,12 @@ export default {
       searchToggle: 'd2admin/search/toggle',
       searchSet: 'd2admin/search/set'
     }),
+    ...mapActions('d2admin/menu', ['asideCollapseSet']),
     /**
      * 接收点击搜索按钮
      */
     handleSearchClick () {
+      this.asideCollapseSet(!this.searchActive)
       this.searchToggle()
       if (this.searchActive) {
         setTimeout(() => {
@@ -47,6 +49,7 @@ export default {
       }
     },
     searchPanelOpen () {
+      this.asideCollapseSet(true)
       if (!this.searchActive) {
         this.searchSet(true)
         setTimeout(() => {
@@ -58,6 +61,7 @@ export default {
     },
     // 关闭搜索面板
     searchPanelClose () {
+      this.asideCollapseToggle(false)
       if (this.searchActive) {
         this.searchSet(false)
       }

@@ -41,7 +41,8 @@ function toD2AdminPageInitData (menuArray) {
     ...(menu.children && menu.children.length > 0) ? { children: menu.children.map(e => transform(e)) } : {},
     meta: {
       cache: true,
-      title: menu.name
+      title: menu.name,
+      icon: menu.icon
     },
     name: routeNameDict[menu.menuId],
     path: routePathDict[menu.menuId]
@@ -78,7 +79,8 @@ function fnAddDynamicRootRoutes (menuList = []) {
         redirect: { name: item.url ? item.children[0].url.replace(/^\//, '').replace('/', '-') : 'index' },
         meta: {
           title: item.name,
-          menuId: item.menuId
+          menuId: item.menuId,
+          icon: item.icon
         },
         name: item.url ? item.url.replace(/^\//, '') : ''
       }

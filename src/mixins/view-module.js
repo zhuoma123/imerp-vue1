@@ -141,6 +141,7 @@ export default {
     },
     // 获取数据列表
     async getDataList (vxeDataForm) {
+      if(this.mixinViewModuleOptions.getDataListURL == '')return;
       this.dataListLoading = true
       await this.$axios.post(
         this.mixinViewModuleOptions.getDataListURL,
@@ -521,35 +522,48 @@ export default {
     // 导出
     exportHandle () {
       let params = qs.stringify({
-        'token': util.cookies.get('token'),
+        'token': util.cookies.get('Mema-Token'),
         ...this.dataForm
       })
       window.location.href = `${window.SITE_CONFIG['apiURL']}${this.mixinViewModuleOptions.exportURL}?${params}`
     },
     // 获取行表数据
     getItemListDate (grid) {
-      let allDate = grid.getRecordset()
       let rlist = []
-      if (allDate) {
-        if (allDate.insertRecords && allDate.insertRecords.length > 0) {
-          for (let i = 0; i < allDate.insertRecords.length; i++) {
-            allDate.insertRecords[i].__state = 'NEW'
+      if(this.subTableAll){//获取所有数据
+        let allDate = grid.getTableData()
+        if (allDate.fullData && allDate.fullData.length > 0) {
+          for (let i = 0; i < allDate.fullData.length; i++) {
+            allDate.fullData[i].__state = 'NEW'
           }
-          rlist = rlist.concat(allDate.insertRecords)
+          rlist = rlist.concat(allDate.fullData)
         }
-        if (allDate.updateRecords && allDate.updateRecords.length > 0) {
-          for (let i = 0; i < allDate.updateRecords.length; i++) {
-            allDate.updateRecords[i].__state = 'MODIFIED'
+
+      }else{
+        let allDate = grid.getRecordset()
+        if (allDate) {
+          if (allDate.insertRecords && allDate.insertRecords.length > 0) {
+            for (let i = 0; i < allDate.insertRecords.length; i++) {
+              allDate.insertRecords[i].__state = 'NEW'
+            }
+            rlist = rlist.concat(allDate.insertRecords)
           }
-          rlist = rlist.concat(allDate.updateRecords)
-        }
-        if (allDate.removeRecords && allDate.removeRecords.length > 0) {
-          for (let i = 0; i < allDate.removeRecords.length; i++) {
-            allDate.removeRecords[i].__state = 'DELETED'
+          if (allDate.updateRecords && allDate.updateRecords.length > 0) {
+            for (let i = 0; i < allDate.updateRecords.length; i++) {
+              allDate.updateRecords[i].__state = 'MODIFIED'
+            }
+            rlist = rlist.concat(allDate.updateRecords)
           }
-          rlist = rlist.concat(allDate.removeRecords)
+          if (allDate.removeRecords && allDate.removeRecords.length > 0) {
+            for (let i = 0; i < allDate.removeRecords.length; i++) {
+              allDate.removeRecords[i].__state = 'DELETED'
+            }
+            rlist = rlist.concat(allDate.removeRecords)
+          }
         }
       }
+
+      
       return rlist
     },
     footerCellClassName ({ $rowIndex, column, columnIndex, $columnIndex }) {
@@ -569,6 +583,7 @@ export default {
         let footerRender = column.own.footerRender
         if (footerRender) {
           let cellValue = footerRender(column, data)
+          
           let cellLabel = cellValue
           let { formatter } = column
           if (formatter && cellValue !='汇总') {
@@ -581,6 +596,11 @@ export default {
             }
           }
 
+          //将汇总金额放回给页面某个元素.需要定义setAmount方法
+          let needReturnAmount = column.own.needReturnAmount
+          if (needReturnAmount) {
+            this.setAmount(cellLabel)
+          }
           return cellLabel
         }
 
@@ -588,12 +608,15 @@ export default {
       })
       ]
     },
+
+    
     removeSelecteds (grid) {
       grid.removeSelecteds().then(() => {
-        grid.updateFooter()
+        grid.updateFooter();
       })
     },
     computeHeight () {
+      return;
       let self = this
       if (self.$refs.pGrid) {
         let toolbar = document.getElementsByClassName('vxe-toolbar')[0] ? `${document.getElementsByClassName('vxe-toolbar')[0].clientHeight}` : 0
@@ -700,7 +723,7 @@ export default {
     visible: function (newName, oldName) {
       if (newName) {
         this.$nextTick(() => {
-          if (this.$refs.sGrid) {
+          if (this.$refs.sGrid && this.mixinViewModuleOptions.getDataListURL != '') {
             this.dataList = []
             this.$refs.sGrid.loadData(this.dataList)
             if (this.isNew) {

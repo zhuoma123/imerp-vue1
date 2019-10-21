@@ -31,6 +31,7 @@ import d2VueFiltersDayjs from '@d2-admin/filters-dayjs'
 import VXETable from 'vxe-table'
 import 'vxe-table/lib/index.css'
 // [vxe表格] 表格插件
+import 'xe-utils'
 import VXETablePluginElement from 'vxe-table-plugin-element'
 import 'vxe-table-plugin-element/dist/style.css'
 // [] 动态表单插件

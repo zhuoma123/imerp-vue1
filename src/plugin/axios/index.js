@@ -45,9 +45,8 @@ const service = axios.create({
 service.interceptors.request.use(
   config => {
     // 在请求发送之前做一些处理
-    const token = util.cookies.get('token')
     // 让每个请求携带token-- ['X-Token']为自定义key 请根据实际情况自行修改
-    config.headers['token'] = token
+    config.headers['Mema-Token'] =  util.cookies.get('Mema-Token')
     config.headers['Accept-Language'] = util.cookies.get('language') || 'zh-chs'
 
     // 默认参数

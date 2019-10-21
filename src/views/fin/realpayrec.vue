@@ -9,7 +9,7 @@
           v-model="dataForm"
           :formprops="formprops"
           ref="dataForm"
-          col-span='6,6,6,6'
+          col-span='6,6,7,5'
           :alldescriptors="descriptors">
           <template slot="btnsearch">
             <el-button type="primary" icon="el-icon-search" @click="search" >查询</el-button>
@@ -37,13 +37,6 @@
         <el-button ref="btnStatusAdd" size="mini" icon="el-icon-circle-plus"
                    v-if="$hasPermission('fin:realpayrec:save')"
                    @click="addHandle">新增</el-button>
-        <el-button ref="btnStatusEdit"
-                   enablestatus='NEW'
-                   row-dbclick
-                   form-readonly
-                   type="primary" size="mini" icon="el-icon-edit"
-                   v-if="$hasPermission('fin:realpayrec:save')"
-                   @click="e => cellDblClick({row: $refs.pGrid.getCurrentRow()}, e)">修改</el-button>
         <el-button ref="btnStatusDelete" type="danger"  size="mini" icon="el-icon-delete"
                    v-if="$hasPermission('fin:realpayrec:delete')"
                    @click="deleteHandle($refs.pGrid)">删除</el-button>
@@ -95,10 +88,12 @@ export default {
           custName: null,
           payDate: null,
           summary: null,
+          summaryMean: null,
           payrecId: null,
           amount: null,
           subjectId: null,
-          accountId: null,
+          gatheringTypeName: null,
+          gatheringType: null,
           status: null,
           pic: null,
           remark: null,
@@ -110,86 +105,81 @@ export default {
           updateDate: null,
           },
       descriptors: {
-    id: {
-        type: 'string',
-        label: 'id'
-      },
-          custId: {
-        type: 'string',
-        label: '往来单位id'
-      },
           custName: {
-        type: 'string',
-        label: '往来单位名称'
-      },
-       btnSearch: {
-        type: 'slot',
-        name: 'btnsearch'
-      },
-  separate4: this.$g.separate,
-      summary: {
-        type: 'string',
-        label: '收付款类型'
-      },
-          payrecId: {
-        type: 'string',
-        label: '关联应收/应付id'
-      },
-          amount: {
-        type: 'string',
-        label: '收付款金额'
-      },
-        separate8: this.$g.separate,
-      accountId: {
-        type: 'string',
-        label: '银行账户'
-      },
+            type: "cust",
+            label: "往来单位",
+            placeholder: "请输入单位名称",
+            name: "im-selector",
+            props: {
+              mapKeyVal: "custName:custId",
+              dataType: "biz.customervendor",
+              clearable: true
+            }
+          },
+          summaryMean: {
+            type: 'cust', 
+            label: '收付款类型',
+            placeholder: '请选择收付款类型',
+            name: 'im-selector',
+            props: {
+              mapKeyVal: "summaryMean:summary",
+              dataType: "dict.GATHERING_TYPE",
+              clearable: true
+            }
+          },
+          bDate: { 
+            type: 'date',
+            label: '收款日期',
+            colSpan: 2,
+            props: {
+              type: 'daterange',
+              rangeSeparator: '至',
+              startPlaceholder: '开始日期',
+              endPlaceholder: '结束日期',
+              valueFormat: 'yyyy-MM-dd'
+            }
+          },
+          separate8: this.$g.separate,
+            gatheringTypeName: {
+            type: "cust",
+            ruletype: "integer",
+            label: "收/付款账户",
+            name: "im-selector",
+            props: {
+              mapKeyVal: "gatheringTypeName:gatheringType",
+              dataType: "biz.gatheringType",
+              clearable: true
+            }
+          },
+
           status: {
-        type: 'string',
-        label: '状态'
-      },
+          type: 'enum', 
+          label: '付款状态',
+          enum: ['NEW', 'SUBMIT'],
+          options: [
+            { label: '新增', value: 'NEW' },
+            { label: '已确定', value: 'SUBMIT' }
+          ]
+        },
           pic: {
-        type: 'string',
-        label: '收付款负责人'
-      },
-        separate12: this.$g.separate,
-      companyId: {
-        type: 'string',
-        label: '公司'
-      },
-          deletedFlag: {
-        type: 'string',
-        label: '删除标记'
-      },
-          createBy: {
-        type: 'string',
-        label: '创建人'
-      },
-        separate16: this.$g.separate,
-      updateBy: {
-        type: 'string',
-        label: '修改人'
-      },
-          updateDate: {
-        type: 'string',
-        label: '修改日期'
-      },
+            type: "cust",
+            label: "经办人",
+            name: "im-selector",
+            props: {
+              mapKeyVal: "pic",
+              dataType: "biz.employee",
+              clearable: true
+            }
+          },
+          btnSearch: {
+            type: 'slot',
+            name: 'btnsearch'
+          }
         },
       tableColumn: [
         { type: 'selection', width: 30, align: 'center' },
         { type: 'index', width: 30, align: 'center' },
-        {
-          title: 'id',
-          field: 'id',
-          sortable: true,
-          align: 'center'
-        },
-        {
-          title: '往来单位id',
-          field: 'custId',
-          sortable: true,
-          align: 'center'
-        },
+        
         {
           title: '往来单位名称',
           field: 'custName',
@@ -205,42 +195,32 @@ export default {
         },
         {
           title: '收付款类型',
-          field: 'summary',
+          field: 'summaryMean',
           sortable: true,
           align: 'center'
         },
-        {
-          title: '关联应收/应付id',
-          field: 'payrecId',
-          sortable: true,
-          align: 'center'
-        },
+        
         {
           title: '收付款金额',
           field: 'amount',
           sortable: true,
           align: 'center'
         },
-        {
-          title: '科目',
-          field: 'subjectId',
-          sortable: true,
-          align: 'center'
-        },
+       
         {
           title: '银行账户',
-          field: 'accountId',
+          field: 'accountMean',
           sortable: true,
           align: 'center'
         },
         {
           title: '状态',
-          field: 'status',
+          field: 'statusMean',
           sortable: true,
           align: 'center'
         },
         {
-          title: '收付款负责人',
+          title: '经办人',
           field: 'pic',
           sortable: true,
           align: 'center'
@@ -251,18 +231,7 @@ export default {
           sortable: true,
           align: 'center'
         },
-        {
-          title: '公司',
-          field: 'companyId',
-          sortable: true,
-          align: 'center'
-        },
-        {
-          title: '删除标记',
-          field: 'deletedFlag',
-          sortable: true,
-          align: 'center'
-        },
+        
         {
           title: '创建人',
           field: 'createBy',
@@ -275,20 +244,7 @@ export default {
           sortable: true,
           align: 'center',
           formatter: ['toDateString', 'yyyy-MM-dd']
-        },
-        {
-          title: '修改人',
-          field: 'updateBy',
-          sortable: true,
-          align: 'center'
-        },
-        {
-          title: '修改日期',
-          field: 'updateDate',
-          sortable: true,
-          align: 'center',
-          formatter: ['toDateString', 'yyyy-MM-dd']
-        },
+        }
       ],
       toolbar: {
         id: 'full_edit_1',

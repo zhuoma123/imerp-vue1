@@ -330,6 +330,13 @@ export default {
             }
           },
           footerRender: this.footerSum
+        },
+        {
+          title: "货位",
+          field: "warehouseSlotId",
+          sortable: true,
+          align: "center",
+          editRender: { name: "input" }
         }
       ],
       toolbar: {

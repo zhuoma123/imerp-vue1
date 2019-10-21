@@ -337,7 +337,13 @@ export default {
             }
           },
 	        footerRender: this.footerSum
-        }
+        },
+	      {
+		      title: "货位",
+		      field: "warehouseSlotId",
+		      sortable: true,
+		      align: "center"
+	      }
       ],
       toolbar: {
         id: 'full_edit_1',

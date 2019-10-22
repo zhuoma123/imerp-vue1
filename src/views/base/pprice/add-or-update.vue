@@ -11,7 +11,7 @@
                         v-model="dataForm.productId"
                         :mapModel.sync="dataForm"
                         mapKeyVal="productName:productId"
-                        dataType="biz.priceproduct"
+                        dataType="bizall.priceproduct"
                         style="width: 300px" :disabled="dataForm.productId">
                 </im-selector>
             </el-form-item>

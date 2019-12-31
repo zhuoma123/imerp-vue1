@@ -20,7 +20,7 @@
 
 ## 加入我们
 
-广州盟码信息科技有限公司是由一群有资历、有抱负、有理想、有远见的互联网技术流组成；
+[广州盟码信息科技有限公司](http://imema.cn)是由一群有资历、有抱负、有理想、有远见的互联网技术流组成；
 
 我们一直坚定地走在技术的最前沿，在专注于行业需求深挖的同时，带来技术的不断创新与优化，融合不同的技术商业模式，使得自身在不断的成长、进化。
 
@@ -43,5 +43,3 @@
 [MIT](https://gitee.com/imema/imerp-vue/blob/master/LICENSE)
 
 Copyright ©2020 广州盟码科技
-
-![](https://gitee.com/imema/imerp-vue/master/doc/image/give-a-star@2x.png)

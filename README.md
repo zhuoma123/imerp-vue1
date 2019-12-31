@@ -34,7 +34,6 @@
 
 * [@LG0](https://gitee.com/LG0)
 * [@xiaochunkai204](https://gitee.com/xiaochunkai204)
-* [@Aysnine](https://github.com/Aysnine)
 * [@matthewleee](https://gitee.com/matthewleee)
 * [@weiqingwu](https://gitee.com/weiqingwu)
 

@@ -1,7 +1,8 @@
 ![banner](http://imema.cn/static/images/banner-erp.jpg)
 
-[ImERP](https://gitee.com/imema/imerp-vue) 是一个完全 **开源免费** 的企业ERP后台产品的前端产品，使用最新的前端技术栈，提供优雅的ERP管理系统用户体验。
+[ImERP-VUE](https://gitee.com/imema/imerp-vue) 是一个完全 **开源免费** 的企业ERP后台产品的前端产品，使用最新的前端技术栈，提供优雅的ERP管理系统用户体验。
 
+[ImERP-BACKEND](https://gitee.com/imema/imerp-backend)广州盟码信息科技有限公司基于ssm技术框架的ERP进销存后台系统
 
 ## 功能
 * 销售管理
